@@ -6,6 +6,18 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — The core carries its history of decisions, retold
+
+Each decision recorded on a rule of the core in the origin project comes over with its date, its
+problem and its ruling, retold without anything of the origin project: not its components, its
+stores or its commits, but the shape of the problem — a rule on confirmation that did not cover the
+fields of a record, so that a changed field left the status standing over a structure the owner
+never saw. A decision that cannot be told without the origin project stays there alone.
+
+Carrying the decisions over as they stand was set aside because they speak of the origin project,
+which the one-way dependency forbids; starting clean, because it drops the strongest evidence a
+reader weighing the method has — that each rule came out of a real failure rather than a desk.
+
 ### 2026-10-27 — The first article carries a series of four pictures and a set of cards
 
 Each picture answers one question an architect asks, and each can be posted alone with a link to the
@@ -206,4 +218,4 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- Whether the history of decisions on the core rules is carried over, or the core starts clean.
+- Whether the guidelines apply the split between base and appendix to themselves.
