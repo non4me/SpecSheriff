@@ -6,6 +6,27 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — The first article carries a series of four pictures and a set of cards
+
+Each picture answers one question an architect asks, and each can be posted alone with a link to the
+article:
+
+1. How does it work? — the life of a rule: the owner confirms it, a test carrying its identifier, code
+   carrying its tag, the commit, the checks and the reviewer, the merge; and the loop by which a
+   changed wording returns the status to empty until it is confirmed again.
+2. What stops bad code? — the gate of a commit: the deterministic checks, and the one judgement, made
+   by a reviewer that sees only the change and the text of the rules.
+3. Will it survive a change of stack? — one base specification, two technical appendices.
+4. How does it differ from Spec Kit? — the map of approaches, spec-first, spec-anchored and
+   spec-as-source, with the tools placed on it and SpecSheriff among them.
+
+Beside the series, a set of cards on how requirements decay silently, one per rule of the doctrine of
+writing: posts for the weeks after the article, useful even to a reader who never takes up the whole
+method. The scene of the sheriff refusing a commit is kept for the second article.
+
+One poster holding the whole method was set aside because nothing on it can be read closely and it
+cannot be cut into posts; one picture alone, because it answers one of the four questions.
+
 ### 2026-10-27 — An emblem is the face of the project, a character appears where play fits
 
 The emblem is a sheriff's star with a rule node at its centre: the face of the README, the
@@ -185,5 +206,4 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- Which pictures the infographics hold.
 - Whether the history of decisions on the core rules is carried over, or the core starts clean.
