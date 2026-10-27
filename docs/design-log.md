@@ -6,6 +6,33 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — The core guidelines are confirmed
+
+The owner went over every node of the core, the base and the appendix of the tools, one at a time,
+the English above a reading in Russian. What came over unchanged kept its confirmation, since its
+wording was the one the owner had already confirmed; every changed or new node was confirmed as it
+now stands, its decisions on it. The confirmations become signed lines once the tools record them
+(step 2). The rulings of that reading that bear on more than one node:
+
+- **The core's examples name what any system has** — a user, an operator, a record, a request — and
+  nothing of one implementation. The worked example's bank stays in the example, the articles and the
+  pictures, never in a rule.
+- **The specification is written fresh.** A node removed while it is first written is deleted, not
+  archived: the origin project's experience shapes it, its history does not carry over beyond the
+  decisions retold on the rules.
+- **A test always carries the sid of what it verifies, and every declaration of the system's code a
+  tag**, or the tag saying it implements none and why. Only a test or a declaration whose code a
+  commit changes must name a checked node. The origin project, taking the core, tags its code before
+  the check is turned on.
+- **The base of the guidelines is tied to no implementation** in three rules — no technology, no look
+  of a user interface, no figure measured on one instance; the doctrine's own rule on measured figures
+  folded into them.
+- **Every procedure that writes the specification is idempotent**, by that name.
+- **One language for a specification, English recommended** and holding where a project names no
+  other; the core is in English.
+- **A restriction by list** names what is allowed or what is forbidden by which mistake would go
+  unnoticed.
+
 ### 2026-10-27 — The guidelines apply the split between base and appendix to themselves
 
 The base guidelines state what is held, what is checked, when, and what a failure costs — a rule's
@@ -222,16 +249,16 @@ example leaves the road to a product open.
 
 - The mechanism that keeps a confirmation honest — a fingerprint of each wording the owner
   confirmed, a hook refusing a status typed by hand, a status returned to empty when its wording
-  changes — lives in personal scripts in the origin project. Without it, "confirmed" is a
-  declaration, so it becomes part of the public tools.
-- The examples in the doctrine of how a rule is written are drawn from the origin project. They are
-  replaced by neutral ones, or by examples from the worked example project.
+  changes — lives in personal scripts in the origin project. The core now states it (the owners'
+  rule and the appendix's rule on recording a confirmation); the tools carry it out in step 2.
+- The origin project's code holds many declarations without a tag. Taking the core (step 5), it
+  tags them, finding a rule for each or stating that it implements none and why, before the check
+  of tags is turned on.
 
 ## Order of work
 
-1. The core guidelines: taken from the origin project along the line drawn above, divided into a base
-   and an appendix of the tools, carrying owners per domain and the general binding of a test, with
-   neutral examples and the decisions retold; confirmed by the owner node by node.
+1. ~~The core guidelines~~ — done 2026-10-27: the base and the appendix of the tools, confirmed by the
+   owner node by node.
 2. The tools, along the base: checks of the specification on its own and against the code, the
    generated export, map and types, confirmations naming who gave them, the general parser with
    TypeScript and Python described, the reviewer's contract with its first runner.
