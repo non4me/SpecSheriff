@@ -6,6 +6,16 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — An emblem is the face of the project, a character appears where play fits
+
+The emblem is a sheriff's star with a rule node at its centre: the face of the README, the
+documentation and the first article. A drawn sheriff appears only where the reader is ready to smile —
+the hands-on article, posts on social networks, the scene of the refused commit.
+
+An emblem alone was set aside because it wastes the name chosen for being remembered; a character
+everywhere, because it would make the method look like a joke to the architects the first article is
+written for.
+
 ### 2026-10-27 — Each article appears in English and in Russian in the same week
 
 The English text is the original and is kept in this repository. The Russian one is written for Habr
@@ -175,5 +185,5 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- The figure of the sheriff: the brand's voice and look.
+- Which pictures the infographics hold.
 - Whether the history of decisions on the core rules is carried over, or the core starts clean.
