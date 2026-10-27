@@ -353,9 +353,9 @@
               "id": "_guidelines/spec/1.13",
               "sid": "s-5x737t9nee4zgaa",
               "kind": "rule",
-              "title": "The base specification names neither a technology nor a look",
+              "title": "The base specification names no technology",
               "status": "checked",
-              "text": "A rule of the base specification states what the system does without naming how the default implementation does it: no language, library, store, protocol, command or file path. Of a user interface it states what a user can rely on in any instance — what is shown, what it means, in what order, in which states, and what the user can do — and nothing of how it looks or is built: no placement, size, colour or icon, no kind of control, and not where a state is kept. Those choices are described in the technical appendix. A technology may be named by example, in brackets, where that makes a rule easier to read, provided the rule does not depend on it. A rule that depends on a technology or a look is a defect, repaired at its revision: that part moves to the appendix, and the rule keeps what must hold whatever the stack.",
+              "text": "A rule of the base specification states what the system does, never how the default implementation does it: it names no language, library, store, protocol, command or file path. How it is done, and any part of a rule that depends on it, is described in the technical appendix. A technology may be named by example, in brackets, where the rule does not depend on it.",
               "refs": [
                 {
                   "type": "refines",
@@ -367,6 +367,14 @@
                 },
                 {
                   "type": "refines",
+                  "from": "s-xef48cjh6krvavz"
+                },
+                {
+                  "type": "refines",
+                  "from": "s-9hfbxv5pfnsh4kc"
+                },
+                {
+                  "type": "refines",
                   "from": "s-vj7ercem526zd6v"
                 },
                 {
@@ -374,7 +382,36 @@
                   "from": "s-a4rbry4hsu34hy8"
                 }
               ],
-              "rationale": "The same rules can then be implemented on another stack, or with another look, with an appendix of its own, without editing a single rule. And a rule that names its tools or its look goes stale when they change, although what the system does has not.",
+              "rationale": "The same rules can then be implemented on another stack, with an appendix of its own, without editing a single rule; and a rule that names its tools goes stale when they change, although what the system does has not.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-10-27",
+                    "problem": "One rule held what the base names of a technology, of a look and of one instance, and grew too long to read as one requirement.",
+                    "ruling": "The owner: three rules, one for each.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "_guidelines/spec/1.14",
+              "sid": "s-xef48cjh6krvavz",
+              "kind": "rule",
+              "title": "Of a user interface the base states what it shows, not how it looks",
+              "status": "checked",
+              "text": "Of a user interface, the base specification states what a user can rely on in any instance: what is shown, what it means, in what order, in which states, and what the user can do. How it looks and is built — placement, size, colour, icon, the kind of control, where a state is kept — is described in the technical appendix.",
+              "refs": [
+                {
+                  "type": "refines",
+                  "to": "s-5x737t9nee4zgaa"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-bsya3febm6u64ab"
+                }
+              ],
+              "rationale": "The same rules can then be given another look with an appendix of its own; and a rule that names its look goes stale when the look changes, although what the user can rely on has not.",
               "meta": {
                 "decisions": [
                   {
@@ -393,7 +430,36 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.14",
+              "id": "_guidelines/spec/1.15",
+              "sid": "s-9hfbxv5pfnsh4kc",
+              "kind": "rule",
+              "title": "The base specification holds no figure of one instance",
+              "status": "checked",
+              "text": "The base specification holds no figure measured on an instance — a population, a rate, a duration observed there. A threshold a rule needs is stated by the method an instance measures it with, and its value is a setting of the technical appendix.",
+              "refs": [
+                {
+                  "type": "refines",
+                  "to": "s-5x737t9nee4zgaa"
+                },
+                {
+                  "type": "refines",
+                  "to": "s-vj7ercem526zd6v"
+                }
+              ],
+              "rationale": "A figure belongs to the instance it was measured on and to the day it was measured, so every other instance would pass or fail the rule by accident.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-10-27",
+                    "problem": "A rule of the writing doctrine forbade numbers measured on a running instance, written to repair rules into which one instance's data had leaked.",
+                    "ruling": "The owner: in a specification written fresh it is one case of the base being tied to no implementation, and stands beside the rules on technology and on a look.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "_guidelines/spec/1.16",
               "sid": "s-vj7ercem526zd6v",
               "kind": "rule",
               "title": "The technical appendix stands beside the base specification",
@@ -407,6 +473,10 @@
                 {
                   "type": "cites",
                   "to": "s-2r7k2aeyusgy6fw"
+                },
+                {
+                  "type": "refines",
+                  "from": "s-9hfbxv5pfnsh4kc"
                 },
                 {
                   "type": "refines",
@@ -442,7 +512,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.15",
+              "id": "_guidelines/spec/1.17",
               "sid": "s-2r7k2aeyusgy6fw",
               "kind": "rule",
               "title": "The technical debt holds the problems of the default implementation set aside",
@@ -473,7 +543,7 @@
               "rationale": "A problem set aside needs a place where it is stated, or it is forgotten, or kept as a task nobody means to do. Every problem there stands for the one reason that the specification's owner judged it not worth solving now, so a reason or a decision of its own would only repeat its standing. Described as it stands and bound to the nodes it concerns, it tells whoever repeats an instance, or reads those nodes, what the implementation does not do; a problem in a technology may be solved by a later version of it while nothing here changes, and the version it was seen in lets a reader tell. Left standing once solved, it would describe a shortfall that no longer exists."
             },
             {
-              "id": "_guidelines/spec/1.16",
+              "id": "_guidelines/spec/1.18",
               "sid": "s-a4rbry4hsu34hy8",
               "kind": "rule",
               "title": "The guidelines hold their base and the appendix of their tools",
@@ -514,7 +584,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.17",
+              "id": "_guidelines/spec/1.19",
               "sid": "s-bsya3febm6u64ab",
               "kind": "rule",
               "title": "A project's own guidelines refine or implement the core",
@@ -528,6 +598,10 @@
                 {
                   "type": "cites",
                   "from": "s-5x737t9nee4zgaa"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-xef48cjh6krvavz"
                 },
                 {
                   "type": "cites",
@@ -555,7 +629,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.18",
+              "id": "_guidelines/spec/1.20",
               "sid": "s-e877bnfa559tvk9",
               "kind": "rule",
               "title": "Data structures are described in the specification",
@@ -604,7 +678,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.19",
+              "id": "_guidelines/spec/1.21",
               "sid": "s-adhmw4gw6y82f44",
               "kind": "rule",
               "title": "A field is required only where its value is guaranteed",
@@ -629,7 +703,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.20",
+              "id": "_guidelines/spec/1.22",
               "sid": "s-z3dnru6qqdf9m6j",
               "kind": "rule",
               "title": "A record variant exists only for a value carrying fields of its own",
@@ -658,7 +732,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.21",
+              "id": "_guidelines/spec/1.23",
               "sid": "s-xfu2gpzddjnmgks",
               "kind": "rule",
               "title": "Each value choosing a record variant is declared once",
@@ -697,7 +771,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.22",
+              "id": "_guidelines/spec/1.24",
               "sid": "s-7vm323mhry2enx3",
               "kind": "rule",
               "title": "What the domains share is agreed in contracts",
@@ -707,7 +781,7 @@
               "rationale": "Domains that coin their own words, or their own conventions for the same exchange, stop understanding one another, and a reader cannot tell whether two words mean one thing. Holding in contracts only what binds more than one domain keeps it from owning what a single domain defines. A record described away from the domain that provides it has no owner: the provider changes what it gives while its description stands elsewhere."
             },
             {
-              "id": "_guidelines/spec/1.23",
+              "id": "_guidelines/spec/1.25",
               "sid": "s-h6h25ctd3yryudh",
               "kind": "rule",
               "title": "The specification is divided into domains",
@@ -716,7 +790,7 @@
               "refs": []
             },
             {
-              "id": "_guidelines/spec/1.24",
+              "id": "_guidelines/spec/1.26",
               "sid": "s-k73czmpkazcx7mu",
               "kind": "rule",
               "title": "A part of the specification can be read alone",
@@ -731,7 +805,7 @@
               "rationale": "The specification is too large to fit whole into the context window of an agent working with it. It is therefore divided into self-contained domains, and a domain into sections, so that only the part the work at hand needs is loaded. Contracts is the exception: shared by every domain, it is loaded whichever part the work needs."
             },
             {
-              "id": "_guidelines/spec/1.25",
+              "id": "_guidelines/spec/1.27",
               "sid": "s-ce9wbaut6edfuy8",
               "kind": "rule",
               "title": "An entity is defined in one domain",
@@ -741,7 +815,7 @@
               "rationale": "Two definitions of one entity are two owners of it, and two owners change it apart; the duplicate is usually the first visible trace of one domain doing another's work."
             },
             {
-              "id": "_guidelines/spec/1.26",
+              "id": "_guidelines/spec/1.28",
               "sid": "s-yggv9myedprnaa7",
               "kind": "rule",
               "title": "A domain's specification opens with its head",
@@ -766,7 +840,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.27",
+              "id": "_guidelines/spec/1.29",
               "sid": "s-nkyty4dy9x2v2a4",
               "kind": "rule",
               "title": "Every domain stands at a level",
@@ -791,7 +865,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/1.28",
+              "id": "_guidelines/spec/1.30",
               "sid": "s-uw9n84edf7cbe9n",
               "kind": "rule",
               "title": "The order of the domains",
@@ -1179,9 +1253,9 @@
           "id": "_guidelines/spec/5",
           "sid": "s-hqz28vdq2a29ure",
           "kind": "section",
-          "title": "The checks and the commands",
-          "status": "",
-          "text": "What is checked, when, what a failure costs, and what holds of every command that writes the specification; how the tools do it is described in the appendix of the tools.",
+          "title": "The checks and the procedures",
+          "status": "checked",
+          "text": "What is checked, when, what a failure costs, and what holds of every procedure that writes the specification; how the tools do it is described in the appendix of the tools.",
           "refs": [],
           "children": [
             {
@@ -1189,8 +1263,8 @@
               "sid": "s-jau82aq9juv9zzh",
               "kind": "rule",
               "title": "What is checked, when, and what a failure costs",
-              "status": "",
-              "text": "Two things are checked mechanically: that the specification holds together on its own, and that the specification and the code still describe each other. Every check is deterministic but one: whether the code does what the rules it names say, and nothing they do not, is judged at every commit that changes code by an independent reviewer (§s-nyh9yk22ba6g77q). The checks run when a commit is made, and the tests of the system's code before a commit is shared; each check reads the commit being made, never what the commit does not hold. A check refuses unless its row says otherwise.\n\n**The specification on its own**\n\n| What is checked | On failure |\n|---|---|\n| No file of the specification, of its archive or of its schema gives one field two values | refused |\n| Every file matches its schema | refused |\n| No two nodes share a sid | refused |\n| No two nodes share an id | refused |\n| Every node's id is the address its place gives | refused |\n| No two term nodes name the same term | refused |\n| A node is checked only where a confirmation holds the fingerprint of its wording and names an owner of the part it stands in, and a change adding a confirmation is signed by that owner | refused |\n| Every link names a node | refused |\n| A node citing another holds a link to it, and a link of type cites stands only where its node cites the node it names and holds no link of another type to it | refused |\n| No node cites another by its address | refused |\n| A term-relation or a uses link binds two terms, and no other type of link, cites included, binds two terms | refused, and settled with the specification's owner |\n| The incoming links are what the outgoing ones produce | refused |\n| No checked node sets words in capitals for stress | refused |\n| A checked section holds at least one rule | refused |\n| Every domain has a head, and the index in it is what the domain's sections produce | refused |\n| Every domain's head names a level the project's own guidelines list | refused |\n| A consumes link goes from a domain's head to a section of another domain | refused |\n| The domains do not use one another in a cycle | refused |\n| A record variant refines the record it is a variant of, stands in the domain declaring the value it answers to, declares a field of its own that no field of the record, nor any its field of type variant holds, already is, answers to values of the fields that record names as choosing its variant, each declared where §s-xfu2gpzddjnmgks says such a value is declared, and answers to values no other variant of it answers to | refused |\n| Every node of the technical appendix outside the sections of the stack and of the technical debt implements a node of the base specification, and every rule of the technical debt refines one | refused |\n| Every rule of the appendix of the tools implements a node of the base of the guidelines | refused |\n| Every rule of a project's own guidelines refines or implements a rule of the core | refused |\n\n**The specification and the code**\n\n| What is checked | On failure |\n|---|---|\n| Every declaration of the system's code carries a tag, or the tag that names no node | refused |\n| Every tag names a node that exists, and a tag on a declaration whose code a commit changes a checked one | refused |\n| Every tag stands on the declaration it binds | refused |\n| Every test of the system's code carries the sid of a node that exists, and a test a commit adds or changes the sid of a checked one | refused |\n| Every rule whose code a commit adds or changes has a test carrying its sid | refused |\n| A node's lists of code and tests are what the tags and the sids the tests carry produce | refused |\n| A node that names the symbols in a file is held to them | refused |\n| A list a node carries matches the declaration in the code or in the schema it names | refused |\n| No file outside the specification and its tools holds a node's address | refused |\n| A citation in the code, the tests and the documents names a node by its sid | refused |\n| The generated types and runtime checks are what the record nodes produce | refused |\n| A rule whose text changed while none of its code has | reported by the node's sid |\n| A commit that changes code names every checked rule its changed declarations' tags name, and no head or section | refused |\n| The code does what the rules it names say, and nothing they do not | refused, naming the rule and the line |\n| The tests of the system's code pass | the commit is not shared |",
+              "status": "checked",
+              "text": "Two things are checked mechanically: that the specification holds together on its own, and that the specification and the code still describe each other. Every check is deterministic but one: whether the code does what the rules it names say, and nothing they do not, is judged at every commit that changes code by an independent reviewer (§s-nyh9yk22ba6g77q). The checks run when a commit is made, and the tests of the system's code before a commit is shared; each check reads the commit being made, never what the commit does not hold. A check refuses unless its row says otherwise.\n\n**The specification on its own**\n\n| What is checked | On failure |\n|---|---|\n| No file of the specification, of its archive or of its schema gives one field two values | refused |\n| Every file matches its schema | refused |\n| No two nodes share a sid | refused |\n| No two nodes share an id | refused |\n| Every node's id is the address its place gives | refused |\n| No two term nodes name the same term | refused |\n| A node is checked only where a confirmation holds the fingerprint of its wording and names an owner of the part it stands in, and a change adding or withdrawing a confirmation is signed by that owner | refused |\n| Every link names a node | refused |\n| A node citing another holds a link to it, and a link of type cites stands only where its node cites the node it names and holds no link of another type to it | refused |\n| No node cites another by its address | refused |\n| A term-relation or a uses link binds two terms, and no other type of link, cites included, binds two terms | refused, and settled with the specification's owner |\n| The incoming links are what the outgoing ones produce | refused |\n| No checked node sets words in capitals for stress | refused |\n| A checked section holds at least one rule | refused |\n| Every domain has a head, and the index in it is what the domain's sections produce | refused |\n| Every domain's head names a level the project's own guidelines list | refused |\n| A consumes link goes from a domain's head to a section of another domain | refused |\n| The domains do not use one another in a cycle | refused |\n| A record variant refines the record it is a variant of, stands in the domain declaring the value it answers to, declares a field of its own that no field of the record, nor any its field of type variant holds, already is, answers to values of the fields that record names as choosing its variant, each declared where §s-xfu2gpzddjnmgks says such a value is declared, and answers to values no other variant of it answers to | refused |\n| Every node of the technical appendix outside the sections of the stack and of the technical debt implements a node of the base specification, and every rule of the technical debt refines one | refused |\n| Every rule of the appendix of the tools implements a node of the base of the guidelines | refused |\n| Every rule of a project's own guidelines refines or implements a rule of the core | refused |\n\n**The specification and the code**\n\n| What is checked | On failure |\n|---|---|\n| Every declaration of the system's code carries a tag, or the tag that names no node | refused |\n| Every tag names a node that exists, and a tag on a declaration whose code a commit changes a checked one | refused |\n| Every tag stands on the declaration it binds | refused |\n| Every test of the system's code carries the sid of a node that exists, and a test a commit adds or changes the sid of a checked one | refused |\n| Every rule whose code a commit adds or changes has a test carrying its sid | refused |\n| A node's lists of code and tests are what the tags and the sids the tests carry produce | refused |\n| A node that names the symbols in a file is held to them | refused |\n| A list a node carries matches the declaration in the code or in the schema it names | refused |\n| No file outside the specification and its tools holds a node's address | refused |\n| A citation in the code, the tests and the documents names a node by its sid | refused |\n| The generated types and runtime checks are what the record nodes produce | refused |\n| A rule whose text changed while none of its code has | reported by the node's sid |\n| A commit that changes code names every checked rule its changed declarations' tags name, and no head or section | refused |\n| The code does what the rules it names say, and nothing they do not | refused, naming the rule and the line |\n| The tests of the system's code pass | the commit is not shared |",
               "refs": [
                 {
                   "type": "implements",
@@ -1284,7 +1358,7 @@
                   },
                   {
                     "date": "2026-10-07",
-                    "problem": "The row refused a test opening with a term's sid, which 3.3 now admits, and read a test as changed where a deleted neighbour lent it the diff's lines.",
+                    "problem": "The row refused a test opening with a term's sid, which §s-rah8b37kytb682y now admits, and read a test as changed where a deleted neighbour lent it the diff's lines.",
                     "ruling": "The owner: a changed test opens with the sid of a checked rule or term, and a test is changed when its text is.",
                     "type": "textual"
                   },
@@ -1320,7 +1394,7 @@
               "sid": "s-nyh9yk22ba6g77q",
               "kind": "rule",
               "title": "The reviewer sees only the change and the rules it names",
-              "status": "",
+              "status": "checked",
               "text": "The independent reviewer of a commit is given the commit's change, less the files generated from the specification, and the text of the rules, records and terms its message and tags name, a record with its fields — and nothing of the session that wrote the code. It refuses the commit where the code does something no named rule states or leaves out what one requires, and names the rule and the line of each finding. A review that cannot be held — no reviewer to run, a run that does not end, an answer that cannot be read — refuses the commit and says why.",
               "refs": [
                 {
@@ -1358,16 +1432,26 @@
               "id": "_guidelines/spec/5.3",
               "sid": "s-jsqxdx47wkkj7gp",
               "kind": "rule",
-              "title": "A command can run twice without harm",
-              "status": "",
-              "text": "A command that writes the specification, or what is generated from it, changes nothing when it runs a second time on what its first run left, and a command belonging to a one-time procedure is removed when the procedure is done.",
+              "title": "A procedure that writes the specification is idempotent",
+              "status": "checked",
+              "text": "Every procedure that writes the specification, or what is generated from it, is idempotent: run again on what its previous run left, it gives the same result and changes nothing, so running it again is always safe. A procedure needed only once, such as bringing existing documents into the model, is removed once it is done, since it is idempotent only on the state of the specification it was written for.",
               "refs": [
                 {
                   "type": "implements",
                   "from": "s-f5rz6b7dhxejjts"
                 }
               ],
-              "rationale": "Whoever works on the specification may run such a command at any time, so one not safe to run again would damage it; a command of a one-time procedure stops being safe to run once its procedure is done, so it goes with the procedure."
+              "rationale": "Whoever works on the specification may run such a procedure at any time, by hand or as part of a check, without knowing whether it has run before; one whose second run changed anything would damage the specification the next time it ran. A procedure written for one state of the specification can damage a later one.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-10-27",
+                    "problem": "Safety to run again was stated of the commands of one toolset, in words that did not name the property they meant.",
+                    "ruling": "The owner: it is stated of every procedure that writes the specification, by its standard name, idempotent.",
+                    "type": "textual"
+                  }
+                ]
+              }
             }
           ]
         },
@@ -1385,16 +1469,16 @@
               "sid": "s-7anvune6h4f6mbr",
               "kind": "rule",
               "title": "The specification is written in one language",
-              "status": "",
-              "text": "The specification is written in one language, the one its owner names in the project's own guidelines: every node's title, text and reason, and everything generated from them. The core of the guidelines, which projects in every language share, is written in English.",
+              "status": "checked",
+              "text": "The specification is written in one language: English, which is recommended, or another its owner names in the project's own guidelines — every node's title, text and reason, and everything generated from them. The core of the guidelines, which projects in every language share, is written in English.",
               "refs": [],
-              "rationale": "A specification that mixes two languages loses the line between what it states and what is an aside. The core is the exception because projects in every language share it, and English is the language their readers are likeliest to share.",
+              "rationale": "A specification that mixes two languages loses the line between what it states and what is an aside. English is the language the readers of a specification are likeliest to share, which is why it is recommended, why it holds where a project names no other, and why the core, which projects in every language share, is written in it.",
               "meta": {
                 "decisions": [
                   {
                     "date": "2026-10-27",
                     "problem": "The rule named English, a choice one project made for its readers, which another project's readers need not share.",
-                    "ruling": "The owner: the specification is written in one language, and which one is the project's choice, in its own guidelines; the core itself is written in English.",
+                    "ruling": "The owner: the specification is written in one language, English being recommended and holding where a project's own guidelines name no other; the core itself is written in English.",
                     "type": "textual"
                   }
                 ]
@@ -1405,7 +1489,7 @@
               "sid": "s-3dgt5c94jr55j3z",
               "kind": "rule",
               "title": "A rule names its subject and states what must hold",
-              "status": "",
+              "status": "checked",
               "text": "A rule names the subject it binds and states what that subject must do: not “credentials are kept encrypted”, which binds nobody, but “the store of secrets keeps every credential encrypted”. A property is stated over what the specification declares, never over what happens not to exist yet: not “a timestamp needs no time zone while every user is in one”, but “a timestamp carries its time zone”. A rule of the technical debt names its subject the same way and states what that subject does while the problem stands (§s-2r7k2aeyusgy6fw).",
               "refs": [
                 {
@@ -1436,7 +1520,7 @@
               "sid": "s-ybq7wbhkrh5pjqs",
               "kind": "rule",
               "title": "A name is quoted where the reader must reach it, a predicate where the rule must keep binding",
-              "status": "",
+              "status": "checked",
               "text": "Where a rule binds a named thing, the name is quoted where the reader must reach the definition that owns it, and the predicate is stated where the rule must keep binding if that name changes: not “`deleted_users` is never searched”, which binds nothing once the table is renamed, but “a table holding the users who deleted their accounts — today `deleted_users` — is never searched”.",
               "refs": [],
               "rationale": "A sentence written against a name goes inert rather than failing when the name moves: nothing breaks, no test moves, and a requirement quietly becomes a statement about nothing. A sentence written against the predicate keeps binding whatever the thing is called, and is useless exactly where the reader needs to find the definition.",
@@ -1456,7 +1540,7 @@
               "sid": "s-hwnzhgw5b683fc7",
               "kind": "rule",
               "title": "A reason is no narrower than the rule it holds up",
-              "status": "",
+              "status": "checked",
               "text": "A node's reason covers everything the node's text requires: a rule that refuses an upload too large to store and tells the user why gives a reason for both, not only for the refusal. Where the reason is narrower, either the reason is completed or the rule is cut back to what the reason carries.",
               "refs": [
                 {
@@ -1503,19 +1587,30 @@
             },
             {
               "id": "_guidelines/spec/6.7",
-              "sid": "s-rmgn3trrv845wha",
+              "sid": "s-hgdc2543ms5spwj",
               "kind": "rule",
-              "title": "No number measured on a running instance",
-              "status": "",
-              "text": "The specification carries no number measured on a running instance — a population, a rate, a duration observed there. Where a rule needs a threshold, it states its condition by method, as a comparison a reader can reproduce: not a threshold for flagging spam given as the figure one instance's data produced, but the way every instance measures its own threshold, on messages its own operators have labelled.",
-              "refs": [],
-              "rationale": "A measurement belongs to the instance it was taken on and to the day it was taken, so every other instance passes or fails such a rule by accident. A specification also serves every instance, and a figure taken inside one has no place in it.",
+              "title": "A restriction by list is chosen by which mistake would go unnoticed",
+              "status": "checked",
+              "text": "Where a rule restricts something by a list, it says whether the list names what is allowed or what is forbidden, and chooses by which mistake would go unnoticed: where something left out would go unnoticed, the list names what is forbidden, as the records a backup leaves out; where something let in would go unnoticed, it names what is allowed, as the fields a public API returns.",
+              "refs": [
+                {
+                  "type": "refines",
+                  "to": "s-xqs2e24mx5253ye"
+                }
+              ],
+              "rationale": "A list goes wrong on whatever nobody thought of when it was written: one naming what is allowed shuts out every newcomer, one naming what is forbidden lets every newcomer in, and for a given restriction only one of those two mistakes is noticed.",
               "meta": {
                 "decisions": [
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
                     "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-10-27",
+                    "problem": "The rule spoke of sets, where what a rule does is restrict something by a list, and spent its words on what everyone knows of allow-lists and deny-lists rather than on how to choose between them.",
+                    "ruling": "The owner: it speaks of a restriction by list and keeps the criterion for choosing one.",
                     "type": "textual"
                   }
                 ]
@@ -1523,35 +1618,10 @@
             },
             {
               "id": "_guidelines/spec/6.8",
-              "sid": "s-hgdc2543ms5spwj",
-              "kind": "rule",
-              "title": "A set is defined so that its mistake shows",
-              "status": "",
-              "text": "Where the specification defines a set, it defines it either by an allow-list, naming what the set admits, or by a deny-list, naming what the set leaves out, and chooses by which mistake would go unnoticed. Where leaving something out would go unnoticed, the set is a deny-list: the records a backup copies are all but those its rules leave out. Where letting something in would go unnoticed, the set is an allow-list: the fields a public API returns are those named, and one added to the record later stays out of the answer until someone names it. Two sets side by side may be defined in different ways.",
-              "refs": [
-                {
-                  "type": "refines",
-                  "to": "s-xqs2e24mx5253ye"
-                }
-              ],
-              "rationale": "A set gets wrong whatever nobody thought of when it was written — an allow-list leaves out every newcomer, a deny-list lets every newcomer in — and for a given set only one of those two mistakes is noticed.",
-              "meta": {
-                "decisions": [
-                  {
-                    "date": "2026-10-27",
-                    "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
-                    "type": "textual"
-                  }
-                ]
-              }
-            },
-            {
-              "id": "_guidelines/spec/6.9",
               "sid": "s-me9k7g34jqb4rzn",
               "kind": "rule",
               "title": "A general word carries its object",
-              "status": "",
+              "status": "checked",
               "text": "A rule names the concrete thing it means rather than a general word for it: not “a limit on how many records a listing shows”, which also let an export drop records, but “a limit on how many records a user interface shows”. Where a general word cannot be avoided — a model, a structure, a check — it carries its object in the same phrase: the structure of which record, the check at which moment comparing what with what, the model of what. A name the specification defines — a term, a record, a field — is never a general word alone, such as type, action or item, but carries its object: userAction, not action.",
               "refs": [],
               "rationale": "A rule has no conversation around it to supply a missing object, and a general rule has the least context of all, so every reader supplies an object of their own and the rule binds whatever each of them chose. Nothing about the word itself looks wrong, which is why the ambiguity survives every reading. A defined name is read in every rule that uses it, far from its definition, and a general one there means whatever each rule's context suggests: a field called type held a kind of request in one log, a user's action in another and a kind of error in a third.",
@@ -1567,11 +1637,11 @@
               }
             },
             {
-              "id": "_guidelines/spec/6.10",
+              "id": "_guidelines/spec/6.9",
               "sid": "s-m6upmfq64kw5h4r",
               "kind": "rule",
               "title": "Capitals only where the language puts them",
-              "status": "",
+              "status": "checked",
               "text": "A node is written in the ordinary case of its language: an abbreviation keeps its own capitals (API, SQL), and a name quoted from the code keeps its spelling. Nothing is set in capitals to stress it — neither a word nor a sentence; what must stand out is said in the words.",
               "refs": [],
               "rationale": "Set in capitals, a word reads as more binding than the words around it, although every word of a rule binds alike, and a reader who meets capitals on every line starts reading the capitals instead of the sentence. A style spreads by imitation, because a rule is written like the rules around it, so one rule in capitals is copied by its neighbours.",
@@ -1587,7 +1657,7 @@
               }
             },
             {
-              "id": "_guidelines/spec/6.11",
+              "id": "_guidelines/spec/6.10",
               "sid": "s-2jcmb9xe9d64t2t",
               "kind": "rule",
               "title": "What no rule requires is not done",
