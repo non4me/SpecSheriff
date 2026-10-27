@@ -6,6 +6,19 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — The guidelines apply the split between base and appendix to themselves
+
+The base guidelines state what is held, what is checked, when, and what a failure costs — a rule's
+tag stands on its declaration, and the check at a commit refuses a declaration without one — and name
+no technology. An appendix of the tools describes how SpecSheriff's own tools carry them out: the
+commands, the hooks, the layout of the files, the parser and its descriptions of languages, the
+runners of the reviewer, the spelling of a tag in a comment. Another toolset, in another language,
+can implement the same base.
+
+Keeping the tools named in the rules was set aside because the method would break its own rule that
+a base names no technology; moving only the runners and the parser out, because it leaves that rule
+broken by the commands.
+
 ### 2026-10-27 — The core carries its history of decisions, retold
 
 Each decision recorded on a rule of the core in the origin project comes over with its date, its
@@ -213,9 +226,23 @@ example leaves the road to a product open.
   declaration, so it becomes part of the public tools.
 - The examples in the doctrine of how a rule is written are drawn from the origin project. They are
   replaced by neutral ones, or by examples from the worked example project.
-- The guidelines name the technologies of their own tools. The method may apply its own split to
-  itself: what is checked, in the base; how one toolset checks it, in an appendix.
+
+## Order of work
+
+1. The core guidelines: taken from the origin project along the line drawn above, divided into a base
+   and an appendix of the tools, carrying owners per domain and the general binding of a test, with
+   neutral examples and the decisions retold; confirmed by the owner node by node.
+2. The tools, along the base: checks of the specification on its own and against the code, the
+   generated export, map and types, confirmations naming who gave them, the general parser with
+   TypeScript and Python described, the reviewer's contract with its first runner.
+3. The skills: spec, spec-review, spec-adopt.
+4. The worked example: the frontier town's bank, its specification, code and tests, and the recorded
+   run in which a commit is refused.
+5. The origin project takes the core from here and keeps its own rules as a part refining it.
+6. The emblem, the four pictures and the cards.
+7. The first article, in English and in Russian.
+8. The repository opened, and the article published.
 
 ## Open questions
 
-- Whether the guidelines apply the split between base and appendix to themselves.
+None at this point.
