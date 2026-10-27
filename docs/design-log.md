@@ -6,6 +6,16 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — Each article appears in English and in Russian in the same week
+
+The English text is the original and is kept in this repository. The Russian one is written for Habr
+rather than translated: its own examples and its own way in, the same meaning. Both appear in the
+same week; the comments on Habr feed the second, hands-on article.
+
+English alone was set aside because it gives up Habr, where the method's readers like to argue about
+process and the author writes in his own language; Russian first as a trial, because the English
+text would lose time while the niche fills.
+
 ### 2026-10-27 — The first article is written for team leads and architects
 
 Its reader is the engineer bringing coding agents into a team's work: plausible code nobody can trace
@@ -165,6 +175,5 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- The articles: their readers, where they appear, and in which languages.
 - The figure of the sheriff: the brand's voice and look.
 - Whether the history of decisions on the core rules is carried over, or the core starts clean.
