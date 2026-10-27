@@ -6,6 +6,19 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — TypeScript and Python at launch, through one general parser
+
+The binding of code to rules is read through a parser with grammars for many languages, so that a
+language is added by describing what counts as a declaration and as a test in it, rather than by new
+code. TypeScript and JavaScript, and Python, are supported at launch; Go, Java, C#, Rust and others
+follow by description. The core rule binding a test to what it verifies becomes: a test declares the
+identifier of the rule it verifies in the way its framework names a test — the opening of its name
+in TypeScript, a mark on the test in Python, where an identifier cannot hold a hyphen.
+
+TypeScript alone was set aside because it cuts the method off from most of the people building
+agents and working with data; a tag bound to the next line without parsing, because nothing could
+then tell which declarations a commit touched, and so whether each carries its tag.
+
 ### 2026-10-27 — The reviewer is a contract, carried out by replaceable runners
 
 The core states the reviewer's contract: it is given the commit's change and the text of the rules
@@ -124,7 +137,6 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- Which languages the binding of code to rules supports.
 - The licence.
 - The articles: their readers, where they appear, and in which languages.
 - The figure of the sheriff: the brand's voice and look.
