@@ -6,6 +6,20 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — The worked example is a small bank in a frontier town
+
+The example project specifies a small savings bank of a Wild West town, which the sheriff guards:
+accounts, transfers between them, a journal of operations. Its rules are a bank's and are meant
+seriously — a transfer never leaves an account below zero — and the theme lives only in names, so
+that removing it is a renaming. The scene the method is shown by: an agent asked to make transfers
+faster drops the check of the balance, and the commit is refused, naming the rule on transfers and
+the line that breaks it. The example is written in TypeScript on Node, the stack the tools are
+already written in.
+
+A task list was set aside as a subject nobody minds seeing broken; a library's loans, because a
+broken rule there costs little; a plain bank, because the frontier town lets the example and the
+brand tell one story.
+
 ### 2026-10-27 — Each domain has its owners, and a confirmation names who gave it
 
 A confirmed node means that an owner of the part it stands in read its wording. Each domain names
@@ -95,7 +109,6 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- The subject and the stack of the worked example project.
 - Which languages the binding of code to rules supports.
 - The model behind the independent reviewer, its cost, and what happens where no model is reachable.
 - The licence.
