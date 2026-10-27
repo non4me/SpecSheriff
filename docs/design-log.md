@@ -6,6 +6,21 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — The first article is written for team leads and architects
+
+Its reader is the engineer bringing coding agents into a team's work: plausible code nobody can trace
+to a requirement, decisions an agent quietly undoes, review that cannot keep up with generation. The
+method's strengths answer a team's problems — an owner's confirmation, owners per domain, the gate at
+every commit, the base kept apart from the appendix — and this reader can introduce a process. Its
+proof is the origin project: one engineer with agents, two months, about 1,800 rules and about 3,900
+bindings of code to them, and agents that do not drift from the rules. Its venues are InfoQ, LinkedIn,
+Habr and Medium. A second, hands-on article, built on the sheriff's scene, is written for developers
+working with agents alone, for Hacker News, Reddit and dev.to.
+
+Developers working alone were set aside as the first reader because they are likeliest to see the
+method's weight before its value, the criticism Spec Kit already draws; regulated industries, as too
+narrow a first audience.
+
 ### 2026-10-27 — Apache 2.0 for what is installed, CC BY 4.0 for what is read
 
 What a project installs — the tools, the skills, the guidelines and the worked example — is under the
