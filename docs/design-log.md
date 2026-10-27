@@ -6,6 +6,21 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — The reviewer is a contract, carried out by replaceable runners
+
+The core states the reviewer's contract: it is given the commit's change and the text of the rules
+the commit names, and nothing of the session that wrote the code; it answers with a verdict naming
+the rule and the line of each finding; and a review that cannot be held — no runner, a timeout, an
+answer that does not parse — refuses the commit. Who carries the review out is a runner, described
+in the appendix of the tools: first the Claude Code CLI, which exists, then the Codex and Gemini
+CLIs, then any service speaking the OpenAI-compatible API, which covers models run locally. The
+example ships a recorded run in which the commit is refused, so that the scene can be seen without
+any model installed.
+
+One runner alone was set aside because the method would read as one vendor's tool and a reader
+without it could not run the example; a call to an API on the reader's key, because every commit
+would cost money and the choice of model would fall on the reader.
+
 ### 2026-10-27 — The worked example is a small bank in a frontier town
 
 The example project specifies a small savings bank of a Wild West town, which the sheriff guards:
@@ -110,7 +125,6 @@ example leaves the road to a product open.
 ## Open questions
 
 - Which languages the binding of code to rules supports.
-- The model behind the independent reviewer, its cost, and what happens where no model is reachable.
 - The licence.
 - The articles: their readers, where they appear, and in which languages.
 - The figure of the sheriff: the brand's voice and look.
