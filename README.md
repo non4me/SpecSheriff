@@ -17,3 +17,11 @@ Design phase. Nothing here is ready to use yet.
 - [`docs/research/landscape.md`](docs/research/landscape.md) — what already exists, and where this
   method differs.
 - [`docs/design-log.md`](docs/design-log.md) — the decisions taken so far, and the questions still open.
+
+## License
+
+What a project installs — the tools, the skills, the guidelines and the worked example — is licensed
+under the [Apache License 2.0](LICENSE). What is read and shared — everything under `docs/`, the
+articles and the infographics — is licensed under
+[Creative Commons Attribution 4.0 International](LICENSE-docs): reuse it freely, naming SpecSheriff
+and linking here.

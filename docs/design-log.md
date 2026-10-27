@@ -6,6 +6,19 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — Apache 2.0 for what is installed, CC BY 4.0 for what is read
+
+What a project installs — the tools, the skills, the guidelines and the worked example — is under the
+Apache License 2.0, whose patent clause is the first thing a large company's lawyers look for. What
+is read and shared — the concept, the articles and the infographics — is under CC BY 4.0, which
+requires naming the source wherever a picture or a passage is reused, so that every reprint carries
+the name and a link. The guidelines count as installed, since a project copies them in beside the
+tools.
+
+MIT for everything was set aside for want of a patent clause, and because it lets the texts and the
+pictures travel without their source; Apache 2.0 for everything, because it is not written for texts
+and pictures.
+
 ### 2026-10-27 — TypeScript and Python at launch, through one general parser
 
 The binding of code to rules is read through a parser with grammars for many languages, so that a
@@ -137,7 +150,6 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- The licence.
 - The articles: their readers, where they appear, and in which languages.
 - The figure of the sheriff: the brand's voice and look.
 - Whether the history of decisions on the core rules is carried over, or the core starts clean.
