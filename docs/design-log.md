@@ -6,6 +6,19 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-27 — Each domain has its owners, and a confirmation names who gave it
+
+A confirmed node means that an owner of the part it stands in read its wording. Each domain names
+its owners in its head; the core rules and the agreements between domains have the specification's
+chief owner. A confirmation is kept in git beside the fingerprint of the wording confirmed and the
+name of whoever confirmed it, and a commit adding a confirmation is refused unless it is signed by
+that person. Working alone, one person owns every domain, and nothing changes.
+
+One owner for the whole specification was set aside because it binds a growing specification to one
+person; a confirmation read off the approvals of a merge request, because it would tie what a status
+means to one hosting platform. That platform's approvals may later be described as one way an
+appendix of the tools records a confirmation, never as what a confirmation is.
+
 ### 2026-10-27 — How the origin project takes the core
 
 Before the first publication, the origin project takes the core as a git dependency pinned to a
@@ -82,7 +95,6 @@ example leaves the road to a product open.
 
 ## Open questions
 
-- Who confirms a node in a team, and how a confirmation is protected there.
 - The subject and the stack of the worked example project.
 - Which languages the binding of code to rules supports.
 - The model behind the independent reviewer, its cost, and what happens where no model is reachable.
