@@ -41,7 +41,7 @@
               "sid": "s-eferktypcj7njt5",
               "kind": "rule",
               "title": "The structure of the specification is defined by its schema",
-              "status": "",
+              "status": "checked",
               "text": "The structure of every node and every file of the specification is defined by its schema. A file that does not match the schema is refused, and the refusal names the field that is wrong. Why each part of the structure is as it is, is written in the schema beside it.",
               "refs": [
                 {
@@ -88,7 +88,7 @@
               "sid": "s-kag2m9tzdnduxdx",
               "kind": "rule",
               "title": "A node is cited by its sid, and its id is its address",
-              "status": "",
+              "status": "checked",
               "text": "A node carries a sid, given to it once and never changed, and is cited by it everywhere: in the links between nodes, in the code, in the tests and in commits. Its id is its address: the part it stands in, followed by its place there — for a section or a rule, its number among the sections and rules under the same parent; for a term, the term. The head of a domain is addressed by the domain's name alone, and the node at the top of a file of the guidelines, of the technical appendix or of contracts by the part's name and the file's; each file of the guidelines and of the appendix is numbered under that address of its own, while contracts, like a domain, is numbered under the part's name straight through its files. The address is computed from where the node stands, never written by hand, and nothing refers to it.",
               "refs": [
                 {
@@ -117,7 +117,7 @@
               "sid": "s-5ah25f6gy99panq",
               "kind": "rule",
               "title": "An empty status means nobody has read this",
-              "status": "",
+              "status": "checked",
               "text": "A node's status is empty or checked. Checked means one thing: an owner of the part the node stands in (§s-67vekyup7y8smap) confirmed the node's wording — its title, text and reason, and the values its kind carries beside them, such as the fields of a record node. A node stays checked only while a confirmation holds the fingerprint of its present wording, so any change to that wording, an owner's own among them, leaves the node unchecked until an owner confirms the new wording; a change to the node's links, its metadata or its place leaves the status as it is.",
               "refs": [
                 {
@@ -177,7 +177,7 @@
               "sid": "s-67vekyup7y8smap",
               "kind": "rule",
               "title": "Every part of the specification has its owners",
-              "status": "",
+              "status": "checked",
               "text": "Each domain may name its owners. The core of the guidelines is owned by its own owners, and their confirmations travel with it into every project that takes it; everything else — the project's own guidelines, contracts, the technical appendix and a domain naming no owners — is owned by the specification's owner, whom the project's own guidelines name (§s-bsya3febm6u64ab). A confirmation is kept with the specification, holding the fingerprint of the wording confirmed and the owner who confirmed it, and a change adding or withdrawing a confirmation is accepted only when it is signed by that owner.",
               "refs": [
                 {
@@ -241,7 +241,7 @@
               "sid": "s-f2b5zvc565s242f",
               "kind": "rule",
               "title": "Removal goes through the archive when the node was checked",
-              "status": "",
+              "status": "checked",
               "text": "A checked node is moved to the archive when it is removed, together with the reason for its removal and the sid of the node that replaces it, if one does. A node that was never checked is deleted outright, whatever cited it.",
               "refs": [
                 {
@@ -354,7 +354,7 @@
               "sid": "s-5x737t9nee4zgaa",
               "kind": "rule",
               "title": "The base specification names neither a technology nor a look",
-              "status": "",
+              "status": "checked",
               "text": "A rule of the base specification states what the system does without naming how the default implementation does it: no language, library, store, protocol, command or file path. Of a user interface it states what a user can rely on in any instance — what is shown, what it means, in what order, in which states, and what the user can do — and nothing of how it looks or is built: no placement, size, colour or icon, no kind of control, and not where a state is kept. Those choices are described in the technical appendix. A technology may be named by example, in brackets, where that makes a rule easier to read, provided the rule does not depend on it. A rule that depends on a technology or a look is a defect, repaired at its revision: that part moves to the appendix, and the rule keeps what must hold whatever the stack.",
               "refs": [
                 {
@@ -477,7 +477,7 @@
               "sid": "s-a4rbry4hsu34hy8",
               "kind": "rule",
               "title": "The guidelines hold their base and the appendix of their tools",
-              "status": "",
+              "status": "checked",
               "text": "The guidelines are divided as the specification is: their base states what is held, what is checked, when, and what a failure costs, and names no technology; the appendix of the tools describes how one toolset carries that base out — its commands, its hooks, where it keeps the files, how it reads code and who runs its reviewer. Each rule of that appendix implements at least one node of the base. The appendix of the tools is not the technical appendix, which describes how the system is built and never the tools of the specification.",
               "refs": [
                 {
@@ -517,8 +517,8 @@
               "id": "_guidelines/spec/1.17",
               "sid": "s-bsya3febm6u64ab",
               "kind": "rule",
-              "title": "A project's own guidelines refine the core",
-              "status": "",
+              "title": "A project's own guidelines refine or implement the core",
+              "status": "checked",
               "text": "The guidelines are a core and a part each project holds as its own: the core's base, which every project shares, with the appendix of the toolset the project uses; and the project's own guidelines, which hold what only its specification needs, such as a kind of node of its own or the list of levels its domains stand at. Each rule of a project's own guidelines refines or implements a rule of the core and never contradicts it.",
               "refs": [
                 {
@@ -662,8 +662,8 @@
               "sid": "s-xfu2gpzddjnmgks",
               "kind": "rule",
               "title": "Each value choosing a record variant is declared once",
-              "status": "",
-              "text": "Each value of a field choosing a record variant is declared once, whether or not a variant answers to it: in the field's own list of values, or where a project's own guidelines declare them (§s-bsya3febm6u64ab).",
+              "status": "checked",
+              "text": "Each value of a field choosing a record variant is declared once, whether or not a variant answers to it: in the field's own list of values, or in a place a project's own guidelines name for such values (§s-bsya3febm6u64ab).",
               "refs": [
                 {
                   "type": "refines",
@@ -720,7 +720,7 @@
               "sid": "s-k73czmpkazcx7mu",
               "kind": "rule",
               "title": "A part of the specification can be read alone",
-              "status": "",
+              "status": "checked",
               "text": "Each domain, contracts, the technical appendix and the guidelines are held apart, and a part too large to read at once is divided into one file per section.",
               "refs": [
                 {
@@ -745,7 +745,7 @@
               "sid": "s-yggv9myedprnaa7",
               "kind": "rule",
               "title": "A domain's specification opens with its head",
-              "status": "",
+              "status": "checked",
               "text": "A domain's specification opens with its head: a node stating what the domain does, its owners where it names any (§s-67vekyup7y8smap), the level it stands at and where its code is, whose consumes links name the sections of other domains the domain uses. The head also carries the index of the domain's sections — each one's sid, title and text, the text of a section stating what that section is responsible for, and the domains that use it — built from the sections and never written by hand.",
               "refs": [
                 {
@@ -770,7 +770,7 @@
               "sid": "s-nkyty4dy9x2v2a4",
               "kind": "rule",
               "title": "Every domain stands at a level",
-              "status": "",
+              "status": "checked",
               "text": "Every domain stands at one of the levels the specification's owner lists in the project's own guidelines (§s-bsya3febm6u64ab), from the general to the particular: the smaller a domain's responsibility, the lower its level. A level is always shown as its number and its name together, and its number is its place in that list.",
               "refs": [
                 {
@@ -795,7 +795,7 @@
               "sid": "s-uw9n84edf7cbe9n",
               "kind": "rule",
               "title": "The order of the domains",
-              "status": "",
+              "status": "checked",
               "text": "The domains are ordered by the consumes links of their heads: a domain stands after every domain it uses and as close as possible before the domains that use it; where the links put two domains in the same place, they stand in the order of their names. The domains do not use one another in a cycle.",
               "refs": [
                 {
@@ -868,8 +868,8 @@
               "sid": "s-sn6au3vcr9uy5pm",
               "kind": "rule",
               "title": "A link carries its type",
-              "status": "",
-              "text": "Every link names what it means, as one of these types: implements — the linking node is how the linked one is carried out; refines — it states the linked node more precisely, or for a narrower case; constrains — it holds a condition the linked rule depends on; consumes — the domain whose head holds the link uses what the linked section of another domain provides; supersedes — it replaces the linked node, which is archived; cites — the linking node cites the linked one (§s-bpdqd9v72wg7vsz) and no other type says how the two bear on each other, so it holds no link of another type to it; term-relation — the linking term and the linked term are bound, for as long as both exist, in the ratio the link carries; uses — what the linking term names makes use of what the linked term names while taking part in a process, as a clerk fills in the form an account type builds, and the link carries no ratio; a term that only starts a process, as a clerk starting a transfer, uses nothing the process uses. A term-relation and a uses link bind two terms, and no other type does, cites included: a term citing another term holds a term-relation or a uses link to it. A ratio is the multiplicity of each end in the usual notation, 1, 0..1, 1..N or 0..N, the linking term's end first — account 1:0..N statement says that an account has any number of statements and that a statement belongs to exactly one account. Read from the linked term, the ratio is reversed.",
+              "status": "checked",
+              "text": "Every link names what it means, as one of these types: implements — the linking node is how the linked one is carried out; refines — it states the linked node more precisely, or for a narrower case; constrains — it holds a condition the linked rule depends on; consumes — the domain whose head holds the link uses what the linked section of another domain provides; supersedes — it replaces the linked node, which is archived; cites — the linking node cites the linked one (§s-bpdqd9v72wg7vsz) and no other type says how the two bear on each other, so it holds no link of another type to it; term-relation — the linking term and the linked term are bound, for as long as both exist, in the ratio the link carries; uses — what the linking term names makes use of what the linked term names while taking part in a process, as a user fills in a form while signing up, and the link carries no ratio; a term that only starts a process, as an operator starting an export, uses nothing the process uses. A term-relation and a uses link bind two terms, and no other type does, cites included: a term citing another term holds a term-relation or a uses link to it. A ratio is the multiplicity of each end in the usual notation, 1, 0..1, 1..N or 0..N, the linking term's end first — user 1:0..N session says that a user has any number of sessions and that a session belongs to exactly one user. Read from the linked term, the ratio is reversed.",
               "refs": [
                 {
                   "type": "cites",
@@ -927,7 +927,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples come from the worked example's bank.",
+                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
                   }
                 ]
@@ -1007,7 +1007,7 @@
               "sid": "s-rwqzepmrt77rv35",
               "kind": "rule",
               "title": "Three records, each answering a different question",
-              "status": "",
+              "status": "checked",
               "text": "A rule is bound to its implementation by three records: a tag carrying the node's sid, on the symbol in the code that implements it; the node's sid declared by the test that verifies it, so that a run of the tests reports it; and, in the node's metadata, the lists of that code and those tests. All three are written by hand, and they must agree.",
               "refs": [
                 {
@@ -1037,7 +1037,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "A test bound to its rule by the opening of its name cannot be written in a language whose names cannot hold a hyphen.",
-                    "ruling": "The owner: a test declares the sid of what it verifies in the way its framework names a test.",
+                    "ruling": "The owner: a test declares the sid of what it verifies however its language allows, so that a run of the tests reports it.",
                     "type": "textual"
                   }
                 ]
@@ -1048,8 +1048,8 @@
               "sid": "s-rah8b37kytb682y",
               "kind": "rule",
               "title": "The test comes before the code",
-              "status": "",
-              "text": "A rule gets its test first — the test declaring the rule's sid (§s-rwqzepmrt77rv35) — and its code second, written to pass that test. Every test of the system's code that a commit adds or changes declares the sid of the checked rule or term it verifies, or of a checked node of a kind a project's own guidelines bind to tests, and a rule whose implementation a commit adds or changes has at least one such test once the commit is made. A change to a test that only rewrites its citations or its comments changes nothing it verifies, and owes it no such sid.",
+              "status": "checked",
+              "text": "When a rule is implemented, its test is written first and the code that implements it second, written to pass that test. The test carries the rule's sid in its name, or, in a language whose names cannot hold one, in a mark on the test (§s-rwqzepmrt77rv35); the code carries the rule's tag (§s-kgbzk2ph9e6jfb4). Every test carries the sid of the node it verifies — a rule, a term, or a node of a kind the project's own guidelines bind to tests; a test a commit adds or changes carries the sid of a checked node, and every rule whose code a commit adds or changes has at least one test.",
               "refs": [
                 {
                   "type": "cites",
@@ -1068,7 +1068,7 @@
                   "from": "s-zrsc6asgmhv8tnc"
                 }
               ],
-              "rationale": "A test names a rule's behaviour, which survives the refactoring that moves and renames the code underneath it, so the binding through tests is the stable one. And a test written first tests the rule, not whatever the code happened to do. A term whose definition states behaviour is verified as a rule is, and its test declares the term's own sid rather than that of a rule written only to repeat it, as is a kind of node a project adds where its own guidelines say it states behaviour. A test without the sid of what it verifies tests something nobody can name, and a rule with no test is implemented on trust; both are refused where the change is made, which is when a test costs least to write. A citation moved onto a sid or a comment reworded changes nothing a test checks, and a sid demanded for it would make the test claim a rule it was never written against.",
+              "rationale": "A test names a rule's behaviour, which survives the refactoring that moves and renames the code underneath it, so the binding through tests is the stable one. And a test written first tests the rule, not whatever the code happened to do. A term whose definition states behaviour is verified as a rule is, and its test carries the term's own sid rather than that of a rule written only to repeat it, as is a kind of node a project adds where its own guidelines say it states behaviour. A test without the sid of what it verifies tests something nobody can name, and a rule with no test is implemented on trust; both are refused where the change is made, which is when a test costs least to write. Only a test a commit adds or changes must name a checked node, since a rule under revision is unchecked while the tests written against its earlier wording still stand.",
               "meta": {
                 "decisions": [
                   {
@@ -1094,6 +1094,12 @@
                     "problem": "A test bound to its rule by the opening of its name cannot be written in a language whose names cannot hold a hyphen, and the rule bound the tests of one project's own kind of node.",
                     "ruling": "The owner: a test declares the sid of what it verifies in the way its framework names a test (§s-rwqzepmrt77rv35); a project's own kinds of node are bound by its own guidelines.",
                     "type": "textual"
+                  },
+                  {
+                    "date": "2026-10-27",
+                    "problem": "The rule let a test whose change only rewrote its citations or comments go without a sid, an exemption for tests written before tests carried sids, and it was worded for a reader who already knew the procedure.",
+                    "ruling": "The owner: a test always carries the sid of what it verifies; the rule is worded as the procedure it is — the test first, the code second, the test carrying the rule's sid and the code its tag.",
+                    "type": "textual"
                   }
                 ]
               }
@@ -1104,7 +1110,7 @@
               "kind": "rule",
               "title": "Every declaration carries a tag, and what carries no rule says so",
               "status": "checked",
-              "text": "Every declaration of the system's code that a commit adds or changes — a function, a class or a member of one, a type, a constant, a component — carries a tag naming the checked node it implements, wherever in the code it stands and whichever domain the node belongs to; a declaration inside another is covered by the tag of the one it stands in. A declaration that serves the chosen technology stack rather than the system's logic, such as a module's re-exports or the glue a library needs, carries instead a tag that names no node and gives its reason. The repository's tools, its configuration and its tests are exempt by where they live. A change confined to comments, or doing nothing but replace the sid a citation names or rename an identifier everywhere the change spells it, changes no code, and owes no tag.",
+              "text": "Every declaration of the system's code — a function, a class or a member of one, a type, a constant, a component — carries a tag naming the node it implements, wherever in the code it stands and whichever domain the node belongs to; a declaration inside another is covered by the tag of the one it stands in. A declaration that implements none of the system's logic but is required by the technology the system is built with — a framework, a library, the infrastructure — such as a module's re-exports or the glue a library needs, carries instead a tag that names no node and gives its reason. The repository's tools, its configuration and its tests are exempt by where they live. Only a declaration whose code a commit changes must name a checked node: rewording its comments, moving a citation onto another sid or renaming an identifier everywhere it is spelled changes no code.",
               "refs": [
                 {
                   "type": "cites",
@@ -1119,13 +1125,19 @@
                   "from": "s-5z5gnu7pahr82xp"
                 }
               ],
-              "rationale": "A tag on every declaration is what makes logic without a rule visible: one tag per file lets every declaration added to it later go untraced, and a binding read by the domain a file stands in misses code that implements another domain's rule. Code that serves the stack exists because of how the system is built, not because of what it does, so there is no rule for it to cite; demanding one teaches people to attach whichever id is nearest, and marking it explicitly keeps 'nobody tagged it' apart from 'there is nothing to tag'. A comment reworded, a citation moved from one node to another, or a name changed everywhere it is spelled changes nothing the code does, and a tag demanded for it would make the code claim a rule it was never checked against.",
+              "rationale": "A tag on every declaration is what makes logic without a rule visible: a declaration left untagged until somebody changes it hides until then whether any rule asks for it, one tag per file lets every declaration added to it later go untraced, and a binding read by the domain a file stands in misses code that implements another domain's rule. Code that serves the stack exists because of how the system is built, not because of what it does, so there is no rule for it to cite; demanding one teaches people to attach whichever id is nearest, and marking it explicitly keeps 'nobody tagged it' apart from 'there is nothing to tag'. Only a declaration whose code changes must name a checked node, since a rule under revision is unchecked while the code written against its earlier wording still stands, and a comment reworded, a citation moved or a name changed everywhere it is spelled changes nothing the code does.",
               "meta": {
                 "decisions": [
                   {
                     "date": "2026-10-07",
                     "problem": "One tag per changed file was owed, and only in a domain with a checked rule of its own, so code implementing two checked rules of another domain shipped with no tag, and logic no rule stated passed beside it.",
                     "ruling": "The owner: code changes only through the specification and never the reverse, enforced by scripts that refuse logic without a reference back to the specification and by an independent reviewer; every declaration a commit adds or changes carries a tag, in every domain and in contracts.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-10-27",
+                    "problem": "A tag was owed only by a declaration a commit added or changed, so code nobody had touched since the rules were written stayed untagged, and whether a rule asked for it could not be seen.",
+                    "ruling": "The owner: every declaration always carries a tag; a project adopting the method tags its code before the check is turned on.",
                     "type": "textual"
                   }
                 ]
@@ -1178,7 +1190,7 @@
               "kind": "rule",
               "title": "What is checked, when, and what a failure costs",
               "status": "",
-              "text": "Two things are checked mechanically: that the specification holds together on its own, and that the specification and the code still describe each other. Every check is deterministic but one: whether the code does what the rules it names say, and nothing they do not, is judged at every commit that changes code by an independent reviewer (§s-nyh9yk22ba6g77q). The checks run when a commit is made, and the tests of the system's code before a commit is shared; each check reads the commit being made, never what the commit does not hold. A check refuses unless its row says otherwise.\n\n**The specification on its own**\n\n| What is checked | On failure |\n|---|---|\n| No file of the specification, of its archive or of its schema gives one field two values | refused |\n| Every file matches its schema | refused |\n| No two nodes share a sid | refused |\n| No two nodes share an id | refused |\n| Every node's id is the address its place gives | refused |\n| No two term nodes name the same term | refused |\n| A node is checked only where a confirmation holds the fingerprint of its wording and names an owner of the part it stands in, and a change adding a confirmation is signed by that owner | refused |\n| Every link names a node | refused |\n| A node citing another holds a link to it, and a link of type cites stands only where its node cites the node it names and holds no link of another type to it | refused |\n| No node cites another by its address | refused |\n| A term-relation or a uses link binds two terms, and no other type of link, cites included, binds two terms | refused, and settled with the specification's owner |\n| The incoming links are what the outgoing ones produce | refused |\n| No checked node sets words in capitals for stress | refused |\n| A checked section holds at least one rule | refused |\n| Every domain has a head, and the index in it is what the domain's sections produce | refused |\n| Every domain's head names a level the project's own guidelines list | refused |\n| A consumes link goes from a domain's head to a section of another domain | refused |\n| The domains do not use one another in a cycle | refused |\n| A record variant refines the record it is a variant of, stands in the domain declaring the value it answers to, declares a field of its own that no field of the record, nor any its field of type variant holds, already is, answers to values of the fields that record names as choosing its variant, each declared where §s-xfu2gpzddjnmgks says such a value is declared, and answers to values no other variant of it answers to | refused |\n| Every node of the technical appendix outside the sections of the stack and of the technical debt implements a node of the base specification, and every rule of the technical debt refines one | refused |\n| Every rule of the appendix of the tools implements a node of the base of the guidelines | refused |\n| Every rule of a project's own guidelines refines or implements a rule of the core | refused |\n\n**The specification and the code**\n\n| What is checked | On failure |\n|---|---|\n| Every declaration of the system's code a commit adds or changes carries a tag, or the tag that names no node | refused |\n| Every tag names a node that exists, and a checked one | refused |\n| Every tag stands on the declaration it binds | refused |\n| Every test of the system's code a commit adds or changes declares the sid of a checked rule, term, or node of a kind a project's own guidelines bind to tests | refused |\n| Every sid a test declares names a node that exists | refused |\n| Every rule whose implementation a commit adds or changes has a test declaring its sid | refused |\n| A node's lists of code and tests are what the tags and the sids the tests declare produce | refused |\n| A node that names the symbols in a file is held to them | refused |\n| A list a node carries matches the declaration in the code or in the schema it names | refused |\n| No file outside the specification and its tools holds a node's address | refused |\n| A citation in the code, the tests and the documents names a node by its sid | refused |\n| The generated types and runtime checks are what the record nodes produce | refused |\n| A rule whose text changed while none of its code has | reported by the node's sid |\n| A commit that changes code names every checked rule its changed declarations' tags name, and no head or section | refused |\n| The code does what the rules it names say, and nothing they do not | refused, naming the rule and the line |\n| The tests of the system's code pass | the commit is not shared |",
+              "text": "Two things are checked mechanically: that the specification holds together on its own, and that the specification and the code still describe each other. Every check is deterministic but one: whether the code does what the rules it names say, and nothing they do not, is judged at every commit that changes code by an independent reviewer (§s-nyh9yk22ba6g77q). The checks run when a commit is made, and the tests of the system's code before a commit is shared; each check reads the commit being made, never what the commit does not hold. A check refuses unless its row says otherwise.\n\n**The specification on its own**\n\n| What is checked | On failure |\n|---|---|\n| No file of the specification, of its archive or of its schema gives one field two values | refused |\n| Every file matches its schema | refused |\n| No two nodes share a sid | refused |\n| No two nodes share an id | refused |\n| Every node's id is the address its place gives | refused |\n| No two term nodes name the same term | refused |\n| A node is checked only where a confirmation holds the fingerprint of its wording and names an owner of the part it stands in, and a change adding a confirmation is signed by that owner | refused |\n| Every link names a node | refused |\n| A node citing another holds a link to it, and a link of type cites stands only where its node cites the node it names and holds no link of another type to it | refused |\n| No node cites another by its address | refused |\n| A term-relation or a uses link binds two terms, and no other type of link, cites included, binds two terms | refused, and settled with the specification's owner |\n| The incoming links are what the outgoing ones produce | refused |\n| No checked node sets words in capitals for stress | refused |\n| A checked section holds at least one rule | refused |\n| Every domain has a head, and the index in it is what the domain's sections produce | refused |\n| Every domain's head names a level the project's own guidelines list | refused |\n| A consumes link goes from a domain's head to a section of another domain | refused |\n| The domains do not use one another in a cycle | refused |\n| A record variant refines the record it is a variant of, stands in the domain declaring the value it answers to, declares a field of its own that no field of the record, nor any its field of type variant holds, already is, answers to values of the fields that record names as choosing its variant, each declared where §s-xfu2gpzddjnmgks says such a value is declared, and answers to values no other variant of it answers to | refused |\n| Every node of the technical appendix outside the sections of the stack and of the technical debt implements a node of the base specification, and every rule of the technical debt refines one | refused |\n| Every rule of the appendix of the tools implements a node of the base of the guidelines | refused |\n| Every rule of a project's own guidelines refines or implements a rule of the core | refused |\n\n**The specification and the code**\n\n| What is checked | On failure |\n|---|---|\n| Every declaration of the system's code carries a tag, or the tag that names no node | refused |\n| Every tag names a node that exists, and a tag on a declaration whose code a commit changes a checked one | refused |\n| Every tag stands on the declaration it binds | refused |\n| Every test of the system's code carries the sid of a node that exists, and a test a commit adds or changes the sid of a checked one | refused |\n| Every rule whose code a commit adds or changes has a test carrying its sid | refused |\n| A node's lists of code and tests are what the tags and the sids the tests carry produce | refused |\n| A node that names the symbols in a file is held to them | refused |\n| A list a node carries matches the declaration in the code or in the schema it names | refused |\n| No file outside the specification and its tools holds a node's address | refused |\n| A citation in the code, the tests and the documents names a node by its sid | refused |\n| The generated types and runtime checks are what the record nodes produce | refused |\n| A rule whose text changed while none of its code has | reported by the node's sid |\n| A commit that changes code names every checked rule its changed declarations' tags name, and no head or section | refused |\n| The code does what the rules it names say, and nothing they do not | refused, naming the rule and the line |\n| The tests of the system's code pass | the commit is not shared |",
               "refs": [
                 {
                   "type": "implements",
@@ -1394,7 +1406,7 @@
               "kind": "rule",
               "title": "A rule names its subject and states what must hold",
               "status": "",
-              "text": "A rule names the subject it binds and states what that subject must do: not “credentials are kept encrypted”, which binds nobody, but “the store of secrets keeps every credential encrypted”. A property is stated over what the specification declares, never over what happens not to exist yet: not “an account needs no currency while the bank deals in one”, but “an account carries its currency”. A rule of the technical debt names its subject the same way and states what that subject does while the problem stands (§s-2r7k2aeyusgy6fw).",
+              "text": "A rule names the subject it binds and states what that subject must do: not “credentials are kept encrypted”, which binds nobody, but “the store of secrets keeps every credential encrypted”. A property is stated over what the specification declares, never over what happens not to exist yet: not “a timestamp needs no time zone while every user is in one”, but “a timestamp carries its time zone”. A rule of the technical debt names its subject the same way and states what that subject does while the problem stands (§s-2r7k2aeyusgy6fw).",
               "refs": [
                 {
                   "type": "cites",
@@ -1413,7 +1425,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples come from the worked example's bank.",
+                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
                   }
                 ]
@@ -1425,7 +1437,7 @@
               "kind": "rule",
               "title": "A name is quoted where the reader must reach it, a predicate where the rule must keep binding",
               "status": "",
-              "text": "Where a rule binds a named thing, the name is quoted where the reader must reach the definition that owns it, and the predicate is stated where the rule must keep binding if that name changes: not “the accounts in `closed_accounts` are never charged a fee”, which binds nothing once the table is renamed, but “an account its customer has closed — today kept in `closed_accounts` — is never charged a fee”.",
+              "text": "Where a rule binds a named thing, the name is quoted where the reader must reach the definition that owns it, and the predicate is stated where the rule must keep binding if that name changes: not “`deleted_users` is never searched”, which binds nothing once the table is renamed, but “a table holding the users who deleted their accounts — today `deleted_users` — is never searched”.",
               "refs": [],
               "rationale": "A sentence written against a name goes inert rather than failing when the name moves: nothing breaks, no test moves, and a requirement quietly becomes a statement about nothing. A sentence written against the predicate keeps binding whatever the thing is called, and is useless exactly where the reader needs to find the definition.",
               "meta": {
@@ -1433,7 +1445,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples come from the worked example's bank.",
+                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
                   }
                 ]
@@ -1445,7 +1457,7 @@
               "kind": "rule",
               "title": "A reason is no narrower than the rule it holds up",
               "status": "",
-              "text": "A node's reason covers everything the node's text requires: a rule that holds a transfer above the daily limit for review and tells the customer it is held gives a reason for both, not only for the hold. Where the reason is narrower, either the reason is completed or the rule is cut back to what the reason carries.",
+              "text": "A node's reason covers everything the node's text requires: a rule that refuses an upload too large to store and tells the user why gives a reason for both, not only for the refusal. Where the reason is narrower, either the reason is completed or the rule is cut back to what the reason carries.",
               "refs": [
                 {
                   "type": "refines",
@@ -1458,7 +1470,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples come from the worked example's bank.",
+                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
                   }
                 ]
@@ -1495,7 +1507,7 @@
               "kind": "rule",
               "title": "No number measured on a running instance",
               "status": "",
-              "text": "The specification carries no number measured on a running instance — a population, a rate, a duration observed there. Where a rule needs a threshold, it states its condition by method, as a comparison a reader can reproduce: not a threshold for suspicious transfers given as the figure one bank's history produced, but the way every instance measures its own threshold, on transfers its own staff have labelled.",
+              "text": "The specification carries no number measured on a running instance — a population, a rate, a duration observed there. Where a rule needs a threshold, it states its condition by method, as a comparison a reader can reproduce: not a threshold for flagging spam given as the figure one instance's data produced, but the way every instance measures its own threshold, on messages its own operators have labelled.",
               "refs": [],
               "rationale": "A measurement belongs to the instance it was taken on and to the day it was taken, so every other instance passes or fails such a rule by accident. A specification also serves every instance, and a figure taken inside one has no place in it.",
               "meta": {
@@ -1503,7 +1515,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples come from the worked example's bank.",
+                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
                   }
                 ]
@@ -1515,7 +1527,7 @@
               "kind": "rule",
               "title": "A set is defined so that its mistake shows",
               "status": "",
-              "text": "Where the specification defines a set, it defines it either by an allow-list, naming what the set admits, or by a deny-list, naming what the set leaves out, and chooses by which mistake would go unnoticed. Where leaving something out would go unnoticed, the set is a deny-list: the operations a statement lists are all of its account's but those its rules leave out. Where letting something in would go unnoticed, the set is an allow-list: the fields an export to a partner carries are those named, and one added to the account later stays out of the export until someone names it. Two sets side by side may be defined in different ways.",
+              "text": "Where the specification defines a set, it defines it either by an allow-list, naming what the set admits, or by a deny-list, naming what the set leaves out, and chooses by which mistake would go unnoticed. Where leaving something out would go unnoticed, the set is a deny-list: the records a backup copies are all but those its rules leave out. Where letting something in would go unnoticed, the set is an allow-list: the fields a public API returns are those named, and one added to the record later stays out of the answer until someone names it. Two sets side by side may be defined in different ways.",
               "refs": [
                 {
                   "type": "refines",
@@ -1528,7 +1540,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples come from the worked example's bank.",
+                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
                   }
                 ]
@@ -1540,15 +1552,15 @@
               "kind": "rule",
               "title": "A general word carries its object",
               "status": "",
-              "text": "A rule names the concrete thing it means rather than a general word for it: not “a limit on how many operations a listing shows”, which also let an export to the tax office drop operations, but “a limit on how many operations a user interface shows”. Where a general word cannot be avoided — a model, a structure, a check — it carries its object in the same phrase: the structure of which record, the check at which moment comparing what with what, the model of what. A name the specification defines — a term, a record, a field — is never a general word alone, such as type, action or item, but carries its object: clerkAction, not action.",
+              "text": "A rule names the concrete thing it means rather than a general word for it: not “a limit on how many records a listing shows”, which also let an export drop records, but “a limit on how many records a user interface shows”. Where a general word cannot be avoided — a model, a structure, a check — it carries its object in the same phrase: the structure of which record, the check at which moment comparing what with what, the model of what. A name the specification defines — a term, a record, a field — is never a general word alone, such as type, action or item, but carries its object: userAction, not action.",
               "refs": [],
-              "rationale": "A rule has no conversation around it to supply a missing object, and a general rule has the least context of all, so every reader supplies an object of their own and the rule binds whatever each of them chose. Nothing about the word itself looks wrong, which is why the ambiguity survives every reading. A defined name is read in every rule that uses it, far from its definition, and a general one there means whatever each rule's context suggests: a field called type held a kind of transfer in one log, a clerk's action in another and a kind of error in a third.",
+              "rationale": "A rule has no conversation around it to supply a missing object, and a general rule has the least context of all, so every reader supplies an object of their own and the rule binds whatever each of them chose. Nothing about the word itself looks wrong, which is why the ambiguity survives every reading. A defined name is read in every rule that uses it, far from its definition, and a general one there means whatever each rule's context suggests: a field called type held a kind of request in one log, a user's action in another and a kind of error in a third.",
               "meta": {
                 "decisions": [
                   {
                     "date": "2026-10-27",
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
-                    "ruling": "The owner: the examples come from the worked example's bank.",
+                    "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
                   }
                 ]
