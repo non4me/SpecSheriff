@@ -231,6 +231,18 @@
               "packages/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together",
               "packages/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
               "packages/specsheriff/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
+            ],
+            "todos": [
+              {
+                "date": "2026-10-28",
+                "by": "the owner",
+                "text": "The export and the map follow a change that reaches the working tree through git — a pull, a merge, a checkout — only at the next edit an agent makes or the next commit; post-merge and post-checkout hooks writing them would close that."
+              },
+              {
+                "date": "2026-10-28",
+                "by": "the owner",
+                "text": "Say how a project gets the git hooks, the agent's hook script and its settings: an install command of the toolset, or the adopt skill."
+              }
             ]
           }
         },
