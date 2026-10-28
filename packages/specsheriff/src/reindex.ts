@@ -18,7 +18,7 @@ export interface ReindexReport {
 
 const ALPHABET = "23456789abcdefghjkmnpqrstuvwxyz";
 
-function newSid(taken: Set<string>): string {
+export function newSid(taken: Set<string>): string {
   for (;;) {
     let sid = "s-";
     for (let i = 0; i < 15; i++) sid += ALPHABET[randomInt(ALPHABET.length)];

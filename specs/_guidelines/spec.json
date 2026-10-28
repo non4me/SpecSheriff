@@ -1591,6 +1591,7 @@
                   }
                 ],
                 "tests": [
+                  "packages/specsheriff/test/e2e/init.test.ts::s-jsqxdx47wkkj7gp run again, sheriff init changes nothing",
                   "packages/specsheriff/test/unit/generated.test.ts::s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of a file that is gone",
                   "packages/specsheriff/test/unit/reindex.test.ts::s-jsqxdx47wkkj7gp run again on what it left, the reindex changes nothing",
                   "packages/specsheriff/test/unit/spec-files.test.ts::s-jsqxdx47wkkj7gp keeps the order of keys, non-ASCII text as it is, and LF line endings",

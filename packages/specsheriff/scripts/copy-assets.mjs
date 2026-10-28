@@ -8,6 +8,7 @@ const require = createRequire(import.meta.url);
 const core = new URL("../core/", import.meta.url);
 mkdirSync(core, { recursive: true });
 for (const name of ["spec.json", "tools.json"]) cpSync(new URL(`../../../specs/_guidelines/${name}`, import.meta.url), new URL(name, core));
+cpSync(new URL("../../../specs/_schema/", import.meta.url), new URL("_schema/", core), { recursive: true });
 
 const grammars = new URL("../grammars/", import.meta.url);
 mkdirSync(grammars, { recursive: true });

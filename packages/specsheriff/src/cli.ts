@@ -6,6 +6,7 @@ import { confirm } from "./confirmations.ts";
 import { binding, citationsOutside } from "./binding.ts";
 import { exportMarkdown, guide, render } from "./generated.ts";
 import { guard } from "./guard.ts";
+import { init } from "./init.ts";
 import { message } from "./message.ts";
 import { review } from "./review.ts";
 import { reindex } from "./reindex.ts";
@@ -29,6 +30,7 @@ Commands:
   message <file>              check a commit's message against the code it changes
   review <file>               ask the independent reviewer for its verdict on the commit being made
   guard                       judge the edit an agent's harness describes on standard input
+  init                        set the repository up: hooks, skills, the core, settings
 
 Options:
   --version  print the version of the toolset
@@ -105,6 +107,13 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       const reason = await guard(root, JSON.parse(readFileSync(0, "utf8") || "{}"));
       if (reason) process.stderr.write(`sheriff guard: ${reason}\n`);
       return reason ? 2 : 0;
+    }
+    case "init": {
+      const report = init(root);
+      for (const p of report.written) process.stdout.write(`written: ${p}\n`);
+      for (const p of report.left) process.stdout.write(`left as it is: ${p} differs from what init would write\n`);
+      for (const n of report.notes) process.stdout.write(`${n}\n`);
+      return 0;
     }
     case "citations": {
       const findings = await citationsOutside(root);

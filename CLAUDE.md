@@ -10,8 +10,12 @@ builds `packages/specsheriff/` and links `sheriff`; `npm test` runs its unit and
 those of `packages/pytest-specsheriff/` (Python 3.10 or later with pytest). The repository is held by
 its own tools: `sheriff.config.json` says the core is written here, so its nodes are confirmed in
 `specs/_confirmations.jsonl` by the owner `specs/_guidelines/project.json` names. A change to
-`packages/specsheriff/src/` reaches the hooks once `npm run build -w specsheriff` has run. Never
-report a check as having run that has not.
+`packages/specsheriff/src/` reaches the hooks once `npm run build -w specsheriff` has run. The git
+hooks, the agent's hook and the skills `spec`, `spec-review` and `spec-adopt` are kept in
+`packages/specsheriff/assets/`; `.githooks/`, `.claude/hooks/` and `.claude/skills/` here are what
+`sheriff init` writes from them, so a change is made in the assets, the copy deleted and `sheriff
+init` run again — a test fails while the two differ. Never report a check as having run that has
+not.
 
 The principles the method rests on, as the owner states them, are below. Weigh every decision and
 proposal against them first; one that contradicts a principle is raised with the owner, never carried

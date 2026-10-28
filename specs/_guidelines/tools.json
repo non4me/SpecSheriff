@@ -66,7 +66,7 @@
           "kind": "rule",
           "title": "The commands",
           "status": "checked",
-          "text": "`sheriff validate` runs the checks of the specification on its own, and `sheriff binding` those between the specification and the code, the drift report with them; `sheriff citations` checks the citations outside the specification; `sheriff message` grades a commit message against the file git hands a commit-msg hook, and `sheriff review` asks the reviewer for its verdict on the commit being made. `sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's head from the domain's sections, and empties the status of every checked node outside the core the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification. Before anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file. `sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb). `sheriff guard` judges an edit an agent is about to make. `sheriff export` writes the readable export in markdown, one file for each file of the specification, and `sheriff render` the map. `sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked. `sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end. `sheriff types` generates, from the record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand.",
+          "text": "`sheriff validate` runs the checks of the specification on its own, and `sheriff binding` those between the specification and the code, the drift report with them; `sheriff citations` checks the citations outside the specification; `sheriff message` grades a commit message against the file git hands a commit-msg hook, and `sheriff review` asks the reviewer for its verdict on the commit being made. `sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's head from the domain's sections, and empties the status of every checked node outside the core the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification. Before anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file. `sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb). `sheriff guard` judges an edit an agent is about to make. `sheriff export` writes the readable export in markdown, one file for each file of the specification, and `sheriff render` the map. `sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked. `sheriff init` sets a repository up for the toolset: it writes the git hooks into `.githooks/` and turns them on, the agent's hook script into `.claude/hooks/`, adding its hooks to `.claude/settings.json` beside those already there, and the skills `spec`, `spec-review` and `spec-adopt` into `.claude/skills/`, and where they are missing the core it carries, into `specs/_guidelines/spec.json` and `tools.json`, and its schema, into `specs/_schema/`, a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no file that differs from what it would write, naming each one instead, so run again it changes nothing. `sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end. `sheriff types` generates, from the record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand.",
           "refs": [
             {
               "type": "implements",
@@ -141,6 +141,10 @@
               "packages/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it",
               "packages/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address",
               "packages/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where",
+              "packages/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init adds its hooks to the agent's settings beside those already there",
+              "packages/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init replaces no file that differs from what it would write, and names it",
+              "packages/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init writes the hooks, the agent's hook, the skills, the core and a start of the settings and the project's guidelines",
+              "packages/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts this repository holds what sheriff init writes, so that running it here writes nothing",
               "packages/specsheriff/test/unit/generated.test.ts::s-f5rz6b7dhxejjts sheriff guide prints the core of this repository whole",
               "packages/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads it",
               "packages/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two lists into one holding the first's members, then the second's the first lacks",
@@ -154,6 +158,13 @@
               "packages/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts refuses a key no node holds",
               "packages/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its address the same as by its sid",
               "packages/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its sid: its address, title, status, text and reason"
+            ],
+            "todos": [
+              {
+                "date": "2026-10-28",
+                "by": "the owner",
+                "text": "Say how a project moves to a later version of the core, which sheriff init does not do since it replaces no file that differs."
+              }
             ]
           }
         },
@@ -237,11 +248,6 @@
                 "date": "2026-10-28",
                 "by": "the owner",
                 "text": "The export and the map follow a change that reaches the working tree through git — a pull, a merge, a checkout — only at the next edit an agent makes or the next commit; post-merge and post-checkout hooks writing them would close that."
-              },
-              {
-                "date": "2026-10-28",
-                "by": "the owner",
-                "text": "Say how a project gets the git hooks, the agent's hook script and its settings: an install command of the toolset, or the adopt skill."
               }
             ]
           }
