@@ -1651,7 +1651,7 @@
               "kind": "rule",
               "title": "No count in prose",
               "status": "checked",
-              "text": "A node states no count of what the specification or a registry holds — of nodes, of states, of members, of commands — and a sentence correcting a count is a count. Where the number matters, it is produced by whatever holds the set: not “contracts holds 45 nodes”, which was true for one day, but the figure counted off the model each time the skill is generated.",
+              "text": "A node states no count of what the specification or a registry holds — of nodes, of states, of members, of commands — and a sentence correcting a count is a count. Where the number matters, it is produced by whatever holds the set: not “contracts holds 45 nodes”, which was true for one day, but the figure counted off the model each time it is shown.",
               "refs": [],
               "rationale": "A count is a second copy of a fact, and the copy is the one that goes stale. It goes stale silently and in the direction that reads as correct, because a number that is merely out of date looks exactly like a number that is right."
             },

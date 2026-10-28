@@ -239,8 +239,9 @@ it and never contradict it.
 
 ### 2026-10-27 — Three skills
 
-- **spec** — the core, generated from the guidelines and the figures counted off the model, and
-  nothing else.
+- **spec** — the core: the guidelines and the figures counted off the model, and nothing else. Since
+  2026-10-28 it is a short skill written by hand that has the agent run `sheriff guide`, which prints
+  them as they stand, rather than a copy generated into the skill and kept beside the nodes.
 - **spec-review** — how an agent works with the specification's owner: as a colleague rather than a
   clerk; a proposed rule checked by a reviewer apart before it is shown; one node at a time, shown
   whole, the original above a reading in the owner's language; one part at a time; a confirmation

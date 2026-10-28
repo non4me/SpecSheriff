@@ -112,6 +112,49 @@ export function ownerOf(spec: Specification, sid: string): string | null {
   return typeof owner === "string" ? owner : null;
 }
 
+/** The levels the domains stand at, from the top: the list of the rule of the project's own guidelines refining the base's rule on levels. */
+export function levelsOf(spec: Specification): string[] | null {
+  let levels: string[] | null = null;
+  const walk = (nodes: SpecNode[]) => {
+    for (const n of nodes) {
+      if (n.list && n.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE)) levels = (n.list as { members: string[] }).members;
+      walk(n.children ?? []);
+    }
+  };
+  walk(spec.files.find((f) => f.path === PROJECT)?.data.nodes ?? []);
+  return levels;
+}
+
+/** Whether a file's part is a domain: neither the guidelines, nor contracts, nor the technical appendix, nor the archive. */
+export const isDomain = (part: string) => !["_guidelines", "contracts", "tech", "_archive"].includes(part);
+
+/** The domains, each after every domain it uses, the order of their names deciding where the links leave a choice. */
+export function domainOrder(spec: Specification): string[] {
+  const domainOf = new Map<string, string>();
+  for (const f of spec.files) {
+    const { part } = partOf(f.path);
+    if (!isDomain(part)) continue;
+    const walk = (nodes: SpecNode[]) => nodes.forEach((n) => (domainOf.set(n.sid, part), walk(n.children ?? [])));
+    walk(f.data.nodes);
+  }
+  const domains = [...new Set(domainOf.values())].sort();
+  const uses = new Map(domains.map((d) => [d, new Set<string>()]));
+  for (const [sid, part] of domainOf) {
+    for (const r of spec.nodes.get(sid)!.node.refs) {
+      const to = r.type === "consumes" && r.to ? domainOf.get(r.to) : undefined;
+      if (to && to !== part) uses.get(part)!.add(to);
+    }
+  }
+  const order: string[] = [];
+  const left = new Set(domains);
+  while (left.size) {
+    const next = [...left].find((d) => [...uses.get(d)!].every((u) => !left.has(u))) ?? [...left][0]!;
+    order.push(next);
+    left.delete(next);
+  }
+  return order;
+}
+
 /** What a node holds beside its wording: its place, status, links, metadata, owner, and what the reindex builds. */
 const NOT_WORDING = new Set(["id", "sid", "kind", "status", "refs", "meta", "children", "owner", "sections", "archived"]);
 

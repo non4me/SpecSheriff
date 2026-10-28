@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { confirm } from "./confirmations.ts";
+import { exportMarkdown, guide, render } from "./generated.ts";
 import { reindex } from "./reindex.ts";
 import { show } from "./show.ts";
 import { loadSpecification, specificationOf, type SpecFile, type Specification } from "./spec-files.ts";
@@ -16,6 +17,9 @@ Commands:
   validate                    check the specification on its own
   confirm [--withdraw] <sid>  record the owner's confirmation of a node's wording, or withdraw it
   show <sid|address>          print a node with its links
+  export                      write the readable export in markdown to md-version/
+  render                      write the map to specs/_viewer/
+  guide                       print the guidelines and where the specification stands
 
 Options:
   --version  print the version of the toolset
@@ -65,6 +69,15 @@ function run(command: string | undefined, args: string[]): number {
       confirm(root, sids, { me, withdraw });
       return 0;
     }
+    case "export":
+      for (const path of exportMarkdown(root)) process.stdout.write(`written: ${path}\n`);
+      return 0;
+    case "render":
+      process.stdout.write(`written: ${render(root)}\n`);
+      return 0;
+    case "guide":
+      process.stdout.write(guide(loadSpecification(root)));
+      return 0;
     case "show":
       if (!args[0]) throw new Error("name a node by its sid or its address");
       process.stdout.write(show(loadSpecification(root), args[0]));
@@ -74,6 +87,9 @@ function run(command: string | undefined, args: string[]): number {
       return 2;
   }
 }
+
+// A reader that stops early, as `| head` does, is not a failure of the command.
+process.stdout.on("error", (error: NodeJS.ErrnoException) => (error.code === "EPIPE" ? process.exit(0) : (process.exitCode = 1)));
 
 const [command, ...args] = process.argv.slice(2);
 try {

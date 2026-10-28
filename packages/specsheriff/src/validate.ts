@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { loadConfig } from "./config.ts";
 import { everConfirmed, holds, readConfirmations } from "./confirmations.ts";
 import { keysTwice } from "./json-text.ts";
-import { addresses, citations, incoming, LEVELS_RULE, ownerOf, partOf } from "./model.ts";
+import { addresses, citations, incoming, LEVELS_RULE, levelsOf, ownerOf, partOf } from "./model.ts";
 import { headIndex, judgedHere } from "./reindex.ts";
 import { loadSchema } from "./schema.ts";
 import { canonical, specificationOf, specPaths, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
@@ -181,11 +181,7 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
       else if (n.kind === "section") entry.sections.push(n);
     }
   }
-  const project = spec.files.find((f) => f.path === "specs/_guidelines/project.json");
-  let levels: string[] | null = null;
-  walk(project?.data.nodes, (n) => {
-    if (n.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE) && n.list) levels = (n.list as { members: string[] }).members;
-  });
+  const levels = levelsOf(spec);
   const domainOf = new Map<string, string>();
   for (const [part, { sections }] of parts) for (const s of sections) walk([s], (n) => domainOf.set(n.sid, part));
   const uses = new Map<string, Set<string>>();
@@ -199,7 +195,7 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
       refuse(head.sid, "the index in its head is not what the domain's sections produce");
     }
     const level = head.level as string;
-    if (!(levels as string[] | null)?.includes(level)) refuse(head.sid, `level "${level}" is not listed in the project's own guidelines`);
+    if (!levels?.includes(level)) refuse(head.sid, `level "${level}" is not listed in the project's own guidelines`);
   }
   for (const [sid, { node }] of spec.nodes) {
     for (const r of node.refs.filter((r) => r.type === "consumes" && r.to)) {

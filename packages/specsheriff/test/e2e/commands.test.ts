@@ -74,6 +74,21 @@ test("s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured 
   assert.match(refused.stderr, new RegExp(`its owner is ${OWNER}`));
 });
 
+test("s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines", () => {
+  const root = project();
+  sheriff(root, "reindex");
+  const exported = sheriff(root, "export");
+  assert.equal(exported.status, 0, exported.stderr);
+  assert.match(exported.stdout, /written: md-version\/contracts\/c\.md/);
+  const rendered = sheriff(root, "render");
+  assert.equal(rendered.status, 0, rendered.stderr);
+  assert.match(readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8"), /markmap/);
+  const guided = sheriff(root, "guide");
+  assert.equal(guided.status, 0, guided.stderr);
+  assert.match(guided.stdout, /contracts: 4 nodes, 0 checked/);
+  assert.ok(guided.stdout.includes(sid("project")));
+});
+
 test("s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address", () => {
   const root = project();
   sheriff(root, "reindex");
