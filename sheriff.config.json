@@ -1,6 +1,7 @@
 {
   "code": [],
   "tests": [
-    "packages/specsheriff/test/**/*.test.ts"
+    "packages/specsheriff/test/**/*.test.ts",
+    "packages/pytest-specsheriff/tests/**/test_*.py"
   ]
 }

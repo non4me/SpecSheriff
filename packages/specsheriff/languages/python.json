@@ -1,0 +1,16 @@
+{
+  "$comment": "What counts as a symbol and as a test in Python. A symbol is a statement of the module of one of the kinds below, a decorated one included, or an assignment at the module's level; a method is covered by the tag of its class. A tag stands in the comment lines directly above the symbol, above its decorators. A test is a function whose name opens with test, and declares its sid by the mark pytest.mark.spec.",
+  "extensions": [".py"],
+  "grammars": { ".py": "tree-sitter-python.wasm" },
+  "comment": "comment",
+  "tagComment": "line",
+  "symbols": [
+    "function_definition",
+    "class_definition",
+    "type_alias_statement",
+    "assignment"
+  ],
+  "export": null,
+  "decorated": "decorated_definition",
+  "tests": { "functions": "test", "mark": "pytest.mark.spec" }
+}

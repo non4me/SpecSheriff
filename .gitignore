@@ -3,3 +3,7 @@ dist/
 md-version/
 specs/_viewer/
 packages/specsheriff/core/
+packages/specsheriff/grammars/
+__pycache__/
+.pytest_cache/
+*.egg-info/

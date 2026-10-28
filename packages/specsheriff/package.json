@@ -9,13 +9,15 @@
   },
   "files": [
     "dist",
-    "core"
+    "core",
+    "grammars",
+    "languages"
   ],
   "engines": {
     "node": ">=24"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/copy-core.mjs",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
     "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit && npm run test:e2e",
@@ -23,10 +25,14 @@
     "test:e2e": "node --test \"test/e2e/**/*.test.ts\""
   },
   "dependencies": {
-    "ajv": "^8.20.0"
+    "ajv": "^8.20.0",
+    "web-tree-sitter": "^0.27.1"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
+    "tree-sitter-javascript": "^0.25.0",
+    "tree-sitter-python": "^0.25.0",
+    "tree-sitter-typescript": "^0.23.2",
     "typescript": "^5.9.0"
   }
 }

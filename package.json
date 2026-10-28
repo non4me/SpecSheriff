@@ -4,7 +4,7 @@
     "packages/specsheriff"
   ],
   "scripts": {
-    "test": "npm test -w specsheriff",
+    "test": "npm test -w specsheriff && python -m pytest packages/pytest-specsheriff/tests -q -p no:asyncio",
     "typecheck": "npm run typecheck -w specsheriff"
   }
 }

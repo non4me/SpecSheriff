@@ -11,7 +11,6 @@ import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
 import { file, node, OWNER, repo, sid } from "../fixture.ts";
 
-const R = "s-jau82aq9juv9zzh"; // 5.1, what is checked
 const CORE = join(REPO, "specs", "_guidelines");
 
 /** A small project that passes every check: its own guidelines, a domain, contracts, the technical appendix. */
@@ -70,37 +69,37 @@ function expectOne(root: string, pattern: RegExp, before?: string): void {
   assert.ok(found.some((m) => pattern.test(m)), `expected ${pattern} among:\n${found.join("\n")}`);
 }
 
-test(`${R} passes a specification that holds together`, () => {
+test(`s-jau82aq9juv9zzh passes a specification that holds together`, () => {
   assert.deepEqual(messages(good()), []);
 });
 
-test(`${R} refuses a file giving one field two values`, () => {
+test(`s-jau82aq9juv9zzh refuses a file giving one field two values`, () => {
   const root = good();
   const path = join(root, "specs", "bank", "a.json");
   writeFileSync(path, readFileSync(path, "utf8").replace('"text": "Accounts.",', '"text": "Accounts.",\n      "text": "Accounts.",'));
   expectOne(root, /specs\/bank\/a\.json: .*"text".*twice/);
 });
 
-test(`${R} refuses a file that does not match its schema`, () => {
+test(`s-jau82aq9juv9zzh refuses a file that does not match its schema`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").status = "done"));
   expectOne(root, /specs\/bank\/a\.json: .*status/);
 });
 
-test(`${R} refuses two nodes sharing a sid, and two sharing an id`, () => {
+test(`s-jau82aq9juv9zzh refuses two nodes sharing a sid, and two sharing an id`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push({ ...nodeIn(d, "close") }));
   expectOne(root, /sid .* held by more than one node/);
   expectOne(root, /id .* held by more than one node/);
 });
 
-test(`${R} refuses an id other than the address its place gives`, () => {
+test(`s-jau82aq9juv9zzh refuses an id other than the address its place gives`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").id = "bank/9"));
   expectOne(root, /bank\/9.*address.*bank\/1\.2/);
 });
 
-test(`${R} refuses two term nodes naming one term, and two record nodes sharing a name`, () => {
+test(`s-jau82aq9juv9zzh refuses two term nodes naming one term, and two record nodes sharing a name`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").title = "user"));
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").title = "account"));
@@ -108,7 +107,7 @@ test(`${R} refuses two term nodes naming one term, and two record nodes sharing 
   expectOne(root, /record "account" .*more than one/);
 });
 
-test(`${R} refuses a checked node no confirmation by its owner holds`, () => {
+test(`s-jau82aq9juv9zzh refuses a checked node no confirmation by its owner holds`, () => {
   const root = good();
   confirm(root, [sid("close")], { me: OWNER });
   assert.deepEqual(messages(root), []);
@@ -116,7 +115,7 @@ test(`${R} refuses a checked node no confirmation by its owner holds`, () => {
   expectOne(root, new RegExp(`${sid("open")}.*checked.*no confirmation`));
 });
 
-test(`${R} leaves the confirmations of the core a project takes to its version`, () => {
+test(`s-jau82aq9juv9zzh leaves the confirmations of the core a project takes to its version`, () => {
   const root = good();
   writeFileSync(join(root, "sheriff.config.json"), '{ "code": [], "tests": [] }');
   edit(root, "specs/_guidelines/spec.json", (d) => (d.nodes[0].status = "checked"));
@@ -124,7 +123,7 @@ test(`${R} leaves the confirmations of the core a project takes to its version`,
   assert.ok(!found.some((m) => /no confirmation/.test(m)), found.join("\n"));
 });
 
-test(`${R} refuses a removed node ever confirmed that is not in the archive, and one never confirmed that is`, () => {
+test(`s-jau82aq9juv9zzh refuses a removed node ever confirmed that is not in the archive, and one never confirmed that is`, () => {
   const before = good();
   confirm(before, [sid("close")], { me: OWNER });
   const root = mkdtempSync(join(tmpdir(), "sheriff-"));
@@ -145,7 +144,7 @@ test(`${R} refuses a removed node ever confirmed that is not in the archive, and
   assert.ok(found.some((m) => m.includes(sid("never")) && /never confirmed/.test(m)), found.join("\n"));
 });
 
-test(`${R} refuses a link to no node, and a citation without a link or a cites link without a citation`, () => {
+test(`s-jau82aq9juv9zzh refuses a link to no node, and a citation without a link or a cites link without a citation`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => {
     nodeIn(d, "close").refs.push({ type: "constrains", to: "s-aaaaaaaaaaaaaab" });
@@ -157,20 +156,20 @@ test(`${R} refuses a link to no node, and a citation without a link or a cites l
   expectOne(root, new RegExp(`cites link to ${sid("close")} .*does not cite`));
 });
 
-test(`${R} refuses a cites link beside a link of another type to the same node`, () => {
+test(`s-jau82aq9juv9zzh refuses a cites link beside a link of another type to the same node`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "open").refs.push({ type: "constrains", to: sid("close") }));
   reindex(root);
   expectOne(root, /cites link .* beside a link of another type/);
 });
 
-test(`${R} refuses a node citing another by its address`, () => {
+test(`s-jau82aq9juv9zzh refuses a node citing another by its address`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "As §bank/1.1 says."));
   expectOne(root, /§bank\/1\.1.*address/);
 });
 
-test(`${R} refuses a term-relation not binding two terms, and a link of another type binding two`, () => {
+test(`s-jau82aq9juv9zzh refuses a term-relation not binding two terms, and a link of another type binding two`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").refs.push({ type: "constrains", to: sid("user") })));
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").refs.push({ type: "uses", to: sid("user") })));
@@ -179,13 +178,13 @@ test(`${R} refuses a term-relation not binding two terms, and a link of another 
   expectOne(root, /uses link .* two terms/);
 });
 
-test(`${R} refuses incoming links the outgoing ones do not produce`, () => {
+test(`s-jau82aq9juv9zzh refuses incoming links the outgoing ones do not produce`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "cites", from: sid("shared") }));
   expectOne(root, /incoming links .* outgoing/);
 });
 
-test(`${R} refuses a checked node setting words in capitals for stress, a quoted name left out`, () => {
+test(`s-jau82aq9juv9zzh refuses a checked node setting words in capitals for stress, a quoted name left out`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "It MUST NOT close; `NOT CODE` and \"QUOTED NAME\" pass."));
   confirm(root, [sid("close")], { me: OWNER });
@@ -194,7 +193,7 @@ test(`${R} refuses a checked node setting words in capitals for stress, a quoted
   assert.match(found[0]!, /MUST NOT/);
 });
 
-test(`${R} refuses a checked section holding no rule`, () => {
+test(`s-jau82aq9juv9zzh refuses a checked section holding no rule`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => d.nodes.push({ ...node("empty", { kind: "section", text: "Nothing." }) }));
   reindex(root);
@@ -202,7 +201,7 @@ test(`${R} refuses a checked section holding no rule`, () => {
   expectOne(root, new RegExp(`${sid("empty")}.*holds no rule`));
 });
 
-test(`${R} refuses a domain without a head, and a head whose index its sections do not produce`, () => {
+test(`s-jau82aq9juv9zzh refuses a domain without a head, and a head whose index its sections do not produce`, () => {
   const root = good();
   edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].sections = []));
   expectOne(root, /index .* sections/);
@@ -213,20 +212,20 @@ test(`${R} refuses a domain without a head, and a head whose index its sections 
   expectOne(headless, /domain loans has no head/);
 });
 
-test(`${R} refuses a level the project's own guidelines do not list`, () => {
+test(`s-jau82aq9juv9zzh refuses a level the project's own guidelines do not list`, () => {
   const root = good();
   edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].level = "top"));
   expectOne(root, /level "top".*not.*listed/);
 });
 
-test(`${R} refuses a consumes link that does not go from a head to a section of another domain`, () => {
+test(`s-jau82aq9juv9zzh refuses a consumes link that does not go from a head to a section of another domain`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "consumes", to: sid("accounts") }));
   reindex(root);
   expectOne(root, /consumes link .* from a domain's head/);
 });
 
-test(`${R} refuses domains using one another in a cycle`, () => {
+test(`s-jau82aq9juv9zzh refuses domains using one another in a cycle`, () => {
   const root = good();
   mkdirSync(join(root, "specs", "loans"));
   writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] }))));
@@ -236,7 +235,7 @@ test(`${R} refuses domains using one another in a cycle`, () => {
   expectOne(root, /cycle/);
 });
 
-test(`${R} refuses a record variant answering to a value its choosing field does not declare, or declaring no field of its own`, () => {
+test(`s-jau82aq9juv9zzh refuses a record variant answering to a value its choosing field does not declare, or declaring no field of its own`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => {
     nodeIn(d, "savings record").answersTo = { kind: "gold" };
@@ -246,35 +245,35 @@ test(`${R} refuses a record variant answering to a value its choosing field does
   expectOne(root, /declares no field of its own/);
 });
 
-test(`${R} refuses a node of the technical appendix outside the stack implementing no node of the base`, () => {
+test(`s-jau82aq9juv9zzh refuses a node of the technical appendix outside the stack implementing no node of the base`, () => {
   const root = good();
   edit(root, "specs/tech/bank.json", (d) => (nodeIn(d, "store").refs = []));
   reindex(root);
   expectOne(root, new RegExp(`${sid("store")}.*implements no node of the base`));
 });
 
-test(`${R} refuses a rule of the appendix of the tools implementing no node of the base of the guidelines`, () => {
+test(`s-jau82aq9juv9zzh refuses a rule of the appendix of the tools implementing no node of the base of the guidelines`, () => {
   const root = good();
   edit(root, "specs/_guidelines/tools.json", (d) => (nodeIn(d, "tool").refs = []));
   reindex(root);
   expectOne(root, new RegExp(`${sid("tool")}.*implements no node of the base of the guidelines`));
 });
 
-test(`${R} refuses a rule of a project's own guidelines that neither refines nor implements a rule of the core`, () => {
+test(`s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the core`, () => {
   const root = good();
   edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("loose")));
   reindex(root);
   expectOne(root, new RegExp(`${sid("loose")}.*neither refines nor implements`));
 });
 
-test(`${R} refuses a core that is not the version the project names, file for file`, () => {
+test(`s-jau82aq9juv9zzh refuses a core that is not the version the project names, file for file`, () => {
   const root = good();
   writeFileSync(join(root, "sheriff.config.json"), '{ "code": [], "tests": [] }');
   const found = messages(root);
   assert.ok(found.some((m) => /specs\/_guidelines\/spec\.json.*not the core/.test(m)), found.join("\n"));
 });
 
-test(`${R} passes the core as this repository holds it, its confirmations aside`, () => {
+test(`s-jau82aq9juv9zzh passes the core as this repository holds it, its confirmations aside`, () => {
   const found = validate(REPO, { coreDir: CORE }).map((f) => `${f.where}: ${f.message}`);
   assert.deepEqual(found.filter((m) => !/no confirmation/.test(m)), []);
 });

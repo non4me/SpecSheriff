@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { confirm } from "./confirmations.ts";
+import { binding, citationsOutside } from "./binding.ts";
 import { exportMarkdown, guide, render } from "./generated.ts";
 import { reindex } from "./reindex.ts";
 import { show } from "./show.ts";
@@ -20,6 +21,8 @@ Commands:
   export                      write the readable export in markdown to md-version/
   render                      write the map to specs/_viewer/
   guide                       print the guidelines and where the specification stands
+  binding                     check the specification against the code and the tests
+  citations                   check the sids in the code, the tests and the documents
 
 Options:
   --version  print the version of the toolset
@@ -40,7 +43,7 @@ function lastCommitted(): Specification | undefined {
   return specificationOf(files);
 }
 
-function run(command: string | undefined, args: string[]): number {
+async function run(command: string | undefined, args: string[]): Promise<number> {
   switch (command) {
     case undefined:
       process.stdout.write(USAGE);
@@ -78,6 +81,16 @@ function run(command: string | undefined, args: string[]): number {
     case "guide":
       process.stdout.write(guide(loadSpecification(root)));
       return 0;
+    case "binding": {
+      const findings = await binding(root);
+      for (const f of findings) process.stdout.write(`${f.where}: ${f.reported ? "reported: " : ""}${f.message}\n`);
+      return findings.some((f) => !f.reported) ? 1 : 0;
+    }
+    case "citations": {
+      const findings = await citationsOutside(root);
+      for (const f of findings) process.stdout.write(`${f.where}: ${f.message}\n`);
+      return findings.length ? 1 : 0;
+    }
     case "show":
       if (!args[0]) throw new Error("name a node by its sid or its address");
       process.stdout.write(show(loadSpecification(root), args[0]));
@@ -93,7 +106,7 @@ process.stdout.on("error", (error: NodeJS.ErrnoException) => (error.code === "EP
 
 const [command, ...args] = process.argv.slice(2);
 try {
-  process.exitCode = run(command, args);
+  process.exitCode = await run(command, args);
 } catch (error) {
   process.stderr.write(`sheriff ${command}: ${(error as Error).message}\n`);
   process.exitCode = 1;

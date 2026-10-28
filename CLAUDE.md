@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 SpecSheriff is a method of spec-anchored development and the upstream of its core: the guidelines
 and the `sheriff` toolset now, later the skills and a worked example. The toolset is being built
 (step 2): `npm install` at the root builds `packages/specsheriff/` and links `sheriff`, and `npm test`
-runs its unit and end-to-end tests. `specs/_schema/` and `sheriff.config.json` exist; the `sheriff`
+runs its unit and end-to-end tests and those of `packages/pytest-specsheriff/` (Python 3.10 or later
+with pytest). `specs/_schema/` and `sheriff.config.json` exist; the `sheriff`
 commands the appendix of the tools specifies, and `.githooks/`, do not exist yet unless `sheriff`'s
 usage lists them. Never report a check as having run that has not.
 

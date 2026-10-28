@@ -1,0 +1,17 @@
+{
+  "$comment": "What counts as a symbol and as a test in JavaScript, JSX included. A symbol is a statement of the module of one of the kinds below, or one of them standing in an export; a member of a class is covered by the tag of the class. A tag stands in the doc comment directly above the symbol.",
+  "extensions": [".js", ".mjs", ".cjs", ".jsx"],
+  "grammars": { ".js": "tree-sitter-javascript.wasm", ".mjs": "tree-sitter-javascript.wasm", ".cjs": "tree-sitter-javascript.wasm", ".jsx": "tree-sitter-javascript.wasm" },
+  "comment": "comment",
+  "tagComment": "doc",
+  "symbols": [
+    "function_declaration",
+    "generator_function_declaration",
+    "class_declaration",
+    "lexical_declaration",
+    "variable_declaration"
+  ],
+  "export": "export_statement",
+  "decorated": null,
+  "tests": { "calls": ["test", "it"] }
+}

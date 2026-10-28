@@ -1,0 +1,23 @@
+{
+  "$comment": "What counts as a symbol and as a test in TypeScript. A symbol is a statement of the module of one of the kinds below, or one of them standing in an export; a member of a class or an interface is covered by the tag of the symbol it stands in. A tag stands in the doc comment directly above the symbol.",
+  "extensions": [".ts", ".mts", ".cts"],
+  "grammars": { ".ts": "tree-sitter-typescript.wasm", ".mts": "tree-sitter-typescript.wasm", ".cts": "tree-sitter-typescript.wasm" },
+  "comment": "comment",
+  "tagComment": "doc",
+  "symbols": [
+    "function_declaration",
+    "generator_function_declaration",
+    "class_declaration",
+    "abstract_class_declaration",
+    "interface_declaration",
+    "type_alias_declaration",
+    "enum_declaration",
+    "lexical_declaration",
+    "variable_declaration",
+    "internal_module",
+    "ambient_declaration"
+  ],
+  "export": "export_statement",
+  "decorated": null,
+  "tests": { "calls": ["test", "it"] }
+}
