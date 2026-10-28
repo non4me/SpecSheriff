@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "section-file.schema.json",
+  "title": "A file holding one part of the specification, one section of a large part, or the archive of one part",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "$comment": "The version of this structure the file was written in. Changing the structure is the same event as changing a contract: the files written in the old version have to be found and migrated, and the version is what finds them.",
+      "const": 1
+    },
+    "scope": {
+      "$comment": "The part of the specification the file belongs to: a domain, contracts, _guidelines or tech.",
+      "type": "string",
+      "minLength": 1
+    },
+    "section": {
+      "$comment": "The name of the file within its part.",
+      "type": "string",
+      "minLength": 1
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "node.schema.json"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "scope",
+    "section",
+    "nodes"
+  ],
+  "additionalProperties": false
+}

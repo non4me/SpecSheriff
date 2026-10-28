@@ -1,0 +1,6 @@
+{
+  "code": [],
+  "tests": [
+    "packages/specsheriff/test/**/*.test.ts"
+  ]
+}

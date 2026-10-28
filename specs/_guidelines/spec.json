@@ -70,18 +70,6 @@
                     "ruling": "The owner: the guidelines apply the split between base and appendix to themselves (§s-a4rbry4hsu34hy8); where the schema is kept is described in the appendix of the tools.",
                     "type": "textual"
                   }
-                ],
-                "todos": [
-                  {
-                    "date": "2026-10-28",
-                    "by": "the owner",
-                    "text": "The schema gives a node's metadata a list of comments, each with its date, its author, its text and, where it has one, its type, the one type being problem: an open problem not yet a decision or a todo, which leaves the list once it is settled. Todos and decisions stay lists of their own."
-                  },
-                  {
-                    "date": "2026-10-28",
-                    "by": "the owner",
-                    "text": "The field naming a comment's type, and the decisions' type with it, is named as a name the specification defines is named, carrying its object rather than standing as type alone."
-                  }
                 ]
               }
             },
@@ -162,7 +150,7 @@
                 ],
                 "declaredIn": {
                   "file": "specs/_schema/node.schema.json",
-                  "entity": "#/$defs/status"
+                  "declaration": "#/$defs/status"
                 }
               },
               "meta": {
@@ -844,7 +832,7 @@
               "kind": "rule",
               "title": "A domain's specification opens with its head",
               "status": "checked",
-              "text": "A domain's specification opens with its head: a node stating what the domain does, its owners where it names any (§s-67vekyup7y8smap), the level it stands at and where its code is, whose consumes links name the sections of other domains the domain uses. The head also carries the index of the domain's sections — each one's sid, title and text, the text of a section stating what that section is responsible for, and the domains that use it — built from the sections and never written by hand.",
+              "text": "A domain's specification opens with its head: a node stating what the domain does, its owner where it names one (§s-67vekyup7y8smap), the level it stands at and where its code is, whose consumes links name the sections of other domains the domain uses. The head also carries the index of the domain's sections — each one's sid, title and text, the text of a section stating what that section is responsible for, and the domains that use it — built from the sections and never written by hand.",
               "refs": [
                 {
                   "type": "cites",
@@ -997,7 +985,7 @@
                 ],
                 "declaredIn": {
                   "file": "specs/_schema/node.schema.json",
-                  "entity": "#/$defs/ref/properties/type"
+                  "declaration": "#/$defs/ref/properties/type"
                 }
               },
               "meta": {
@@ -1031,13 +1019,6 @@
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
                     "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
-                  }
-                ],
-                "todos": [
-                  {
-                    "date": "2026-10-28",
-                    "by": "the owner",
-                    "text": "The schema settles how a list's declaredIn names a declaration standing inside another, such as the values of a field of the objects a list holds, and renames its key entity, which now reads as the entity the core defines, to pointer."
                   }
                 ]
               }
@@ -1713,6 +1694,12 @@
                     "problem": "Its examples were drawn from one project a reader of the method does not know.",
                     "ruling": "The owner: the examples name what any system has — a user, an operator, a record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
                     "type": "textual"
+                  },
+                  {
+                    "date": "2026-10-28",
+                    "problem": "The schema of a node names several of its fields type and one kind, general words this rule keeps a name the specification defines from being.",
+                    "ruling": "The owner: a field of the node schema is read within the object holding it, which carries its object, so the schema keeps type and kind.",
+                    "type": "procedural"
                   }
                 ]
               }

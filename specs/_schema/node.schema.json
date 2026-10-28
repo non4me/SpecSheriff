@@ -1,0 +1,744 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "node.schema.json",
+  "title": "A node of the specification",
+  "$comment": "The one description of a node's structure, its metadata included. The file schema refers to it and never restates it, and a node refers to itself for the nodes under it. Each kind adds its own fields through a condition on kind, so an error names the field that is wrong rather than every kind the node is not. A field nobody declared is refused: it would be a field nobody remembers the purpose of, and admitting one lets them accumulate.",
+  "allOf": [
+    {
+      "$ref": "#/$defs/base"
+    },
+    {
+      "$comment": "The head of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owner where it names one, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "domain"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/owner"
+          },
+          "level": {
+            "$comment": "The name of the level the domain stands at, one of those the project's own guidelines list; validate checks it against that list, which the schema cannot see.",
+            "type": "string",
+            "minLength": 1
+          },
+          "code": {
+            "$comment": "The directory the domain's code is in, or null where it has none.",
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sections": {
+            "$comment": "The index of the domain's sections, in the order they read: each one's sid, title and text, and the heads of the domains that use it. Built by the reindex from the sections; validate refuses an index they do not produce.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sid": {
+                  "$ref": "#/$defs/sid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "usedBy": {
+                  "$comment": "Read off the section's incoming consumes links; absent where no domain uses it.",
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/$defs/sid"
+                  }
+                }
+              },
+              "required": [
+                "sid",
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "level",
+          "code",
+          "sections"
+        ]
+      }
+    },
+    {
+      "$comment": "A section: a container of rules, whose text states what it is responsible for and requires nothing. It may name an owner of its own, who confirms every node within it.",
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "section"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "owner": {
+            "$ref": "#/$defs/owner"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "One rule. A rule may describe a list.",
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "rule"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "list": {
+            "$ref": "#/$defs/list"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "A record node: a record the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the record's name and its text what the record is. The implementation's types and runtime checks are generated from it and never written beside it. A record that refines another record node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the record it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "record"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "fields": {
+            "$comment": "The record's own fields, in the order they read; one inherited from the record it refines is not repeated here.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/field"
+            }
+          },
+          "unknown": {
+            "$comment": "What happens to a field nobody declared: refused, or kept as it came.",
+            "enum": [
+              "refused",
+              "kept"
+            ]
+          },
+          "chosenBy": {
+            "$comment": "On a record whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/fieldName"
+            }
+          },
+          "answersTo": {
+            "$comment": "On a record variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest record up its chain of refines names as choosing it.",
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+              "$ref": "#/$defs/fieldName"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "fields",
+          "unknown"
+        ]
+      }
+    }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "base": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "sid": {
+          "$ref": "#/$defs/sid"
+        },
+        "kind": {
+          "$comment": "domain is the head of a domain; a term's title is the term it defines.",
+          "enum": [
+            "domain",
+            "section",
+            "rule",
+            "term",
+            "record"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "text": {
+          "$comment": "What must hold; for a section or a head, what it is responsible for.",
+          "type": "string"
+        },
+        "rationale": {
+          "$comment": "Why the requirement in text must hold; not part of it.",
+          "type": "string"
+        },
+        "refs": {
+          "$comment": "A link is declared once: a second copy of it says nothing the first does not, and the reindex would build it twice into the other node's list.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ref"
+          }
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        },
+        "archived": {
+          "$comment": "Only on a node in the archive: when and why it was removed, and the sid of the node that replaces it, if one does. validate requires it there and refuses it anywhere else, which the schema cannot tell apart.",
+          "type": "object",
+          "properties": {
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "replacedBy": {
+              "$ref": "#/$defs/sid"
+            }
+          },
+          "required": [
+            "date",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "children": {
+          "$comment": "The nodes under this one, in the order they read. Nesting carries the tree: there is no parent field and no order field, so neither can contradict where the node actually sits.",
+          "type": "array",
+          "items": {
+            "$ref": "node.schema.json"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "sid",
+        "kind",
+        "title",
+        "status",
+        "text",
+        "refs"
+      ]
+    },
+    "nodeId": {
+      "$comment": "An address: the part the node stands in followed by its place there, e.g. contracts/4.1, or the domain's name alone for the head of a domain. Computed by the reindex from where the node stands and never written by hand; nothing refers to it.",
+      "type": "string",
+      "pattern": "^_?[a-z][a-z0-9-]*(/[A-Za-z0-9][A-Za-z0-9 ./-]*)?$"
+    },
+    "sid": {
+      "$comment": "A node's permanent identifier: s- and fifteen characters drawn at random from lowercase letters and digits without 0, o, 1, l and i, which are read for one another. Given once and never changed, and held by every reference to the node.",
+      "type": "string",
+      "pattern": "^s-[a-hjkmnp-z2-9]{15}$"
+    },
+    "status": {
+      "$comment": "checked: the node's owner confirmed its present wording; empty otherwise.",
+      "enum": [
+        "",
+        "checked"
+      ]
+    },
+    "owner": {
+      "$comment": "The owner of a domain or a section, named by an email; absent where the owner above holds.",
+      "type": "string",
+      "pattern": "^[^@\\s]+@[^@\\s]+$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "ref": {
+      "$comment": "A link as the node holds it, read from this node's end. An entry naming to is one the node makes, written by hand; an entry naming from points at the node, is built by the reindex and is never written by hand. An entry names exactly one of the two.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "implements",
+            "refines",
+            "constrains",
+            "consumes",
+            "supersedes",
+            "cites",
+            "term-relation",
+            "uses"
+          ]
+        },
+        "to": {
+          "$ref": "#/$defs/sid"
+        },
+        "from": {
+          "$ref": "#/$defs/sid"
+        },
+        "ratio": {
+          "$comment": "Required on a term-relation and refused on every other link: a link between rules binds one node to one, so a ratio on it would state a multiplicity nobody could mean.",
+          "$ref": "#/$defs/ratio"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "to"
+          ],
+          "not": {
+            "required": [
+              "from"
+            ]
+          }
+        },
+        {
+          "required": [
+            "from"
+          ],
+          "not": {
+            "required": [
+              "to"
+            ]
+          }
+        }
+      ],
+      "if": {
+        "properties": {
+          "type": {
+            "const": "term-relation"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "ratio"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "ratio"
+          ]
+        }
+      }
+    },
+    "ratio": {
+      "$comment": "The multiplicity at each end of a term-relation, the end of the node holding the entry first. Both ends, because one end alone cannot say whether the other may be absent: 1:0..1 and 1:1 differ in exactly that.",
+      "type": "string",
+      "pattern": "^(1|0\\.\\.1|1\\.\\.N|0\\.\\.N):(1|0\\.\\.1|1\\.\\.N|0\\.\\.N)$"
+    },
+    "list": {
+      "$comment": "A list a rule describes — a set of states, the members of a category, the routes of a table — held as members rather than as prose, because a machine compares it with the declaration in the code or in a schema that carries it. declaredIn names that declaration and is absent until the code exists: the rule is written first and implemented second.",
+      "type": "object",
+      "properties": {
+        "of": {
+          "$comment": "What the list is of, in one line, so that it says which declaration is its counterpart.",
+          "type": "string",
+          "minLength": 1
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "declaredIn": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "declaration": {
+              "$comment": "In code, the name of the declaration; in a schema, a JSON pointer to the enum, which reaches one standing inside another as well.",
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "file",
+            "declaration"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "of",
+        "members"
+      ],
+      "additionalProperties": false
+    },
+    "fieldName": {
+      "$comment": "A field's name as the code spells it: an identifier in camelCase, so the generated types use it as it stands.",
+      "type": "string",
+      "pattern": "^[a-z][A-Za-z0-9]*$"
+    },
+    "field": {
+      "$comment": "One field as a record node declares it: its name, its type, whether it is required and what it says.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/fieldName"
+        },
+        "type": {
+          "$ref": "#/$defs/neutralType"
+        },
+        "required": {
+          "$comment": "Whether the field is always present: true or false; on a field of type variant, and only there, \"where it holds a value\"."
+        },
+        "text": {
+          "$comment": "What the field says.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "required",
+        "text"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "type": {
+            "properties": {
+              "is": {
+                "const": "variant"
+              }
+            },
+            "required": [
+              "is"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "required": {
+            "const": "where it holds a value"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "required": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "neutralType": {
+      "$comment": "A field's type in neutral terms, named by is; the technical appendix says how each is checked at runtime. email address is text holding one email address; any value is data of no shape the specification declares; one of carries its values; list of, the type of its members; map of, the type of its values, each kept under a key of text; record and identifier of, the sid of the record node they name, a record variant excluded. variant is the object of the fields the chosen record variant declares, beside the fields every variant holds: it stands only as a field's own type, on the record that names the fields choosing its variant.",
+      "type": "object",
+      "properties": {
+        "is": {
+          "enum": [
+            "text",
+            "email address",
+            "whole number",
+            "number",
+            "yes/no",
+            "instant",
+            "duration",
+            "any value",
+            "one of",
+            "list of",
+            "map of",
+            "record",
+            "identifier of",
+            "variant"
+          ]
+        }
+      },
+      "required": [
+        "is"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "one of"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "values": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "values"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "enum": [
+                  "list of",
+                  "map of"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "of": {
+                "$ref": "#/$defs/neutralType"
+              }
+            },
+            "required": [
+              "of"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "enum": [
+                  "record",
+                  "identifier of"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "record": {
+                "$ref": "#/$defs/sid"
+              }
+            },
+            "required": [
+              "record"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "is": {
+                "const": "variant"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "fields": {
+                "$comment": "The fields held in the field of type variant whatever the variant, beside the chosen variant's own. None is of type variant, and a variant's own field repeats none of them, which validate checks.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/field"
+                }
+              }
+            }
+          }
+        },
+        {
+          "$comment": "The bounds a whole number or a number may take, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the record.",
+          "if": {
+            "properties": {
+              "is": {
+                "enum": [
+                  "whole number",
+                  "number"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "minimum": {
+                "type": "number"
+              },
+              "exclusiveMinimum": {
+                "type": "number"
+              },
+              "maximum": {
+                "type": "number"
+              },
+              "exclusiveMaximum": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "meta": {
+      "$comment": "What accumulates around a node without being part of its wording: what was decided about it, the code and tests bound to it, comments and the work deferred on it. Changing it does not change the node's status. It is kept in the node, so that whoever reads a node sees it whole in one place.",
+      "type": "object",
+      "properties": {
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$comment": "What was settled about the node: a problem, and the ruling on it. textual: the ruling changed the node's wording; procedural: it changed none.",
+            "type": "object",
+            "properties": {
+              "date": {
+                "$ref": "#/$defs/date"
+              },
+              "problem": {
+                "type": "string",
+                "minLength": 1
+              },
+              "ruling": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "enum": [
+                  "textual",
+                  "procedural"
+                ]
+              }
+            },
+            "required": [
+              "date",
+              "problem",
+              "ruling",
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "code": {
+          "$comment": "The code bound to the node: each file, and the symbols in it that carry the node's tag; compared with the tags by binding.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file": {
+                "type": "string",
+                "minLength": 1
+              },
+              "symbols": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "required": [
+              "file"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tests": {
+          "$comment": "The tests declaring the node's sid, each as its file and name; compared with the tests by binding.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$comment": "A remark on the node: when, whose and what. A comment of type problem is an open problem, not yet a decision or a todo, and leaves the list once it is settled. A comment opening with TODO is refused: deferred work is a todos item, and one left in a comment is missed by everything that collects what waits.",
+            "type": "object",
+            "properties": {
+              "date": {
+                "$ref": "#/$defs/date"
+              },
+              "by": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "not": {
+                  "pattern": "^TODO"
+                }
+              },
+              "type": {
+                "enum": [
+                  "problem"
+                ]
+              }
+            },
+            "required": [
+              "date",
+              "by",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "todos": {
+          "type": "array",
+          "items": {
+            "$comment": "A task or an idea put off until later, kept on the node it concerns: when it was put off, whose word it is, and what is to be done. An item is removed once it is done, git keeping its history and a ruling it led to going to the node's decisions.",
+            "type": "object",
+            "properties": {
+              "date": {
+                "$ref": "#/$defs/date"
+              },
+              "by": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "date",
+              "by",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

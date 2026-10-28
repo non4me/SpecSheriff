@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/specsheriff"
+  ],
+  "scripts": {
+    "test": "npm test -w specsheriff",
+    "typecheck": "npm run typecheck -w specsheriff"
+  }
+}

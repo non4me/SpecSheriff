@@ -5,10 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this repository is
 
 SpecSheriff is a method of spec-anchored development and the upstream of its core: the guidelines
-now, later the `sheriff` toolset, the skills and a worked example. It is in the design phase. There
-is no code, no package manifest and nothing to build or test: the `sheriff` commands, `.githooks/`,
-`specs/_schema/` and `sheriff.config.json` are specified in the appendix of the tools but do not
-exist yet. Never run them or report a check as having run.
+and the `sheriff` toolset now, later the skills and a worked example. The toolset is being built
+(step 2): `npm install` at the root builds `packages/specsheriff/` and links `sheriff`, and `npm test`
+runs its unit and end-to-end tests. `specs/_schema/` and `sheriff.config.json` exist; the `sheriff`
+commands the appendix of the tools specifies, and `.githooks/`, do not exist yet unless `sheriff`'s
+usage lists them. Never report a check as having run that has not.
 
 The principles the method rests on, as the owner states them, are below. Weigh every decision and
 proposal against them first; one that contradicts a principle is raised with the owner, never carried
@@ -118,9 +119,13 @@ EOF
 
 ## When code arrives
 
-The tools are written in TypeScript on Node and read code with tree-sitter. In the worked example and
+The tools are written in TypeScript on Node and read code with tree-sitter. Their source is kept in
+`packages/specsheriff/` (the npm package providing `sheriff`) and `packages/pytest-specsheriff/` (the
+plugin for pytest). In the worked example and
 any project taking the core, every symbol of the system's code carries `@spec <sid>` (or
 `@spec none <reason>`) in the comment directly above it, a test declares the sid it verifies and is
 written first, and a commit changing code names every checked node it serves; the exact syntax is in
 `tools.json`. The repository's tools, configuration and tests are exempt from tags by where they live
-(§s-kgbzk2ph9e6jfb4).
+(§s-kgbzk2ph9e6jfb4). The tools' own tests are not exempt from sids, by the owner's choice
+(2026-10-28): each declares the sid of the node of `spec.json` or `tools.json` it verifies and is
+written before the code it tests, so that this repository works by the method it offers.
