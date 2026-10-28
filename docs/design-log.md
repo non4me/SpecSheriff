@@ -21,7 +21,12 @@ them. The rulings of building it that bear on more than one node:
 - **A node removed while the core is first written is no longer deleted**: from now on a node ever
   confirmed goes to the archive (§s-f2b5zvc565s242f).
 
-Not yet decided: how a project gets the hooks — an install command, or the adopt skill (step 3).
+- **A project gets the hooks, the skills and the core by `sheriff init`**, a command rather than the
+  adopt skill, so that what the checks depend on is laid out by a script (step 3). The adopt skill
+  imports a project's documents by the agent, with no import command, since every project writes
+  its documents its own way; the owner's reading of every node is what guarantees the import. The
+  owner's language and table of terms for spec-review are a file of the project's,
+  `.claude/spec-review.md`.
 
 ### 2026-10-28 — The core read again as a whole, against the principles
 
@@ -301,7 +306,8 @@ example leaves the road to a product open.
    export and the map, confirmations naming who gave them, the general parser with TypeScript,
    JavaScript and Python described, the reviewer's contract with its first runner, the git and agent
    hooks; turned on in this repository. `sheriff types` moved to step 4.
-3. The skills: spec, spec-review, spec-adopt.
+3. ~~The skills~~ — done 2026-10-28: spec, spec-review, spec-adopt, and `sheriff init` laying them
+   out with the hooks and the core.
 4. The worked example: the frontier town's bank, its specification, code and tests, and the recorded
    run in which a commit is refused.
 5. The origin project takes the core from here and keeps its own rules as a part refining it.
