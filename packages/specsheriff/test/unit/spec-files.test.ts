@@ -17,7 +17,7 @@ test("s-zefk589ykh37b8u reads every file of the specification under specs/, and 
   mkdirSync(join(root, "specs", "_archive"));
   writeFileSync(join(root, "specs", "_archive", "x.json"), JSON.stringify({ schemaVersion: 1, scope: "x", section: "x", nodes: [] }));
   const spec = loadSpecification(root);
-  assert.deepEqual(spec.files.map((f) => f.path).sort(), ["specs/_guidelines/spec.json", "specs/_guidelines/tools.json"]);
+  assert.deepEqual(spec.files.map((f) => f.path).sort(), ["specs/_guidelines/project.json", "specs/_guidelines/spec.json", "specs/_guidelines/tools.json"]);
   assert.deepEqual(spec.archive.map((f) => f.path), ["specs/_archive/x.json"]);
   assert.ok(spec.nodes.size > 0);
   for (const [sid, at] of spec.nodes) assert.equal(at.node.sid, sid);
