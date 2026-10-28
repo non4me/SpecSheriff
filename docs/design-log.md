@@ -6,6 +6,23 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-28 — The repository is held by its own tools
+
+The `sheriff` toolset is built along the appendix of the tools and holds this repository: the core
+is written here (`writesCore`), the owner named by `specs/_guidelines/project.json` confirms its nodes
+into `specs/_confirmations.jsonl`, the git hooks check every commit and the agent's hooks every edit.
+The tools' own tests carry the sid of the node of the core they verify, and the core's nodes list
+them. The rulings of building it that bear on more than one node:
+
+- **The spec skill reads the guidelines through `sheriff guide`** rather than holding a copy generated
+  into it, so nothing generated is kept beside the nodes but what the checks compare.
+- **`sheriff types` waits for the worked example**, whose record nodes and technical appendix are the
+  first it can be built against.
+- **A node removed while the core is first written is no longer deleted**: from now on a node ever
+  confirmed goes to the archive (§s-f2b5zvc565s242f).
+
+Not yet decided: how a project gets the hooks — an install command, or the adopt skill (step 3).
+
 ### 2026-10-28 — The core read again as a whole, against the principles
 
 The owner stated the principles the method rests on, now in `docs/principles.md`, and went over the
@@ -272,10 +289,6 @@ example leaves the road to a product open.
 
 ## Findings to act on
 
-- The mechanism that keeps a confirmation honest — a fingerprint of each wording the owner
-  confirmed, a hook refusing a status typed by hand, a status returned to empty when its wording
-  changes — lives in personal scripts in the origin project. The core now states it (the owners'
-  rule and the appendix's rule on recording a confirmation); the tools carry it out in step 2.
 - The origin project's code holds many declarations without a tag. Taking the core (step 5), it
   tags them, finding a rule for each or stating that it implements none and why, before the check
   of tags is turned on.
@@ -284,9 +297,10 @@ example leaves the road to a product open.
 
 1. ~~The core guidelines~~ — done 2026-10-27: the base and the appendix of the tools, confirmed by the
    owner node by node.
-2. The tools, along the base: checks of the specification on its own and against the code, the
-   generated export, map and types, confirmations naming who gave them, the general parser with
-   TypeScript and Python described, the reviewer's contract with its first runner.
+2. ~~The tools~~ — done 2026-10-28: checks of the specification on its own and against the code, the
+   export and the map, confirmations naming who gave them, the general parser with TypeScript,
+   JavaScript and Python described, the reviewer's contract with its first runner, the git and agent
+   hooks; turned on in this repository. `sheriff types` moved to step 4.
 3. The skills: spec, spec-review, spec-adopt.
 4. The worked example: the frontier town's bank, its specification, code and tests, and the recorded
    run in which a commit is refused.

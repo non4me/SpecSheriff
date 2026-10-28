@@ -3,5 +3,7 @@
   "tests": [
     "packages/specsheriff/test/**/*.test.ts",
     "packages/pytest-specsheriff/tests/**/test_*.py"
-  ]
+  ],
+  "writesCore": true,
+  "testCommand": "npm test"
 }

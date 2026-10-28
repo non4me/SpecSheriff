@@ -5,12 +5,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this repository is
 
 SpecSheriff is a method of spec-anchored development and the upstream of its core: the guidelines
-and the `sheriff` toolset now, later the skills and a worked example. The toolset is being built
-(step 2): `npm install` at the root builds `packages/specsheriff/` and links `sheriff`, and `npm test`
-runs its unit and end-to-end tests and those of `packages/pytest-specsheriff/` (Python 3.10 or later
-with pytest). `specs/_schema/` and `sheriff.config.json` exist; the `sheriff`
-commands the appendix of the tools specifies, and `.githooks/`, do not exist yet unless `sheriff`'s
-usage lists them. Never report a check as having run that has not.
+and the `sheriff` toolset now, later the skills and a worked example. `npm install` at the root
+builds `packages/specsheriff/` and links `sheriff`; `npm test` runs its unit and end-to-end tests and
+those of `packages/pytest-specsheriff/` (Python 3.10 or later with pytest). The repository is held by
+its own tools: `sheriff.config.json` says the core is written here, so its nodes are confirmed in
+`specs/_confirmations.jsonl` by the owner `specs/_guidelines/project.json` names. A change to
+`packages/specsheriff/src/` reaches the hooks once `npm run build -w specsheriff` has run. Never
+report a check as having run that has not.
 
 The principles the method rests on, as the owner states them, are below. Weigh every decision and
 proposal against them first; one that contradicts a principle is raised with the owner, never carried
@@ -35,40 +36,51 @@ What a project installs (tools, skills, guidelines, example) is Apache 2.0; `doc
 
 ## The node files
 
-A file is `{schemaVersion, scope, section, nodes}`, a tree of nodes through `children`. A node holds:
+A file is `{schemaVersion, scope, section, nodes}`, a tree of nodes through `children`; its structure
+is `specs/_schema/` (§s-eferktypcj7njt5). A node holds:
 
 - `sid` — permanent, `s-` plus 15 characters from `23456789abcdefghjkmnpqrstuvwxyz`; the only way a
-  node is cited, anywhere. A new node gets a fresh, unique one.
-- `id` — the address computed from where the node stands (part, file, number among its siblings).
-  Nothing cites it. Until `sheriff reindex` exists, renumber by hand after inserting or moving a node.
-- `kind` (`section`, which holds rules and requires nothing, or `rule`), `title`, `status` (`""` or
-  `"checked"`), `text` (what must hold), `rationale` (why, kept apart from the requirement), `list`
-  (`of`, `members`, `declaredIn`), `refs`, `meta.decisions` (`date`, `problem`, `ruling`, `type`),
-  `meta.todos`.
-- `refs` — typed outgoing links `{type, to}` and, in the same list, incoming ones `{type, from}`
-  mirroring every link that points here. The types and their meanings: §s-sn6au3vcr9uy5pm.
+  node is cited, anywhere. A node written without one is given one by `sheriff reindex`.
+- `id` — the address computed from where the node stands. Nothing cites it, and nobody writes it:
+  `sheriff reindex` does.
+- `kind` (`section`, which holds rules and requires nothing; `rule`; `term`; `record`; `domain`, a
+  domain's head), `title`, `status` (`""` or `"checked"`), `text` (what must hold), `rationale` (why,
+  kept apart from the requirement), `list` (`of`, `members`, `declaredIn`), `owner` on a section or a
+  head, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
+  and the lists of the `code` and the `tests` bound to the node, which must agree with the tags and
+  the tests' sids (§s-rwqzepmrt77rv35).
+- `refs` — typed outgoing links `{type, to}`, written by hand, and incoming ones `{type, from}`,
+  built by `sheriff reindex`. The types and their meanings: §s-sn6au3vcr9uy5pm.
 
-Formatting is exactly `json.dumps(data, indent=2, ensure_ascii=False) + "\n"`, LF endings, the
-existing key order.
+Formatting is exactly `JSON.stringify(data, null, 2) + "\n"`, LF endings, the existing key order;
+`sheriff reindex` rewrites a file into it.
 
-## Editing the specification by hand (until the tools enforce it)
+## Editing the specification
+
+The tools hold every edit. The agent's hooks in `.claude/settings.json` run `sheriff guard` before an
+edit made with the file tools, and after any edit `sheriff reindex`, `export`, `render`, `validate`,
+`binding` and `citations`, handing back what they refuse; the git hooks in `.githooks/` (turned on per
+clone by `git config core.hooksPath .githooks`) check the staged commit, its message and, where code
+changes, its review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by hand, and
+`npm test` runs the tools' tests.
 
 - **Status.** Any change to a node's wording — title, text, rationale, or the values its kind carries
-  such as `list` — empties its status. A node becomes `checked` only on the owner's agreement after
-  reading it, never on your own judgement; until `sheriff confirm` exists, you write the status once
-  they agree. The one exception the owner allows: a purely technical replacement that changes no
-  meaning, such as a renamed term or path, is confirmed by you and reported in one line. A change to
-  links or metadata leaves the status as it is; a move that gives the node another owner empties it
-  (§s-5ah25f6gy99panq).
+  such as `list` — needs its status written `""`: `sheriff guard` refuses an edit that leaves it
+  checked. A node becomes checked only on the owner's agreement after reading it, never on your own
+  judgement, by `npx sheriff confirm <sid>` (git names the owner). The one exception the owner allows:
+  a purely technical replacement that changes no meaning, such as a renamed term or path, is
+  confirmed by you and reported in one line. A change to links or metadata leaves the status as it
+  is; a move that gives the node another owner empties it (§s-5ah25f6gy99panq).
 - **Citations.** A node cites another as `§<sid>`, in any field but its links and children. Every
   citation needs an outgoing link to that node (`cites` unless another type says how the two bear on
-  each other), a `cites` link stands only where the node cites its target, and the target holds the
-  mirroring incoming entry (§s-bpdqd9v72wg7vsz).
+  each other), and a `cites` link stands only where the node cites its target (§s-bpdqd9v72wg7vsz);
+  the incoming entry is built by the reindex.
 - **Decisions** are recorded in the `meta.decisions` of the rule they settled, never as a document
   (§s-gqbj8849rf224qa), retold without anything of the private origin project the method was
   extracted from: nothing here names it or relies on it.
-- **Removal.** While the core is first written, a removed node is deleted, not archived (design log,
-  2026-10-27); afterwards a checked node goes to the archive (§s-f2b5zvc565s242f).
+- **Removal.** A node a confirmation was ever given for goes to the archive,
+  `specs/_archive/<name>.json`, with `archived` holding the date, the reason and the sid of the node
+  that replaces it; a node never confirmed is deleted (§s-f2b5zvc565s242f).
 - **Where a rule goes.** The base names no technology, no look of a user interface and no figure
   measured on one instance; those go to the appendix of the tools, each of whose rules implements a
   node of the base. Examples in the core name what any system has — a user, an operator, a record, a
@@ -76,35 +88,6 @@ existing key order.
 - **How a rule is written** is the last section of `spec.json` — one language (English), a named
   subject, a reason that gives only its grounds and is no narrower than its rule, no count in prose,
   no capitals for stress, a general word carrying its object. Read it before writing any node.
-
-After every edit, run this stand-in for `sheriff validate` from the repository root:
-
-```bash
-python - <<'EOF'
-import glob, json, re
-nodes, errs = {}, []
-for f in glob.glob("specs/**/*.json", recursive=True):
-    raw = open(f, encoding="utf-8").read()
-    data = json.loads(raw)
-    if json.dumps(data, indent=2, ensure_ascii=False) + "\n" != raw: errs.append(f"{f}: not in canonical formatting")
-    stack = list(data.get("nodes", []))
-    while stack:
-        n = stack.pop(); stack += n.get("children", [])
-        if not re.fullmatch(r"s-[2-9a-hjkmnp-z]{15}", n["sid"]) or n["sid"] in nodes: errs.append(f"bad or duplicate sid {n['sid']}")
-        nodes[n["sid"]] = n
-for sid, n in nodes.items():
-    out = {(r["type"], r["to"]) for r in n["refs"] if "to" in r}
-    cited = set(re.findall(r"§(s-\w+)", json.dumps({k: v for k, v in n.items() if k not in ("refs", "children")}, ensure_ascii=False))) - {sid}
-    for t, to in out:
-        if to not in nodes: errs.append(f"{sid}: link to missing {to}")
-        elif {"type": t, "from": sid} not in nodes[to]["refs"]: errs.append(f"{to}: missing incoming {t} from {sid}")
-        if t == "cites" and to not in cited: errs.append(f"{sid}: cites link to {to} without a § citation")
-    for r in n["refs"]:
-        if "from" in r and {"type": r["type"], "to": sid} not in nodes.get(r["from"], {"refs": []})["refs"]: errs.append(f"{sid}: stale incoming {r}")
-    errs += [f"{sid}: cites {c} without a link" for c in cited - {to for _, to in out}]
-print("\n".join(errs) or f"ok: {len(nodes)} nodes")
-EOF
-```
 
 ## Working with the owner
 

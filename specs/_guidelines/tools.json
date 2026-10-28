@@ -44,7 +44,21 @@
               "type": "implements",
               "to": "s-nkyty4dy9x2v2a4"
             }
-          ]
+          ],
+          "meta": {
+            "tests": [
+              "packages/specsheriff/test/unit/binding.test.ts::s-zefk589ykh37b8u reads no file of the tools for an address where the core is written",
+              "packages/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file neither names for neither",
+              "packages/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live",
+              "packages/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads this repository's settings, whose tests are the tools' own",
+              "packages/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads whether the core is written in the repository",
+              "packages/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared",
+              "packages/specsheriff/test/unit/model.test.ts::s-zefk589ykh37b8u tells a file's part and whether it holds the core",
+              "packages/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u finds each node with the file it stands in and its parent",
+              "packages/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part",
+              "packages/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file"
+            ]
+          }
         },
         {
           "id": "_guidelines/tools/2",
@@ -118,6 +132,28 @@
                 "ruling": "The owner: they are the commands of SpecSheriff's toolset, described in the appendix of the tools.",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "packages/specsheriff/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts an unknown command is refused, naming it",
+              "packages/specsheriff/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff --version prints the version of the toolset",
+              "packages/specsheriff/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff with no command lists the commands",
+              "packages/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines",
+              "packages/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it",
+              "packages/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address",
+              "packages/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where",
+              "packages/specsheriff/test/unit/generated.test.ts::s-f5rz6b7dhxejjts sheriff guide prints the core of this repository whole",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads it",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two lists into one holding the first's members, then the second's the first lacks",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two objects key by key, each key where it was first written",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two values JSON Schema holds equal into one",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge, naming the key and each one's line and value",
+              "packages/specsheriff/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts gives a sid to a node that has none, its address and sid first",
+              "packages/specsheriff/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge",
+              "packages/specsheriff/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file",
+              "packages/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts names every link a node makes or receives by the address and title of the node at the other end",
+              "packages/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts refuses a key no node holds",
+              "packages/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its address the same as by its sid",
+              "packages/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its sid: its address, title, status, text and reason"
             ]
           }
         },
@@ -143,6 +179,9 @@
                 "ruling": "The owner: it is a web page, and the rule says so.",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "packages/specsheriff/test/unit/generated.test.ts::s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of"
             ]
           }
         },
@@ -184,6 +223,14 @@
                 "ruling": "Following the owner's rulings on citations (§s-bpdqd9v72wg7vsz, §s-sn6au3vcr9uy5pm, §s-hr7j7scmfkkjnws): the pre-commit hook runs the citation check, and the check of the specification refuses a citation with no link.",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "packages/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written",
+              "packages/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it",
+              "packages/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves",
+              "packages/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together",
+              "packages/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
+              "packages/specsheriff/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
             ]
           }
         },
@@ -223,6 +270,13 @@
                 "by": "the owner",
                 "text": "The Record variants row checks a value against the choosing field's own list only: how a project's own guidelines name another place where such values are declared, and so how a variant is found to stand in the domain declaring its value, is to be described, and checked once it is."
               }
+            ],
+            "tests": [
+              "packages/specsheriff/test/unit/binding.test.ts::s-4kd2pave7vm4hmd refuses a sid in the code, the tests or the documents that names no node, the archive's included, and a number naming a node",
+              "packages/specsheriff/test/unit/gates.test.ts::s-4kd2pave7vm4hmd reads the tests as the edit would leave the working tree",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds a key an object holds twice, naming the key and both lines",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds nothing where every key is held once",
+              "packages/specsheriff/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd refuses text that is not JSON, naming the line"
             ]
           }
         },
@@ -268,6 +322,15 @@
                 "ruling": "The owner: one general parser, with a grammar per language, reads the code; a language is added by describing what counts as a declaration and as a test in it, and TypeScript, JavaScript and Python are described at launch.",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "packages/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp covers a member by the tag of the class it stands in",
+              "packages/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp finds a symbol carrying no tag, and a tag not directly above a symbol",
+              "packages/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp lets the first of a run of re-exports say for the whole run that it implements no rule",
+              "packages/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a Python tag in the comment lines above a symbol's decorators, and an assignment at the module's level",
+              "packages/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a tag in the doc comment directly above a TypeScript symbol, several where it carries several",
+              "packages/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads nothing of a file in a language no description covers",
+              "packages/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp refuses a tag sharing its line with anything but the comment's delimiters"
             ]
           }
         },
@@ -297,6 +360,14 @@
                 "ruling": "The owner: in Python a test declares its sid by a mark on it; each language's description says how a test declares its sid there.",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "packages/pytest-specsheriff/tests/test_plugin.py::test_a_mark_without_one_sid_is_refused",
+              "packages/pytest-specsheriff/tests/test_plugin.py::test_a_run_reports_a_marked_test_by_a_name_its_sid_opens",
+              "packages/pytest-specsheriff/tests/test_plugin.py::test_an_unmarked_test_keeps_its_name",
+              "packages/pytest-specsheriff/tests/test_plugin.py::test_the_mark_is_registered",
+              "packages/specsheriff/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a Python test declares by its mark",
+              "packages/specsheriff/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a TypeScript test opens its name with, a template's leading text included"
             ]
           }
         },
@@ -329,6 +400,10 @@
                 "by": "the owner",
                 "text": "Describe the Codex and Gemini CLIs as runners, then any service speaking the OpenAI-compatible API, which covers models run locally."
               }
+            ],
+            "tests": [
+              "packages/specsheriff/test/unit/config.test.ts::s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus and twenty minutes unless set otherwise",
+              "packages/specsheriff/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, the model and its fallback asked for"
             ]
           }
         },
@@ -362,6 +437,15 @@
                 "ruling": "The owner: a confirmation is kept with the specification, names who gave it and is accepted only under that owner's signature.",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "packages/specsheriff/test/e2e/commands.test.ts::s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured with, and refuses where that is not the owner",
+              "packages/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends nothing where the latest line for that wording is already its owner's confirmation",
+              "packages/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and the owner confirming it, and sets it checked",
+              "packages/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended",
+              "packages/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
+              "packages/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides",
+              "packages/specsheriff/test/unit/model.test.ts::s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind carries, not its owner or what the reindex builds"
             ]
           }
         }

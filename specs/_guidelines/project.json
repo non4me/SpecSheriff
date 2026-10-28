@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines",
+  "section": "project",
+  "nodes": [
+    {
+      "id": "_guidelines/project",
+      "sid": "s-4r66g6swm8up52b",
+      "kind": "section",
+      "title": "SpecSheriff's own guidelines",
+      "status": "",
+      "text": "What only the specification of this repository needs beyond the core.",
+      "owner": "vladimir.troyanenko@gmail.com",
+      "refs": []
+    }
+  ]
+}
