@@ -1,6 +1,16 @@
 import { readFileSync } from "node:fs";
 import { join, posix } from "node:path";
 
+export interface ReviewSettings {
+  /** The runner the reviewer's input is handed to. */
+  runner: "claude";
+  model: string;
+  /** The model asked for where the first is overloaded or not offered. */
+  fallbackModel: string;
+  /** The time after which a run is ended, in minutes. */
+  minutes: number;
+}
+
 export interface Config {
   /** Globs naming where the system's code lives: read for tags. */
   code: string[];
@@ -8,10 +18,14 @@ export interface Config {
   tests: string[];
   /** Whether the core is written in this repository, so that its nodes are confirmed here rather than compared with a version. */
   writesCore: boolean;
+  /** The command that runs the tests of the system's code, before a commit is shared. */
+  testCommand: string | null;
+  review: ReviewSettings;
 }
 
 const FILE = "sheriff.config.json";
 const KEYS = ["code", "tests"] as const;
+const REVIEW: ReviewSettings = { runner: "claude", model: "fable", fallbackModel: "opus", minutes: 20 };
 
 export function loadConfig(root: string): Config {
   let raw: Record<string, unknown>;
@@ -21,7 +35,7 @@ export function loadConfig(root: string): Config {
     throw new Error(`${FILE}: ${(error as Error).message}`);
   }
   for (const key of Object.keys(raw)) {
-    if (![...KEYS, "writesCore"].includes(key)) throw new Error(`${FILE}: ${key} is no setting of the toolset`);
+    if (![...KEYS, "writesCore", "testCommand", "review"].includes(key)) throw new Error(`${FILE}: ${key} is no setting of the toolset`);
   }
   for (const key of KEYS) {
     const value = raw[key];
@@ -30,11 +44,22 @@ export function loadConfig(root: string): Config {
     }
   }
   if (raw.writesCore !== undefined && typeof raw.writesCore !== "boolean") throw new Error(`${FILE}: writesCore must be true or false`);
-  return { code: raw.code as string[], tests: raw.tests as string[], writesCore: raw.writesCore === true };
+  if (raw.testCommand !== undefined && typeof raw.testCommand !== "string") throw new Error(`${FILE}: testCommand must be a command`);
+  const review = { ...REVIEW, ...((raw.review as object | undefined) ?? {}) } as ReviewSettings;
+  for (const key of Object.keys(review)) if (!(key in REVIEW)) throw new Error(`${FILE}: review.${key} is no setting of the reviewer`);
+  if (review.runner !== "claude") throw new Error(`${FILE}: review.runner names no runner the toolset describes: ${review.runner}`);
+  if (typeof review.minutes !== "number" || review.minutes <= 0) throw new Error(`${FILE}: review.minutes must be a number of minutes`);
+  return {
+    code: raw.code as string[],
+    tests: raw.tests as string[],
+    writesCore: raw.writesCore === true,
+    testCommand: (raw.testCommand as string | undefined) ?? null,
+    review,
+  };
 }
 
 /** How a file, by its path from the root with forward slashes, is read: a test wins over code where both name it. */
-export function readsAs(config: Config, path: string): "code" | "tests" | null {
+export function readsAs(config: Pick<Config, "code" | "tests">, path: string): "code" | "tests" | null {
   const matches = (globs: string[]) => globs.some((glob) => posix.matchesGlob(path, glob));
   if (matches(config.tests)) return "tests";
   if (matches(config.code)) return "code";

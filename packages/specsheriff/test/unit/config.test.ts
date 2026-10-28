@@ -14,7 +14,18 @@ function withConfig(text: string): string {
 
 test("s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live", () => {
   const config = loadConfig(withConfig('{ "code": ["src/**/*.ts"], "tests": ["test/**/*.test.ts"] }'));
-  assert.deepEqual(config, { code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesCore: false });
+  assert.deepEqual(config, { code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesCore: false, testCommand: null, review: { runner: "claude", model: "fable", fallbackModel: "opus", minutes: 20 } });
+});
+
+test("s-477gtdrkw34dzxw reads the command that runs the tests of the system's code", () => {
+  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "testCommand": "npm test" }')).testCommand, "npm test");
+});
+
+test("s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus and twenty minutes unless set otherwise", () => {
+  const set = loadConfig(withConfig('{ "code": [], "tests": [], "review": { "model": "opus", "minutes": 5 } }')).review;
+  assert.deepEqual(set, { runner: "claude", model: "opus", fallbackModel: "opus", minutes: 5 });
+  assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "other" } }')), /runner/);
+  assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "review": { "colour": 1 } }')), /colour/);
 });
 
 test("s-zefk589ykh37b8u reads whether the core is written in the repository", () => {

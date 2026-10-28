@@ -5,6 +5,9 @@ import { fileURLToPath } from "node:url";
 import { confirm } from "./confirmations.ts";
 import { binding, citationsOutside } from "./binding.ts";
 import { exportMarkdown, guide, render } from "./generated.ts";
+import { guard } from "./guard.ts";
+import { message } from "./message.ts";
+import { review } from "./review.ts";
 import { reindex } from "./reindex.ts";
 import { show } from "./show.ts";
 import { loadSpecification, specificationOf, type SpecFile, type Specification } from "./spec-files.ts";
@@ -23,6 +26,9 @@ Commands:
   guide                       print the guidelines and where the specification stands
   binding                     check the specification against the code and the tests
   citations                   check the sids in the code, the tests and the documents
+  message <file>              check a commit's message against the code it changes
+  review <file>               ask the independent reviewer for its verdict on the commit being made
+  guard                       judge the edit an agent's harness describes on standard input
 
 Options:
   --version  print the version of the toolset
@@ -85,6 +91,20 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       const findings = await binding(root);
       for (const f of findings) process.stdout.write(`${f.where}: ${f.reported ? "reported: " : ""}${f.message}\n`);
       return findings.some((f) => !f.reported) ? 1 : 0;
+    }
+    case "message":
+    case "review": {
+      if (!args[0]) throw new Error("name the file holding the commit's message");
+      const text = readFileSync(args[0], "utf8");
+      const findings = command === "message" ? await message(root, text) : await review(root, text);
+      for (const f of findings) process.stdout.write(`${f.where}: ${f.message}\n`);
+      return findings.length ? 1 : 0;
+    }
+    case "guard": {
+      // The harness blocks the edit on exit code 2 and hands what is written to standard error to the agent.
+      const reason = await guard(root, JSON.parse(readFileSync(0, "utf8") || "{}"));
+      if (reason) process.stderr.write(`sheriff guard: ${reason}\n`);
+      return reason ? 2 : 0;
     }
     case "citations": {
       const findings = await citationsOutside(root);

@@ -35,18 +35,20 @@ async function readAll(root: string, paths: string[]): Promise<CodeFile[]> {
 
 const allSymbols = (symbols: CodeSymbol[]): CodeSymbol[] => symbols.flatMap((s) => [s, ...allSymbols(s.inner)]);
 
-export async function binding(root: string): Promise<BindingFinding[]> {
-  const findings: BindingFinding[] = [];
-  const config = loadConfig(root);
-  const spec = loadSpecification(root);
-  const exists = (sid: string) => spec.nodes.has(sid);
-  const checked = (sid: string) => spec.nodes.get(sid)?.node.status === "checked";
+export interface Commit {
+  codeFiles: CodeFile[];
+  testFiles: CodeFile[];
+  /** The symbols whose code the commit adds or changes, by file. */
+  changedSymbols: Map<string, Set<CodeSymbol>>;
+  /** The names of the tests the commit adds or changes, by file. */
+  changedTests: Map<string, Set<string>>;
+}
+
+/** The code and the tests as the commit leaves them, and what of them it adds or changes. */
+export async function readCommit(root: string, config: Config): Promise<Commit> {
   const tracked = trackedFiles(root).filter((p) => existsSync(join(root, p)));
   const codeFiles = await readAll(root, tracked.filter((p) => readsAs(config, p) === "code"));
   const testFiles = await readAll(root, tracked.filter((p) => readsAs(config, p) === "tests"));
-  const at = (path: string, line: number) => `${path}:${line}`;
-
-  // What the commit changes: the symbols and the tests its lines of code fall in.
   const commit = changes(root).filter((c) => readsAs(config, c.path) !== null);
   const lines = codeChanges(commit);
   const changedSymbols = new Map<string, Set<CodeSymbol>>();
@@ -73,6 +75,24 @@ export async function binding(root: string): Promise<BindingFinding[]> {
     changedSymbols.set(change.path, symbols);
     changedTests.set(change.path, tests);
   }
+  return { codeFiles, testFiles, changedSymbols, changedTests };
+}
+
+/** The sids the tags on the symbols a commit changes name, inner symbols' own included. */
+export function changedTags(commit: Commit): Set<string> {
+  const sids = new Set<string>();
+  for (const symbols of commit.changedSymbols.values()) for (const s of symbols) for (const t of s.tags) if (t.sid) sids.add(t.sid);
+  return sids;
+}
+
+export async function binding(root: string): Promise<BindingFinding[]> {
+  const findings: BindingFinding[] = [];
+  const config = loadConfig(root);
+  const spec = loadSpecification(root);
+  const exists = (sid: string) => spec.nodes.has(sid);
+  const checked = (sid: string) => spec.nodes.get(sid)?.node.status === "checked";
+  const { codeFiles, testFiles, changedSymbols, changedTests } = await readCommit(root, config);
+  const at = (path: string, line: number) => `${path}:${line}`;
 
   // Tags.
   const rulesChanged = new Set<string>();
