@@ -18,7 +18,7 @@
           "kind": "rule",
           "title": "Where the files are",
           "status": "checked",
-          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its head in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, and the guidelines under `specs/_guidelines/`: the base in `spec.json`, the appendix of the tools in `tools.json`, and a project's own guidelines in `project.json`. A part divided into one file per section keeps its files in its directory. The schema is kept in `specs/_schema/`: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part. Confirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git; the skills `sheriff skill` writes are kept in git, where the agent's harness reads them. The toolset is installed as the npm package `specsheriff`, which provides the command `sheriff`, and its plugin for pytest as the package `pytest-specsheriff`. The toolset's settings are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live.",
+          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its head in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: the base in `spec.json`, the appendix of the tools in `tools.json`, and a project's own guidelines in `project.json`. A part divided into one file per section keeps its files in its directory. The schema is kept in `specs/_schema/`: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part. Confirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git; the skills `sheriff skill` writes are kept in git, where the agent's harness reads them. The toolset is installed as the npm package `specsheriff`, which provides the command `sheriff`, and its plugin for pytest as the package `pytest-specsheriff`. The toolset's settings are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the core is written in says so by the setting `\"writesCore\": true`. The specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
           "refs": [
             {
               "type": "implements",
@@ -35,6 +35,14 @@
             {
               "type": "implements",
               "to": "s-a4rbry4hsu34hy8"
+            },
+            {
+              "type": "implements",
+              "to": "s-67vekyup7y8smap"
+            },
+            {
+              "type": "implements",
+              "to": "s-nkyty4dy9x2v2a4"
             }
           ]
         },
@@ -208,6 +216,13 @@
                 "ruling": "The owner: the check of the specification refuses it, so a commit cannot carry it.",
                 "type": "textual"
               }
+            ],
+            "todos": [
+              {
+                "date": "2026-10-28",
+                "by": "the owner",
+                "text": "The Record variants row checks a value against the choosing field's own list only: how a project's own guidelines name another place where such values are declared, and so how a variant is found to stand in the domain declaring its value, is to be described, and checked once it is."
+              }
             ]
           }
         },
@@ -323,7 +338,7 @@
           "kind": "rule",
           "title": "How a confirmation is recorded",
           "status": "checked",
-          "text": "`sheriff confirm <sid>...` appends to `specs/_confirmations.jsonl` one line per node — its sid, the fingerprint of its wording and the owner confirming it — unless the latest line for that fingerprint is already a confirmation by the node's owner, and sets the node's status to checked; `sheriff confirm --withdraw <sid>...` appends a line withdrawing the confirmation of the wording the node holds, and empties its status. Of the lines for one fingerprint, the latest decides. The fingerprint is a SHA-256 hash of one canonical string holding the node's title, text and reason and the values its kind carries beside them, the keys of an object sorted and a list in its own order. An owner is named by an email.",
+          "text": "`sheriff confirm <sid>...` appends to `specs/_confirmations.jsonl` one line per node — its sid, the fingerprint of its wording and the owner confirming it, who is the email git is configured with — and sets the node's status to checked. It refuses a node whose owner is someone else, naming that owner, and appends nothing for a node where the latest line for that fingerprint is already a confirmation by its owner. `sheriff confirm --withdraw <sid>...` appends a line withdrawing the confirmation of the wording the node holds, and empties its status. Of the lines for one fingerprint, the latest decides. The fingerprint is a SHA-256 hash of one canonical string holding the node's title, text and reason and the values its kind carries beside them, but neither the owner a node names nor what the reindex builds, the keys of an object sorted and a list in its own order. An owner is named by an email.",
           "refs": [
             {
               "type": "implements",
@@ -338,7 +353,7 @@
               "from": "s-f5rz6b7dhxejjts"
             }
           ],
-          "rationale": "One line appended per confirmation merges between branches without a conflict and keeps every confirmation ever given, and with the latest line deciding, a withdrawal cannot be undone by typing a status back. SHA-256 is a hash every language provides.",
+          "rationale": "One line appended per confirmation merges between branches without a conflict and keeps every confirmation ever given, and with the latest line deciding, a withdrawal cannot be undone by typing a status back. SHA-256 is a hash every language provides. The email git is configured with is the one a commit names its author by, so a confirmation and the commit carrying it name the same person. The owner a node names says who reads its wording, not what the wording is, and what the reindex builds is no one's wording.",
           "meta": {
             "decisions": [
               {

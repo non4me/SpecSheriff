@@ -8,13 +8,14 @@
     "sheriff": "dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "core"
   ],
   "engines": {
     "node": ">=24"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-core.mjs",
     "prepare": "npm run build",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit && npm run test:e2e",

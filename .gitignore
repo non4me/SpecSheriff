@@ -2,3 +2,4 @@ node_modules/
 dist/
 md-version/
 specs/_viewer/
+packages/specsheriff/core/

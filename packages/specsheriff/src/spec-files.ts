@@ -55,11 +55,16 @@ function readSpecFile(root: string, path: string): SpecFile {
   }
 }
 
-export function loadSpecification(root: string): Specification {
+/** The paths of the files of the specification and of its archive, in the order they are read. */
+export function specPaths(root: string): string[] {
+  return jsonFiles(root, "specs");
+}
+
+/** The specification the files make, the archive's set apart. */
+export function specificationOf(files: SpecFile[]): Specification {
   const spec: Specification = { files: [], archive: [], nodes: new Map() };
-  for (const path of jsonFiles(root, "specs")) {
-    const file = readSpecFile(root, path);
-    if (path.startsWith("specs/_archive/")) {
+  for (const file of files) {
+    if (file.path.startsWith("specs/_archive/")) {
       spec.archive.push(file);
       continue;
     }
@@ -71,6 +76,10 @@ export function loadSpecification(root: string): Specification {
     for (const node of file.data.nodes ?? []) walk(node, null);
   }
   return spec;
+}
+
+export function loadSpecification(root: string): Specification {
+  return specificationOf(specPaths(root).map((path) => readSpecFile(root, path)));
 }
 
 /** The one formatting of a file of the specification: two spaces, keys in their order, text as it is, LF. */

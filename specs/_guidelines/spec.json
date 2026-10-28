@@ -217,6 +217,10 @@
                 {
                   "type": "implements",
                   "from": "s-v4qus7raqnwzneb"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-zefk589ykh37b8u"
                 }
               ],
               "rationale": "A confirmation means that whoever answers for a rule has read it, so only that person can give it. Owners of domains and sections divide the reading as the specification is divided, so that it can grow beyond what one person reads.",
@@ -866,6 +870,10 @@
                 {
                   "type": "cites",
                   "to": "s-bsya3febm6u64ab"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-zefk589ykh37b8u"
                 }
               ],
               "rationale": "The links between domains give an order but not a place: a domain that uses nothing may be where the others start or stand apart from them, and one that nothing uses may be where they end or stand over them. The level says which.",

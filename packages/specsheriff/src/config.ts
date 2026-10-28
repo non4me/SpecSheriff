@@ -6,6 +6,8 @@ export interface Config {
   code: string[];
   /** Globs naming where its tests live: read for the sids they declare. */
   tests: string[];
+  /** Whether the core is written in this repository, so that its nodes are confirmed here rather than compared with a version. */
+  writesCore: boolean;
 }
 
 const FILE = "sheriff.config.json";
@@ -19,7 +21,7 @@ export function loadConfig(root: string): Config {
     throw new Error(`${FILE}: ${(error as Error).message}`);
   }
   for (const key of Object.keys(raw)) {
-    if (!(KEYS as readonly string[]).includes(key)) throw new Error(`${FILE}: ${key} is no setting of the toolset`);
+    if (![...KEYS, "writesCore"].includes(key)) throw new Error(`${FILE}: ${key} is no setting of the toolset`);
   }
   for (const key of KEYS) {
     const value = raw[key];
@@ -27,7 +29,8 @@ export function loadConfig(root: string): Config {
       throw new Error(`${FILE}: ${key} must be a list of glob patterns`);
     }
   }
-  return { code: raw.code as string[], tests: raw.tests as string[] };
+  if (raw.writesCore !== undefined && typeof raw.writesCore !== "boolean") throw new Error(`${FILE}: writesCore must be true or false`);
+  return { code: raw.code as string[], tests: raw.tests as string[], writesCore: raw.writesCore === true };
 }
 
 /** How a file, by its path from the root with forward slashes, is read: a test wins over code where both name it. */

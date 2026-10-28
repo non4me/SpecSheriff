@@ -14,11 +14,16 @@ function withConfig(text: string): string {
 
 test("s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live", () => {
   const config = loadConfig(withConfig('{ "code": ["src/**/*.ts"], "tests": ["test/**/*.test.ts"] }'));
-  assert.deepEqual(config, { code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"] });
+  assert.deepEqual(config, { code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesCore: false });
+});
+
+test("s-zefk589ykh37b8u reads whether the core is written in the repository", () => {
+  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "writesCore": true }')).writesCore, true);
+  assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "writesCore": "yes" }')), /writesCore/);
 });
 
 test("s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file neither names for neither", () => {
-  const config = { code: ["src/**/*.ts"], tests: ["src/**/*.test.ts", "test/**"] };
+  const config = { code: ["src/**/*.ts"], tests: ["src/**/*.test.ts", "test/**"], writesCore: false };
   assert.equal(readsAs(config, "src/a/b.ts"), "code");
   assert.equal(readsAs(config, "src/a/b.test.ts"), "tests");
   assert.equal(readsAs(config, "test/x.py"), "tests");
