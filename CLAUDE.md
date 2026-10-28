@@ -10,6 +10,12 @@ is no code, no package manifest and nothing to build or test: the `sheriff` comm
 `specs/_schema/` and `sheriff.config.json` are specified in the appendix of the tools but do not
 exist yet. Never run them or report a check as having run.
 
+The principles the method rests on, as the owner states them, are below. Weigh every decision and
+proposal against them first; one that contradicts a principle is raised with the owner, never carried
+out quietly.
+
+@docs/principles.md
+
 `docs/design-log.md` holds the decisions (newest first), the order of work and the open questions;
 read it before proposing anything. A decision moves onto the rule it settled once that rule exists,
 and the log keeps only what no rule carries.
@@ -50,7 +56,8 @@ existing key order.
   reading it, never on your own judgement; until `sheriff confirm` exists, you write the status once
   they agree. The one exception the owner allows: a purely technical replacement that changes no
   meaning, such as a renamed term or path, is confirmed by you and reported in one line. A change to
-  links, metadata or place leaves the status as it is (§s-5ah25f6gy99panq).
+  links or metadata leaves the status as it is; a move that gives the node another owner empties it
+  (§s-5ah25f6gy99panq).
 - **Citations.** A node cites another as `§<sid>`, in any field but its links and children. Every
   citation needs an outgoing link to that node (`cites` unless another type says how the two bear on
   each other), a `cites` link stands only where the node cites its target, and the target holds the
@@ -114,6 +121,6 @@ EOF
 The tools are written in TypeScript on Node and read code with tree-sitter. In the worked example and
 any project taking the core, every symbol of the system's code carries `@spec <sid>` (or
 `@spec none <reason>`) in the comment directly above it, a test declares the sid it verifies and is
-written first, and a commit changing code names every checked rule it serves; the exact syntax is in
+written first, and a commit changing code names every checked node it serves; the exact syntax is in
 `tools.json`. The repository's tools, configuration and tests are exempt from tags by where they live
 (§s-kgbzk2ph9e6jfb4).

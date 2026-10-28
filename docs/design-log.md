@@ -6,12 +6,35 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-28 — The core read again as a whole, against the principles
+
+The owner stated the principles the method rests on, now in `docs/principles.md`, and went over the
+core again as a whole, each changed node confirmed as it now stands, its decisions on it. The rulings
+that bear on more than one node:
+
+- **A symbol, not a declaration, carries the tag**, and only a symbol whose code a commit changes must
+  name a checked node; a change to a tag is a change to the code (§s-kgbzk2ph9e6jfb4).
+- **The specification has one owner; a domain or any section may have its own**, the nearest above a
+  node being its owner, and only the owner confirms (§s-67vekyup7y8smap). A confirmation names its
+  owner and is not signed: the agent's hooks and the checks at a commit keep a status honest. This
+  sets aside the signed confirmations of 2026-10-27.
+- **The checks run at each edit an agent makes**, and an edit that would leave a node checked over an
+  unconfirmed wording, or change the code of a rule with no test, is refused before it is made
+  (§s-83ev4wwesbwnhnp); the hooks are kept in the repository.
+- **Whatever is generated from the nodes is regenerated after every change and never edited**, and a
+  generated copy that is kept is checked against what the nodes produce (§s-kh8qcd5kxgh9z3j).
+- **A node ever confirmed is archived when removed**, not only one checked at the moment
+  (§s-f2b5zvc565s242f). The rule that a node removed while the core is first written is deleted ends
+  before `sheriff validate` first runs on this repository.
+- **Comments come back into a node's metadata**, the one type of comment an open problem; the schema
+  defines them at step 2 (todo on §s-eferktypcj7njt5).
+
 ### 2026-10-27 — The core guidelines are confirmed
 
 The owner went over every node of the core, the base and the appendix of the tools, one at a time,
 the English above a reading in Russian. What came over unchanged kept its confirmation, since its
 wording was the one the owner had already confirmed; every changed or new node was confirmed as it
-now stands, its decisions on it. The confirmations become signed lines once the tools record them
+now stands, its decisions on it. The confirmations become lines in a file once the tools record them
 (step 2). The rulings of that reading that bear on more than one node:
 
 - **The core's examples name what any system has** — a user, an operator, a record, a request — and
@@ -180,7 +203,8 @@ that person. Working alone, one person owns every domain, and nothing changes.
 One owner for the whole specification was set aside because it binds a growing specification to one
 person; a confirmation read off the approvals of a merge request, because it would tie what a status
 means to one hosting platform. That platform's approvals may later be described as one way an
-appendix of the tools records a confirmation, never as what a confirmation is.
+appendix of the tools records a confirmation, never as what a confirmation is. (The signature was set
+aside on 2026-10-28.)
 
 ### 2026-10-27 — How the origin project takes the core
 
