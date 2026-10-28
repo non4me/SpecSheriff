@@ -24,7 +24,9 @@ them. The rulings of building it that bear on more than one node:
 - **A project gets the hooks, the skills and the core by `sheriff init`**, a command rather than the
   adopt skill, so that what the checks depend on is laid out by a script (step 3). The adopt skill
   imports a project's documents by the agent, with no import command, since every project writes
-  its documents its own way; the owner's reading of every node is what guarantees the import. The
+  its documents its own way; the owner's reading of every node is what guarantees the import. It
+  starts from the directory the owner names, walked whole, the owner agreeing which part each
+  document goes into, and the originals are deleted once they stand in the nodes. The
   owner's language and table of terms for spec-review are a file of the project's,
   `.claude/spec-review.md`.
 
