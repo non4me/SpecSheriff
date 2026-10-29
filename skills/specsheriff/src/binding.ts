@@ -19,7 +19,7 @@ const SID_ANYWHERE = /\bs-[2-9a-hjkmnp-z]{15}\b/g;
 function outsideFiles(root: string, config: Config): string[] {
   return trackedFiles(root).filter((p) => {
     if (p.startsWith("specs/")) return false;
-    if (config.writesSpecSheriffGuidelines && p.startsWith("packages/")) return false;
+    if (config.writesSpecSheriffGuidelines && p.startsWith("skills/")) return false;
     return readsAs(config, p) !== null || p.endsWith(".md");
   });
 }

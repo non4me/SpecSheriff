@@ -44,8 +44,8 @@ test("s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file 
 
 test("s-zefk589ykh37b8u reads this repository's settings, whose tests are the tools' own", () => {
   const config = loadConfig(REPO);
-  assert.equal(readsAs(config, "packages/specsheriff/test/unit/config.test.ts"), "tests");
-  assert.equal(readsAs(config, "packages/specsheriff/src/config.ts"), null);
+  assert.equal(readsAs(config, "skills/specsheriff/test/unit/config.test.ts"), "tests");
+  assert.equal(readsAs(config, "skills/specsheriff/src/config.ts"), null);
 });
 
 test("s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared", () => {

@@ -2,8 +2,8 @@ node_modules/
 dist/
 md-version/
 specs/_viewer/
-packages/specsheriff/guidelines/
-packages/specsheriff/grammars/
+skills/specsheriff/guidelines/
+skills/specsheriff/grammars/
 __pycache__/
 .pytest_cache/
 *.egg-info/

@@ -1,8 +1,8 @@
 {
   "code": [],
   "tests": [
-    "packages/specsheriff/test/**/*.test.ts",
-    "packages/pytest-specsheriff/tests/**/test_*.py"
+    "skills/specsheriff/test/**/*.test.ts",
+    "skills/pytest-specsheriff/tests/**/test_*.py"
   ],
   "writesSpecSheriffGuidelines": true,
   "testCommand": "npm test"

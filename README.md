@@ -25,8 +25,8 @@ text of those rules.
   [`specs/_guidelines/`](specs/_guidelines/): the base in `spec.json`, and in `tools.json` the
   appendix saying how the tools carry it out.
 - **The skills** — what a practitioner installs: the SpecSheriff tools in
-  [`packages/specsheriff`](packages/specsheriff) (the command `sheriff`) and their plugin for pytest
-  in [`packages/pytest-specsheriff`](packages/pytest-specsheriff). The plugin for Claude Code and its
+  [`skills/specsheriff`](skills/specsheriff) (the command `sheriff`) and their plugin for pytest
+  in [`skills/pytest-specsheriff`](skills/pytest-specsheriff). The plugin for Claude Code and its
   marketplace come next, then Codex CLI.
 - **The worked example** — a saloon in a frontier town, set up the way any project is. It comes after
   the plugin.

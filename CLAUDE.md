@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SpecSheriff is a method of spec-anchored development and the upstream of what a project takes
 from it: the SpecSheriff guidelines and the SpecSheriff tools now, later the skills and a worked
-example. `npm install` at the root builds `packages/specsheriff/` and links `sheriff`; `npm test`
-runs its unit and end-to-end tests and those of `packages/pytest-specsheriff/` (Python 3.10 or later
+example. `npm install` at the root builds `skills/specsheriff/` and links `sheriff`; `npm test`
+runs its unit and end-to-end tests and those of `skills/pytest-specsheriff/` (Python 3.10 or later
 with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
 guidelines are written here, so their nodes are confirmed in `specs/_confirmations.jsonl` by the
 owner `specs/_guidelines/project.json` names. A change to
-`packages/specsheriff/src/` reaches the hooks once `npm run build -w specsheriff` has run. The git
+`skills/specsheriff/src/` reaches the hooks once `npm run build -w specsheriff` has run. The git
 hooks, the agent's hook and the skills `spec`, `spec-review` and `spec-adopt` are kept in
-`packages/specsheriff/assets/`; `.githooks/`, `.claude/hooks/` and `.claude/skills/` here are what
+`skills/specsheriff/assets/`; `.githooks/`, `.claude/hooks/` and `.claude/skills/` here are what
 `sheriff init` writes from them, so a change is made in the assets, the copy deleted and `sheriff
 init` run again — a test fails while the two differ. Never report a check as having run that has
 not.
@@ -109,7 +109,7 @@ changes, its review. `npx sheriff validate`, `binding`, `citations` and `show <s
 ## When code arrives
 
 The tools are written in TypeScript on Node and read code with tree-sitter. Their source is kept in
-`packages/specsheriff/` (the npm package providing `sheriff`) and `packages/pytest-specsheriff/` (the
+`skills/specsheriff/` (the npm package providing `sheriff`) and `skills/pytest-specsheriff/` (the
 plugin for pytest). In the worked example and any project taking the SpecSheriff guidelines, every
 symbol of the system's code carries `@spec <sid>` (or `@spec none <reason>`) in the comment directly
 above it, a test declares the sid it verifies and is written first, and a commit changing code names
