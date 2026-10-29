@@ -1,6 +1,7 @@
 # The landscape: what already exists
 
-Surveyed on 2026-10-27. The field moves month by month, and this survey is not exhaustive.
+Surveyed on 2026-10-27; four tools added on 2026-10-29. The field moves month by month, and this
+survey is not exhaustive.
 
 ## The vocabulary
 
@@ -25,15 +26,29 @@ specification.
 | Requirements traceability from regulated industries | OpenFastTrace, StrictDoc, Doorstop, Sphinx-Needs, BMW Lobster, mantra | permanent identifiers, links, tags in code and tests, coverage reports; Doorstop's review stamp, which is cleared when an item's text changes, is the same idea as an owner's confirmation | built for human audit rather than for agents; no reviewer judging what the code does against the rules; no doctrine of how a rule is written; no split between a technology-free base and a replaceable technical appendix |
 | Recent research and small projects | Spec Growth Engine (H. Grabowski, arXiv 2606.27045 and 2610.11725, 2026); LiveSpec; KeelSpec | a machine-readable spec graph; contract kept apart from design; the agent's context scoped to an ownership path; a deterministic drift gate as a git hook (Spec Growth Engine). `@spec` anchors in code and an LLM review of plans (LiveSpec). Typed artefacts, cross-references and a CI gate on drift (KeelSpec) | code is held to the graph through its import graph, not through per-declaration tags (Spec Growth Engine); specifications are markdown per feature, and the LLM reviews the plan rather than the code against the rules (LiveSpec); no binding of code or tests to rules (KeelSpec) |
 
+Added on 2026-10-29, each read at its own source that day:
+
+| Tool | What it shares with SpecSheriff | What it lacks |
+|---|---|---|
+| Qodo Merge (PR-Agent), its ticket compliance | a model judges a pull request against the ticket it names | the result is a label or findings on the pull request, advisory: no source describes it blocking a merge; no ids, no confirmation of the ticket's text, no tags, no deterministic check |
+| SpecGate | a sign-off holding a SHA-256 hash of the specification's text, which goes stale when the text is edited; tests carrying the id of the requirement they verify; a deterministic check in CI that fails on a requirement with no test or a dangling tag | the sign-off covers a change, not each rule; ids come from headings, so they are not permanent; code is mapped by path globs, not tagged; no hook at an edit or a commit; no reviewer |
+| SpecDrive | ids never reused or renumbered; `@spec` tags in tests and in the main modules of the code; a deterministic check of coverage and of orphan tags | not every symbol is tagged, and the code's tags are not checked; the check runs only when the agent's skill runs it, with no hook; approval is given in conversation and recorded nowhere; no reviewer |
+| Spec Trace, a community extension of Spec Kit | requirement ids in the specification, tests citing them, orphan tests found | tests only, not code; its matrix is produced by the agent following prompts, and nothing shipped checks it; no confirmation, no hook, no reviewer |
+
 ## Where SpecSheriff differs
 
-The parts exist separately, some of them for decades. No source found combines them, and three
-were found nowhere:
+The parts exist separately, some of them for decades, and no source found holds them together:
+rule nodes with permanent ids, each confirmed by its owner and unconfirmed again by a change to its
+wording; every symbol of the code and every test bound to a rule by its id; deterministic checks at
+each edit an agent makes and at every commit; and the three parts below. SpecGate comes nearest on a
+confirmation tied to the text and a deterministic gate, SpecDrive on permanent ids tagged into code
+and tests, Qodo on a model judging a change against its requirement.
 
 1. **An independent reviewer as a gate of every commit**, deliberately given nothing of the session
    that wrote the code: only the change and the text of the rules the commit names. It refuses a
    commit whose code does something no named rule states, or leaves out what one requires, naming
-   the rule and the line.
+   the rule and the line. Qodo's review is the nearest found: it reads the ticket rather than rules,
+   on the pull request, and advises.
 2. **A doctrine of how a rule is written**, each item derived from a way requirements were seen to
    decay silently: a count in prose that goes stale, a figure measured on one instance, a general
    word without its object, a rule written against a name rather than a property, an allow-list
@@ -55,3 +70,7 @@ were found nowhere:
 - [StrictDoc user guide](https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html)
 - [RTEMS — requirements tooling](https://docs.rtems.org/docs/6.2/eng/req/tooling.html) (an evaluation of Doorstop and others)
 - [bmw-lobster-tool-cpp](https://pypi.org/project/bmw-lobster-tool-cpp), [mantra](https://lib.rs/crates/mantra)
+- [Qodo — ticketing integrations](https://docs.qodo.ai/install-and-configure/integrations/ticketing-integrations), [qodo-ai/pr-agent](https://github.com/qodo-ai/pr-agent)
+- [fpavia111-creator/specgate](https://github.com/fpavia111-creator/specgate)
+- [junov/SpecDrive](https://github.com/junov/SpecDrive)
+- [Quratulain-bilal/spec-kit-trace](https://github.com/Quratulain-bilal/spec-kit-trace), listed in [Spec Kit's catalog of extensions](https://github.com/github/spec-kit)

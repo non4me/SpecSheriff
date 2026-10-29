@@ -19,9 +19,10 @@ text of those rules.
 
 ## Three parts
 
-- **The theory** — what the method is and why: [the principles](docs/principles.md), [what already
-  exists and where this method differs](docs/research/landscape.md), [the decisions taken so
-  far](docs/design-log.md), and the SpecSheriff guidelines themselves as rule nodes in
+- **The theory** — what the method is and why: [the method on one page](docs/README.md), [the
+  principles](docs/principles.md), [what already exists and where this method
+  differs](docs/research/landscape.md), [the decisions taken so far](docs/design-log.md), and the
+  SpecSheriff guidelines themselves as rule nodes in
   [`specs/_guidelines/`](specs/_guidelines/): the base in `spec.json`, and in `tools.json` the
   appendix saying how the tools carry it out.
 - **The skills** — what a practitioner installs: the SpecSheriff tools in
