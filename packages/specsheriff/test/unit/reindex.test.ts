@@ -88,9 +88,9 @@ test("s-5ah25f6gy99panq empties the status of a node confirmed by someone who is
   assert.equal(at(root, "levels").status, "");
 });
 
-test("s-bsya3febm6u64ab leaves the status of the core a project takes as it stands, and judges it where the core is written", () => {
+test("s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written", () => {
   const core = file("_guidelines", "spec", node("core", { kind: "section", status: "checked", children: [node("core rule", { status: "checked" })] }));
-  const taking = bank({ "specs/_guidelines/spec.json": core, "sheriff.config.json": { code: [], tests: [], writesCore: false } });
+  const taking = bank({ "specs/_guidelines/spec.json": core, "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: false } });
   reindex(taking);
   assert.equal(at(taking, "core rule").status, "checked");
   const writing = bank({ "specs/_guidelines/spec.json": core });

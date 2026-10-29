@@ -31,7 +31,7 @@ export function file(scope: string, section: string, ...nodes: object[]) {
 export function repo(files: Record<string, unknown>): string {
   const root = mkdtempSync(join(tmpdir(), "sheriff-"));
   cpSync(join(REPO, "specs", "_schema"), join(root, "specs", "_schema"), { recursive: true });
-  const all: Record<string, unknown> = { "sheriff.config.json": { code: [], tests: [], writesCore: true }, ...files };
+  const all: Record<string, unknown> = { "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: true }, ...files };
   for (const [path, content] of Object.entries(all)) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), typeof content === "string" ? content : JSON.stringify(content, null, 2) + "\n");

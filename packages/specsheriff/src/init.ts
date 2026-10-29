@@ -13,7 +13,7 @@ export interface InitReport {
 }
 
 const ASSETS = fileURLToPath(new URL("../assets/", import.meta.url));
-const CORE = fileURLToPath(new URL("../core/", import.meta.url));
+const GUIDELINES = fileURLToPath(new URL("../guidelines/", import.meta.url));
 
 type HookEntry = { matcher?: string; hooks: Array<{ type: string; command: string }> };
 type Settings = { hooks?: Record<string, HookEntry[]>; [key: string]: unknown };
@@ -24,25 +24,25 @@ function files(dir: string): string[] {
 
 /**
  * What init writes, by the path it writes it to: the hooks, the agent's hook, the skills, and the
- * core — except in the repository the core is written in, where the core is the source of the copy
- * the toolset carries, not a copy of it.
+ * SpecSheriff guidelines — except in the repository they are written in, where they are the source of
+ * the copy the SpecSheriff tools carry, not a copy of it.
  */
-function plan(writesCore: boolean): Map<string, { text: string; executable: boolean }> {
+function plan(writesSpecSheriffGuidelines: boolean): Map<string, { text: string; executable: boolean }> {
   const out = new Map<string, { text: string; executable: boolean }>();
   const add = (to: string, from: string, executable = false) => out.set(to, { text: readFileSync(from, "utf8"), executable });
   for (const f of files(join(ASSETS, "githooks"))) add(`.githooks/${f}`, join(ASSETS, "githooks", f), true);
   for (const f of files(join(ASSETS, "claude", "hooks"))) add(`.claude/hooks/${f}`, join(ASSETS, "claude", "hooks", f), true);
   for (const f of files(join(ASSETS, "skills"))) add(`.claude/skills/${f}`, join(ASSETS, "skills", f));
-  if (!writesCore) {
-    for (const name of ["spec.json", "tools.json"]) add(`specs/_guidelines/${name}`, join(CORE, name));
-    for (const f of files(join(CORE, "_schema"))) add(`specs/_schema/${f}`, join(CORE, "_schema", f));
+  if (!writesSpecSheriffGuidelines) {
+    for (const name of ["spec.json", "tools.json"]) add(`specs/_guidelines/${name}`, join(GUIDELINES, name));
+    for (const f of files(join(GUIDELINES, "_schema"))) add(`specs/_schema/${f}`, join(GUIDELINES, "_schema", f));
   }
   return out;
 }
 
-function writesCore(root: string): boolean {
+function writesSpecSheriffGuidelines(root: string): boolean {
   try {
-    return JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).writesCore === true;
+    return JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).writesSpecSheriffGuidelines === true;
   } catch {
     return false;
   }
@@ -65,7 +65,7 @@ function mergeSettings(settings: Settings, ours: Settings): boolean {
   return changed;
 }
 
-/** Sets a repository up for the toolset, replacing no file that differs from what it would write. */
+/** Sets a repository up for the SpecSheriff tools, replacing no file that differs from what it would write. */
 export function init(root: string): InitReport {
   const report: InitReport = { written: [], left: [], notes: [] };
   const write = (path: string, text: string, executable = false) => {
@@ -79,7 +79,7 @@ export function init(root: string): InitReport {
     if (executable) chmodSync(full, 0o755);
     report.written.push(path);
   };
-  for (const [path, { text, executable }] of plan(writesCore(root))) write(path, text, executable);
+  for (const [path, { text, executable }] of plan(writesSpecSheriffGuidelines(root))) write(path, text, executable);
 
   const settingsPath = join(root, ".claude", "settings.json");
   const ours = JSON.parse(readFileSync(join(ASSETS, "claude", "settings.hooks.json"), "utf8")) as Settings;
@@ -115,7 +115,7 @@ export function init(root: string): InitReport {
     else {
       const project = { schemaVersion: 1, scope: "_guidelines", section: "project", nodes: [{
         id: "_guidelines/project", sid: newSid(new Set()), kind: "section", title: "The project's own guidelines", status: "",
-        text: "What only this project's specification needs beyond the core.", owner, refs: [],
+        text: "What only this project's specification needs beyond the SpecSheriff guidelines.", owner, refs: [],
       }] };
       write("specs/_guidelines/project.json", canonical(project));
     }

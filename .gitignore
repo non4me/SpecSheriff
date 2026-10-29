@@ -2,7 +2,7 @@ node_modules/
 dist/
 md-version/
 specs/_viewer/
-packages/specsheriff/core/
+packages/specsheriff/guidelines/
 packages/specsheriff/grammars/
 __pycache__/
 .pytest_cache/

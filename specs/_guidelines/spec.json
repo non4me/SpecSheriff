@@ -123,7 +123,7 @@
                 ],
                 "tests": [
                   "packages/specsheriff/test/unit/model.test.ts::s-kag2m9tzdnduxdx addresses a domain's head by its name and numbers its sections straight through its files",
-                  "packages/specsheriff/test/unit/model.test.ts::s-kag2m9tzdnduxdx computes for every node of the core the address it stands at",
+                  "packages/specsheriff/test/unit/model.test.ts::s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guidelines the address it stands at",
                   "packages/specsheriff/test/unit/reindex.test.ts::s-kag2m9tzdnduxdx computes every node's address from where it stands"
                 ]
               }
@@ -625,9 +625,9 @@
               "id": "_guidelines/spec/1.19",
               "sid": "s-bsya3febm6u64ab",
               "kind": "rule",
-              "title": "A project's own guidelines refine or implement the core",
+              "title": "A project's own guidelines refine or implement the SpecSheriff guidelines",
               "status": "checked",
-              "text": "The guidelines are a core and a part each project holds as its own: the core's base, which every project shares, with the appendix of the toolset the project uses; and the project's own guidelines, which hold what only its specification needs, such as the specification's owner, a kind of node of its own or the list of levels its domains stand at. Each rule of a project's own guidelines refines or implements a rule of the core and never contradicts it. A project takes the core whole, at a version its specification's owner names, and changes it only where the core is written; the checks compare the core to that version.",
+              "text": "The guidelines are the SpecSheriff guidelines and a part each project holds as its own: the base of the SpecSheriff guidelines, which every project shares, with the appendix of the toolset the project uses; and the project's own guidelines, which hold what only its specification needs, such as the specification's owner, a kind of node of its own or the list of levels its domains stand at. Each rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines and never contradicts it. A project takes the SpecSheriff guidelines whole, at a version its specification's owner names, and changes them only where they are written; the checks compare them to that version.",
               "refs": [
                 {
                   "type": "cites",
@@ -646,24 +646,30 @@
                   "from": "s-jau82aq9juv9zzh"
                 }
               ],
-              "rationale": "A core every project shares is what lets a tool, a skill or a reader carry from one project to the next, and a project needs what the core cannot foresee. Refining or implementing the core and never contradicting it, a project's own rules extend it as the technical appendix extends the base, so that a rule of the core can be relied on in every project without reading that project's own. Taken whole at a named version, the core reads the same in every project naming that version, and stands confirmed there as it was confirmed where it is written; a change made to it in one project would be a second core nobody who writes the first one reads.",
+              "rationale": "The SpecSheriff guidelines, shared by every project, are what lets a tool, a skill or a reader carry from one project to the next, and a project needs what they cannot foresee. Refining or implementing the SpecSheriff guidelines and never contradicting them, a project's own rules extend them as the technical appendix extends the base, so that a rule of the SpecSheriff guidelines can be relied on in every project without reading that project's own. Taken whole at a named version, the SpecSheriff guidelines read the same in every project naming that version, and stand confirmed there as they were confirmed where they are written; a change made to them in one project would be a second version nobody who writes them reads.",
               "meta": {
                 "decisions": [
                   {
                     "date": "2026-10-27",
                     "problem": "Rules only one project's specification needed stood in the guidelines every project would share.",
-                    "ruling": "The owner: the core holds what every project shares; a project holds what only its specification needs as rules of its own, standing to the core as the technical appendix stands to the base.",
+                    "ruling": "The owner: the SpecSheriff guidelines hold what every project shares; a project holds what only its specification needs as rules of its own, standing to them as the technical appendix stands to the base.",
                     "type": "textual"
                   },
                   {
                     "date": "2026-10-28",
-                    "problem": "The core of the guidelines was to name owners of its own, as a domain does, so that the confirmations it carried into a project would hold there under signatures that project's owner never gave.",
-                    "ruling": "The owner: the core is no domain and has no owners in a project; a project takes it whole, at a version its specification's owner names, its confirmations stay where it is written, and the checks compare it to that version.",
+                    "problem": "The SpecSheriff guidelines were to name owners of their own, as a domain does, so that the confirmations they carried into a project would hold there under signatures that project's owner never gave.",
+                    "ruling": "The owner: the SpecSheriff guidelines are no domain and have no owners in a project; a project takes them whole, at a version its specification's owner names, their confirmations stay where they are written, and the checks compare them to that version.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-10-29",
+                    "problem": "The part of the guidelines every project takes whole was named the core, a general word that does not say of what.",
+                    "ruling": "The owner: it is named the SpecSheriff guidelines.",
                     "type": "textual"
                   }
                 ],
                 "tests": [
-                  "packages/specsheriff/test/unit/reindex.test.ts::s-bsya3febm6u64ab leaves the status of the core a project takes as it stands, and judges it where the core is written"
+                  "packages/specsheriff/test/unit/reindex.test.ts::s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written"
                 ]
               }
             },
@@ -803,7 +809,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "The rule named, beside a field's own list of values, the tables one project's tools read such values from.",
-                    "ruling": "The owner: the core keeps the field's own list, and a project's own guidelines may declare such values elsewhere (§s-bsya3febm6u64ab).",
+                    "ruling": "The owner: the SpecSheriff guidelines keep the field's own list, and a project's own guidelines may declare such values elsewhere (§s-bsya3febm6u64ab).",
                     "type": "textual"
                   }
                 ]
@@ -919,7 +925,7 @@
                   {
                     "date": "2026-10-27",
                     "problem": "The rule listed the levels one project's domains stand at, which another project's domains need not.",
-                    "ruling": "The owner: the core keeps that every domain stands at a level, from the general to the particular; the list of levels is the project's, in its own guidelines (§s-bsya3febm6u64ab).",
+                    "ruling": "The owner: the SpecSheriff guidelines keep that every domain stands at a level, from the general to the particular; the list of levels is the project's, in its own guidelines (§s-bsya3febm6u64ab).",
                     "type": "textual"
                   }
                 ]
@@ -1000,7 +1006,7 @@
                   }
                 ],
                 "tests": [
-                  "packages/specsheriff/test/unit/model.test.ts::s-bpdqd9v72wg7vsz builds the incoming links of the core as they stand",
+                  "packages/specsheriff/test/unit/model.test.ts::s-bpdqd9v72wg7vsz builds the incoming links of the SpecSheriff guidelines as they stand",
                   "packages/specsheriff/test/unit/model.test.ts::s-bpdqd9v72wg7vsz reads the citations of a node outside its links, the nodes under it and spans quoted as code",
                   "packages/specsheriff/test/unit/reindex.test.ts::s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from the outgoing links"
                 ]
@@ -1360,7 +1366,7 @@
               "kind": "rule",
               "title": "What is checked, when, and what a failure costs",
               "status": "checked",
-              "text": "Two things are checked mechanically: that the specification holds together on its own, and that the specification and the code still describe each other. Every check is deterministic but one: whether the code does what the nodes it names say, and nothing they do not, is judged at every commit that changes code by an independent reviewer (§s-nyh9yk22ba6g77q). The checks run when a commit is made, and the tests of the system's code before a commit is shared; each check reads the commit being made, and the history behind it where its row says so, never what the commit does not hold. A check refuses unless its row says otherwise.\n\n**The specification on its own**\n\n| What is checked | On failure |\n|---|---|\n| No file of the specification, of its archive or of its schema gives one field two values | refused |\n| Every file matches its schema | refused |\n| No two nodes share a sid | refused |\n| No two nodes share an id | refused |\n| Every node's id is the address its place gives | refused |\n| No two term nodes name the same term | refused |\n| No two record nodes share a name | refused |\n| A node outside the core a project takes is checked only where a confirmation holds the fingerprint of its wording and names the node's owner | refused |\n| A node a commit removes, outside the core a project takes, is deleted where no confirmation of it was ever given, and otherwise stands in the archive with the reason for its removal | refused |\n| Every link names a node | refused |\n| A node citing another holds a link to it, and a link of type cites stands only where its node cites the node it names and holds no link of another type to it | refused |\n| No node cites another by its address | refused |\n| A term-relation or a uses link binds two terms, and no other type of link, cites included, binds two terms | refused, and settled with the specification's owner |\n| The incoming links are what the outgoing ones produce | refused |\n| No checked node sets words in capitals for stress | refused |\n| A checked section holds at least one rule | refused |\n| Every domain has a head, and the index in it is what the domain's sections produce | refused |\n| Every domain's head names a level the project's own guidelines list | refused |\n| A consumes link goes from a domain's head to a section of another domain | refused |\n| The domains do not use one another in a cycle | refused |\n| A record variant refines the record it is a variant of, stands in the domain declaring the value it answers to, declares a field of its own that no field of the record, nor any its field of type variant holds, already is, answers to values of the fields that record names as choosing its variant, each declared where §s-xfu2gpzddjnmgks says such a value is declared, and answers to values no other variant of it answers to | refused |\n| Every node of the technical appendix outside the sections of the stack and of the technical debt implements a node of the base specification, and every rule of the technical debt refines one | refused |\n| Every rule of the appendix of the tools implements a node of the base of the guidelines | refused |\n| Every rule of a project's own guidelines refines or implements a rule of the core | refused |\n| The core a project takes is the version it names, file for file | refused |\n\n**The specification and the code**\n\n| What is checked | On failure |\n|---|---|\n| Every symbol of the system's code carries a tag, or the tag that names no node | refused |\n| Every tag names a node that exists, and a tag on a symbol whose code a commit changes a checked one | refused |\n| Every tag stands on the symbol it binds | refused |\n| Every test of the system's code carries the sid of a node that exists, and a test a commit adds or changes the sid of a checked one | refused |\n| Every rule whose code a commit adds or changes has a test carrying its sid | refused |\n| A node's lists of code and tests are what the tags and the sids the tests carry produce | refused |\n| A node that names the symbols in a file is held to them | refused |\n| A list a node carries matches the declaration in the code or in the schema it names | refused |\n| No file outside the specification and its tools holds a node's address | refused |\n| A citation in the code, the tests and the documents names a node by its sid | refused |\n| Every copy generated from the nodes that is kept, the types and runtime checks of the system's code included, is what the nodes produce | refused |\n| A rule whose text changed while none of its code has, read from the history | reported by the node's sid |\n| A commit that changes code names every checked node its changed symbols' tags name, and no head or section | refused |\n| The code does what the nodes it names say, and nothing they do not | refused, naming the node and the line |\n| The tests of the system's code pass | the commit is not shared |",
+              "text": "Two things are checked mechanically: that the specification holds together on its own, and that the specification and the code still describe each other. Every check is deterministic but one: whether the code does what the nodes it names say, and nothing they do not, is judged at every commit that changes code by an independent reviewer (§s-nyh9yk22ba6g77q). The checks run when a commit is made, and the tests of the system's code before a commit is shared; each check reads the commit being made, and the history behind it where its row says so, never what the commit does not hold. A check refuses unless its row says otherwise.\n\n**The specification on its own**\n\n| What is checked | On failure |\n|---|---|\n| No file of the specification, of its archive or of its schema gives one field two values | refused |\n| Every file matches its schema | refused |\n| No two nodes share a sid | refused |\n| No two nodes share an id | refused |\n| Every node's id is the address its place gives | refused |\n| No two term nodes name the same term | refused |\n| No two record nodes share a name | refused |\n| A node outside the SpecSheriff guidelines a project takes is checked only where a confirmation holds the fingerprint of its wording and names the node's owner | refused |\n| A node a commit removes, outside the SpecSheriff guidelines a project takes, is deleted where no confirmation of it was ever given, and otherwise stands in the archive with the reason for its removal | refused |\n| Every link names a node | refused |\n| A node citing another holds a link to it, and a link of type cites stands only where its node cites the node it names and holds no link of another type to it | refused |\n| No node cites another by its address | refused |\n| A term-relation or a uses link binds two terms, and no other type of link, cites included, binds two terms | refused, and settled with the specification's owner |\n| The incoming links are what the outgoing ones produce | refused |\n| No checked node sets words in capitals for stress | refused |\n| A checked section holds at least one rule | refused |\n| Every domain has a head, and the index in it is what the domain's sections produce | refused |\n| Every domain's head names a level the project's own guidelines list | refused |\n| A consumes link goes from a domain's head to a section of another domain | refused |\n| The domains do not use one another in a cycle | refused |\n| A record variant refines the record it is a variant of, stands in the domain declaring the value it answers to, declares a field of its own that no field of the record, nor any its field of type variant holds, already is, answers to values of the fields that record names as choosing its variant, each declared where §s-xfu2gpzddjnmgks says such a value is declared, and answers to values no other variant of it answers to | refused |\n| Every node of the technical appendix outside the sections of the stack and of the technical debt implements a node of the base specification, and every rule of the technical debt refines one | refused |\n| Every rule of the appendix of the tools implements a node of the base of the guidelines | refused |\n| Every rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines | refused |\n| The SpecSheriff guidelines a project takes are the version it names, file for file | refused |\n\n**The specification and the code**\n\n| What is checked | On failure |\n|---|---|\n| Every symbol of the system's code carries a tag, or the tag that names no node | refused |\n| Every tag names a node that exists, and a tag on a symbol whose code a commit changes a checked one | refused |\n| Every tag stands on the symbol it binds | refused |\n| Every test of the system's code carries the sid of a node that exists, and a test a commit adds or changes the sid of a checked one | refused |\n| Every rule whose code a commit adds or changes has a test carrying its sid | refused |\n| A node's lists of code and tests are what the tags and the sids the tests carry produce | refused |\n| A node that names the symbols in a file is held to them | refused |\n| A list a node carries matches the declaration in the code or in the schema it names | refused |\n| No file outside the specification and its tools holds a node's address | refused |\n| A citation in the code, the tests and the documents names a node by its sid | refused |\n| Every copy generated from the nodes that is kept, the types and runtime checks of the system's code included, is what the nodes produce | refused |\n| A rule whose text changed while none of its code has, read from the history | reported by the node's sid |\n| A commit that changes code names every checked node its changed symbols' tags name, and no head or section | refused |\n| The code does what the nodes it names say, and nothing they do not | refused, naming the node and the line |\n| The tests of the system's code pass | the commit is not shared |",
               "refs": [
                 {
                   "type": "implements",
@@ -1494,15 +1500,15 @@
                   "packages/specsheriff/test/unit/binding.test.ts::s-jau82aq9juv9zzh reports a rule whose text changed after its code, and refuses nothing for it",
                   "packages/specsheriff/test/unit/gates.test.ts::s-jau82aq9juv9zzh asks no review of a commit that changes no code",
                   "packages/specsheriff/test/unit/gates.test.ts::s-jau82aq9juv9zzh passes a message of a commit that changes no code",
-                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh leaves the confirmations of the core a project takes to its version",
+                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh leaves the confirmations of the SpecSheriff guidelines a project takes to their version",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh passes a specification that holds together",
-                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh passes the core as this repository holds it, its confirmations aside",
+                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their confirmations aside",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a checked node no confirmation by its owner holds",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a checked node setting words in capitals for stress, a quoted name left out",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a checked section holding no rule",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a cites link beside a link of another type to the same node",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a consumes link that does not go from a head to a section of another domain",
-                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a core that is not the version the project names, file for file",
+                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses SpecSheriff guidelines that are not the version the project names, file for file",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a domain without a head, and a head whose index its sections do not produce",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a file giving one field two values",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a file that does not match its schema",
@@ -1512,7 +1518,7 @@
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a node of the technical appendix outside the stack implementing no node of the base",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a record variant answering to a value its choosing field does not declare, or declaring no field of its own",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a removed node ever confirmed that is not in the archive, and one never confirmed that is",
-                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the core",
+                  "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a rule of the appendix of the tools implementing no node of the base of the guidelines",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses a term-relation not binding two terms, and a link of another type binding two",
                   "packages/specsheriff/test/unit/validate.test.ts::s-jau82aq9juv9zzh refuses an id other than the address its place gives",
@@ -1665,15 +1671,15 @@
               "kind": "rule",
               "title": "The specification is written in one language",
               "status": "checked",
-              "text": "The specification is written in one language: English, which is recommended, or another the specification's owner names in the project's own guidelines — every node's title, text and reason, and everything generated from them. The core of the guidelines, which projects in every language share, is written in English.",
+              "text": "The specification is written in one language: English, which is recommended, or another the specification's owner names in the project's own guidelines — every node's title, text and reason, and everything generated from them. The SpecSheriff guidelines, which projects in every language share, are written in English.",
               "refs": [],
-              "rationale": "A specification that mixes two languages loses the line between what it states and what is an aside. English is the language the readers of a specification are likeliest to share, which is why it is recommended, why it holds where a project names no other, and why the core, which projects in every language share, is written in it.",
+              "rationale": "A specification that mixes two languages loses the line between what it states and what is an aside. English is the language the readers of a specification are likeliest to share, which is why it is recommended, why it holds where a project names no other, and why the SpecSheriff guidelines, which projects in every language share, are written in it.",
               "meta": {
                 "decisions": [
                   {
                     "date": "2026-10-27",
                     "problem": "The rule named English, a choice one project made for its readers, which another project's readers need not share.",
-                    "ruling": "The owner: the specification is written in one language, English being recommended and holding where a project's own guidelines name no other; the core itself is written in English.",
+                    "ruling": "The owner: the specification is written in one language, English being recommended and holding where a project's own guidelines name no other; the SpecSheriff guidelines themselves are written in English.",
                     "type": "textual"
                   }
                 ]

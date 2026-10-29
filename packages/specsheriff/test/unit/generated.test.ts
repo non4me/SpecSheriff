@@ -12,7 +12,7 @@ import { LEVELS_RULE } from "../../src/model.ts";
 
 function project(): string {
   const root = repo({
-    "sheriff.config.json": { code: [], tests: [], writesCore: false },
+    "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: false },
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", status: "checked", children: [node("base rule", { rationale: "Because." })] })),
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
@@ -94,7 +94,7 @@ test("s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines and th
   assert.match(out, /alpha: 3 nodes, 0 checked/);
 });
 
-test("s-f5rz6b7dhxejjts sheriff guide prints the core of this repository whole", () => {
+test("s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole", () => {
   const spec = loadSpecification(REPO);
   const out = guide(spec);
   for (const [s, at] of spec.nodes) if (at.file.path.startsWith("specs/_guidelines/")) assert.ok(out.includes(s), s);

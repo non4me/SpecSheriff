@@ -79,7 +79,7 @@ export async function guard(root: string, input: HookInput): Promise<string | nu
     const edited = specificationOf([...spec.files.filter((f) => f.path !== path), ...spec.archive, { path, data }]);
     const lines = readConfirmations(root);
     for (const [sid, { node, file }] of edited.nodes) {
-      if (file.path !== path || node.status !== "checked" || !judgedHere(path, config.writesCore)) continue;
+      if (file.path !== path || node.status !== "checked" || !judgedHere(path, config.writesSpecSheriffGuidelines)) continue;
       const old = was.get(sid);
       const touched = !old || old.status !== "checked" || fingerprint(old) !== fingerprint(node);
       if (touched && !holds(edited, lines, sid)) {

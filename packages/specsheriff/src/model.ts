@@ -7,10 +7,10 @@ export const LEVELS_RULE = "s-nkyty4dy9x2v2a4";
 export const SID = /^s-[2-9a-hjkmnp-z]{15}$/;
 const PROJECT = "specs/_guidelines/project.json";
 
-export function partOf(path: string): { part: string; file: string; core: boolean } {
+export function partOf(path: string): { part: string; file: string; specSheriffGuidelines: boolean } {
   const [, part = "", ...rest] = path.split("/");
   const file = posix.basename(rest.join("/"), ".json");
-  return { part, file, core: part === "_guidelines" && (file === "spec" || file === "tools") };
+  return { part, file, specSheriffGuidelines: part === "_guidelines" && (file === "spec" || file === "tools") };
 }
 
 /** A part whose files are numbered one by one under addresses of their own, rather than straight through. */

@@ -15,8 +15,8 @@ export interface Finding {
 }
 
 export interface ValidateOptions {
-  /** The directory holding the core the installed toolset carries. */
-  coreDir: string;
+  /** The directory holding the SpecSheriff guidelines the installed SpecSheriff tools carry. */
+  guidelinesDir: string;
   /** The specification as the commit before this one holds it, for what the commit removes. */
   before?: Specification;
 }
@@ -24,7 +24,7 @@ export interface ValidateOptions {
 const REQUIRING = new Set(["rule", "record", "term"]);
 const isBase = (path: string) => !["_guidelines", "tech"].includes(partOf(path).part);
 
-export function validate(root: string, { coreDir, before }: ValidateOptions): Finding[] {
+export function validate(root: string, { guidelinesDir, before }: ValidateOptions): Finding[] {
   const findings: Finding[] = [];
   const config = loadConfig(root);
   const paths = specPaths(root);
@@ -76,7 +76,7 @@ export function validate(root: string, { coreDir, before }: ValidateOptions): Fi
   // Confirmations and the archive.
   const lines = readConfirmations(root);
   for (const [sid, { node, file }] of spec.nodes) {
-    if (node.status === "checked" && judgedHere(file.path, config.writesCore) && !holds(spec, lines, sid)) {
+    if (node.status === "checked" && judgedHere(file.path, config.writesSpecSheriffGuidelines) && !holds(spec, lines, sid)) {
       refuse(sid, `checked, but no confirmation by its owner ${ownerOf(spec, sid) ?? "(none named)"} holds its wording`);
     }
     if (node.archived) refuse(sid, "carries the reason of its removal, but is not in the archive");
@@ -90,7 +90,7 @@ export function validate(root: string, { coreDir, before }: ValidateOptions): Fi
     });
   }
   for (const [sid, was] of before?.nodes ?? []) {
-    if (spec.nodes.has(sid) || !judgedHere(was.file.path, config.writesCore)) continue;
+    if (spec.nodes.has(sid) || !judgedHere(was.file.path, config.writesSpecSheriffGuidelines)) continue;
     if (everConfirmed(lines, sid) && !archived.has(sid)) {
       findings.push({ where: `${was.file.path}: ${sid} (${was.node.id})`, message: "removed after a confirmation was given for it, but not in the archive with the reason for its removal" });
     }
@@ -141,13 +141,13 @@ export function validate(root: string, { coreDir, before }: ValidateOptions): Fi
   variants(spec, refuse);
   appendices(spec, refuse);
 
-  if (!config.writesCore) {
+  if (!config.writesSpecSheriffGuidelines) {
     for (const name of ["spec.json", "tools.json"]) {
       const path = `specs/_guidelines/${name}`;
       const ours = spec.files.find((f) => f.path === path);
-      const theirs = join(coreDir, name);
+      const theirs = join(guidelinesDir, name);
       if (!ours || !existsSync(theirs) || canonical(ours.data) !== canonical(JSON.parse(readFileSync(theirs, "utf8")))) {
-        findings.push({ where: path, message: "is not the core the installed sheriff carries, file for file" });
+        findings.push({ where: path, message: "does not hold the SpecSheriff guidelines the installed sheriff carries, file for file" });
       }
     }
   }
@@ -274,7 +274,7 @@ function appendices(spec: Specification, refuse: Refuse): void {
   const linksTo = (n: SpecNode, types: string[], ok: (path: string) => boolean) =>
     n.refs.some((r) => r.to && types.includes(r.type) && spec.nodes.has(r.to) && ok(spec.nodes.get(r.to)!.file.path));
   for (const [sid, { node, file }] of spec.nodes) {
-    const { part, file: name, core } = partOf(file.path);
+    const { part, file: name, specSheriffGuidelines } = partOf(file.path);
     if (node.kind === "section") continue;
     if (part === "tech" && name === "debt") {
       if (!linksTo(node, ["refines"], isBase)) refuse(sid, "a rule of the technical debt that refines no node of the base");
@@ -282,9 +282,9 @@ function appendices(spec: Specification, refuse: Refuse): void {
       if (!linksTo(node, ["implements"], isBase)) refuse(sid, "a node of the technical appendix that implements no node of the base");
     } else if (part === "_guidelines" && name === "tools") {
       if (!linksTo(node, ["implements"], (p) => p === "specs/_guidelines/spec.json")) refuse(sid, "a rule of the appendix of the tools that implements no node of the base of the guidelines");
-    } else if (part === "_guidelines" && !core) {
-      if (!linksTo(node, ["refines", "implements"], (p) => partOf(p).core) && !node.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE)) {
-        refuse(sid, "a rule of the project's own guidelines that neither refines nor implements a rule of the core");
+    } else if (part === "_guidelines" && !specSheriffGuidelines) {
+      if (!linksTo(node, ["refines", "implements"], (p) => partOf(p).specSheriffGuidelines) && !node.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE)) {
+        refuse(sid, "a rule of the project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines");
       }
     }
   }

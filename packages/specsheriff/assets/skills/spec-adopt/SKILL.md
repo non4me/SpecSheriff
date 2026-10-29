@@ -10,7 +10,7 @@ the owner. Rewriting while importing loses what nobody notices was lost. Load th
 
 ## Before you start
 
-`npx sheriff init` has set the repository up: the hooks, the skills, the core in
+`npx sheriff init` has set the repository up: the hooks, the skills, the SpecSheriff guidelines in
 `specs/_guidelines/`, `sheriff.config.json` and `specs/_guidelines/project.json` naming the owner.
 Name in `sheriff.config.json` where the system's code and its tests live.
 

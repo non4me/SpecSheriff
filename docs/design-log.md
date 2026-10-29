@@ -8,33 +8,34 @@ holds only what no rule carries.
 
 ### 2026-10-28 — The repository is held by its own tools
 
-The `sheriff` toolset is built along the appendix of the tools and holds this repository: the core
-is written here (`writesCore`), the owner named by `specs/_guidelines/project.json` confirms its nodes
-into `specs/_confirmations.jsonl`, the git hooks check every commit and the agent's hooks every edit.
-The tools' own tests carry the sid of the node of the core they verify, and the core's nodes list
-them. The rulings of building it that bear on more than one node:
+The SpecSheriff tools are built along the appendix of the tools and hold this repository: the
+SpecSheriff guidelines are written here (`writesSpecSheriffGuidelines`), the owner named by
+`specs/_guidelines/project.json` confirms their nodes into `specs/_confirmations.jsonl`, the git
+hooks check every commit and the agent's hooks every edit. The tools' own tests carry the sid of the
+node of the SpecSheriff guidelines they verify, and those nodes list them. The rulings of building
+it that bear on more than one node:
 
 - **The spec skill reads the guidelines through `sheriff guide`** rather than holding a copy generated
   into it, so nothing generated is kept beside the nodes but what the checks compare.
 - **`sheriff types` waits for the worked example**, whose record nodes and technical appendix are the
   first it can be built against.
-- **A node removed while the core is first written is no longer deleted**: from now on a node ever
-  confirmed goes to the archive (§s-f2b5zvc565s242f).
+- **A node removed while the SpecSheriff guidelines are first written is no longer deleted**: from
+  now on a node ever confirmed goes to the archive (§s-f2b5zvc565s242f).
 
-- **A project gets the hooks, the skills and the core by `sheriff init`**, a command rather than the
-  adopt skill, so that what the checks depend on is laid out by a script (step 3). The adopt skill
-  imports a project's documents by the agent, with no import command, since every project writes
-  its documents its own way; the owner's reading of every node is what guarantees the import. It
-  starts from the directory the owner names, walked whole, the owner agreeing which part each
-  document goes into, and the originals are deleted once they stand in the nodes. The
-  owner's language and table of terms for spec-review are a file of the project's,
+- **A project gets the hooks, the skills and the SpecSheriff guidelines by `sheriff init`**, a
+  command rather than the adopt skill, so that what the checks depend on is laid out by a script
+  (step 3). The adopt skill imports a project's documents by the agent, with no import command,
+  since every project writes its documents its own way; the owner's reading of every node is what
+  guarantees the import. It starts from the directory the owner names, walked whole, the owner
+  agreeing which part each document goes into, and the originals are deleted once they stand in the
+  nodes. The owner's language and table of terms for spec-review are a file of the project's,
   `.claude/spec-review.md`.
 
-### 2026-10-28 — The core read again as a whole, against the principles
+### 2026-10-28 — The SpecSheriff guidelines read again as a whole, against the principles
 
 The owner stated the principles the method rests on, now in `docs/principles.md`, and went over the
-core again as a whole, each changed node confirmed as it now stands, its decisions on it. The rulings
-that bear on more than one node:
+SpecSheriff guidelines again as a whole, each changed node confirmed as it now stands, its decisions
+on it. The rulings that bear on more than one node:
 
 - **A symbol, not a declaration, carries the tag**, and only a symbol whose code a commit changes must
   name a checked node; a change to a tag is a change to the code (§s-kgbzk2ph9e6jfb4).
@@ -48,44 +49,44 @@ that bear on more than one node:
 - **Whatever is generated from the nodes is regenerated after every change and never edited**, and a
   generated copy that is kept is checked against what the nodes produce (§s-kh8qcd5kxgh9z3j).
 - **A node ever confirmed is archived when removed**, not only one checked at the moment
-  (§s-f2b5zvc565s242f). The rule that a node removed while the core is first written is deleted ends
-  before `sheriff validate` first runs on this repository.
+  (§s-f2b5zvc565s242f). The rule that a node removed while the SpecSheriff guidelines are first
+  written is deleted ends before `sheriff validate` first runs on this repository.
 - **Comments come back into a node's metadata**, the one type of comment an open problem; the schema
   defines them at step 2 (todo on §s-eferktypcj7njt5).
 
-### 2026-10-27 — The core guidelines are confirmed
+### 2026-10-27 — The SpecSheriff guidelines are confirmed
 
-The owner went over every node of the core, the base and the appendix of the tools, one at a time,
-the English above a reading in Russian. What came over unchanged kept its confirmation, since its
-wording was the one the owner had already confirmed; every changed or new node was confirmed as it
-now stands, its decisions on it. The confirmations become lines in a file once the tools record them
-(step 2). The rulings of that reading that bear on more than one node:
+The owner went over every node of the SpecSheriff guidelines, the base and the appendix of the
+tools, one at a time, the English above a reading in Russian. What came over unchanged kept its
+confirmation, since its wording was the one the owner had already confirmed; every changed or new
+node was confirmed as it now stands, its decisions on it. The confirmations become lines in a file
+once the tools record them (step 2). The rulings of that reading that bear on more than one node:
 
-- **The core's examples name what any system has** — a user, an operator, a record, a request — and
-  nothing of one implementation. The worked example's bank stays in the example, the articles and the
-  pictures, never in a rule.
+- **The examples of the SpecSheriff guidelines name what any system has** — a user, an operator, a
+  record, a request — and nothing of one implementation. The worked example's bank stays in the
+  example, the articles and the pictures, never in a rule.
 - **The specification is written fresh.** A node removed while it is first written is deleted, not
   archived: the origin project's experience shapes it, its history does not carry over beyond the
   decisions retold on the rules.
 - **A test always carries the sid of what it verifies, and every declaration of the system's code a
   tag**, or the tag saying it implements none and why. Only a test or a declaration whose code a
-  commit changes must name a checked node. The origin project, taking the core, tags its code before
-  the check is turned on.
+  commit changes must name a checked node. The origin project, taking the SpecSheriff guidelines,
+  tags its code before the check is turned on.
 - **The base of the guidelines is tied to no implementation** in three rules — no technology, no look
   of a user interface, no figure measured on one instance; the doctrine's own rule on measured figures
   folded into them.
 - **Every procedure that writes the specification is idempotent**, by that name.
 - **One language for a specification, English recommended** and holding where a project names no
-  other; the core is in English.
+  other; the SpecSheriff guidelines are in English.
 - **A restriction by list** names what is allowed or what is forbidden by which mistake would go
   unnoticed.
 
 ### 2026-10-27 — The guidelines apply the split between base and appendix to themselves
 
 The base guidelines state what is held, what is checked, when, and what a failure costs — a rule's
-tag stands on its declaration, and the check at a commit refuses a declaration without one — and name
-no technology. An appendix of the tools describes how SpecSheriff's own tools carry them out: the
-commands, the hooks, the layout of the files, the parser and its descriptions of languages, the
+tag stands on its declaration, and the check at a commit refuses a declaration without one — and
+name no technology. An appendix of the tools describes how SpecSheriff's own tools carry them out:
+the commands, the hooks, the layout of the files, the parser and its descriptions of languages, the
 runners of the reviewer, the spelling of a tag in a comment. Another toolset, in another language,
 can implement the same base.
 
@@ -93,13 +94,14 @@ Keeping the tools named in the rules was set aside because the method would brea
 a base names no technology; moving only the runners and the parser out, because it leaves that rule
 broken by the commands.
 
-### 2026-10-27 — The core carries its history of decisions, retold
+### 2026-10-27 — The SpecSheriff guidelines carry their history of decisions, retold
 
-Each decision recorded on a rule of the core in the origin project comes over with its date, its
-problem and its ruling, retold without anything of the origin project: not its components, its
-stores or its commits, but the shape of the problem — a rule on confirmation that did not cover the
-fields of a record, so that a changed field left the status standing over a structure the owner
-never saw. A decision that cannot be told without the origin project stays there alone.
+Each decision recorded on a rule of the SpecSheriff guidelines in the origin project comes over with
+its date, its problem and its ruling, retold without anything of the origin project: not its
+components, its stores or its commits, but the shape of the problem — a rule on confirmation that
+did not cover the fields of a record, so that a changed field left the status standing over a
+structure the owner never saw. A decision that cannot be told without the origin project stays there
+alone.
 
 Carrying the decisions over as they stand was set aside because they speak of the origin project,
 which the one-way dependency forbids; starting clean, because it drops the strongest evidence a
@@ -179,9 +181,10 @@ and pictures.
 The binding of code to rules is read through a parser with grammars for many languages, so that a
 language is added by describing what counts as a declaration and as a test in it, rather than by new
 code. TypeScript and JavaScript, and Python, are supported at launch; Go, Java, C#, Rust and others
-follow by description. The core rule binding a test to what it verifies becomes: a test declares the
-identifier of the rule it verifies in the way its framework names a test — the opening of its name
-in TypeScript, a mark on the test in Python, where an identifier cannot hold a hyphen.
+follow by description. The rule of the SpecSheriff guidelines binding a test to what it verifies
+becomes: a test declares the identifier of the rule it verifies in the way its framework names a
+test — the opening of its name in TypeScript, a mark on the test in Python, where an identifier
+cannot hold a hyphen.
 
 TypeScript alone was set aside because it cuts the method off from most of the people building
 agents and working with data; a tag bound to the next line without parsing, because nothing could
@@ -189,14 +192,14 @@ then tell which declarations a commit touched, and so whether each carries its t
 
 ### 2026-10-27 — The reviewer is a contract, carried out by replaceable runners
 
-The core states the reviewer's contract: it is given the commit's change and the text of the rules
-the commit names, and nothing of the session that wrote the code; it answers with a verdict naming
-the rule and the line of each finding; and a review that cannot be held — no runner, a timeout, an
-answer that does not parse — refuses the commit. Who carries the review out is a runner, described
-in the appendix of the tools: first the Claude Code CLI, which exists, then the Codex and Gemini
-CLIs, then any service speaking the OpenAI-compatible API, which covers models run locally. The
-example ships a recorded run in which the commit is refused, so that the scene can be seen without
-any model installed.
+The SpecSheriff guidelines state the reviewer's contract: it is given the commit's change and the
+text of the rules the commit names, and nothing of the session that wrote the code; it answers with
+a verdict naming the rule and the line of each finding; and a review that cannot be held — no
+runner, a timeout, an answer that does not parse — refuses the commit. Who carries the review out is
+a runner, described in the appendix of the tools: first the Claude Code CLI, which exists, then the
+Codex and Gemini CLIs, then any service speaking the OpenAI-compatible API, which covers models run
+locally. The example ships a recorded run in which the commit is refused, so that the scene can be
+seen without any model installed.
 
 One runner alone was set aside because the method would read as one vendor's tool and a reader
 without it could not run the example; a call to an API on the reader's key, because every commit
@@ -219,10 +222,11 @@ brand tell one story.
 ### 2026-10-27 — Each domain has its owners, and a confirmation names who gave it
 
 A confirmed node means that an owner of the part it stands in read its wording. Each domain names
-its owners in its head; the core rules and the agreements between domains have the specification's
-chief owner. A confirmation is kept in git beside the fingerprint of the wording confirmed and the
-name of whoever confirmed it, and a commit adding a confirmation is refused unless it is signed by
-that person. Working alone, one person owns every domain, and nothing changes.
+its owners in its head; the rules of the SpecSheriff guidelines and the agreements between domains
+have the specification's chief owner. A confirmation is kept in git beside the fingerprint of the
+wording confirmed and the name of whoever confirmed it, and a commit adding a confirmation is
+refused unless it is signed by that person. Working alone, one person owns every domain, and nothing
+changes.
 
 One owner for the whole specification was set aside because it binds a growing specification to one
 person; a confirmation read off the approvals of a merge request, because it would tie what a status
@@ -230,11 +234,11 @@ means to one hosting platform. That platform's approvals may later be described 
 appendix of the tools records a confirmation, never as what a confirmation is. (The signature was set
 aside on 2026-10-28.)
 
-### 2026-10-27 — How the origin project takes the core
+### 2026-10-27 — How the origin project takes the SpecSheriff guidelines
 
-Before the first publication, the origin project takes the core as a git dependency pinned to a
-commit of this repository; after it, as a versioned package. A change to the core is made here and
-committed here first, and the origin project then moves its pin.
+Before the first publication, the origin project takes the SpecSheriff guidelines as a git
+dependency pinned to a commit of this repository; after it, as a versioned package. A change to them
+is made here and committed here first, and the origin project then moves its pin.
 
 ### 2026-10-27 — The name is SpecSheriff
 
@@ -244,26 +248,27 @@ shield or mind were set aside: each is taken by a project in the same niche, and
 most worn metaphor in tooling for coding agents. Specbound, SpecWarrant, Rulefirst and Spec Anchor
 were weighed and set aside as neutral, or as the name of a category rather than of a project.
 
-### 2026-10-27 — The line between the core and a project's own rules
+### 2026-10-27 — The line between the SpecSheriff guidelines and a project's own rules
 
-The core holds the model of nodes and statuses, the links and their types, the binding of code and
-tests to rules, the map, the doctrine of how a rule is written, the split between the base
-specification and the technical appendix, the technical debt, record nodes with the types and
-runtime checks generated from them, and record variants.
+The SpecSheriff guidelines hold the model of nodes and statuses, the links and their types, the
+binding of code and tests to rules, the map, the doctrine of how a rule is written, the split
+between the base specification and the technical appendix, the technical debt, record nodes with the
+types and runtime checks generated from them, and record variants.
 
 A project holds as its own rules what only its system needs. For the origin project those are its
 model of jobs and of the steps a job consists of, with the registry its runtime reads; the exception
-letting a menu entry of its user interface carry its icon and place, with the checks of its pages and
-menu; its domains' tables headed by a field's name, with its kinds of problem; and the concrete list
-of the levels its domains stand at. The core keeps the rule that every domain stands at a level the
-owner defines, from the general to the particular; the list of levels is a project's setting.
+letting a menu entry of its user interface carry its icon and place, with the checks of its pages
+and menu; its domains' tables headed by a field's name, with its kinds of problem; and the concrete
+list of the levels its domains stand at. The SpecSheriff guidelines keep the rule that every domain
+stands at a level the owner defines, from the general to the particular; the list of levels is a
+project's setting.
 
-A project's own rules stand to the core as the technical appendix stands to the base: they refine
-it and never contradict it.
+A project's own rules stand to the SpecSheriff guidelines as the technical appendix stands to the
+base: they refine them and never contradict them.
 
 ### 2026-10-27 — Three skills
 
-- **spec** — the core: the guidelines and the figures counted off the model, and nothing else. Since
+- **spec** — the guidelines and the figures counted off the model, and nothing else. Since
   2026-10-28 it is a short skill written by hand that has the agent run `sheriff guide`, which prints
   them as they stand, rather than a copy generated into the skill and kept beside the nodes.
 - **spec-review** — how an agent works with the specification's owner: as a colleague rather than a
@@ -282,10 +287,10 @@ the commit gate.
 
 ### 2026-10-27 — SpecSheriff is the upstream of the method
 
-The method's core rules, its tools and its skills live here. The project the method was extracted
-from — a private system under active development, to be opened once it is finished — takes the
-core from here and keeps only its own extensions. The dependency runs one way: nothing here names or
-relies on that project.
+The SpecSheriff guidelines, the SpecSheriff tools and the skills live here. The project the method
+was extracted from — a private system under active development, to be opened once it is finished —
+takes the SpecSheriff guidelines from here and keeps only its own extensions. The dependency runs
+one way: nothing here names or relies on that project.
 
 ### 2026-10-27 — What a reader gets
 
@@ -296,23 +301,24 @@ example leaves the road to a product open.
 
 ## Findings to act on
 
-- The origin project's code holds many declarations without a tag. Taking the core (step 5), it
-  tags them, finding a rule for each or stating that it implements none and why, before the check
-  of tags is turned on.
+- The origin project's code holds many declarations without a tag. Taking the SpecSheriff guidelines
+  (step 5), it tags them, finding a rule for each or stating that it implements none and why, before
+  the check of tags is turned on.
 
 ## Order of work
 
-1. ~~The core guidelines~~ — done 2026-10-27: the base and the appendix of the tools, confirmed by the
-   owner node by node.
+1. ~~The SpecSheriff guidelines~~ — done 2026-10-27: the base and the appendix of the tools,
+   confirmed by the owner node by node.
 2. ~~The tools~~ — done 2026-10-28: checks of the specification on its own and against the code, the
    export and the map, confirmations naming who gave them, the general parser with TypeScript,
    JavaScript and Python described, the reviewer's contract with its first runner, the git and agent
    hooks; turned on in this repository. `sheriff types` moved to step 4.
 3. ~~The skills~~ — done 2026-10-28: spec, spec-review, spec-adopt, and `sheriff init` laying them
-   out with the hooks and the core.
+   out with the hooks and the SpecSheriff guidelines.
 4. The worked example: the frontier town's bank, its specification, code and tests, and the recorded
    run in which a commit is refused.
-5. The origin project takes the core from here and keeps its own rules as a part refining it.
+5. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
+   refining it.
 6. The emblem, the four pictures and the cards.
 7. The first article, in English and in Russian.
 8. The repository opened, and the article published.

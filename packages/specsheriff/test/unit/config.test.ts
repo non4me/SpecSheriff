@@ -14,7 +14,7 @@ function withConfig(text: string): string {
 
 test("s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live", () => {
   const config = loadConfig(withConfig('{ "code": ["src/**/*.ts"], "tests": ["test/**/*.test.ts"] }'));
-  assert.deepEqual(config, { code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesCore: false, testCommand: null, review: { runner: "claude", model: "fable", fallbackModel: "opus", minutes: 20 } });
+  assert.deepEqual(config, { code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesSpecSheriffGuidelines: false, testCommand: null, review: { runner: "claude", model: "fable", fallbackModel: "opus", minutes: 20 } });
 });
 
 test("s-477gtdrkw34dzxw reads the command that runs the tests of the system's code", () => {
@@ -28,13 +28,13 @@ test("s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus a
   assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "review": { "colour": 1 } }')), /colour/);
 });
 
-test("s-zefk589ykh37b8u reads whether the core is written in the repository", () => {
-  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "writesCore": true }')).writesCore, true);
-  assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "writesCore": "yes" }')), /writesCore/);
+test("s-zefk589ykh37b8u reads whether the SpecSheriff guidelines are written in the repository", () => {
+  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "writesSpecSheriffGuidelines": true }')).writesSpecSheriffGuidelines, true);
+  assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "writesSpecSheriffGuidelines": "yes" }')), /writesSpecSheriffGuidelines/);
 });
 
 test("s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file neither names for neither", () => {
-  const config = { code: ["src/**/*.ts"], tests: ["src/**/*.test.ts", "test/**"], writesCore: false };
+  const config = { code: ["src/**/*.ts"], tests: ["src/**/*.test.ts", "test/**"], writesSpecSheriffGuidelines: false };
   assert.equal(readsAs(config, "src/a/b.ts"), "code");
   assert.equal(readsAs(config, "src/a/b.test.ts"), "tests");
   assert.equal(readsAs(config, "test/x.py"), "tests");

@@ -9,7 +9,7 @@ const CLI = fileURLToPath(new URL("../../src/cli.ts", import.meta.url));
 const sheriff = (...args: string[]) => spawnSync(process.execPath, [CLI, ...args], { cwd: REPO, encoding: "utf8" });
 const version = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8")).version;
 
-test("s-f5rz6b7dhxejjts sheriff --version prints the version of the toolset", () => {
+test("s-f5rz6b7dhxejjts sheriff --version prints the version of the SpecSheriff tools", () => {
   const run = sheriff("--version");
   assert.equal(run.status, 0);
   assert.equal(run.stdout.trim(), version);

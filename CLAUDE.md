@@ -4,12 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-SpecSheriff is a method of spec-anchored development and the upstream of its core: the guidelines
-and the `sheriff` toolset now, later the skills and a worked example. `npm install` at the root
-builds `packages/specsheriff/` and links `sheriff`; `npm test` runs its unit and end-to-end tests and
-those of `packages/pytest-specsheriff/` (Python 3.10 or later with pytest). The repository is held by
-its own tools: `sheriff.config.json` says the core is written here, so its nodes are confirmed in
-`specs/_confirmations.jsonl` by the owner `specs/_guidelines/project.json` names. A change to
+SpecSheriff is a method of spec-anchored development and the upstream of what a project takes
+from it: the SpecSheriff guidelines and the SpecSheriff tools now, later the skills and a worked
+example. `npm install` at the root builds `packages/specsheriff/` and links `sheriff`; `npm test`
+runs its unit and end-to-end tests and those of `packages/pytest-specsheriff/` (Python 3.10 or later
+with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
+guidelines are written here, so their nodes are confirmed in `specs/_confirmations.jsonl` by the
+owner `specs/_guidelines/project.json` names. A change to
 `packages/specsheriff/src/` reaches the hooks once `npm run build -w specsheriff` has run. The git
 hooks, the agent's hook and the skills `spec`, `spec-review` and `spec-adopt` are kept in
 `packages/specsheriff/assets/`; `.githooks/`, `.claude/hooks/` and `.claude/skills/` here are what
@@ -27,12 +28,12 @@ out quietly.
 read it before proposing anything. A decision moves onto the rule it settled once that rule exists,
 and the log keeps only what no rule carries.
 
-`specs/_guidelines/` is the core of the guidelines — the method's own specification, normative for
+`specs/_guidelines/` holds the SpecSheriff guidelines — the method's own specification, normative for
 all work here:
 
 - `spec.json` — the base: what is held, what is checked, when, and what a failure costs. It names no
   technology.
-- `tools.json` — the appendix of the tools: how SpecSheriff's toolset carries the base out — file
+- `tools.json` — the appendix of the tools: how the SpecSheriff tools carry the base out — file
   layout, commands, hooks, the table of how each check is made, tag and test syntax, the reviewer's
   runner, how a confirmation is recorded. It is the specification the tools are built from.
 
@@ -87,8 +88,8 @@ changes, its review. `npx sheriff validate`, `binding`, `citations` and `show <s
   that replaces it; a node never confirmed is deleted (§s-f2b5zvc565s242f).
 - **Where a rule goes.** The base names no technology, no look of a user interface and no figure
   measured on one instance; those go to the appendix of the tools, each of whose rules implements a
-  node of the base. Examples in the core name what any system has — a user, an operator, a record, a
-  request — never the worked example's bank.
+  node of the base. Examples in the SpecSheriff guidelines name what any system has — a user, an
+  operator, a record, a request — never the worked example's bank.
 - **How a rule is written** is the last section of `spec.json` — one language (English), a named
   subject, a reason that gives only its grounds and is no narrower than its rule, no count in prose,
   no capitals for stress, a general word carrying its object. Read it before writing any node.
@@ -103,16 +104,16 @@ changes, its review. `npx sheriff validate`, `binding`, `citations` and `show <s
 - Files outside `specs/` — the docs, this file, later the code — cite a node by its sid, never by its
   address; the tools refuse an address outside the specification.
 - Commit messages follow the history: the part first, then what changed, in plain sentences
-  ("Design log: …", "Core guidelines: …").
+  ("Design log: …", "SpecSheriff guidelines: …").
 
 ## When code arrives
 
 The tools are written in TypeScript on Node and read code with tree-sitter. Their source is kept in
 `packages/specsheriff/` (the npm package providing `sheriff`) and `packages/pytest-specsheriff/` (the
-plugin for pytest). In the worked example and
-any project taking the core, every symbol of the system's code carries `@spec <sid>` (or
-`@spec none <reason>`) in the comment directly above it, a test declares the sid it verifies and is
-written first, and a commit changing code names every checked node it serves; the exact syntax is in
+plugin for pytest). In the worked example and any project taking the SpecSheriff guidelines, every
+symbol of the system's code carries `@spec <sid>` (or `@spec none <reason>`) in the comment directly
+above it, a test declares the sid it verifies and is written first, and a commit changing code names
+every checked node it serves; the exact syntax is in
 `tools.json`. The repository's tools, configuration and tests are exempt from tags by where they live
 (§s-kgbzk2ph9e6jfb4). The tools' own tests are not exempt from sids, by the owner's choice
 (2026-10-28): each declares the sid of the node of `spec.json` or `tools.json` it verifies and is

@@ -5,7 +5,7 @@ import { addresses, citations, fingerprint, incoming, ownerOf, partOf } from "..
 import { REPO } from "../repo.ts";
 import { file, node, OWNER, repo, sid } from "../fixture.ts";
 
-test("s-kag2m9tzdnduxdx computes for every node of the core the address it stands at", () => {
+test("s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guidelines the address it stands at", () => {
   const spec = loadSpecification(REPO);
   const computed = addresses(spec);
   for (const [s, at] of spec.nodes) assert.equal(computed.get(s), at.node.id, s);
@@ -34,7 +34,7 @@ test("s-bpdqd9v72wg7vsz reads the citations of a node outside its links, the nod
   assert.deepEqual(citations(n), { sids: ["s-aaaaaaaaaaaaaab", "s-aaaaaaaaaaaaaad"], addresses: ["§1.4"] });
 });
 
-test("s-bpdqd9v72wg7vsz builds the incoming links of the core as they stand", () => {
+test("s-bpdqd9v72wg7vsz builds the incoming links of the SpecSheriff guidelines as they stand", () => {
   const spec = loadSpecification(REPO);
   const built = incoming(spec);
   const key = (r: { type: string; from?: string }) => `${r.type} ${r.from}`;
@@ -79,8 +79,8 @@ test("s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind ca
   assert.equal(fingerprint({ ...listed, list: { members: ["a", "b"], of: "x" } }), fingerprint(listed));
 });
 
-test("s-zefk589ykh37b8u tells a file's part and whether it holds the core", () => {
-  assert.deepEqual(partOf("specs/_guidelines/spec.json"), { part: "_guidelines", file: "spec", core: true });
-  assert.deepEqual(partOf("specs/_guidelines/project.json"), { part: "_guidelines", file: "project", core: false });
-  assert.deepEqual(partOf("specs/bank/00-bank.json"), { part: "bank", file: "00-bank", core: false });
+test("s-zefk589ykh37b8u tells a file's part and whether it holds the SpecSheriff guidelines", () => {
+  assert.deepEqual(partOf("specs/_guidelines/spec.json"), { part: "_guidelines", file: "spec", specSheriffGuidelines: true });
+  assert.deepEqual(partOf("specs/_guidelines/project.json"), { part: "_guidelines", file: "project", specSheriffGuidelines: false });
+  assert.deepEqual(partOf("specs/bank/00-bank.json"), { part: "bank", file: "00-bank", specSheriffGuidelines: false });
 });

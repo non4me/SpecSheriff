@@ -16,8 +16,8 @@ export interface Config {
   code: string[];
   /** Globs naming where its tests live: read for the sids they declare. */
   tests: string[];
-  /** Whether the core is written in this repository, so that its nodes are confirmed here rather than compared with a version. */
-  writesCore: boolean;
+  /** Whether the SpecSheriff guidelines are written in this repository, so that their nodes are confirmed here rather than compared with a version. */
+  writesSpecSheriffGuidelines: boolean;
   /** The command that runs the tests of the system's code, before a commit is shared. */
   testCommand: string | null;
   review: ReviewSettings;
@@ -35,7 +35,7 @@ export function loadConfig(root: string): Config {
     throw new Error(`${FILE}: ${(error as Error).message}`);
   }
   for (const key of Object.keys(raw)) {
-    if (![...KEYS, "writesCore", "testCommand", "review"].includes(key)) throw new Error(`${FILE}: ${key} is no setting of the toolset`);
+    if (![...KEYS, "writesSpecSheriffGuidelines", "testCommand", "review"].includes(key)) throw new Error(`${FILE}: ${key} is no setting of the SpecSheriff tools`);
   }
   for (const key of KEYS) {
     const value = raw[key];
@@ -43,16 +43,16 @@ export function loadConfig(root: string): Config {
       throw new Error(`${FILE}: ${key} must be a list of glob patterns`);
     }
   }
-  if (raw.writesCore !== undefined && typeof raw.writesCore !== "boolean") throw new Error(`${FILE}: writesCore must be true or false`);
+  if (raw.writesSpecSheriffGuidelines !== undefined && typeof raw.writesSpecSheriffGuidelines !== "boolean") throw new Error(`${FILE}: writesSpecSheriffGuidelines must be true or false`);
   if (raw.testCommand !== undefined && typeof raw.testCommand !== "string") throw new Error(`${FILE}: testCommand must be a command`);
   const review = { ...REVIEW, ...((raw.review as object | undefined) ?? {}) } as ReviewSettings;
   for (const key of Object.keys(review)) if (!(key in REVIEW)) throw new Error(`${FILE}: review.${key} is no setting of the reviewer`);
-  if (review.runner !== "claude") throw new Error(`${FILE}: review.runner names no runner the toolset describes: ${review.runner}`);
+  if (review.runner !== "claude") throw new Error(`${FILE}: review.runner names no runner the SpecSheriff tools describe: ${review.runner}`);
   if (typeof review.minutes !== "number" || review.minutes <= 0) throw new Error(`${FILE}: review.minutes must be a number of minutes`);
   return {
     code: raw.code as string[],
     tests: raw.tests as string[],
-    writesCore: raw.writesCore === true,
+    writesSpecSheriffGuidelines: raw.writesSpecSheriffGuidelines === true,
     testCommand: (raw.testCommand as string | undefined) ?? null,
     review,
   };

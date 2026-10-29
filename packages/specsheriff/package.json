@@ -9,7 +9,7 @@
   },
   "files": [
     "dist",
-    "core",
+    "guidelines",
     "grammars",
     "assets",
     "languages"

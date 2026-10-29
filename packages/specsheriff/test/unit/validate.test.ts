@@ -11,12 +11,12 @@ import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
 import { file, node, OWNER, repo, sid } from "../fixture.ts";
 
-const CORE = join(REPO, "specs", "_guidelines");
+const GUIDELINES = join(REPO, "specs", "_guidelines");
 
 /** A small project that passes every check: its own guidelines, a domain, contracts, the technical appendix. */
 function good(): string {
   const root = repo({
-    "sheriff.config.json": { code: [], tests: [], writesCore: true },
+    "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: true },
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("levels rule"), node("one rule")] })),
     "specs/_guidelines/tools.json": file("_guidelines", "tools", node("tools", { kind: "section", text: "The tools.", children: [node("tool", { refs: [{ type: "implements", to: sid("one rule") }] })] })),
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
@@ -46,7 +46,7 @@ function good(): string {
   return root;
 }
 
-const run = (root: string, before?: string) => validate(root, { coreDir: CORE, before: before ? loadSpecification(before) : undefined });
+const run = (root: string, before?: string) => validate(root, { guidelinesDir: GUIDELINES, before: before ? loadSpecification(before) : undefined });
 const messages = (root: string, before?: string) => run(root, before).map((f) => `${f.where}: ${f.message}`);
 
 function edit(root: string, path: string, change: (data: any) => void): void {
@@ -115,7 +115,7 @@ test(`s-jau82aq9juv9zzh refuses a checked node no confirmation by its owner hold
   expectOne(root, new RegExp(`${sid("open")}.*checked.*no confirmation`));
 });
 
-test(`s-jau82aq9juv9zzh leaves the confirmations of the core a project takes to its version`, () => {
+test(`s-jau82aq9juv9zzh leaves the confirmations of the SpecSheriff guidelines a project takes to their version`, () => {
   const root = good();
   writeFileSync(join(root, "sheriff.config.json"), '{ "code": [], "tests": [] }');
   edit(root, "specs/_guidelines/spec.json", (d) => (d.nodes[0].status = "checked"));
@@ -259,21 +259,21 @@ test(`s-jau82aq9juv9zzh refuses a rule of the appendix of the tools implementing
   expectOne(root, new RegExp(`${sid("tool")}.*implements no node of the base of the guidelines`));
 });
 
-test(`s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the core`, () => {
+test(`s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines`, () => {
   const root = good();
   edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("loose")));
   reindex(root);
   expectOne(root, new RegExp(`${sid("loose")}.*neither refines nor implements`));
 });
 
-test(`s-jau82aq9juv9zzh refuses a core that is not the version the project names, file for file`, () => {
+test(`s-jau82aq9juv9zzh refuses SpecSheriff guidelines that are not the version the project names, file for file`, () => {
   const root = good();
   writeFileSync(join(root, "sheriff.config.json"), '{ "code": [], "tests": [] }');
   const found = messages(root);
-  assert.ok(found.some((m) => /specs\/_guidelines\/spec\.json.*not the core/.test(m)), found.join("\n"));
+  assert.ok(found.some((m) => /specs\/_guidelines\/spec\.json.*not hold the SpecSheriff guidelines/.test(m)), found.join("\n"));
 });
 
-test(`s-jau82aq9juv9zzh passes the core as this repository holds it, its confirmations aside`, () => {
-  const found = validate(REPO, { coreDir: CORE }).map((f) => `${f.where}: ${f.message}`);
+test(`s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their confirmations aside`, () => {
+  const found = validate(REPO, { guidelinesDir: GUIDELINES }).map((f) => `${f.where}: ${f.message}`);
   assert.deepEqual(found.filter((m) => !/no confirmation/.test(m)), []);
 });

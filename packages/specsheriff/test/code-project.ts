@@ -29,7 +29,7 @@ export const OPEN_TEST = `test("${sid("open")} opens an account", () => {});\n`;
 /** A project whose code and tests agree with its specification, committed. */
 export function codeProject(): string {
   const root = repo({
-    "sheriff.config.json": { code: ["src/**"], tests: ["test/**"], writesCore: true },
+    "sheriff.config.json": { code: ["src/**"], tests: ["test/**"], writesSpecSheriffGuidelines: true },
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours." })),
     "specs/contracts/c.json": file("contracts", "c", node("accounts", { kind: "section", text: "Accounts.", children: [
       node("open", { meta: { code: [{ file: "src/open.ts" }], tests: [`test/open.test.ts::${sid("open")} opens an account`] } }),

@@ -70,13 +70,13 @@ export function headIndex(spec: Specification, sections: SpecNode[], built: Retu
   });
 }
 
-/** Whether a node's status is judged by the confirmations here, rather than taken with the core at its version. */
-export function judgedHere(path: string, writesCore: boolean): boolean {
-  return writesCore || !partOf(path).core;
+/** Whether a node's status is judged by the confirmations here, rather than taken with the SpecSheriff guidelines at their version. */
+export function judgedHere(path: string, writesSpecSheriffGuidelines: boolean): boolean {
+  return writesSpecSheriffGuidelines || !partOf(path).specSheriffGuidelines;
 }
 
 export function reindex(root: string): ReindexReport {
-  const { writesCore } = loadConfig(root);
+  const { writesSpecSheriffGuidelines } = loadConfig(root);
   const report: ReindexReport = { merged: [], emptied: [], written: [] };
   const texts = new Map<string, string>();
   const files: SpecFile[] = specPaths(root).map((path) => {
@@ -103,7 +103,7 @@ export function reindex(root: string): ReindexReport {
 
   const lines = readConfirmations(root);
   for (const [sid, { node, file }] of spec.nodes) {
-    if (node.status === "checked" && judgedHere(file.path, writesCore) && !holds(spec, lines, sid)) {
+    if (node.status === "checked" && judgedHere(file.path, writesSpecSheriffGuidelines) && !holds(spec, lines, sid)) {
       node.status = "";
       report.emptied.push(sid);
     }

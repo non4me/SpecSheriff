@@ -100,10 +100,10 @@ test("s-jau82aq9juv9zzh refuses a node's address in a file outside the specifica
   await expectOne(root, /docs\/notes\.md:1: .*Contracts\/1\.1.*address/);
 });
 
-test("s-zefk589ykh37b8u reads no file of the tools for an address where the core is written", async () => {
+test("s-zefk589ykh37b8u reads no file of the tools for an address where the SpecSheriff guidelines are written", async () => {
   const root = project();
   put(root, "packages/tool/test/a.test.ts", `test("${sid("open")} reads contracts/1.1", () => {});\n`);
-  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify({ code: ["src/**"], tests: ["test/**", "packages/*/test/**"], writesCore: true }));
+  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify({ code: ["src/**"], tests: ["test/**", "packages/*/test/**"], writesSpecSheriffGuidelines: true }));
   assert.ok(!(await messages(root)).some((m) => /address/.test(m)));
 });
 

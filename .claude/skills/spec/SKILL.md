@@ -6,8 +6,8 @@ description: The guidelines this project's specification is kept and implemented
 # spec
 
 Run `npx sheriff guide` and read what it prints, whole, before anything else. It is the guidelines as
-they stand at this moment — the core every project shares, the appendix of the tools, and this
-project's own guidelines — every node with its sid, its text and its reason, and the figures counted
+they stand at this moment — the SpecSheriff guidelines every project shares, their base and the
+appendix of the tools, and this project's own guidelines — every node with its sid, its text and its reason, and the figures counted
 off the specification as it printed them. Work by them.
 
 This skill holds nothing of the guidelines itself, so that it can never say less than they do, or

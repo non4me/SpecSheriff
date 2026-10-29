@@ -15,11 +15,11 @@ export interface BindingFinding extends Finding {
 
 const SID_ANYWHERE = /\bs-[2-9a-hjkmnp-z]{15}\b/g;
 
-/** The files a check outside the specification reads: the code, the tests and the documents, the tools' own left out where the core is written. */
+/** The files a check outside the specification reads: the code, the tests and the documents, the tools' own left out where the SpecSheriff guidelines are written. */
 function outsideFiles(root: string, config: Config): string[] {
   return trackedFiles(root).filter((p) => {
     if (p.startsWith("specs/")) return false;
-    if (config.writesCore && p.startsWith("packages/")) return false;
+    if (config.writesSpecSheriffGuidelines && p.startsWith("packages/")) return false;
     return readsAs(config, p) !== null || p.endsWith(".md");
   });
 }
@@ -147,7 +147,7 @@ export async function binding(root: string): Promise<BindingFinding[]> {
     producedTests.get(t.sid)!.add(`${file.path}::${t.name}`);
   }
   for (const [sid, { node, file }] of spec.nodes) {
-    if (!judgedHere(file.path, config.writesCore)) continue;
+    if (!judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
     const meta = (node.meta ?? {}) as { code?: Array<{ file: string; symbols?: string[] }>; tests?: string[] };
     const produced = producedCode.get(sid) ?? new Map<string, Set<string>>();
     const listed = (meta.code ?? []).map((c) => c.file).sort();
@@ -240,7 +240,7 @@ function drift(root: string, spec: Specification, config: Config): BindingFindin
   };
   for (const [sid, { node, file }] of spec.nodes) {
     const code = ((node.meta ?? {}) as { code?: Array<{ file: string }> }).code ?? [];
-    if (!code.length || !judgedHere(file.path, config.writesCore)) continue;
+    if (!code.length || !judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
     const history = historyOf(file.path);
     let textChanged: string | null = null;
     for (let i = 0; i < history.length; i++) {

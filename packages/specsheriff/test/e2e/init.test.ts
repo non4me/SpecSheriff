@@ -18,7 +18,7 @@ function fresh(): string {
   return root;
 }
 
-test("s-f5rz6b7dhxejjts sheriff init writes the hooks, the agent's hook, the skills, the core and a start of the settings and the project's guidelines", () => {
+test("s-f5rz6b7dhxejjts sheriff init writes the hooks, the agent's hook, the skills, the SpecSheriff guidelines and a start of the settings and the project's guidelines", () => {
   const root = fresh();
   const run = sheriff(root, "init");
   assert.equal(run.status, 0, run.stderr);
