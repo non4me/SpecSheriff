@@ -89,7 +89,7 @@ changes, its review. `npx sheriff validate`, `binding`, `citations` and `show <s
 - **Where a rule goes.** The base names no technology, no look of a user interface and no figure
   measured on one instance; those go to the appendix of the tools, each of whose rules implements a
   node of the base. Examples in the SpecSheriff guidelines name what any system has — a user, an
-  operator, a record, a request — never the worked example's bank.
+  operator, a record, a request — never the worked example's saloon.
 - **How a rule is written** is the last section of `spec.json` — one language (English), a named
   subject, a reason that gives only its grounds and is no narrower than its rule, no count in prose,
   no capitals for stress, a general word carrying its object. Read it before writing any node.

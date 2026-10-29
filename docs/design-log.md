@@ -6,6 +6,100 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-29 — Three parts in one repository: the theory, the skills, the worked example
+
+SpecSheriff is three parts kept in this repository. The theory explains the method to a reader who
+has never seen it: the approach in a few paragraphs, the principles one line each, a dated comparison
+with similar tools with every claim linked to its source, which skills the method needs and why, and
+the SpecSheriff guidelines the other two parts are built from. The skills are what a practitioner
+installs: for each agent a plugin with the skills — spec, spec-review, spec-adopt, init and update —
+and the templates of the hooks, the SpecSheriff tools, and a guide saying which skill to take in
+which case, citing the theory rather than restating it. Their code and tests carry the sids of the
+theory's nodes, so that the repository's own checks hold the implementation to the theory and the
+method is shown on itself. The worked example is set up by the skills the way any project is, which
+is why the packaging comes before it. The plugin is made for Claude Code now and for Codex CLI next;
+Gemini CLI is being studied. Licences stay by directory: the theory's prose under CC BY 4.0, the
+guidelines, the skills, the tools and the example under Apache 2.0. The plugin goes to Anthropic's
+plugin directory once the worked example and the first article are out.
+
+### 2026-10-29 — One channel, this repository, and the version of the checks is the project's
+
+A plugin updates on each machine at its own time, and none of Claude Code, Codex CLI and Gemini CLI
+lets a repository pin a plugin's version. Tools carried only by the plugin would give one commit
+different answers on two machines after a release, would be found by a git hook run from a terminal
+or an editor at no stable path, and would not reach CI at all.
+
+So the plugin comes through the marketplace kept in this repository and updates itself, init turning
+automatic updates on in the project's settings, while the tools that check a commit are run by the
+project's hooks — the agent's and git's alike — at the version the project names, taken from this
+repository at that version's tag into a cache on the machine, as the pre-commit framework takes each
+hook from its repository at the revision its configuration names. A release is one tag, whose number
+the plugin, the tools and the guidelines they carry share; the plugin for pytest is installed by pip
+from the same repository at the same tag. Moving a project to a new version is one commit its owner
+makes, changing the version named and the copy of the guidelines, which the plugin offers once it
+sees a newer version: a project takes the SpecSheriff guidelines at the version its owner names
+(§s-bsya3febm6u64ab). The agent's hooks stay in the project, written there by init as they are kept
+now (§s-477gtdrkw34dzxw), so that a colleague's agent is held before they install the plugin; Codex
+CLI and Gemini CLI both run a project's own hooks, and Codex admits no plugin carrying hooks into its
+public directory.
+
+The tools inside the plugin, at whatever version each machine updated to, were set aside for the
+answers that differ between machines; the plugin carrying every released version of the guidelines,
+with a launcher for the git hooks, because it kept only the comparison of the copy of the guidelines
+alike and left the checks themselves differing; an npm package as a second channel, because this
+repository already serves every file and a second publication is one more thing to keep in step.
+
+### 2026-10-29 — The final gate stands on each participant's machine
+
+Git hooks run on each participant's machine and can be skipped, so the principle calling them the
+final gate whoever made the change claimed more than they hold. It now reads: git hooks at every
+commit, the final gate on each participant's machine, whoever made the change; a team that needs the
+gate to hold for everyone runs the same checks in CI. The practitioner's guide gives the recipe — the
+branch reset softly to its base, so that the whole branch reads as the commit being made, and the
+same commands run — and a test proves it.
+
+CI shipped with the tools was set aside: the hooks on each machine are the gate, and a team's CI is
+its own.
+
+### 2026-10-29 — The worked example is a saloon in a frontier town
+
+The example project specifies the saloon of a Wild West town, which the sheriff guards, in three
+domains with the contracts between them: a regular's tab — the account, its limit, the repayments and
+the journal of operations — where a regular's debt never exceeds the tab's limit; the stock of bottles
+and supplies, which never falls below zero; and the rooms upstairs with their bookings, a room never
+let to two guests for the same night. The contracts hold the shared terms — regular, order, tab — and
+the rules binding the domains, such as an order put on the tab lowering the stock and raising the
+regular's debt in one operation. As with the bank it replaces, the rules are real and meant
+seriously, the theme lives only in names, the example is written in TypeScript on Node, and it ships
+a recorded run in which a commit is refused.
+
+The scene: an agent asked to make service at the bar faster drops the check of the tab's limit and
+rewrites the test it broke, so that every test passes, and the reviewer refuses the commit all the
+same, naming the rule on the limit and the line. A second scene, a room let twice for one night, is
+kept for the hands-on article. Gambling, the age of patrons and real brands of drink stay out; drink
+is background and never the subject of a rule.
+
+A saloon is closer to everyday business software — a till, stock, bookings — gives several domains
+and the contracts between them naturally, is judged by nobody against a real one, and a sheriff in a
+saloon is the genre's own scene. The bank was set aside because one subject showed the domains, their
+levels and the contracts poorly, and readers from finance judge a bank by a real one; the agent only
+dropping the check, because an ordinary run of the tests catches that, and the scene would show
+nothing the tests do not.
+
+### 2026-10-29 — The mark is the sheriff's coin and its star
+
+The mark is a five-pointed star drawn as one continuous line, an S tilted inside it whose ends join
+the star, each point ending in a small open ring. Full size, it is the coin: the star inside two pairs
+of rings, SPECSHERIFF along the top and NO CODE WITHOUT A RULE along the bottom; every icon is the
+bare star, since the coin's lettering cannot be read at icon sizes. One folder, `brand/`, holds the
+owner's drawings and every export, rendered from them by a committed script; the README, the plugins
+and the promo site copy from it. The marks are under no open licence: anyone may use them unchanged
+to refer to SpecSheriff — in an article, a post, a talk, a badge — and nobody may change them or use
+them as the mark of another product; their copies in the plugins are excepted from Apache 2.0.
+
+CC BY 4.0, as for the pictures, was set aside: it would let anyone redraw the mark and put it on their
+own, and cannot be withdrawn.
+
 ### 2026-10-28 — The repository is held by its own tools
 
 The SpecSheriff tools are built along the appendix of the tools and hold this repository: the
@@ -136,7 +230,7 @@ the hands-on article, posts on social networks, the scene of the refused commit.
 
 An emblem alone was set aside because it wastes the name chosen for being remembered; a character
 everywhere, because it would make the method look like a joke to the architects the first article is
-written for.
+written for. (The mark was fixed on 2026-10-29: the coin and the star with its S.)
 
 ### 2026-10-27 — Each article appears in English and in Russian in the same week
 
@@ -217,7 +311,7 @@ already written in.
 
 A task list was set aside as a subject nobody minds seeing broken; a library's loans, because a
 broken rule there costs little; a plain bank, because the frontier town lets the example and the
-brand tell one story.
+brand tell one story. (Superseded on 2026-10-29: the worked example is a saloon.)
 
 ### 2026-10-27 — Each domain has its owners, and a confirmation names who gave it
 
@@ -238,7 +332,8 @@ aside on 2026-10-28.)
 
 Before the first publication, the origin project takes the SpecSheriff guidelines as a git
 dependency pinned to a commit of this repository; after it, as a versioned package. A change to them
-is made here and committed here first, and the origin project then moves its pin.
+is made here and committed here first, and the origin project then moves its pin. (Since 2026-10-29
+a version is a tag of this repository, taken as any project takes it.)
 
 ### 2026-10-27 — The name is SpecSheriff
 
@@ -280,6 +375,8 @@ base: they refine them and never contradict them.
 - **spec-adopt** — bringing a project's existing documents into the model: imported verbatim first,
   every citation moved onto a permanent identifier, numbered by place, then gone over with the owner.
 
+(Since 2026-10-29 the plugin adds init and update.)
+
 A personal working regime — a task list, working time against an estimate, a status line, a local
 cache in front of external systems — is not published. Neither is a protocol for teams of agent
 sessions: it is a subject of its own. Of it, only the independent reviewer is published, as part of
@@ -312,17 +409,22 @@ example leaves the road to a product open.
 2. ~~The tools~~ — done 2026-10-28: checks of the specification on its own and against the code, the
    export and the map, confirmations naming who gave them, the general parser with TypeScript,
    JavaScript and Python described, the reviewer's contract with its first runner, the git and agent
-   hooks; turned on in this repository. `sheriff types` moved to step 4.
+   hooks; turned on in this repository. `sheriff types` moved to the worked example.
 3. ~~The skills~~ — done 2026-10-28: spec, spec-review, spec-adopt, and `sheriff init` laying them
    out with the hooks and the SpecSheriff guidelines.
-4. The worked example: the frontier town's bank, its specification, code and tests, and the recorded
-   run in which a commit is refused.
-5. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
+4. The packaging: the repository laid out as the three parts, with the mark in `brand/`; the theory;
+   the rules of the appendix of the tools for the one channel, then the plugin for Claude Code and its
+   marketplace; the practitioner's guide, and a test on a clean machine.
+5. The worked example: the frontier town's saloon, its specification, code and tests, `sheriff
+   types`, and the recorded run in which a commit is refused.
+6. The plugin for Codex CLI, with its runner of the reviewer.
+7. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
    refining it.
-6. The emblem, the four pictures and the cards.
-7. The first article, in English and in Russian.
-8. The repository opened, and the article published.
+8. The four pictures and the cards.
+9. The first article, in English and in Russian.
+10. The repository opened, the article published, and the plugin submitted to Anthropic's plugin
+    directory.
 
 ## Open questions
 
-None at this point.
+- Whether Gemini CLI gets a package of its own: being studied.
