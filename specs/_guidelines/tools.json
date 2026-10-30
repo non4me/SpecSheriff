@@ -18,7 +18,7 @@
           "kind": "rule",
           "title": "Where the files are",
           "status": "checked",
-          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its head in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: the base in `spec.json`, the appendix of the tools in `tools.json`, and a project's own guidelines in `project.json`. A part divided into one file per section keeps its files in its directory. The schema is kept in `specs/_schema/`: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part. Confirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git. The SpecSheriff tools are installed as the npm package `specsheriff`, which provides the command `sheriff`, and their plugin for pytest as the package `pytest-specsheriff`. The settings of the SpecSheriff tools are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the SpecSheriff guidelines are written in says so by the setting `\"writesSpecSheriffGuidelines\": true`. The documents are the markdown files the repository keeps outside `specs/`. The tools of the specification are the files of the SpecSheriff tools: a project installs them and keeps none of them, and the repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the sids they declare and no file is read for an address. The specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
+          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its head in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: a project's own guidelines in `project.json`, and, in the repository the SpecSheriff guidelines are written in, the base in `spec.json` and the appendix of the tools in `tools.json`, which every other project reads from the plugin for Claude Code (§s-zh2vcr3xjumppg5). A part divided into one file per section keeps its files in its directory. The schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in, and every other project reads it from the plugin: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part. Confirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git. The SpecSheriff tools provide the command `sheriff`. Their plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install \"pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff\"`. The settings of the SpecSheriff tools are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the SpecSheriff guidelines are written in says so by the setting `\"writesSpecSheriffGuidelines\": true`. The documents are the markdown files the repository keeps outside `specs/`. The tools of the specification are the files of the SpecSheriff tools: a project keeps only the files `sheriff init` writes, and the repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the sids they declare and no file is read for an address. The specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
           "refs": [
             {
               "type": "implements",
@@ -43,6 +43,10 @@
             {
               "type": "implements",
               "to": "s-nkyty4dy9x2v2a4"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
             }
           ],
           "meta": {
@@ -65,6 +69,23 @@
                 "ruling": "The owner: it is named the SpecSheriff tools.",
                 "type": "textual"
               }
+            ],
+            "todos": [
+              {
+                "date": "2026-10-30",
+                "by": "the agent, in the whole-part pass",
+                "text": "Say where the agent and a person find the command `sheriff`: no npm install puts it on the path any more; the plugin's `bin/` would put it on the agent's, and a person's terminal has neither."
+              },
+              {
+                "date": "2026-10-30",
+                "by": "the agent, in the whole-part pass",
+                "text": "`pytest-specsheriff`, installed by pip, does not follow the plugin for Claude Code when Claude Code updates it: say how a machine takes its later release."
+              },
+              {
+                "date": "2026-10-30",
+                "by": "the agent, in the whole-part pass",
+                "text": "By the owner's rule of 2026-10-29, what only the repository the SpecSheriff guidelines are written in holds leaves the guidelines for an internal document: where that repository keeps `spec.json`, `tools.json` and the schema, and its tools under `skills/`, read for sids and not for addresses; the tests bound here to that are rebound with it."
+              }
             ]
           }
         },
@@ -74,7 +95,7 @@
           "kind": "rule",
           "title": "The commands",
           "status": "checked",
-          "text": "`sheriff validate` runs the checks of the specification on its own, and `sheriff binding` those between the specification and the code, the drift report with them; `sheriff citations` checks the citations outside the specification; `sheriff message` grades a commit message against the file git hands a commit-msg hook, and `sheriff review` asks the reviewer for its verdict on the commit being made. `sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's head from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification. Before anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file. `sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb). `sheriff guard` judges an edit an agent is about to make. `sheriff export` writes the readable export in markdown, one file for each file of the specification, and `sheriff render` the map. `sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked. `sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` and turns them on, the agent's hook script into `.claude/hooks/`, adding its hooks to `.claude/settings.json` beside those already there, and the skills `spec`, `spec-review` and `spec-adopt` into `.claude/skills/`, and where they are missing the SpecSheriff guidelines it carries, into `specs/_guidelines/spec.json` and `tools.json`, and their schema, into `specs/_schema/`, a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no file that differs from what it would write, naming each one instead, so run again it changes nothing. `sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end. `sheriff types` generates, from the record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand.",
+          "text": "`sheriff validate` runs the checks of the specification on its own, and `sheriff binding` those between the specification and the code, the drift report with them; `sheriff citations` checks the citations outside the specification; `sheriff message` grades a commit message against the file git hands a commit-msg hook, and `sheriff review` asks the reviewer for its verdict on the commit being made. `sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's head from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification. Before anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file. `sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb). `sheriff guard` judges an edit an agent is about to make. `sheriff export` writes the readable export in markdown, one file for each file of the specification, and `sheriff render` the map. `sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked. `sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p) and turns them on; adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there; and, where they are missing, writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no other file that differs from what it would write, naming each one instead, so run again it changes nothing. `sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end. `sheriff types` generates, from the record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand.",
           "refs": [
             {
               "type": "implements",
@@ -111,6 +132,14 @@
             {
               "type": "cites",
               "to": "s-hr7j7scmfkkjnws"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
             }
           ],
           "rationale": "The reindex rewrites whole the files written by hand, so it keeps everything they hold: two values written under one key are each somebody's intent, kept together where both can stand and refused where keeping one would drop the other, since nothing says which was meant; and every merge is named, because one of them may have been written to replace the other.",
@@ -169,9 +198,17 @@
             ],
             "todos": [
               {
-                "date": "2026-10-28",
-                "by": "the owner",
-                "text": "Say how a project moves to a later version of the SpecSheriff guidelines, which sheriff init does not do since it replaces no file that differs."
+                "date": "2026-10-30",
+                "by": "the agent, in the whole-part pass",
+                "text": "The first sentence gives `sheriff binding` the checks between the specification and the code, some of which the table of how each check is made gives to other commands; say each command's checks by that table."
+              }
+            ],
+            "comments": [
+              {
+                "date": "2026-10-30",
+                "by": "the agent, in the whole-part pass",
+                "type": "problem",
+                "text": "In a project the SpecSheriff guidelines are read from the plugin for Claude Code and never written, so the reindex cannot record in them the incoming links a project's own guidelines make to them, nor can the check of incoming links compare those with anything committed: say how they are held, perhaps built in memory only for `sheriff show`, and whether the base's rule on links needs to say so."
               }
             ]
           }
@@ -210,7 +247,7 @@
           "kind": "rule",
           "title": "The hooks",
           "status": "checked",
-          "text": "Each check lives in a command a git hook calls: `.githooks/pre-commit` runs `sheriff export` and `sheriff render`, then `sheriff validate`, `sheriff binding` and `sheriff citations`, `.githooks/commit-msg` runs `sheriff message` and then `sheriff review` on the file git hands it, and `.githooks/pre-push` runs the tests of the system's code by the command `sheriff.config.json` names as its `testCommand`. A clone turns them on once, with `git config core.hooksPath .githooks`. At a commit, the checks read what is staged, written out to a directory of its own and read there against the repository's history, while the export and the map are written in the working tree. The agent's hooks described are Claude Code's, kept in `.claude/settings.json` in the repository: before an edit made with the file tools, `sheriff guard` judges it; after any edit, `sheriff reindex`, `sheriff export`, `sheriff render`, `sheriff validate`, `sheriff binding` and `sheriff citations` run over the working tree, its difference from the last commit read as the commit, and what they refuse is reported to the agent. An edit made through the shell is not judged before it is made; the checks after it and at the commit still read it.",
+          "text": "Each check lives in a command a git hook calls: `.githooks/pre-commit` runs `sheriff export` and `sheriff render`, then `sheriff validate`, `sheriff binding` and `sheriff citations`, `.githooks/commit-msg` runs `sheriff message` and then `sheriff review` on the file git hands it, and `.githooks/pre-push` runs the tests of the system's code by the command `sheriff.config.json` names as its `testCommand`. A clone turns them on with `git config core.hooksPath .githooks`, which the `SessionStart` hook of the plugin for Claude Code runs where `core.hooksPath` is unset, saying so, and reports where it names another directory. At a commit, the checks read what is staged, written out to a directory of its own and read there against the repository's history, while the export and the map are written in the working tree. The agent's hooks described are Claude Code's, which the plugin for Claude Code declares (§s-zh2vcr3xjumppg5): before an edit made with the file tools, `sheriff guard` judges it; after any edit, `sheriff reindex`, `sheriff export`, `sheriff render`, `sheriff validate`, `sheriff binding` and `sheriff citations` run over the working tree, its difference from the last commit read as the commit, and what they refuse is reported to the agent. An edit made through the shell is not judged before it is made; the checks after it and at the commit still read it.",
           "refs": [
             {
               "type": "implements",
@@ -231,9 +268,21 @@
             {
               "type": "cites",
               "to": "s-hr7j7scmfkkjnws"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "from": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "from": "s-zh2vcr3xjumppg5"
             }
           ],
-          "rationale": "A hook runs each check where the commit is made, so that none depends on whoever commits remembering it; kept in the repository and turned on by one setting, the hooks are the same in every clone. The agent's hooks are kept in the repository for the same reason, so that every clone's agent is held by them.",
+          "rationale": "A hook runs each check where the commit is made, so that none depends on whoever commits remembering it; kept in the repository and turned on by one setting, the hooks are the same in every clone. The agent's hooks come with the plugin for Claude Code, so that every clone's agent is held by them; and that plugin turns the git hooks on, so that no clone's gate depends on its user remembering to.",
           "meta": {
             "decisions": [
               {
@@ -266,7 +315,7 @@
           "kind": "rule",
           "title": "How each check is made",
           "status": "checked",
-          "text": "How each check is made, and by which command:\n\n| Check | How | Command |\n|---|---|---|\n| One key twice | the file is read as text, and the keys of each object are counted | `sheriff validate` |\n| The schema | the file is validated against the schema with a JSON Schema validator | `sheriff validate` |\n| Sids, ids, terms | every sid, id, term and record node's name is collected and counted | `sheriff validate` |\n| Addresses | the addresses are computed in memory and compared with what is committed | `sheriff validate` |\n| Confirmations | the latest line for the fingerprint of the wording of each checked node outside the SpecSheriff guidelines the project takes is looked up in the confirmations, and the owner it names is compared with the node's owner | `sheriff validate` |\n| The archive | each sid the commit removes from the specification is looked up in the confirmations, and one a confirmation was ever given for is looked up in the archive, with the reason for its removal; one never confirmed is refused where it stands in the archive | `sheriff validate` |\n| Links and citations in the nodes | every outgoing link's target is resolved against the sids that exist, and the citations in every node are read and set against the links it makes | `sheriff validate` |\n| Incoming links, heads' indexes | they are rebuilt in memory and compared with what is committed | `sheriff validate` |\n| Capitals | the title, text and reason of every checked node are read for two words or more running in capitals, a quoted name left out | `sheriff validate` |\n| Order of the domains | the order is computed from the consumes links | `sheriff validate` |\n| Levels | the level each head names is looked up in the list the project's own guidelines hold | `sheriff validate` |\n| Record variants | the record nodes, their refines links and the choosing fields' lists of values are read | `sheriff validate` |\n| The SpecSheriff guidelines | the base and the appendix of the tools are compared, file for file, with the SpecSheriff guidelines the installed `sheriff` carries, the version of `sheriff` a project installs being the version of the SpecSheriff guidelines it names; the repository they are written in says so in `sheriff.config.json`, and compares them with nothing | `sheriff validate` |\n| Appendices and a project's own guidelines | the outgoing implements and refines links of each node are resolved, and the part of the node each names is read | `sheriff validate` |\n| Tags | every symbol of the system's code is read for its tag, an inner symbol covered by the one it stands in, and a category exempt by where it lives is not read at all; the commit's changed lines are mapped onto the symbols they fall in, a line holding a tag, before the commit or after it, onto the symbol the tag stands on, and a symbol whose every changed line holds no tag and differs from the line it replaces only in a comment, in the sid a citation names or in an identifier the commit renames throughout counts as unchanged | `sheriff binding` |\n| Tests | every test is read for the sid it carries, resolved against the nodes, and the tests whose text the commit changes against the checked ones; the sids of the tags on the changed symbols are looked up among the sids every test carries | `sheriff binding` |\n| Lists of code and tests, symbols, lists | the tags and the sids the tests carry are collected across the repository and compared with the metadata, and the members of a list with the declaration it names | `sheriff binding` |\n| Addresses outside the specification | the files outside `specs/` and the tools are read for a part's name followed by a place, in any case and whether or not it names a node now | `sheriff binding` |\n| Generated copies | the types and the runtime checks are generated in memory and compared with what is committed | `sheriff binding` |\n| Drift | the history of the node is compared with the history of the files in its metadata, a renamed file read under both its names | `sheriff binding` |\n| Citations outside the specification | each sid in the code, the tests and the documents is resolved, the archive's included, and a number naming a node refused | `sheriff citations` |\n| Before an edit | the edit is applied to the file in memory and its changed lines are mapped onto the symbols as the Tags row maps them; the tags of each changed symbol are looked up among the sids the tests of the working tree carry, the edited file as it would stand included, and a node the edit leaves checked is looked up in the confirmations as the Confirmations row does | `sheriff guard` |\n| The message | the sids in the message are resolved and set against the tags on the changed symbols | `sheriff message` |\n| The review | a runner reads the commit's change against the nodes it names | `sheriff review` |\n| The tests | they are run | the project's test command, from the pre-push hook |",
+          "text": "How each check is made, and by which command:\n\n| Check | How | Command |\n|---|---|---|\n| One key twice | the file is read as text, and the keys of each object are counted | `sheriff validate` |\n| The schema | the file is validated against the schema with a JSON Schema validator | `sheriff validate` |\n| Sids, ids, terms | every sid, id, term and record node's name is collected and counted | `sheriff validate` |\n| Addresses | the addresses are computed in memory and compared with what is committed | `sheriff validate` |\n| Confirmations | the latest line for the fingerprint of the wording of each checked node outside the SpecSheriff guidelines the project takes is looked up in the confirmations, and the owner it names is compared with the node's owner | `sheriff validate` |\n| The archive | each sid the commit removes from the specification is looked up in the confirmations, and one a confirmation was ever given for is looked up in the archive, with the reason for its removal; one never confirmed is refused where it stands in the archive | `sheriff validate` |\n| Links and citations in the nodes | every outgoing link's target is resolved against the sids that exist, and the citations in every node are read and set against the links it makes | `sheriff validate` |\n| Incoming links, heads' indexes | they are rebuilt in memory and compared with what is committed | `sheriff validate` |\n| Capitals | the title, text and reason of every checked node are read for two words or more running in capitals, a quoted name left out | `sheriff validate` |\n| Order of the domains | the order is computed from the consumes links | `sheriff validate` |\n| Levels | the level each head names is looked up in the list the project's own guidelines hold | `sheriff validate` |\n| Record variants | the record nodes, their refines links and the choosing fields' lists of values are read | `sheriff validate` |\n| The SpecSheriff guidelines | outside the repository they are written in, a `spec.json` or a `tools.json` under `specs/_guidelines/`, or any file under `specs/_schema/`, is refused | `sheriff validate` |\n| Appendices and a project's own guidelines | the outgoing implements and refines links of each node are resolved, and the part of the node each names is read | `sheriff validate` |\n| Tags | every symbol of the system's code is read for its tag, an inner symbol covered by the one it stands in, and a category exempt by where it lives is not read at all; the commit's changed lines are mapped onto the symbols they fall in, a line holding a tag, before the commit or after it, onto the symbol the tag stands on, and a symbol whose every changed line holds no tag and differs from the line it replaces only in a comment, in the sid a citation names or in an identifier the commit renames throughout counts as unchanged | `sheriff binding` |\n| Tests | every test is read for the sid it carries, resolved against the nodes, and the tests whose text the commit changes against the checked ones; the sids of the tags on the changed symbols are looked up among the sids every test carries | `sheriff binding` |\n| Lists of code and tests, symbols, lists | the tags and the sids the tests carry are collected across the repository and compared with the metadata, and the members of a list with the declaration it names | `sheriff binding` |\n| Addresses outside the specification | the files outside `specs/` and the tools are read for a part's name followed by a place, in any case and whether or not it names a node now | `sheriff binding` |\n| Generated copies | the types and the runtime checks are generated in memory and compared with what is committed | `sheriff binding` |\n| Drift | the history of the node is compared with the history of the files in its metadata, a renamed file read under both its names | `sheriff binding` |\n| Citations outside the specification | each sid in the code, the tests and the documents is resolved, the archive's included, and a number naming a node refused | `sheriff citations` |\n| Before an edit | the edit is applied to the file in memory and its changed lines are mapped onto the symbols as the Tags row maps them; the tags of each changed symbol are looked up among the sids the tests of the working tree carry, the edited file as it would stand included, and a node the edit leaves checked is looked up in the confirmations as the Confirmations row does | `sheriff guard` |\n| The message | the sids in the message are resolved and set against the tags on the changed symbols | `sheriff message` |\n| The review | a runner reads the commit's change against the nodes it names | `sheriff review` |\n| The tests | they are run | the project's test command, from the pre-push hook |",
           "refs": [
             {
               "type": "implements",
@@ -366,7 +415,7 @@
           "kind": "rule",
           "title": "How a test declares the rule it verifies",
           "status": "checked",
-          "text": "In TypeScript and JavaScript a test declares the sid of what it verifies by opening its name with it: `test(\"s-… what it verifies\", …)`. In Python it declares it by a mark on the test, `@pytest.mark.spec(\"s-…\")`; SpecSheriff's plugin for pytest registers the mark and opens the name a run reports with the sid. The description of a further language says how a test declares its sid there.",
+          "text": "In TypeScript and JavaScript a test declares the sid of what it verifies by opening its name with it: `test(\"s-… what it verifies\", …)`. In Python it declares it by a mark on the test, `@pytest.mark.spec(\"s-…\")`; the plugin for pytest of the SpecSheriff tools, `pytest-specsheriff`, registers the mark and opens the name a run reports with the sid. The description of a further language says how a test declares its sid there.",
           "refs": [
             {
               "type": "implements",
@@ -472,6 +521,90 @@
               "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
               "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides",
               "skills/specsheriff/test/unit/model.test.ts::s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind carries, not its owner or what the reindex builds"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/10",
+          "sid": "s-4mej6ccn7xu3d3p",
+          "kind": "rule",
+          "title": "A git hook calls its script in the data directory of the plugin for Claude Code",
+          "status": "checked",
+          "text": "When a session starts, the plugin for Claude Code (§s-zh2vcr3xjumppg5) copies the SpecSheriff tools it carries into its data directory, `${CLAUDE_PLUGIN_DATA}`, at `~/.claude/plugins/data/specsheriff-specsheriff-marketplace/`, where the copy there is of another release or missing. Each git hook `sheriff init` writes holds nothing but a call to the script for that hook in `hooks/` of that directory, which runs what the hook is to run (§s-477gtdrkw34dzxw). The hook refuses where that script is missing, saying that a session of Claude Code started on the machine puts it there; the script refuses where Node is missing or older than the tools need, naming the version they need.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-zh2vcr3xjumppg5"
+            }
+          ],
+          "rationale": "Claude Code keeps each version of a plugin in a directory of its own, which changes with every update and is removed some time after, and keeps the plugin's data directory across updates; so a call written once into a project names the data directory, and the plugin keeps there a copy of the release it holds. A hook holding only the call runs what the script of the installed release says, so a hook written once never falls behind a release. A check that cannot run holds nothing, so the hook refuses rather than passing."
+        },
+        {
+          "id": "_guidelines/tools/11",
+          "sid": "s-zh2vcr3xjumppg5",
+          "kind": "rule",
+          "title": "The plugin for Claude Code carries everything its work needs",
+          "status": "checked",
+          "text": "The plugin for Claude Code, `specsheriff`, carries the skills `spec`, `spec-review`, `spec-adopt` and `spec-init`, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares to Claude Code its hooks: the agent's hooks (§s-477gtdrkw34dzxw) and the one run when a session starts (§s-4mej6ccn7xu3d3p). In a repository holding no `sheriff.config.json` at its root, its hooks do nothing but keep its copy of the tools (§s-4mej6ccn7xu3d3p). The marketplace `specsheriff-marketplace` lists the plugin by the relative path of its directory. A project declares both in `.claude/settings.json`: the marketplace under `extraKnownMarketplaces`, its source the branch `release` of the repository the SpecSheriff guidelines are written in and `autoUpdate` on, and the plugin under `enabledPlugins`. Each machine runs the release its copy of the plugin holds until Claude Code updates it there. The skill `spec-init` runs `sheriff init` with the tools the plugin carries.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-bsya3febm6u64ab"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "implements",
+              "to": "s-83ev4wwesbwnhnp"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-4mej6ccn7xu3d3p"
+            }
+          ],
+          "rationale": "An agent takes up a skill only where it is installed, and Claude Code installs and updates a plugin from a marketplace itself and runs the hooks a plugin declares while it is enabled: declared in the project, the plugin is offered to the agent of every clone and, updating itself, brings every machine the latest release. Carrying the guidelines and the tools beside the skills, it keeps everything of one release together on the machine, and nothing of a release in the project but the calls to it. A plugin installed for a user runs in every project they open, and a project not taking the method is held to nothing of it. The marketplace is read from `release`, which holds only releases, so an agent loads a release and never the work in progress on `main`.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-29",
+                "problem": "How a practitioner takes up the method.",
+                "ruling": "The owner: the main channel is a plugin of skills for the agents, distributed through a marketplace; the plugin is made for Claude Code now and for Codex CLI next, and Gemini CLI is being studied.",
+                "type": "textual"
+              }
             ]
           }
         }
