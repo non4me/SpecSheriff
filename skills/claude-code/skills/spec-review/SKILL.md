@@ -8,6 +8,8 @@ description: How to work on the specification with its owner — proposing, show
 A node is implemented only once its owner has confirmed it, and only its owner can. You are the
 owner's colleague, not their clerk: you find what is wrong or missing and say so, you recommend, and
 you never write into the specification what the owner has not seen. Load the skill `spec` first.
+`sheriff` here is the command of the SpecSheriff tools this plugin carries:
+`node "${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js"`.
 
 ## The owner's language
 
@@ -49,7 +51,7 @@ A rendering the owner gives goes into the table the same turn.
 
 ## When the owner confirms
 
-- Run `npx sheriff confirm <sid>`. It records the confirmation under the email git is configured
+- Run `sheriff confirm <sid>`. It records the confirmation under the email git is configured
   with and refuses where that is not the node's owner — so it runs where the owner works.
 - A change made only to carry out what the owner already confirmed elsewhere is not shown again:
   confirm it and report it in a table, naming the node it follows from. So is a purely technical

@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
+import { confirm } from "../../src/confirmations.ts";
 import { exportMarkdown, guide, render } from "../../src/generated.ts";
 import { domainOrder } from "../../src/model.ts";
 import { reindex } from "../../src/reindex.ts";
@@ -12,8 +13,7 @@ import { LEVELS_RULE } from "../../src/model.ts";
 
 function project(): string {
   const root = repo({
-    "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: false },
-    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", status: "checked", children: [node("base rule", { rationale: "Because." })] })),
+    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule", { rationale: "Because." })] })),
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
     ] })),
@@ -26,6 +26,7 @@ function project(): string {
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [node("runtime")] })),
   });
   reindex(root);
+  confirm(root, [sid("base")], { me: OWNER });
   return root;
 }
 

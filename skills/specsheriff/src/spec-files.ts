@@ -1,5 +1,7 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, posix } from "node:path";
+import { fileURLToPath } from "node:url";
+import { incoming } from "./model.ts";
 
 export interface SpecNode {
   sid: string;
@@ -79,7 +81,33 @@ export function specificationOf(files: SpecFile[]): Specification {
 }
 
 export function loadSpecification(root: string): Specification {
-  return specificationOf(specPaths(root).map((path) => readSpecFile(root, path)));
+  return withTaken(root, specPaths(root).map((path) => readSpecFile(root, path)));
+}
+
+/** The SpecSheriff guidelines and their schema as the SpecSheriff tools carry them. */
+export const CARRIED = fileURLToPath(new URL("../guidelines/", import.meta.url));
+
+/** Whether the repository is set up for the SpecSheriff tools and takes the SpecSheriff guidelines from them, rather than writing them. */
+export function takesGuidelines(root: string): boolean {
+  try {
+    return JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).writesSpecSheriffGuidelines !== true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The specification the repository's own files make, with the SpecSheriff guidelines it takes from
+ * the tools where it takes them, standing where they are written and with the links the project
+ * makes to them built into them in memory; a copy the project holds is left out.
+ */
+export function withTaken(root: string, own: SpecFile[]): Specification {
+  if (!takesGuidelines(root)) return specificationOf(own);
+  const taken = ["spec.json", "tools.json"].map((name) => ({ path: `specs/_guidelines/${name}`, data: JSON.parse(readFileSync(join(CARRIED, name), "utf8")) }));
+  const spec = specificationOf([...own.filter((f) => !taken.some((t) => t.path === f.path)), ...taken]);
+  const built = incoming(spec);
+  for (const [sid, at] of spec.nodes) if (taken.includes(at.file)) at.node.refs = [...at.node.refs.filter((r) => !r.from), ...(built.get(sid) ?? [])];
+  return spec;
 }
 
 /** The one formatting of a file of the specification: two spaces, keys in their order, text as it is, LF. */

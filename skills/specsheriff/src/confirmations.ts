@@ -1,7 +1,7 @@
 import { appendFileSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { fingerprint, ownerOf } from "./model.ts";
-import { loadSpecification, writeSpecFile, type Specification } from "./spec-files.ts";
+import { fingerprint, ownerOf, partOf } from "./model.ts";
+import { loadSpecification, takesGuidelines, writeSpecFile, type Specification } from "./spec-files.ts";
 
 export interface Confirmation {
   sid: string;
@@ -54,6 +54,9 @@ export function confirm(root: string, sids: string[], { me, withdraw = false }: 
   const lines = readConfirmations(root);
   for (const sid of sids) {
     if (!spec.nodes.has(sid)) throw new Error(`${sid}: no node holds this sid`);
+    if (takesGuidelines(root) && partOf(spec.nodes.get(sid)!.file.path).specSheriffGuidelines) {
+      throw new Error(`${sid}: a node of the SpecSheriff guidelines, confirmed only in the repository they are written in`);
+    }
     const owner = ownerOf(spec, sid);
     if (owner === null) throw new Error(`${sid}: no owner is named for this node`);
     if (!withdraw && owner !== me) throw new Error(`${sid}: its owner is ${owner}, not ${me}`);

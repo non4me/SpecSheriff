@@ -5,7 +5,8 @@
   ],
   "scripts": {
     "test": "npm test -w specsheriff && python -m pytest skills/pytest-specsheriff/tests -q -p no:asyncio",
-    "typecheck": "npm run typecheck -w specsheriff"
+    "typecheck": "npm run typecheck -w specsheriff",
+    "release": "node scripts/release.mjs"
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",

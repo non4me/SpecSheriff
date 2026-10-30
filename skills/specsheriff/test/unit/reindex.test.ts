@@ -5,8 +5,8 @@ import { join } from "node:path";
 import { confirm } from "../../src/confirmations.ts";
 import { reindex } from "../../src/reindex.ts";
 import { loadSpecification, specPaths } from "../../src/spec-files.ts";
-import { SID } from "../../src/model.ts";
-import { file, node, OWNER, repo, sid } from "../fixture.ts";
+import { LEVELS_RULE, SID } from "../../src/model.ts";
+import { file, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
 const read = (root: string) => Object.fromEntries(specPaths(root).map((p) => [p, readFileSync(join(root, p), "utf8")]));
 const at = (root: string, name: string) => loadSpecification(root).nodes.get(sid(name))!.node;
@@ -89,10 +89,10 @@ test("s-5ah25f6gy99panq empties the status of a node confirmed by someone who is
 });
 
 test("s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written", () => {
+  const project = taking();
+  reindex(project);
+  assert.equal(loadSpecification(project).nodes.get(LEVELS_RULE)!.node.status, "checked");
   const core = file("_guidelines", "spec", node("core", { kind: "section", status: "checked", children: [node("core rule", { status: "checked" })] }));
-  const taking = bank({ "specs/_guidelines/spec.json": core, "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: false } });
-  reindex(taking);
-  assert.equal(at(taking, "core rule").status, "checked");
   const writing = bank({ "specs/_guidelines/spec.json": core });
   reindex(writing);
   assert.equal(at(writing, "core rule").status, "");

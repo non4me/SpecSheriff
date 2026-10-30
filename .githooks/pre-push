@@ -1,10 +1,9 @@
 #!/bin/sh
-# The tests of the system's code pass before a commit is shared, by the command sheriff.config.json names.
-root=$(git rev-parse --show-toplevel) || exit 1
-cd "$root" || exit 1
-command=$(node -e "process.stdout.write(require('./sheriff.config.json').testCommand ?? '')") || exit 1
-if [ -z "$command" ]; then
-  echo "sheriff: sheriff.config.json names no testCommand, so the tests cannot run before the push" >&2
+# Written by sheriff init: runs this hook's script from the SpecSheriff tools that the plugin for
+# Claude Code keeps on this machine, so that the hook runs the release the plugin holds.
+hook="${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsheriff-specsheriff-marketplace/hooks/$(basename "$0")"
+if [ ! -f "$hook" ]; then
+  echo "sheriff: $hook is missing; a session of Claude Code started on this machine puts it there" >&2
   exit 1
 fi
-sh -c "$command"
+exec sh "$hook" "$@"

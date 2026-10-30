@@ -1,11 +1,9 @@
 #!/bin/sh
-# The export and the map are written in the working tree; the checks of the specification on its own,
-# against the code and of the citations outside it read the commit being made.
-root=$(git rev-parse --show-toplevel) || exit 1
-. "$root/.githooks/staged.sh"
-(cd "$root" && "$sheriff" export >/dev/null && "$sheriff" render >/dev/null) || exit 1
-failed=0
-for check in validate binding citations; do
-  (cd "$staged" && "$sheriff" "$check") || failed=1
-done
-exit $failed
+# Written by sheriff init: runs this hook's script from the SpecSheriff tools that the plugin for
+# Claude Code keeps on this machine, so that the hook runs the release the plugin holds.
+hook="${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsheriff-specsheriff-marketplace/hooks/$(basename "$0")"
+if [ ! -f "$hook" ]; then
+  echo "sheriff: $hook is missing; a session of Claude Code started on this machine puts it there" >&2
+  exit 1
+fi
+exec sh "$hook" "$@"

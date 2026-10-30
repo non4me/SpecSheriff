@@ -25,18 +25,19 @@ text of those rules.
   SpecSheriff guidelines themselves as rule nodes in
   [`specs/_guidelines/`](specs/_guidelines/): the base in `spec.json`, and in `tools.json` the
   appendix saying how the tools carry it out.
-- **The skills** — what a practitioner installs: the SpecSheriff tools in
-  [`skills/specsheriff`](skills/specsheriff) (the command `sheriff`) and their plugin for pytest
-  in [`skills/pytest-specsheriff`](skills/pytest-specsheriff). The plugin for Claude Code and its
-  marketplace come next, then Codex CLI.
+- **The skills** — what a practitioner installs: the plugin for Claude Code in
+  [`skills/claude-code`](skills/claude-code), listed by the marketplace of this repository and
+  carrying the skills, the SpecSheriff guidelines and the SpecSheriff tools (the command `sheriff`,
+  built from [`skills/specsheriff`](skills/specsheriff)), and the tools' plugin for pytest in
+  [`skills/pytest-specsheriff`](skills/pytest-specsheriff). Codex CLI comes next.
 - **The worked example** — a saloon in a frontier town, set up the way any project is. It comes after
   the plugin.
 
 ## Status
 
-Work in progress. The guidelines are confirmed by their owner, and the tools hold this repository to
-them; the plugin, the theory written for a newcomer and the worked example are being built. Nothing
-here is ready to use yet.
+Work in progress. The guidelines are confirmed by their owner, the tools hold this repository to
+them, and the plugin for Claude Code carries both; the worked example is being built. Nothing here is
+released yet.
 
 ## License
 

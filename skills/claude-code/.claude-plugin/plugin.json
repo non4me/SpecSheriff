@@ -1,0 +1,11 @@
+{
+  "name": "specsheriff",
+  "version": "0.0.0",
+  "description": "Spec-anchored development: the skills, the SpecSheriff guidelines and the SpecSheriff tools that hold a specification, its tests and its code to one another.",
+  "author": {
+    "name": "non4me",
+    "url": "https://github.com/non4me"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/non4me/SpecSheriff"
+}

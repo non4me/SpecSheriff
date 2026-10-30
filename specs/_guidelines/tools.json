@@ -59,6 +59,7 @@
               "skills/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared",
               "skills/specsheriff/test/unit/model.test.ts::s-zefk589ykh37b8u tells a file's part and whether it holds the SpecSheriff guidelines",
               "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u finds each node with the file it stands in and its parent",
+              "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools",
               "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part",
               "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file"
             ],
@@ -178,9 +179,9 @@
               "skills/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it",
               "skills/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address",
               "skills/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where",
-              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init adds its hooks to the agent's settings beside those already there",
+              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init declares the marketplace and the plugin beside every other key of the agent's settings",
               "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init replaces no file that differs from what it would write, and names it",
-              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init writes the hooks, the agent's hook, the skills, the SpecSheriff guidelines and a start of the settings and the project's guidelines",
+              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines",
               "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts this repository holds what sheriff init writes, so that running it here writes nothing",
               "skills/specsheriff/test/unit/generated.test.ts::s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole",
               "skills/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads it",
@@ -208,7 +209,7 @@
                 "date": "2026-10-30",
                 "by": "the agent, in the whole-part pass",
                 "type": "problem",
-                "text": "In a project the SpecSheriff guidelines are read from the plugin for Claude Code and never written, so the reindex cannot record in them the incoming links a project's own guidelines make to them, nor can the check of incoming links compare those with anything committed: say how they are held, perhaps built in memory only for `sheriff show`, and whether the base's rule on links needs to say so."
+                "text": "In a project the SpecSheriff guidelines are read from the plugin for Claude Code and never written, so the reindex cannot record in them the incoming links a project's own guidelines make to them. The tools build those links into them in memory whenever they read the specification, and so check incoming links only in the project's own files, which the reindex alone writes; whether this rule, or the base's rule on links, should say so is still to be settled."
               }
             ]
           }
@@ -298,6 +299,7 @@
               "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves",
               "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together",
               "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory",
               "skills/specsheriff/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
             ],
             "todos": [
@@ -518,6 +520,7 @@
               "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends nothing where the latest line for that wording is already its owner's confirmation",
               "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and the owner confirming it, and sets it checked",
               "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended",
+              "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing",
               "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
               "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides",
               "skills/specsheriff/test/unit/model.test.ts::s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind carries, not its owner or what the reindex builds"
@@ -553,7 +556,15 @@
               "from": "s-zh2vcr3xjumppg5"
             }
           ],
-          "rationale": "Claude Code keeps each version of a plugin in a directory of its own, which changes with every update and is removed some time after, and keeps the plugin's data directory across updates; so a call written once into a project names the data directory, and the plugin keeps there a copy of the release it holds. A hook holding only the call runs what the script of the installed release says, so a hook written once never falls behind a release. A check that cannot run holds nothing, so the hook refuses rather than passing."
+          "rationale": "Claude Code keeps each version of a plugin in a directory of its own, which changes with every update and is removed some time after, and keeps the plugin's data directory across updates; so a call written once into a project names the data directory, and the plugin keeps there a copy of the release it holds. A hook holding only the call runs what the script of the installed release says, so a hook written once never falls behind a release. A check that cannot run holds nothing, so the hook refuses rather than passing.",
+          "meta": {
+            "tests": [
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a git hook refuses where its script is missing, saying that a session of Claude Code puts it there",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p each git hook sheriff init writes holds nothing but a call to its script in the plugin's data directory",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing"
+            ]
+          }
         },
         {
           "id": "_guidelines/tools/11",
@@ -605,6 +616,13 @@
                 "ruling": "The owner: the main channel is a plugin of skills for the agents, distributed through a marketplace; the plugin is made for Claude Code now and for Codex CLI next, and Gemini CLI is being studied.",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts",
+              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the skill spec-init runs sheriff init with the tools the plugin carries"
             ]
           }
         }

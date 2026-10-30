@@ -9,9 +9,7 @@ import { loadSpecification } from "../../src/spec-files.ts";
 import { LEVELS_RULE } from "../../src/model.ts";
 import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
-import { file, node, OWNER, repo, sid } from "../fixture.ts";
-
-const GUIDELINES = join(REPO, "specs", "_guidelines");
+import { file, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
 /** A small project that passes every check: its own guidelines, a domain, contracts, the technical appendix. */
 function good(): string {
@@ -46,7 +44,7 @@ function good(): string {
   return root;
 }
 
-const run = (root: string, before?: string) => validate(root, { guidelinesDir: GUIDELINES, before: before ? loadSpecification(before) : undefined });
+const run = (root: string, before?: string) => validate(root, { before: before ? loadSpecification(before) : undefined });
 const messages = (root: string, before?: string) => run(root, before).map((f) => `${f.where}: ${f.message}`);
 
 function edit(root: string, path: string, change: (data: any) => void): void {
@@ -115,12 +113,8 @@ test(`s-jau82aq9juv9zzh refuses a checked node no confirmation by its owner hold
   expectOne(root, new RegExp(`${sid("open")}.*checked.*no confirmation`));
 });
 
-test(`s-jau82aq9juv9zzh leaves the confirmations of the SpecSheriff guidelines a project takes to their version`, () => {
-  const root = good();
-  writeFileSync(join(root, "sheriff.config.json"), '{ "code": [], "tests": [] }');
-  edit(root, "specs/_guidelines/spec.json", (d) => (d.nodes[0].status = "checked"));
-  const found = run(root).map((f) => f.message);
-  assert.ok(!found.some((m) => /no confirmation/.test(m)), found.join("\n"));
+test(`s-jau82aq9juv9zzh leaves the confirmations of the SpecSheriff guidelines a project takes to where they are written`, () => {
+  assert.deepEqual(messages(taking()), []);
 });
 
 test(`s-jau82aq9juv9zzh refuses a removed node ever confirmed that is not in the archive, and one never confirmed that is`, () => {
@@ -266,14 +260,18 @@ test(`s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neithe
   expectOne(root, new RegExp(`${sid("loose")}.*neither refines nor implements`));
 });
 
-test(`s-jau82aq9juv9zzh refuses SpecSheriff guidelines that are not the version the project names, file for file`, () => {
-  const root = good();
-  writeFileSync(join(root, "sheriff.config.json"), '{ "code": [], "tests": [] }');
+test(`s-jau82aq9juv9zzh refuses, outside the repository the SpecSheriff guidelines are written in, a copy of them or of their schema`, () => {
+  const root = taking();
+  cpSync(join(REPO, "specs", "_guidelines", "tools.json"), join(root, "specs", "_guidelines", "tools.json"));
+  mkdirSync(join(root, "specs", "_schema"));
+  writeFileSync(join(root, "specs", "_schema", "notes.txt"), "ours\n");
   const found = messages(root);
-  assert.ok(found.some((m) => /specs\/_guidelines\/spec\.json.*not hold the SpecSheriff guidelines/.test(m)), found.join("\n"));
+  for (const path of ["specs/_guidelines/tools.json", "specs/_schema/notes.txt"]) {
+    assert.ok(found.some((m) => m.startsWith(`${path}: `) && /copy of the SpecSheriff guidelines/.test(m)), found.join("\n"));
+  }
 });
 
 test(`s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their confirmations aside`, () => {
-  const found = validate(REPO, { guidelinesDir: GUIDELINES }).map((f) => `${f.where}: ${f.message}`);
+  const found = validate(REPO).map((f) => `${f.where}: ${f.message}`);
   assert.deepEqual(found.filter((m) => !/no confirmation/.test(m)), []);
 });

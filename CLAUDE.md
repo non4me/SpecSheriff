@@ -5,18 +5,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this repository is
 
 SpecSheriff is a method of spec-anchored development and the upstream of what a project takes
-from it: the SpecSheriff guidelines and the SpecSheriff tools now, later the skills and a worked
-example. `npm install` at the root builds `skills/specsheriff/` and links `sheriff`; `npm test`
-runs its unit and end-to-end tests and those of `skills/pytest-specsheriff/` (Python 3.10 or later
+from it: the plugin for Claude Code carrying the skills, the SpecSheriff guidelines and the
+SpecSheriff tools now, later a worked example. `npm install` at the root builds the tools in
+`skills/specsheriff/`, links `sheriff`, and lays the built tools out in the plugin,
+`skills/claude-code/tools/` (ignored here, committed only on the branch `release`); `npm test` runs
+the tools' unit and end-to-end tests and those of `skills/pytest-specsheriff/` (Python 3.10 or later
 with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
 guidelines are written here, so their nodes are confirmed in `specs/_confirmations.jsonl` by the
-owner `specs/_guidelines/project.json` names. A change to
-`skills/specsheriff/src/` reaches the hooks once `npm run build -w specsheriff` has run. The git
-hooks, the agent's hook and the skills `spec`, `spec-review` and `spec-adopt` are kept in
-`skills/specsheriff/assets/`; `.githooks/`, `.claude/hooks/` and `.claude/skills/` here are what
-`sheriff init` writes from them, so a change is made in the assets, the copy deleted and `sheriff
-init` run again — a test fails while the two differ. Never report a check as having run that has
-not.
+owner `specs/_guidelines/project.json` names. `.githooks/` and `.claude/settings.json` hold what
+`sheriff init` writes, as in any project, and a test fails where they differ. How this repository
+runs its own plugin from the working tree — a change to `skills/specsheriff/src/` reaching the
+agent's hooks once `npm run build -w specsheriff` has run, and the git hooks at the next session
+start — and how a release is made, is in `internal/release.md`. Never report a check as having run
+that has not.
 
 The principles the method rests on, as the owner states them, are below. Weigh every decision and
 proposal against them first; one that contradicts a principle is raised with the owner, never carried
@@ -62,11 +63,11 @@ Formatting is exactly `JSON.stringify(data, null, 2) + "\n"`, LF endings, the ex
 
 ## Editing the specification
 
-The tools hold every edit. The agent's hooks in `.claude/settings.json` run `sheriff guard` before an
+The tools hold every edit. The agent's hooks, which the plugin declares, run `sheriff guard` before an
 edit made with the file tools, and after any edit `sheriff reindex`, `export`, `render`, `validate`,
-`binding` and `citations`, handing back what they refuse; the git hooks in `.githooks/` (turned on per
-clone by `git config core.hooksPath .githooks`) check the staged commit, its message and, where code
-changes, its review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by hand, and
+`binding` and `citations`, handing back what they refuse; the git hooks in `.githooks/` (turned on by
+the plugin when a session starts) check the staged commit, its message and, where code changes, its
+review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by hand, and
 `npm test` runs the tools' tests.
 
 - **Status.** Any change to a node's wording — title, text, rationale, or the values its kind carries

@@ -1,11 +1,11 @@
 #!/bin/sh
 # The export and the map are written in the working tree; the checks of the specification on its own,
 # against the code and of the citations outside it read the commit being made.
-root=$(git rev-parse --show-toplevel) || exit 1
-. "$root/.githooks/staged.sh"
-(cd "$root" && "$sheriff" export >/dev/null && "$sheriff" render >/dev/null) || exit 1
+. "$(dirname "$0")/sheriff.sh"
+. "$(dirname "$0")/staged.sh"
+(cd "$root" && sheriff export >/dev/null && sheriff render >/dev/null) || exit 1
 failed=0
 for check in validate binding citations; do
-  (cd "$staged" && "$sheriff" "$check") || failed=1
+  (cd "$staged" && sheriff "$check") || failed=1
 done
 exit $failed

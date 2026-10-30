@@ -1,11 +1,18 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { confirm, readConfirmations } from "../../src/confirmations.ts";
 import { loadSpecification } from "../../src/spec-files.ts";
-import { fingerprint } from "../../src/model.ts";
-import { file, node, OWNER, repo, sid } from "../fixture.ts";
+import { fingerprint, LEVELS_RULE } from "../../src/model.ts";
+import { file, node, OWNER, repo, sid, taking } from "../fixture.ts";
+
+test("s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing", () => {
+  const root = taking();
+  assert.throws(() => confirm(root, [LEVELS_RULE], { me: OWNER }), /SpecSheriff guidelines/);
+  assert.ok(!existsSync(join(root, "specs", "_confirmations.jsonl")));
+  assert.ok(!existsSync(join(root, "specs", "_guidelines", "spec.json")));
+});
 
 function project() {
   return repo({

@@ -1,6 +1,8 @@
-import { cpSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
+import { LEVELS_RULE } from "../src/model.ts";
+import { reindex } from "../src/reindex.ts";
 import type { SpecNode } from "../src/spec-files.ts";
 import { REPO } from "./repo.ts";
 
@@ -36,5 +38,19 @@ export function repo(files: Record<string, unknown>): string {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), typeof content === "string" ? content : JSON.stringify(content, null, 2) + "\n");
   }
+  return root;
+}
+
+/** A project taking the SpecSheriff guidelines rather than writing them: its own guidelines alone, reindexed. */
+export function taking(files: Record<string, unknown> = {}): string {
+  const root = repo({
+    "sheriff.config.json": { code: [], tests: [] },
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
+      node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core"] } }),
+    ] })),
+    ...files,
+  });
+  rmSync(join(root, "specs", "_schema"), { recursive: true });
+  reindex(root);
   return root;
 }

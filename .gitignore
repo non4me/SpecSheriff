@@ -7,3 +7,4 @@ skills/specsheriff/grammars/
 __pycache__/
 .pytest_cache/
 *.egg-info/
+skills/claude-code/tools/

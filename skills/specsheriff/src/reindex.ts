@@ -5,7 +5,7 @@ import { loadConfig } from "./config.ts";
 import { holds, readConfirmations } from "./confirmations.ts";
 import { mergeKeys, type KeyTwice } from "./json-text.ts";
 import { addresses, incoming, partOf, SID } from "./model.ts";
-import { canonical, specificationOf, specPaths, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
+import { canonical, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface ReindexReport {
   /** Every key whose values were merged, with the file it is in. */
@@ -91,7 +91,7 @@ export function reindex(root: string): ReindexReport {
     }
   });
   giveSids(files);
-  const spec = specificationOf(files);
+  const spec = withTaken(root, files);
 
   const ids = addresses(spec);
   const built = incoming(spec);
@@ -109,7 +109,9 @@ export function reindex(root: string): ReindexReport {
     }
   }
 
+  // Only the repository's own files are written, never the SpecSheriff guidelines it takes from the tools.
   for (const f of [...spec.files, ...spec.archive]) {
+    if (!files.includes(f)) continue;
     const text = canonical(f.data);
     if (text !== texts.get(f.path)) {
       writeFileSync(join(root, f.path), text);

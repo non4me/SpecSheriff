@@ -1,15 +1,17 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
+import { CARRIED, takesGuidelines } from "./spec-files.ts";
 
 export interface Schema {
   /** The errors of a file of the specification against the schema, each naming the field that is wrong; none where it matches. */
   check(data: unknown): string[];
 }
 
+/** The schema of the repository's specification: its own where it writes the SpecSheriff guidelines, else the one the tools carry. */
 export function loadSchema(root: string): Schema {
   const ajv = new Ajv2020({ strict: false });
-  const dir = join(root, "specs", "_schema");
+  const dir = takesGuidelines(root) ? join(CARRIED, "_schema") : join(root, "specs", "_schema");
   for (const name of readdirSync(dir).filter((n) => n.endsWith(".schema.json"))) {
     ajv.addSchema(JSON.parse(readFileSync(join(dir, name), "utf8")));
   }

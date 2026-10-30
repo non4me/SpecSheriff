@@ -1,5 +1,6 @@
 #!/bin/sh
 # The tests of the system's code pass before a commit is shared, by the command sheriff.config.json names.
+. "$(dirname "$0")/sheriff.sh"
 root=$(git rev-parse --show-toplevel) || exit 1
 cd "$root" || exit 1
 command=$(node -e "process.stdout.write(require('./sheriff.config.json').testCommand ?? '')") || exit 1

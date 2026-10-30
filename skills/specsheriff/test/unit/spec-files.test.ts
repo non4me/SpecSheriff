@@ -1,10 +1,24 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cpSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { canonical, loadSpecification, writeSpecFile } from "../../src/spec-files.ts";
+import { LEVELS_RULE } from "../../src/model.ts";
+import { reindex } from "../../src/reindex.ts";
+import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
+import { sid, taking } from "../fixture.ts";
+
+test("s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools", () => {
+  const root = taking();
+  const at = loadSpecification(root).nodes.get(LEVELS_RULE)!;
+  assert.equal(at.file.path, "specs/_guidelines/spec.json");
+  assert.ok(at.node.refs.some((r) => r.type === "refines" && r.from === sid("our levels")), "the project's links are built into them in memory");
+  assert.deepEqual(validate(root), []);
+  reindex(root);
+  assert.ok(!existsSync(join(root, "specs", "_guidelines", "spec.json")), "and never written into the project");
+});
 
 function copyOfSpecs(): string {
   const root = mkdtempSync(join(tmpdir(), "sheriff-"));

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { loadConfig } from "./config.ts";
 import { everConfirmed, holds, readConfirmations } from "./confirmations.ts";
@@ -6,7 +6,7 @@ import { keysTwice } from "./json-text.ts";
 import { addresses, citations, incoming, LEVELS_RULE, levelsOf, ownerOf, partOf } from "./model.ts";
 import { headIndex, judgedHere } from "./reindex.ts";
 import { loadSchema } from "./schema.ts";
-import { canonical, specificationOf, specPaths, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
+import { specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface Finding {
   /** The file, and the node where there is one. */
@@ -15,8 +15,6 @@ export interface Finding {
 }
 
 export interface ValidateOptions {
-  /** The directory holding the SpecSheriff guidelines the installed SpecSheriff tools carry. */
-  guidelinesDir: string;
   /** The specification as the commit before this one holds it, for what the commit removes. */
   before?: Specification;
 }
@@ -24,10 +22,22 @@ export interface ValidateOptions {
 const REQUIRING = new Set(["rule", "record", "term"]);
 const isBase = (path: string) => !["_guidelines", "tech"].includes(partOf(path).part);
 
-export function validate(root: string, { guidelinesDir, before }: ValidateOptions): Finding[] {
+export function validate(root: string, { before }: ValidateOptions = {}): Finding[] {
   const findings: Finding[] = [];
   const config = loadConfig(root);
   const paths = specPaths(root);
+
+  // A project taking the SpecSheriff guidelines holds no copy of them or of their schema.
+  if (!config.writesSpecSheriffGuidelines) {
+    const schemaDir = join(root, "specs", "_schema");
+    const schemaFiles = existsSync(schemaDir)
+      ? readdirSync(schemaDir, { recursive: true, encoding: "utf8" }).filter((p) => statSync(join(schemaDir, p)).isFile()).map((p) => `specs/_schema/${p.replaceAll("\\", "/")}`)
+      : [];
+    for (const path of [...paths.filter((p) => partOf(p).specSheriffGuidelines), ...schemaFiles]) {
+      findings.push({ where: path, message: "a copy of the SpecSheriff guidelines or of their schema, which a project reads from the SpecSheriff tools" });
+    }
+    if (findings.length) return findings;
+  }
 
   // Files read as text and against the schema; a file that does not read stops the checks of the nodes.
   const schema = loadSchema(root);
@@ -47,7 +57,7 @@ export function validate(root: string, { guidelinesDir, before }: ValidateOption
   }
   if (findings.length) return findings;
 
-  const spec = specificationOf(files);
+  const spec = withTaken(root, files);
   const at = (sid: string) => {
     const n = spec.nodes.get(sid)!;
     return `${n.file.path}: ${sid} (${n.node.id})`;
@@ -140,17 +150,6 @@ export function validate(root: string, { guidelinesDir, before }: ValidateOption
   domains(spec, built, refuse, findings);
   variants(spec, refuse);
   appendices(spec, refuse);
-
-  if (!config.writesSpecSheriffGuidelines) {
-    for (const name of ["spec.json", "tools.json"]) {
-      const path = `specs/_guidelines/${name}`;
-      const ours = spec.files.find((f) => f.path === path);
-      const theirs = join(guidelinesDir, name);
-      if (!ours || !existsSync(theirs) || canonical(ours.data) !== canonical(JSON.parse(readFileSync(theirs, "utf8")))) {
-        findings.push({ where: path, message: "does not hold the SpecSheriff guidelines the installed sheriff carries, file for file" });
-      }
-    }
-  }
   return findings;
 }
 

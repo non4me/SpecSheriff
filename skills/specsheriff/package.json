@@ -12,6 +12,7 @@
     "guidelines",
     "grammars",
     "assets",
+    "hooks",
     "languages"
   ],
   "engines": {

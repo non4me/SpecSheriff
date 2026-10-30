@@ -73,8 +73,8 @@ held, what is checked, when, and what a failure costs, and names no technology. 
 tools, [`tools.json`](../specs/_guidelines/tools.json), says how the SpecSheriff tools carry the base
 out: where the files are, the commands, the agent's hooks and git's, how each check is made,
 how a tag and a test name their rule, who runs the reviewer and how a confirmation is recorded
-(§s-a4rbry4hsu34hy8). A project takes both whole, at the version its owner names, and keeps beside
-them guidelines of its own that refine them (§s-bsya3febm6u64ab). `sheriff guide` prints them all, and
+(§s-a4rbry4hsu34hy8). A project takes both whole, with the skills that apply them and updated with
+them, and keeps beside them guidelines of its own that refine them (§s-bsya3febm6u64ab). `sheriff guide` prints them all, and
 `sheriff show <sid>` one node.
 
 ## The skills the method needs
@@ -90,17 +90,15 @@ way every time.
   wording.
 - **spec-adopt** — bringing a project's existing documents into nodes, walked whole, the owner agreeing
   where each goes: a project rarely starts from nothing.
-- **init** — laying out what the checks depend on: the hooks of the agent and of git, the guidelines
-  and their schema, the settings naming the version and the owner. A check nobody installed holds
-  nothing.
-- **update** — moving a project to a newer version in one commit its owner makes, since a project
-  takes the guidelines at the version its owner names.
+- **spec-init** — laying out what the checks depend on: the git hooks, the plugin declared for every
+  clone so that the agent's hooks and the skills come with it, the settings and the owner. A check
+  nobody installed holds nothing.
 
 How to use them, and which to take when, is the practitioner's guide, kept with the skills.
 
 ## Where the rest is
 
-- The skills and the tools: [`skills/`](../skills/) — the SpecSheriff tools and their plugin for
-  pytest; the plugin for Claude Code follows.
+- The skills and the tools: [`skills/`](../skills/) — the plugin for Claude Code carrying the
+  skills, the SpecSheriff guidelines and the SpecSheriff tools, and the tools' plugin for pytest.
 - The worked example, a saloon in a frontier town: to come.
 - The decisions taken so far, and why: [the design log](design-log.md).

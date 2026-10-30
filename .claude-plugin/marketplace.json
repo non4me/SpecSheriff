@@ -1,0 +1,15 @@
+{
+  "name": "specsheriff-marketplace",
+  "owner": {
+    "name": "non4me",
+    "url": "https://github.com/non4me"
+  },
+  "description": "SpecSheriff: the method of spec-anchored development, as a plugin for Claude Code.",
+  "plugins": [
+    {
+      "name": "specsheriff",
+      "source": "./skills/claude-code",
+      "description": "The skills, the SpecSheriff guidelines and the SpecSheriff tools."
+    }
+  ]
+}

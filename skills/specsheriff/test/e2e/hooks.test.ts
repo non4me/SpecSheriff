@@ -1,20 +1,21 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { delimiter, join } from "node:path";
-import { REPO } from "../repo.ts";
+import { join } from "node:path";
 import { sid } from "../fixture.ts";
 import { codeProject, OPEN, put } from "../code-project.ts";
+import { PLUGIN, pluginHook, plugins } from "../plugin.ts";
 
-const env = { ...process.env, PATH: `${join(REPO, "node_modules", ".bin")}${delimiter}${process.env.PATH}` };
-const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: root, encoding: "utf8", env });
+const machine = plugins();
+const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: root, encoding: "utf8", env: machine.env });
 
+/** A project set up by sheriff init, on a machine where a session of Claude Code has started. */
 function hooked(): string {
   const root = codeProject();
-  cpSync(join(REPO, ".githooks"), join(root, ".githooks"), { recursive: true });
-  git(root, "config", "core.hooksPath", ".githooks");
+  spawnSync(process.execPath, [`${PLUGIN}/tools/dist/cli.js`, "init"], { cwd: root, encoding: "utf8" });
+  pluginHook("session-start.sh", machine, root);
   writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_viewer/\n");
   git(root, "add", "-A");
   return root;
@@ -61,8 +62,7 @@ test("s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a 
 
 test("s-83ev4wwesbwnhnp after an agent's edit the checks run over the working tree, and what they refuse is handed to the agent", () => {
   const root = hooked();
-  cpSync(join(REPO, ".claude", "hooks"), join(root, ".claude", "hooks"), { recursive: true });
-  const afterEdit = () => spawnSync("sh", [join(root, ".claude", "hooks", "sheriff-after-edit.sh")], { cwd: root, encoding: "utf8", env });
+  const afterEdit = () => pluginHook("after-edit.sh", machine, root);
   const clean = afterEdit();
   assert.equal(clean.status, 0, clean.stderr);
   put(root, "src/open.ts", OPEN + "export function close() {}\n");
@@ -75,7 +75,7 @@ test("s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the sett
   const root = hooked();
   commit(root, "Hooks in");
   const remote = mkdtempSync(join(tmpdir(), "sheriff-remote-"));
-  spawnSync("git", ["init", "-q", "--bare", remote]);
+  git(remote, "init", "-q", "--bare");
   git(root, "remote", "add", "origin", remote);
   const config = (testCommand?: string) => {
     const path = join(root, "sheriff.config.json");

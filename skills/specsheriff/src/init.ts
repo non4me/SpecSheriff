@@ -1,6 +1,5 @@
-import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { git } from "./diff.ts";
 import { newSid } from "./reindex.ts";
 import { canonical } from "./spec-files.ts";
@@ -12,58 +11,16 @@ export interface InitReport {
   notes: string[];
 }
 
-const ASSETS = fileURLToPath(new URL("../assets/", import.meta.url));
-const GUIDELINES = fileURLToPath(new URL("../guidelines/", import.meta.url));
+/** Every git hook init writes: a call to its script in the data directory of the plugin for Claude Code. */
+const HOOK = readFileSync(new URL("../assets/githook", import.meta.url), "utf8");
 
-type HookEntry = { matcher?: string; hooks: Array<{ type: string; command: string }> };
-type Settings = { hooks?: Record<string, HookEntry[]>; [key: string]: unknown };
-
-function files(dir: string): string[] {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(dir, e.name)).map((f) => `${e.name}/${f}`) : [e.name]));
-}
-
-/**
- * What init writes, by the path it writes it to: the hooks, the agent's hook, the skills, and the
- * SpecSheriff guidelines — except in the repository they are written in, where they are the source of
- * the copy the SpecSheriff tools carry, not a copy of it.
- */
-function plan(writesSpecSheriffGuidelines: boolean): Map<string, { text: string; executable: boolean }> {
-  const out = new Map<string, { text: string; executable: boolean }>();
-  const add = (to: string, from: string, executable = false) => out.set(to, { text: readFileSync(from, "utf8"), executable });
-  for (const f of files(join(ASSETS, "githooks"))) add(`.githooks/${f}`, join(ASSETS, "githooks", f), true);
-  for (const f of files(join(ASSETS, "claude", "hooks"))) add(`.claude/hooks/${f}`, join(ASSETS, "claude", "hooks", f), true);
-  for (const f of files(join(ASSETS, "skills"))) add(`.claude/skills/${f}`, join(ASSETS, "skills", f));
-  if (!writesSpecSheriffGuidelines) {
-    for (const name of ["spec.json", "tools.json"]) add(`specs/_guidelines/${name}`, join(GUIDELINES, name));
-    for (const f of files(join(GUIDELINES, "_schema"))) add(`specs/_schema/${f}`, join(GUIDELINES, "_schema", f));
-  }
-  return out;
-}
-
-function writesSpecSheriffGuidelines(root: string): boolean {
-  try {
-    return JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).writesSpecSheriffGuidelines === true;
-  } catch {
-    return false;
-  }
-}
-
-/** Adds each of its hooks to the agent's settings where no hook already runs the same command. */
-function mergeSettings(settings: Settings, ours: Settings): boolean {
-  let changed = false;
-  settings.hooks ??= {};
-  for (const [event, entries] of Object.entries(ours.hooks ?? {})) {
-    const theirs = (settings.hooks[event] ??= []);
-    for (const entry of entries) {
-      const present = theirs.some((e) => e.hooks?.some((h) => entry.hooks.some((o) => o.command === h.command)));
-      if (!present) {
-        theirs.push(entry);
-        changed = true;
-      }
-    }
-  }
-  return changed;
-}
+/** What a project declares to Claude Code: the marketplace, read from the branch release, and the plugin. */
+const DECLARED: Record<string, Record<string, unknown>> = {
+  extraKnownMarketplaces: {
+    "specsheriff-marketplace": { source: { source: "github", repo: "non4me/SpecSheriff", ref: "release" }, autoUpdate: true },
+  },
+  enabledPlugins: { "specsheriff@specsheriff-marketplace": true },
+};
 
 /** Sets a repository up for the SpecSheriff tools, replacing no file that differs from what it would write. */
 export function init(root: string): InitReport {
@@ -79,11 +36,11 @@ export function init(root: string): InitReport {
     if (executable) chmodSync(full, 0o755);
     report.written.push(path);
   };
-  for (const [path, { text, executable }] of plan(writesSpecSheriffGuidelines(root))) write(path, text, executable);
+  for (const hook of ["pre-commit", "commit-msg", "pre-push"]) write(`.githooks/${hook}`, HOOK, true);
 
+  // The marketplace and the plugin are added beside every other key; a declaration of them that says otherwise is left as it is.
   const settingsPath = join(root, ".claude", "settings.json");
-  const ours = JSON.parse(readFileSync(join(ASSETS, "claude", "settings.hooks.json"), "utf8")) as Settings;
-  let settings: Settings = {};
+  let settings: Record<string, unknown> = {};
   let readable = true;
   if (existsSync(settingsPath)) {
     try {
@@ -91,10 +48,20 @@ export function init(root: string): InitReport {
     } catch {
       readable = false;
       report.left.push(".claude/settings.json");
-      report.notes.push(".claude/settings.json is not JSON: the agent's hooks were not added");
+      report.notes.push(".claude/settings.json is not JSON: the marketplace and the plugin were not declared");
     }
   }
-  if (readable && mergeSettings(settings, ours)) {
+  let changed = false;
+  let differs = false;
+  for (const [key, entries] of readable ? Object.entries(DECLARED) : []) {
+    const held = (settings[key] ??= {}) as Record<string, unknown>;
+    for (const [name, value] of Object.entries(entries)) {
+      if (!(name in held)) (held[name] = value), (changed = true);
+      else if (JSON.stringify(held[name]) !== JSON.stringify(value)) differs = true;
+    }
+  }
+  if (differs) report.left.push(".claude/settings.json");
+  if (changed) {
     mkdirSync(dirname(settingsPath), { recursive: true });
     writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
     report.written.push(".claude/settings.json");

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { confirm } from "./confirmations.ts";
 import { binding, citationsOutside } from "./binding.ts";
 import { exportMarkdown, guide, render } from "./generated.ts";
@@ -30,7 +29,7 @@ Commands:
   message <file>              check a commit's message against the code it changes
   review <file>               ask the independent reviewer for its verdict on the commit being made
   guard                       judge the edit an agent's harness describes on standard input
-  init                        set the repository up: hooks, skills, the SpecSheriff guidelines, settings
+  init                        set the repository up: the git hooks, the plugin for Claude Code, settings
 
 Options:
   --version  print the version of the SpecSheriff tools
@@ -67,7 +66,7 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       return 0;
     }
     case "validate": {
-      const findings = validate(root, { guidelinesDir: fileURLToPath(new URL("../guidelines/", import.meta.url)), before: lastCommitted() });
+      const findings = validate(root, { before: lastCommitted() });
       for (const f of findings) process.stdout.write(`${f.where}: ${f.message}\n`);
       return findings.length ? 1 : 0;
     }
