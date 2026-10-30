@@ -8,9 +8,9 @@ SpecSheriff is a method of spec-anchored development and the upstream of what a 
 from it: the plugin for Claude Code carrying the skills, the SpecSheriff guidelines and the
 SpecSheriff tools now, later a worked example. `npm install` at the root builds the tools in
 `skills/specsheriff/`, links `sheriff`, and lays the built tools out in the plugin,
-`skills/claude-code/tools/` (ignored here, committed only on the branch `release`); `npm test` runs
-the tools' unit and end-to-end tests and those of `skills/pytest-specsheriff/` (Python 3.10 or later
-with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
+`skills/claude-code/tools/` (ignored here, committed only on the branch `release`); `npm test` builds
+them again and runs their unit and end-to-end tests and those of `skills/pytest-specsheriff/`
+(Python 3.10 or later with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
 guidelines are written here, so their nodes are confirmed in `specs/_confirmations.jsonl` by the
 owner `specs/_guidelines/project.json` names. `.githooks/` and `.claude/settings.json` hold what
 `sheriff init` writes, as in any project, and a test fails where they differ. How this repository
