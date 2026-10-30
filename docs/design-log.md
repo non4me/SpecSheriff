@@ -12,9 +12,9 @@ SpecSheriff is three parts kept in this repository. The theory explains the meth
 has never seen it: the approach in a few paragraphs, the principles one line each, a dated comparison
 with similar tools with every claim linked to its source, which skills the method needs and why, and
 the SpecSheriff guidelines the other two parts are built from. The skills are what a practitioner
-installs: for each agent a plugin with the skills — spec, spec-review, spec-adopt, init and update —
-and the templates of the hooks, the SpecSheriff tools, and a guide saying which skill to take in
-which case, citing the theory rather than restating it. Their code and tests carry the sids of the
+installs: for each agent a plugin with the skills — spec, spec-review, spec-adopt and spec-init —
+the SpecSheriff guidelines and the SpecSheriff tools, and a guide saying which skill to take in which
+case, citing the theory rather than restating it. Their code and tests carry the sids of the
 theory's nodes, so that the repository's own checks hold the implementation to the theory and the
 method is shown on itself. The worked example is set up by the skills the way any project is, which
 is why the packaging comes before it. The plugin is made for Claude Code now and for Codex CLI next;
@@ -22,32 +22,22 @@ Gemini CLI is being studied. Licences stay by directory: the theory's prose unde
 guidelines, the skills, the tools and the example under Apache 2.0. The plugin goes to Anthropic's
 plugin directory once the worked example and the first article are out.
 
-### 2026-10-29 — One channel, this repository, and the version of the checks is the project's
+### 2026-10-29 — One channel: the plugin carries everything its work needs
 
-A plugin updates on each machine at its own time, and none of Claude Code, Codex CLI and Gemini CLI
-lets a repository pin a plugin's version. Tools carried only by the plugin would give one commit
-different answers on two machines after a release, would be found by a git hook run from a terminal
-or an editor at no stable path, and would not reach CI at all.
+The decision stands on the rules it settled (§s-bsya3febm6u64ab, §s-zh2vcr3xjumppg5,
+§s-4mej6ccn7xu3d3p): the plugin carries the skills, the SpecSheriff guidelines and the SpecSheriff
+tools, comes through the marketplace kept in this repository and updates itself on every machine, and
+a project keeps no copy of the guidelines and names no version.
 
-So the plugin comes through the marketplace kept in this repository and updates itself, init turning
-automatic updates on in the project's settings, while the tools that check a commit are run by the
-project's hooks — the agent's and git's alike — at the version the project names, taken from this
-repository at that version's tag into a cache on the machine, as the pre-commit framework takes each
-hook from its repository at the revision its configuration names. A release is one tag, whose number
-the plugin, the tools and the guidelines they carry share; the plugin for pytest is installed by pip
-from the same repository at the same tag. Moving a project to a new version is one commit its owner
-makes, changing the version named and the copy of the guidelines, which the plugin offers once it
-sees a newer version: a project takes the SpecSheriff guidelines at the version its owner names
-(§s-bsya3febm6u64ab). The agent's hooks stay in the project, written there by init as they are kept
-now (§s-477gtdrkw34dzxw), so that a colleague's agent is held before they install the plugin; Codex
-CLI and Gemini CLI both run a project's own hooks, and Codex admits no plugin carrying hooks into its
-public directory.
-
-The tools inside the plugin, at whatever version each machine updated to, were set aside for the
-answers that differ between machines; the plugin carrying every released version of the guidelines,
-with a launcher for the git hooks, because it kept only the comparison of the copy of the guidelines
-alike and left the checks themselves differing; an npm package as a second channel, because this
-repository already serves every file and a second publication is one more thing to keep in step.
+Set aside: an npm package as a second channel, because this repository already serves every file and
+a second publication is one more thing to keep in step; and, the same day, the version of the checks
+named by the project and taken from this repository at its tag into a cache on the machine, as the
+pre-commit framework takes each hook. That held one commit to one answer on every machine, at the
+cost of a version each project keeps and moves; the owner took the standard road instead, on which
+every release reaches every machine through the marketplace's update and a machine not yet updated is
+its user's matter. How a version is released is this repository's own procedure, described in an
+internal document rather than in the guidelines. Codex admits no plugin carrying hooks into its public
+directory, which its plugin will have to meet.
 
 ### 2026-10-29 — The final gate stands on each participant's machine
 
@@ -333,7 +323,8 @@ aside on 2026-10-28.)
 Before the first publication, the origin project takes the SpecSheriff guidelines as a git
 dependency pinned to a commit of this repository; after it, as a versioned package. A change to them
 is made here and committed here first, and the origin project then moves its pin. (Since 2026-10-29
-a version is a tag of this repository, taken as any project takes it.)
+the origin project, like any project, takes the SpecSheriff guidelines with the plugin that carries
+them.)
 
 ### 2026-10-27 — The name is SpecSheriff
 
@@ -375,7 +366,7 @@ base: they refine them and never contradict them.
 - **spec-adopt** — bringing a project's existing documents into the model: imported verbatim first,
   every citation moved onto a permanent identifier, numbered by place, then gone over with the owner.
 
-(Since 2026-10-29 the plugin adds init and update.)
+(Since 2026-10-29 the plugin adds spec-init.)
 
 A personal working regime — a task list, working time against an estimate, a status line, a local
 cache in front of external systems — is not published. Neither is a protocol for teams of agent
