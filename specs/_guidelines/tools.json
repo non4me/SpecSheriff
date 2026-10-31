@@ -18,7 +18,7 @@
           "kind": "rule",
           "title": "Where the files are",
           "status": "checked",
-          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its head in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: a project's own guidelines in `project.json`, and, in the repository the SpecSheriff guidelines are written in, the base in `spec.json` and the appendix of the tools in `tools.json`, which every other project reads from the plugin for Claude Code (§s-zh2vcr3xjumppg5). A part divided into one file per section keeps its files in its directory. The schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in, and every other project reads it from the plugin: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part. Confirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git. The SpecSheriff tools provide the command `sheriff`. Their plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install \"pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff\"`. The settings of the SpecSheriff tools are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the SpecSheriff guidelines are written in says so by the setting `\"writesSpecSheriffGuidelines\": true`. The documents are the markdown files the repository keeps outside `specs/`. The tools of the specification are the files of the SpecSheriff tools: a project keeps only the files `sheriff init` writes, and the repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the sids they declare and no file is read for an address. The specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
+          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its header in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: a project's own guidelines in `project.json`, and, in the repository the SpecSheriff guidelines are written in, the base in `spec.json` and the appendix of the tools in `tools.json`, which every other project reads from the plugin for Claude Code (§s-zh2vcr3xjumppg5). A part divided into one file per section keeps its files in its directory. The schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in, and every other project reads it from the plugin: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part. Confirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git. The SpecSheriff tools provide the command `sheriff`. In a terminal it is run from the copy that the plugin for Claude Code keeps in its data directory (§s-4mej6ccn7xu3d3p), as `node <data directory>/dist/cli.js`. Their plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install \"pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff\"`. The settings of the SpecSheriff tools are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the SpecSheriff guidelines are written in says so by the setting `\"writesSpecSheriffGuidelines\": true`. The documents are the markdown files the repository keeps outside `specs/`. The tools of the specification are the files of the SpecSheriff tools: a project keeps only the files `sheriff init` writes, and the repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the sids they declare and no file is read for an address. The specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
           "refs": [
             {
               "type": "implements",
@@ -47,21 +47,25 @@
             {
               "type": "cites",
               "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
             }
           ],
           "meta": {
             "tests": [
-              "skills/specsheriff/test/unit/binding.test.ts::s-zefk589ykh37b8u reads no file of the tools for an address where the SpecSheriff guidelines are written",
-              "skills/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file neither names for neither",
-              "skills/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live",
-              "skills/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads this repository's settings, whose tests are the tools' own",
-              "skills/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u reads whether the SpecSheriff guidelines are written in the repository",
-              "skills/specsheriff/test/unit/config.test.ts::s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared",
-              "skills/specsheriff/test/unit/model.test.ts::s-zefk589ykh37b8u tells a file's part and whether it holds the SpecSheriff guidelines",
-              "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u finds each node with the file it stands in and its parent",
-              "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools",
-              "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part",
-              "skills/specsheriff/test/unit/spec-files.test.ts::s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file"
+              "skills/tools/test/unit/binding.test.ts::s-zefk589ykh37b8u reads no file of the tools for an address where the SpecSheriff guidelines are written",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file neither names for neither",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads this repository's settings, whose tests are the tools' own",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads whether the SpecSheriff guidelines are written in the repository",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared",
+              "skills/tools/test/unit/model.test.ts::s-zefk589ykh37b8u tells a file's part and whether it holds the SpecSheriff guidelines",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u finds each node with the file it stands in and its parent",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file"
             ],
             "decisions": [
               {
@@ -69,23 +73,24 @@
                 "problem": "The toolset SpecSheriff provides was spelled the toolset, SpecSheriff's toolset and the tools: three names for one thing, the first a general word that does not say whose.",
                 "ruling": "The owner: it is named the SpecSheriff tools.",
                 "type": "textual"
-              }
-            ],
-            "todos": [
-              {
-                "date": "2026-10-30",
-                "by": "the agent, in the whole-part pass",
-                "text": "Say where the agent and a person find the command `sheriff`: no npm install puts it on the path any more; the plugin's `bin/` would put it on the agent's, and a person's terminal has neither."
               },
               {
                 "date": "2026-10-30",
-                "by": "the agent, in the whole-part pass",
-                "text": "`pytest-specsheriff`, installed by pip, does not follow the plugin for Claude Code when Claude Code updates it: say how a machine takes its later release."
+                "problem": "No package installed the command `sheriff` any more: an agent found the SpecSheriff tools through the plugin for Claude Code, and a person's terminal had no command at all.",
+                "ruling": "The owner: nothing new is built. In a terminal the command is run from the copy of the tools the plugin keeps in its data directory, whose path is the same on every machine; the agent's skills run it from the tools the plugin carries.",
+                "type": "textual"
               },
               {
                 "date": "2026-10-30",
-                "by": "the agent, in the whole-part pass",
-                "text": "By the owner's rule of 2026-10-29, what only the repository the SpecSheriff guidelines are written in holds leaves the guidelines for an internal document: where that repository keeps `spec.json`, `tools.json` and the schema, and its tools under `skills/`, read for sids and not for addresses; the tests bound here to that are rebound with it."
+                "problem": "`pytest-specsheriff`, installed by pip, does not follow the plugin for Claude Code when Claude Code updates it.",
+                "ruling": "The owner: nothing is built and no rule says how it is updated. It registers the mark, checks its form and opens the reported name with the sid, while the checks read the sid from the test's source, so an older copy breaks no check; updating it is a person's action, which the practitioner's guide gives.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "By the owner's rule of 2026-10-29, what only the repository the SpecSheriff guidelines are written in does leaves the guidelines for an internal document; this rule says where that repository keeps the guidelines, their schema and its tools, and what it is not read for.",
+                "ruling": "The owner: those clauses stay. They say what the SpecSheriff tools do in a repository that writes the guidelines, which every project's copy of the tools carries out; the procedures only that repository runs — a release, the build, running its own plugin — are in its internal document.",
+                "type": "procedural"
               }
             ]
           }
@@ -96,7 +101,7 @@
           "kind": "rule",
           "title": "The commands",
           "status": "checked",
-          "text": "`sheriff validate` runs the checks of the specification on its own, and `sheriff binding` those between the specification and the code, the drift report with them; `sheriff citations` checks the citations outside the specification; `sheriff message` grades a commit message against the file git hands a commit-msg hook, and `sheriff review` asks the reviewer for its verdict on the commit being made. `sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's head from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification. Before anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file. `sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb). `sheriff guard` judges an edit an agent is about to make. `sheriff export` writes the readable export in markdown, one file for each file of the specification, and `sheriff render` the map. `sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked. `sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p) and turns them on; adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there; and, where they are missing, writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no other file that differs from what it would write, naming each one instead, so run again it changes nothing. `sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end. `sheriff types` generates, from the record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand.",
+          "text": "`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` make the checks the table of how each check is made gives them (§s-4kd2pave7vm4hmd). `sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's header from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification. Before anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file. `sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb). `sheriff export` writes the readable export in markdown, one file for each file of the specification, and `sheriff render` the map. `sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked. `sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p) and turns them on; adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there; and, where they are missing, writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no other file that differs from what it would write, naming each one instead, so run again it changes nothing. `sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end. `sheriff types` generates, from the data record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand.",
           "refs": [
             {
               "type": "implements",
@@ -141,6 +146,10 @@
             {
               "type": "cites",
               "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-4kd2pave7vm4hmd"
             }
           ],
           "rationale": "The reindex rewrites whole the files written by hand, so it keeps everything they hold: two values written under one key are each somebody's intent, kept together where both can stand and refused where keeping one would drop the other, since nothing says which was meant; and every merge is named, because one of them may have been written to replace the other.",
@@ -148,7 +157,7 @@
             "decisions": [
               {
                 "date": "2026-10-07",
-                "problem": "The types and runtime checks generated from the record nodes had no command.",
+                "problem": "The types and runtime checks generated from the data record nodes had no command.",
                 "ruling": "The owner: a command of their own generates them.",
                 "type": "textual"
               },
@@ -169,48 +178,39 @@
                 "problem": "The commands were one repository's package scripts.",
                 "ruling": "The owner: they are the commands of the SpecSheriff tools, described in the appendix of the tools.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "The first sentence gave `sheriff binding` every check between the specification and the code, though the table of how each check is made gives some of them to other commands.",
+                "ruling": "The owner: the sentence names the commands that check and leaves to that table which check each makes, so that it is said in one place.",
+                "type": "textual"
               }
             ],
             "tests": [
-              "skills/specsheriff/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts an unknown command is refused, naming it",
-              "skills/specsheriff/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff --version prints the version of the SpecSheriff tools",
-              "skills/specsheriff/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff with no command lists the commands",
-              "skills/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines",
-              "skills/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it",
-              "skills/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address",
-              "skills/specsheriff/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where",
-              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init declares the marketplace and the plugin beside every other key of the agent's settings",
-              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init replaces no file that differs from what it would write, and names it",
-              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines",
-              "skills/specsheriff/test/e2e/init.test.ts::s-f5rz6b7dhxejjts this repository holds what sheriff init writes, so that running it here writes nothing",
-              "skills/specsheriff/test/unit/generated.test.ts::s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads it",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two lists into one holding the first's members, then the second's the first lacks",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two objects key by key, each key where it was first written",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two values JSON Schema holds equal into one",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge, naming the key and each one's line and value",
-              "skills/specsheriff/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts gives a sid to a node that has none, its address and sid first",
-              "skills/specsheriff/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge",
-              "skills/specsheriff/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file",
-              "skills/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts names every link a node makes or receives by the address and title of the node at the other end",
-              "skills/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts refuses a key no node holds",
-              "skills/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its address the same as by its sid",
-              "skills/specsheriff/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its sid: its address, title, status, text and reason"
-            ],
-            "todos": [
-              {
-                "date": "2026-10-30",
-                "by": "the agent, in the whole-part pass",
-                "text": "The first sentence gives `sheriff binding` the checks between the specification and the code, some of which the table of how each check is made gives to other commands; say each command's checks by that table."
-              }
-            ],
-            "comments": [
-              {
-                "date": "2026-10-30",
-                "by": "the agent, in the whole-part pass",
-                "type": "problem",
-                "text": "In a project the SpecSheriff guidelines are read from the plugin for Claude Code and never written, so the reindex cannot record in them the incoming links a project's own guidelines make to them. The tools build those links into them in memory whenever they read the specification, and so check incoming links only in the project's own files, which the reindex alone writes; whether this rule, or the base's rule on links, should say so is still to be settled."
-              }
+              "skills/tools/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts an unknown command is refused, naming it",
+              "skills/tools/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff --version prints the version of the SpecSheriff tools",
+              "skills/tools/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff with no command lists the commands",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init declares the marketplace and the plugin beside every other key of the agent's settings",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init replaces no file that differs from what it would write, and names it",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts this repository holds what sheriff init writes, so that running it here writes nothing",
+              "skills/tools/test/unit/generated.test.ts::s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads it",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two lists into one holding the first's members, then the second's the first lacks",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two objects key by key, each key where it was first written",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two values JSON Schema holds equal into one",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge, naming the key and each one's line and value",
+              "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts gives a sid to a node that has none, its address and sid first",
+              "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge",
+              "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts names every link a node makes or receives by the address and title of the node at the other end",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts refuses a key no node holds",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its address the same as by its sid",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its sid: its address, title, status, text and reason"
             ]
           }
         },
@@ -238,7 +238,7 @@
               }
             ],
             "tests": [
-              "skills/specsheriff/test/unit/generated.test.ts::s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of"
+              "skills/tools/test/unit/generated.test.ts::s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of"
             ]
           }
         },
@@ -291,16 +291,28 @@
                 "problem": "The citation check was run by no hook, so citations it refused reached the main branch through commits every hook had passed, and nothing checked that a citation in a node had a link.",
                 "ruling": "Following the owner's rulings on citations (§s-bpdqd9v72wg7vsz, §s-sn6au3vcr9uy5pm, §s-hr7j7scmfkkjnws): the pre-commit hook runs the citation check, and the check of the specification refuses a citation with no link.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "An automated security review found that the plugin's session start turns on whatever hooks `.githooks/` holds in a repository whose root holds `sheriff.config.json`, so a repository someone opens could have git run code it brought, which git never does for a clone until its user turns its hooks on.",
+                "ruling": "The owner: the rule stands, and nothing is built against it. The consent that counts is the trust a user gives a folder in Claude Code, before which a plugin the project declares does not load; a repository taking the method runs its own code at every push anyway, since the pre-push hook runs its tests; and the case left open needs together the plugin installed by the user rather than declared by the project, Claude Code run without its dialog of trust, and a clone nobody looked at.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "The todo on this rule asks for post-merge and post-checkout hooks writing the export and the map, which follow a change that reaches the working tree through git only at the next edit an agent makes or the next commit.",
+                "ruling": "The owner: it waits past the first release, 0.1.0, and the todo stays. The export and the map are views kept in the working tree, which git does not keep and no check reads, and they lag only until the next edit or commit.",
+                "type": "procedural"
               }
             ],
             "tests": [
-              "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written",
-              "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it",
-              "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves",
-              "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together",
-              "skills/specsheriff/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory",
-              "skills/specsheriff/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
+              "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory",
+              "skills/tools/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
             ],
             "todos": [
               {
@@ -317,7 +329,7 @@
           "kind": "rule",
           "title": "How each check is made",
           "status": "checked",
-          "text": "How each check is made, and by which command:\n\n| Check | How | Command |\n|---|---|---|\n| One key twice | the file is read as text, and the keys of each object are counted | `sheriff validate` |\n| The schema | the file is validated against the schema with a JSON Schema validator | `sheriff validate` |\n| Sids, ids, terms | every sid, id, term and record node's name is collected and counted | `sheriff validate` |\n| Addresses | the addresses are computed in memory and compared with what is committed | `sheriff validate` |\n| Confirmations | the latest line for the fingerprint of the wording of each checked node outside the SpecSheriff guidelines the project takes is looked up in the confirmations, and the owner it names is compared with the node's owner | `sheriff validate` |\n| The archive | each sid the commit removes from the specification is looked up in the confirmations, and one a confirmation was ever given for is looked up in the archive, with the reason for its removal; one never confirmed is refused where it stands in the archive | `sheriff validate` |\n| Links and citations in the nodes | every outgoing link's target is resolved against the sids that exist, and the citations in every node are read and set against the links it makes | `sheriff validate` |\n| Incoming links, heads' indexes | they are rebuilt in memory and compared with what is committed | `sheriff validate` |\n| Capitals | the title, text and reason of every checked node are read for two words or more running in capitals, a quoted name left out | `sheriff validate` |\n| Order of the domains | the order is computed from the consumes links | `sheriff validate` |\n| Levels | the level each head names is looked up in the list the project's own guidelines hold | `sheriff validate` |\n| Record variants | the record nodes, their refines links and the choosing fields' lists of values are read | `sheriff validate` |\n| The SpecSheriff guidelines | outside the repository they are written in, a `spec.json` or a `tools.json` under `specs/_guidelines/`, or any file under `specs/_schema/`, is refused | `sheriff validate` |\n| Appendices and a project's own guidelines | the outgoing implements and refines links of each node are resolved, and the part of the node each names is read | `sheriff validate` |\n| Tags | every symbol of the system's code is read for its tag, an inner symbol covered by the one it stands in, and a category exempt by where it lives is not read at all; the commit's changed lines are mapped onto the symbols they fall in, a line holding a tag, before the commit or after it, onto the symbol the tag stands on, and a symbol whose every changed line holds no tag and differs from the line it replaces only in a comment, in the sid a citation names or in an identifier the commit renames throughout counts as unchanged | `sheriff binding` |\n| Tests | every test is read for the sid it carries, resolved against the nodes, and the tests whose text the commit changes against the checked ones; the sids of the tags on the changed symbols are looked up among the sids every test carries | `sheriff binding` |\n| Lists of code and tests, symbols, lists | the tags and the sids the tests carry are collected across the repository and compared with the metadata, and the members of a list with the declaration it names | `sheriff binding` |\n| Addresses outside the specification | the files outside `specs/` and the tools are read for a part's name followed by a place, in any case and whether or not it names a node now | `sheriff binding` |\n| Generated copies | the types and the runtime checks are generated in memory and compared with what is committed | `sheriff binding` |\n| Drift | the history of the node is compared with the history of the files in its metadata, a renamed file read under both its names | `sheriff binding` |\n| Citations outside the specification | each sid in the code, the tests and the documents is resolved, the archive's included, and a number naming a node refused | `sheriff citations` |\n| Before an edit | the edit is applied to the file in memory and its changed lines are mapped onto the symbols as the Tags row maps them; the tags of each changed symbol are looked up among the sids the tests of the working tree carry, the edited file as it would stand included, and a node the edit leaves checked is looked up in the confirmations as the Confirmations row does | `sheriff guard` |\n| The message | the sids in the message are resolved and set against the tags on the changed symbols | `sheriff message` |\n| The review | a runner reads the commit's change against the nodes it names | `sheriff review` |\n| The tests | they are run | the project's test command, from the pre-push hook |",
+          "text": "How each check is made, and by which command:\n\n| Check | How | Command |\n|---|---|---|\n| One key twice | the file is read as text, and the keys of each object are counted | `sheriff validate` |\n| The schema | the file is validated against the schema with a JSON Schema validator | `sheriff validate` |\n| Sids, ids, terms, data records | every sid, id, term and data record node's name is collected and counted, a term's and a data record node's name in lower case; the part each term node stands in is looked up | `sheriff validate` |\n| Addresses | the addresses are computed in memory and compared with what is committed | `sheriff validate` |\n| Confirmations | the latest line for the fingerprint of the wording of each checked node outside the SpecSheriff guidelines the project takes is looked up in the confirmations, and the owner it names is compared with the node's owner | `sheriff validate` |\n| The archive | each sid the commit removes from the specification is looked up in the confirmations, and one a confirmation was ever given for is looked up in the archive, with the reason for its removal; one never confirmed is refused where it stands in the archive | `sheriff validate` |\n| Links and citations in the nodes | every outgoing link's target is resolved against the sids that exist, and the citations in every node are read and set against the links it makes; a `§` followed by a sid and then by no lower-case letter or digit cites it, and one followed by anything else, up to a space, a comma, a semicolon or a closing parenthesis, is a citation by an address | `sheriff validate` |\n| Links between terms | the kind of the node at each end of every outgoing link is looked up and set against the link's type | `sheriff validate` |\n| Headers, their indexes, incoming links | every domain's files are read for its header; the headers' indexes and the incoming links are rebuilt in memory and compared with what is committed | `sheriff validate` |\n| Capitals | the title, text and reason of every checked node are read for three words or more in capitals, each of two characters or more, separated only by spaces or tabs, anything in backticks or double quotation marks left out | `sheriff validate` |\n| Sections | the children of every checked section, and those of each section inside it, are read for a node that counts as a rule (§s-7445ahgjck2aefg) | `sheriff validate` |\n| Consumes links, cycles among the domains | each consumes link is read for a domain's header at its start and a section of another domain at its end, and the domains are walked along those links for a domain those links lead back to | `sheriff validate` |\n| Levels | the level each header names is looked up in the list the project's own guidelines hold | `sheriff validate` |\n| Data record variants | each variant's refines link is resolved to the data record it refines; the fields the variant answers to are compared with those the nearest data record up its refines links names as choosing it; each value it answers to is looked up in the list of values of the field it answers for, and nowhere else; the part the variant stands in is compared with the part of the data record holding that field; the fields the variant declares are compared with those of the data records up its refines links, the fields their fields of type variant hold included; the values each variant answers to are compared with those of every other variant answering to the same data record's choosing fields | `sheriff validate` |\n| The SpecSheriff guidelines | outside the repository they are written in, a `spec.json` or a `tools.json` under `specs/_guidelines/`, or any file under `specs/_schema/`, is refused | `sheriff validate` |\n| Appendices and a project's own guidelines | the outgoing implements and refines links of each node are resolved, and the part of the node each names is read | `sheriff validate` |\n| Tags | every symbol of the system's code is read for its tag, an inner symbol covered by the one it stands in, and a category exempt by where it lives is not read at all; the commit's changed lines are mapped onto the symbols they fall in, a line holding a tag, before the commit or after it, onto the symbol the tag stands on, and a symbol whose every changed line holds no tag and differs from the line it replaces only in a comment, in the sid a citation names or in an identifier the commit renames throughout counts as unchanged; the sid of every tag is looked up among the nodes, and that of a tag on a changed symbol among the checked ones | `sheriff binding` |\n| Tests | every test is read for the sid it carries, resolved against the nodes, and the tests whose text the commit changes against the checked ones; the sids of the tags on the changed symbols are looked up among the sids every test carries | `sheriff binding` |\n| Lists of code and tests, symbols, lists | the tags and the sids the tests carry are collected across the repository and compared with the metadata, and the members of a list with the declaration it names | `sheriff binding` |\n| Addresses outside the specification | the files the repository keeps — tracked by git, or new and not ignored — outside `specs/` and the tools are read for a part's name followed by a place, in any case and whether or not it names a node now | `sheriff binding` |\n| Generated copies | the types and the runtime checks are generated in memory and compared with what is committed | `sheriff binding` |\n| Drift | the history of the node is compared with the history of the files in its metadata, a renamed file read under both its names | `sheriff binding` |\n| Citations outside the specification | each sid in the code, the tests and the documents is resolved, the archive's included, and a number naming a node refused | `sheriff citations` |\n| Before an edit | the edit is applied to the file in memory and its changed lines are mapped onto the symbols as the Tags row maps them; the tags of each changed symbol are looked up among the sids the tests of the working tree carry, the edited file as it would stand included, and a node the edit leaves checked is looked up in the confirmations as the Confirmations row does | `sheriff guard` |\n| The message | the sids in the message are resolved and set against the tags on the changed symbols, and the kind of each node they name is looked up to refuse a domain's header or a section | `sheriff message` |\n| The review | a runner reads the commit's change against the nodes it names | `sheriff review` |\n| The tests | they are run | the project's test command, from the pre-push hook |",
           "refs": [
             {
               "type": "implements",
@@ -330,6 +342,14 @@
             {
               "type": "cites",
               "to": "s-eferktypcj7njt5"
+            },
+            {
+              "type": "cites",
+              "to": "s-7445ahgjck2aefg"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
             }
           ],
           "meta": {
@@ -339,21 +359,33 @@
                 "problem": "Nothing refused a file whose object holds one key twice. JSON Schema leaves the behaviour of such a document undefined, so it escapes the check that it matches its schema (§s-eferktypcj7njt5), and a tool reading it keeps the last of the two values alone.",
                 "ruling": "The owner: the check of the specification refuses it, so a commit cannot carry it.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "Five checks of the base's table had no row here, so no rule said which command makes them, and several rows did not say all their check does.",
+                "ruling": "The owner: every check of the base's table has its row and its command, the new checks of terms, of names whatever their case and of capitals from three words included, so that the rule on the commands can refer to this table.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The check of data record variants checked a value only where its choosing field held a list of values, so a variant whose field held none passed with any value; nothing held a variant to the domain declaring its value, and the fields a field of type variant holds were not counted among those a variant inherits.",
+                "ruling": "The owner: before the first release, 0.1.0, the tools read such values from the choosing field's own list alone, refuse a value not found there, and hold a variant to the part of the data record holding that field; how a project's own guidelines name another place for such values waits past 0.1.0, and the todo stays. Following the rows of §s-jau82aq9juv9zzh on variants, the row says all the check does.",
+                "type": "textual"
               }
             ],
             "todos": [
               {
                 "date": "2026-10-28",
                 "by": "the owner",
-                "text": "The Record variants row checks a value against the choosing field's own list only: how a project's own guidelines name another place where such values are declared, and so how a variant is found to stand in the domain declaring its value, is to be described, and checked once it is."
+                "text": "How a project's own guidelines name another place where the values of a field choosing a data record variant are declared is to be described; the Data record variants row then reads that place too, and holds a variant answering to a value declared there to the domain declaring it."
               }
             ],
             "tests": [
-              "skills/specsheriff/test/unit/binding.test.ts::s-4kd2pave7vm4hmd refuses a sid in the code, the tests or the documents that names no node, the archive's included, and a number naming a node",
-              "skills/specsheriff/test/unit/gates.test.ts::s-4kd2pave7vm4hmd reads the tests as the edit would leave the working tree",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds a key an object holds twice, naming the key and both lines",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds nothing where every key is held once",
-              "skills/specsheriff/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd refuses text that is not JSON, naming the line"
+              "skills/tools/test/unit/binding.test.ts::s-4kd2pave7vm4hmd refuses a sid in the code, the tests or the documents that names no node, the archive's included, and a number naming a node",
+              "skills/tools/test/unit/gates.test.ts::s-4kd2pave7vm4hmd reads the tests as the edit would leave the working tree",
+              "skills/tools/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds a key an object holds twice, naming the key and both lines",
+              "skills/tools/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds nothing where every key is held once",
+              "skills/tools/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd refuses text that is not JSON, naming the line"
             ]
           }
         },
@@ -401,13 +433,13 @@
               }
             ],
             "tests": [
-              "skills/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp covers a member by the tag of the class it stands in",
-              "skills/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp finds a symbol carrying no tag, and a tag not directly above a symbol",
-              "skills/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp lets the first of a run of re-exports say for the whole run that it implements no rule",
-              "skills/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a Python tag in the comment lines above a symbol's decorators, and an assignment at the module's level",
-              "skills/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a tag in the doc comment directly above a TypeScript symbol, several where it carries several",
-              "skills/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads nothing of a file in a language no description covers",
-              "skills/specsheriff/test/unit/code.test.ts::s-5z5gnu7pahr82xp refuses a tag sharing its line with anything but the comment's delimiters"
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp covers a member by the tag of the class it stands in",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp finds a symbol carrying no tag, and a tag not directly above a symbol",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp lets the first of a run of re-exports say for the whole run that it implements no rule",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a Python tag in the comment lines above a symbol's decorators, and an assignment at the module's level",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a tag in the doc comment directly above a TypeScript symbol, several where it carries several",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads nothing of a file in a language no description covers",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp refuses a tag sharing its line with anything but the comment's delimiters"
             ]
           }
         },
@@ -443,8 +475,8 @@
               "skills/pytest-specsheriff/tests/test_plugin.py::test_a_run_reports_a_marked_test_by_a_name_its_sid_opens",
               "skills/pytest-specsheriff/tests/test_plugin.py::test_an_unmarked_test_keeps_its_name",
               "skills/pytest-specsheriff/tests/test_plugin.py::test_the_mark_is_registered",
-              "skills/specsheriff/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a Python test declares by its mark",
-              "skills/specsheriff/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a TypeScript test opens its name with, a template's leading text included"
+              "skills/tools/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a Python test declares by its mark",
+              "skills/tools/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a TypeScript test opens its name with, a template's leading text included"
             ]
           }
         },
@@ -469,6 +501,12 @@
                 "problem": "The reviewer was one agent's command line.",
                 "ruling": "The owner: a runner carries the review out, the Claude Code CLI first, then the Codex and Gemini CLIs, then any service speaking the OpenAI-compatible API, which covers models run locally.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The todo on this rule asks for the Codex and Gemini CLIs as runners, then any service speaking the OpenAI-compatible API.",
+                "ruling": "Following the order of work the owner agreed, it waits past the first release, 0.1.0, and the todo stays. That release is the plugin for Claude Code alone, whose every user has the runner described; the runner of Codex CLI comes with the plugin for Codex CLI, and whether Gemini CLI gets a package of its own is being studied.",
+                "type": "procedural"
               }
             ],
             "todos": [
@@ -479,8 +517,8 @@
               }
             ],
             "tests": [
-              "skills/specsheriff/test/unit/config.test.ts::s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus and twenty minutes unless set otherwise",
-              "skills/specsheriff/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, the model and its fallback asked for"
+              "skills/tools/test/unit/config.test.ts::s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus and twenty minutes unless set otherwise",
+              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, the model and its fallback asked for"
             ]
           }
         },
@@ -516,14 +554,14 @@
               }
             ],
             "tests": [
-              "skills/specsheriff/test/e2e/commands.test.ts::s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured with, and refuses where that is not the owner",
-              "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends nothing where the latest line for that wording is already its owner's confirmation",
-              "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and the owner confirming it, and sets it checked",
-              "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended",
-              "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing",
-              "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
-              "skills/specsheriff/test/unit/confirm.test.ts::s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides",
-              "skills/specsheriff/test/unit/model.test.ts::s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind carries, not its owner or what the reindex builds"
+              "skills/tools/test/e2e/commands.test.ts::s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured with, and refuses where that is not the owner",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends nothing where the latest line for that wording is already its owner's confirmation",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and the owner confirming it, and sets it checked",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides",
+              "skills/tools/test/unit/model.test.ts::s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind carries, not its owner or what the reindex builds"
             ]
           }
         },
@@ -549,6 +587,10 @@
             },
             {
               "type": "cites",
+              "from": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "cites",
               "from": "s-f5rz6b7dhxejjts"
             },
             {
@@ -559,10 +601,10 @@
           "rationale": "Claude Code keeps each version of a plugin in a directory of its own, which changes with every update and is removed some time after, and keeps the plugin's data directory across updates; so a call written once into a project names the data directory, and the plugin keeps there a copy of the release it holds. A hook holding only the call runs what the script of the installed release says, so a hook written once never falls behind a release. A check that cannot run holds nothing, so the hook refuses rather than passing.",
           "meta": {
             "tests": [
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a git hook refuses where its script is missing, saying that a session of Claude Code puts it there",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p each git hook sheriff init writes holds nothing but a call to its script in the plugin's data directory",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing"
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a git hook refuses where its script is missing, saying that a session of Claude Code puts it there",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p each git hook sheriff init writes holds nothing but a call to its script in the plugin's data directory",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing"
             ]
           }
         },
@@ -572,7 +614,7 @@
           "kind": "rule",
           "title": "The plugin for Claude Code carries everything its work needs",
           "status": "checked",
-          "text": "The plugin for Claude Code, `specsheriff`, carries the skills `spec`, `spec-review`, `spec-adopt` and `spec-init`, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares to Claude Code its hooks: the agent's hooks (§s-477gtdrkw34dzxw) and the one run when a session starts (§s-4mej6ccn7xu3d3p). In a repository holding no `sheriff.config.json` at its root, its hooks do nothing but keep its copy of the tools (§s-4mej6ccn7xu3d3p). The marketplace `specsheriff-marketplace` lists the plugin by the relative path of its directory. A project declares both in `.claude/settings.json`: the marketplace under `extraKnownMarketplaces`, its source the branch `release` of the repository the SpecSheriff guidelines are written in and `autoUpdate` on, and the plugin under `enabledPlugins`. Each machine runs the release its copy of the plugin holds until Claude Code updates it there. The skill `spec-init` runs `sheriff init` with the tools the plugin carries.",
+          "text": "The plugin for Claude Code, `specsheriff`, carries the skills `spec`, `spec-review`, `spec-adopt` and `spec-init`, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares to Claude Code its hooks: the agent's hooks (§s-477gtdrkw34dzxw) and the one run when a session starts (§s-4mej6ccn7xu3d3p). In a repository holding no `sheriff.config.json` at its root, its hooks do nothing but keep its copy of the tools (§s-4mej6ccn7xu3d3p). The marketplace `specsheriff-marketplace` lists the plugin by the relative path of its directory. A project declares both in `.claude/settings.json`: the marketplace under `extraKnownMarketplaces`, its source the branch `release` of the repository the SpecSheriff guidelines are written in and `autoUpdate` on, and the plugin under `enabledPlugins`. Each machine runs the release its copy of the plugin holds until Claude Code updates it there. The plugin's skills and the agent's hooks run `sheriff` from the SpecSheriff tools the plugin carries, as `node \"${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js\"`. The skill `spec-init` runs `sheriff init`.",
           "refs": [
             {
               "type": "implements",
@@ -607,7 +649,7 @@
               "from": "s-4mej6ccn7xu3d3p"
             }
           ],
-          "rationale": "An agent takes up a skill only where it is installed, and Claude Code installs and updates a plugin from a marketplace itself and runs the hooks a plugin declares while it is enabled: declared in the project, the plugin is offered to the agent of every clone and, updating itself, brings every machine the latest release. Carrying the guidelines and the tools beside the skills, it keeps everything of one release together on the machine, and nothing of a release in the project but the calls to it. A plugin installed for a user runs in every project they open, and a project not taking the method is held to nothing of it. The marketplace is read from `release`, which holds only releases, so an agent loads a release and never the work in progress on `main`.",
+          "rationale": "An agent takes up a skill only where it is installed, and Claude Code installs and updates a plugin from a marketplace itself and runs the hooks a plugin declares while it is enabled: declared in the project, the plugin is offered to the agent of every clone and, updating itself, brings every machine the latest release. Carrying the guidelines and the tools beside the skills, it keeps everything of one release together on the machine, and nothing of a release in the project but the calls to it. A plugin installed for a user runs in every project they open, and a project not taking the method is held to nothing of it. The marketplace is read from `release`, which holds only releases, so an agent loads a release and never the work in progress on `main`. Claude Code writes the directory of the plugin's installed release wherever a skill or a hook names `${CLAUDE_PLUGIN_ROOT}`, so each runs the tools of its own release.",
           "meta": {
             "decisions": [
               {
@@ -615,14 +657,20 @@
                 "problem": "How a practitioner takes up the method.",
                 "ruling": "The owner: the main channel is a plugin of skills for the agents, distributed through a marketplace; the plugin is made for Claude Code now and for Codex CLI next, and Gemini CLI is being studied.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "Only the skill spec-init was said to run the SpecSheriff tools the plugin carries; where the other skills and the agent's hooks run them from, no rule said.",
+                "ruling": "The owner: the plugin's skills and the agent's hooks run them from the tools the plugin carries, by the directory Claude Code writes in for the installed release.",
+                "type": "textual"
               }
             ],
             "tests": [
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts",
-              "skills/specsheriff/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the skill spec-init runs sheriff init with the tools the plugin carries"
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, and spec-init runs sheriff init"
             ]
           }
         }

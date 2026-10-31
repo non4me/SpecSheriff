@@ -14,7 +14,7 @@ const at = (root: string, name: string) => loadSpecification(root).nodes.get(sid
 function bank(extra: Record<string, unknown> = {}) {
   return repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("head", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
     "specs/bank/a.json": file("bank", "a", node("accounts", { kind: "section", text: "Accounts.", children: [node("open", { refs: [{ type: "cites", to: sid("close") }, { type: "cites", from: sid("lend") }] }), node("close")] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "What is shared.", children: [node("term", { kind: "term", title: "account" })] })),
     ...extra,
@@ -24,7 +24,7 @@ function bank(extra: Record<string, unknown> = {}) {
 test("s-kag2m9tzdnduxdx computes every node's address from where it stands", () => {
   const root = bank();
   reindex(root);
-  assert.equal(at(root, "head").id, "bank");
+  assert.equal(at(root, "header").id, "bank");
   assert.equal(at(root, "close").id, "bank/1.2");
   assert.equal(at(root, "term").id, "contracts/account");
 });
@@ -34,21 +34,21 @@ test("s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from the out
   reindex(root);
   assert.deepEqual(at(root, "open").refs, [{ type: "cites", to: sid("close") }]);
   assert.deepEqual(at(root, "close").refs, [{ type: "cites", from: sid("open") }]);
-  assert.deepEqual(at(root, "shared").refs, [{ type: "consumes", from: sid("head") }]);
+  assert.deepEqual(at(root, "shared").refs, [{ type: "consumes", from: sid("header") }]);
 });
 
-test("s-yggv9myedprnaa7 rebuilds the index in a domain's head from the domain's sections", () => {
+test("s-yggv9myedprnaa7 rebuilds the index in a domain's header from the domain's sections", () => {
   const root = bank();
   reindex(root);
-  assert.deepEqual(at(root, "head").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts." }]);
+  assert.deepEqual(at(root, "header").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts." }]);
 });
 
-test("s-yggv9myedprnaa7 names in a head's index the heads of the domains using a section", () => {
+test("s-yggv9myedprnaa7 names in a header's index the headers of the domains using a section", () => {
   const root = bank({
     "specs/loans/00-loans.json": file("loans", "00-loans", node("loans", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] })),
   });
   reindex(root);
-  assert.deepEqual(at(root, "head").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts.", usedBy: [sid("loans")] }]);
+  assert.deepEqual(at(root, "header").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts.", usedBy: [sid("loans")] }]);
 });
 
 test("s-f5rz6b7dhxejjts gives a sid to a node that has none, its address and sid first", () => {

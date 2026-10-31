@@ -7,15 +7,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 SpecSheriff is a method of spec-anchored development and the upstream of what a project takes
 from it: the plugin for Claude Code carrying the skills, the SpecSheriff guidelines and the
 SpecSheriff tools now, later a worked example. `npm install` at the root builds the tools in
-`skills/specsheriff/`, links `sheriff`, and lays the built tools out in the plugin,
+`skills/tools/`, links `sheriff`, and lays the built tools out in the plugin,
 `skills/claude-code/tools/` (ignored here, committed only on the branch `release`); `npm test` builds
 them again and runs their unit and end-to-end tests and those of `skills/pytest-specsheriff/`
 (Python 3.10 or later with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
 guidelines are written here, so their nodes are confirmed in `specs/_confirmations.jsonl` by the
 owner `specs/_guidelines/project.json` names. `.githooks/` and `.claude/settings.json` hold what
 `sheriff init` writes, as in any project, and a test fails where they differ. How this repository
-runs its own plugin from the working tree — a change to `skills/specsheriff/src/` reaching the
-agent's hooks once `npm run build -w specsheriff` has run, and the git hooks at the next session
+runs its own plugin from the working tree — a change to `skills/tools/src/` reaching the
+agent's hooks once `npm run build -w specsheriff-tools` has run, and the git hooks at the next session
 start — and how a release is made, is in `internal/release.md`. Never report a check as having run
 that has not.
 
@@ -50,9 +50,9 @@ is `specs/_schema/` (§s-eferktypcj7njt5). A node holds:
 - `id` — the address computed from where the node stands. Nothing cites it, and nobody writes it:
   `sheriff reindex` does.
 - `kind` (`section`, which holds rules and requires nothing; `rule`; `term`; `record`; `domain`, a
-  domain's head), `title`, `status` (`""` or `"checked"`), `text` (what must hold), `rationale` (why,
+  domain's header), `title`, `status` (`""` or `"checked"`), `text` (what must hold), `rationale` (why,
   kept apart from the requirement), `list` (`of`, `members`, `declaredIn`), `owner` on a section or a
-  head, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
+  header, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
   and the lists of the `code` and the `tests` bound to the node, which must agree with the tags and
   the tests' sids (§s-rwqzepmrt77rv35).
 - `refs` — typed outgoing links `{type, to}`, written by hand, and incoming ones `{type, from}`,
@@ -93,7 +93,7 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
   operator, a record, a request — never the worked example's saloon.
 - **How a rule is written** is the last section of `spec.json` — one language (English), a named
   subject, a reason that gives only its grounds and is no narrower than its rule, no count in prose,
-  no capitals for stress, a general word carrying its object. Read it before writing any node.
+  no phrase or sentence in capitals, a general word carrying its object. Read it before writing any node.
 
 ## Working with the owner
 
@@ -110,7 +110,7 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
 ## When code arrives
 
 The tools are written in TypeScript on Node and read code with tree-sitter. Their source is kept in
-`skills/specsheriff/` (the npm package providing `sheriff`) and `skills/pytest-specsheriff/` (the
+`skills/tools/` (the npm package providing `sheriff`) and `skills/pytest-specsheriff/` (the
 plugin for pytest). In the worked example and any project taking the SpecSheriff guidelines, every
 symbol of the system's code carries `@spec <sid>` (or `@spec none <reason>`) in the comment directly
 above it, a test declares the sid it verifies and is written first, and a commit changing code names

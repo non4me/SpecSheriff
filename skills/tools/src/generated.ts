@@ -54,9 +54,9 @@ export function outline(spec: Specification): string {
     out.push(item(0, b.title));
     for (const d of domains) {
       const nodes = domainFiles(d).flatMap((f) => f.data.nodes);
-      const head = nodes.find((n) => n.kind === "domain");
-      out.push(item(1, head?.title ?? d));
-      branch(nodes.filter((n) => n !== head), 2, out);
+      const header = nodes.find((n) => n.kind === "domain");
+      out.push(item(1, header?.title ?? d));
+      branch(nodes.filter((n) => n !== header), 2, out);
     }
   }
   out.push(item(0, "Technical appendix"));

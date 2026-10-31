@@ -1,7 +1,6 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, posix } from "node:path";
 import { fileURLToPath } from "node:url";
-import { incoming } from "./model.ts";
 
 export interface SpecNode {
   sid: string;
@@ -98,16 +97,12 @@ export function takesGuidelines(root: string): boolean {
 
 /**
  * The specification the repository's own files make, with the SpecSheriff guidelines it takes from
- * the tools where it takes them, standing where they are written and with the links the project
- * makes to them built into them in memory; a copy the project holds is left out.
+ * the tools where it takes them, standing where they are written; a copy the project holds is left out.
  */
 export function withTaken(root: string, own: SpecFile[]): Specification {
   if (!takesGuidelines(root)) return specificationOf(own);
   const taken = ["spec.json", "tools.json"].map((name) => ({ path: `specs/_guidelines/${name}`, data: JSON.parse(readFileSync(join(CARRIED, name), "utf8")) }));
-  const spec = specificationOf([...own.filter((f) => !taken.some((t) => t.path === f.path)), ...taken]);
-  const built = incoming(spec);
-  for (const [sid, at] of spec.nodes) if (taken.includes(at.file)) at.node.refs = [...at.node.refs.filter((r) => !r.from), ...(built.get(sid) ?? [])];
-  return spec;
+  return specificationOf([...own.filter((f) => !taken.some((t) => t.path === f.path)), ...taken]);
 }
 
 /** The one formatting of a file of the specification: two spaces, keys in their order, text as it is, LF. */

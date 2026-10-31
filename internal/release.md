@@ -6,9 +6,9 @@ rule of the SpecSheriff guidelines, and no other project needs any of it.
 
 ## The layout
 
-- `skills/specsheriff/` — the SpecSheriff tools: their source, tests, the descriptions of languages,
+- `skills/tools/` — the SpecSheriff tools: their source, tests, the descriptions of languages,
   the git hooks' scripts in `hooks/` and the template of the hook `sheriff init` writes in `assets/`.
-  `npm run build -w specsheriff` compiles them into `dist/`, copies the SpecSheriff guidelines and
+  `npm run build -w specsheriff-tools` compiles them into `dist/`, copies the SpecSheriff guidelines and
   their schema into `guidelines/` and the grammars into `grammars/`, then lays all of it out in the
   plugin as `skills/claude-code/tools/`, with the packages the tools need at runtime and `release`,
   the version and the time of the build. `npm install` at the root runs the build.
@@ -34,8 +34,8 @@ from the branch `release`. To run the working tree instead, a machine declares t
 with the path of the clone. Claude Code then loads the plugin in place: the skills and the agent's
 hooks are read from the working tree at every session start, and the agent's hooks run the last build.
 When a session starts, the plugin copies that build into its data directory, where the git hooks run
-it, because every build writes a new `release`. So a change to `skills/specsheriff/src/` reaches the
-agent's hooks once `npm run build -w specsheriff` has run, and the git hooks at the next session
+it, because every build writes a new `release`. So a change to `skills/tools/src/` reaches the
+agent's hooks once `npm run build -w specsheriff-tools` has run, and the git hooks at the next session
 start, or at once by running the session start by hand:
 
 ```sh
@@ -51,7 +51,7 @@ this working tree.
 
 `npm run release -- <major>.<minor>.<patch>` on a clean `main`:
 
-1. writes the version into `skills/specsheriff/package.json` and the lockfile,
+1. writes the version into `skills/tools/package.json` and the lockfile,
    `skills/claude-code/.claude-plugin/plugin.json` and `skills/pytest-specsheriff/pyproject.toml`,
    and commits it on `main` as `Release: <version>`, through the git hooks like any commit;
 2. builds the tools;
@@ -63,3 +63,25 @@ this working tree.
 `release` holds only releases, so a project's marketplace never reads the work in progress on `main`.
 Claude Code offers a machine the new release once the version in `plugin.json` has changed, and with
 the marketplace's `autoUpdate` on it takes it in the background.
+
+## Checking a release before it is published
+
+A release is rehearsed before it is published, so that what reaches GitHub is what was tried and a
+fault costs no version number:
+
+1. A clone of `main` whose `origin` is a bare repository on disk stands in for GitHub, and
+   `npm run release -- <version>` runs there unchanged.
+2. A clean machine — here WSL, with Node, Claude Code and uv in the user's home — opens an empty
+   project that declares the marketplace as a `git` source by the stand-in's `file://` URL at the
+   ref `release`, so that Claude Code clones the plugin into its cache as it would from GitHub,
+   where this repository loads it in place.
+3. There the plugin is installed, `spec-init` sets the project up, the agent and a person each make
+   a commit and a commit is refused, and the plugin for pytest is installed by pip from `release`.
+   A second release made in the stand-in alone must then reach the project by itself at the next
+   session start.
+4. All passing, the rehearsed commits are pushed to GitHub as they are — `main` at
+   `v<version>^1`, `release` and the tag at `v<version>` — and `main` is fetched back here. The
+   project on the clean machine is switched to the `github` source, installs and makes one commit;
+   git there takes the access to the private repository from Windows' credential manager.
+5. A fault is fixed on `main`, the stand-in deleted, and the rehearsal run again with the same
+   number.

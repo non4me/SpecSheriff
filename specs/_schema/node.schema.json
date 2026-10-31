@@ -8,7 +8,7 @@
       "$ref": "#/$defs/base"
     },
     {
-      "$comment": "The head of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owner where it names one, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
+      "$comment": "The header of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owner where it names one, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
       "if": {
         "properties": {
           "kind": {
@@ -39,7 +39,7 @@
             ]
           },
           "sections": {
-            "$comment": "The index of the domain's sections, in the order they read: each one's sid, title and text, and the heads of the domains that use it. Built by the reindex from the sections; validate refuses an index they do not produce.",
+            "$comment": "The index of the domain's sections, in the order they read: each one's sid, title and text, and the headers of the domains that use it. Built by the reindex from the sections; validate refuses an index they do not produce.",
             "type": "array",
             "items": {
               "type": "object",
@@ -113,7 +113,7 @@
       }
     },
     {
-      "$comment": "A record node: a record the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the record's name and its text what the record is. The implementation's types and runtime checks are generated from it and never written beside it. A record that refines another record node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the record it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
+      "$comment": "A data record node: a data record the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the data record's name and its text what the data record is. The implementation's types and runtime checks are generated from it and never written beside it. A data record that refines another data record node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the data record it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
       "if": {
         "properties": {
           "kind": {
@@ -124,7 +124,7 @@
       "then": {
         "properties": {
           "fields": {
-            "$comment": "The record's own fields, in the order they read; one inherited from the record it refines is not repeated here.",
+            "$comment": "The data record's own fields, in the order they read; one inherited from the data record it refines is not repeated here.",
             "type": "array",
             "items": {
               "$ref": "#/$defs/field"
@@ -138,7 +138,7 @@
             ]
           },
           "chosenBy": {
-            "$comment": "On a record whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
+            "$comment": "On a data record whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
@@ -147,7 +147,7 @@
             }
           },
           "answersTo": {
-            "$comment": "On a record variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest record up its chain of refines names as choosing it.",
+            "$comment": "On a data record variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest data record up its chain of refines names as choosing it.",
             "type": "object",
             "minProperties": 1,
             "propertyNames": {
@@ -178,7 +178,7 @@
           "$ref": "#/$defs/sid"
         },
         "kind": {
-          "$comment": "domain is the head of a domain; a term's title is the term it defines.",
+          "$comment": "domain is the header of a domain; a term's title is the term it defines.",
           "enum": [
             "domain",
             "section",
@@ -195,7 +195,7 @@
           "$ref": "#/$defs/status"
         },
         "text": {
-          "$comment": "What must hold; for a section or a head, what it is responsible for.",
+          "$comment": "What must hold; for a section or a header, what it is responsible for.",
           "type": "string"
         },
         "rationale": {
@@ -253,7 +253,7 @@
       ]
     },
     "nodeId": {
-      "$comment": "An address: the part the node stands in followed by its place there, e.g. contracts/4.1, or the domain's name alone for the head of a domain. Computed by the reindex from where the node stands and never written by hand; nothing refers to it.",
+      "$comment": "An address: the part the node stands in followed by its place there, e.g. contracts/4.1, or the domain's name alone for the header of a domain. Computed by the reindex from where the node stands and never written by hand; nothing refers to it.",
       "type": "string",
       "pattern": "^_?[a-z][a-z0-9-]*(/[A-Za-z0-9][A-Za-z0-9 ./-]*)?$"
     },
@@ -404,7 +404,7 @@
       "pattern": "^[a-z][A-Za-z0-9]*$"
     },
     "field": {
-      "$comment": "One field as a record node declares it: its name, its type, whether it is required and what it says.",
+      "$comment": "One field as a data record node declares it: its name, its type, whether it is required and what it says.",
       "type": "object",
       "properties": {
         "name": {
@@ -461,7 +461,7 @@
       }
     },
     "neutralType": {
-      "$comment": "A field's type in neutral terms, named by is; the technical appendix says how each is checked at runtime. email address is text holding one email address; any value is data of no shape the specification declares; one of carries its values; list of, the type of its members; map of, the type of its values, each kept under a key of text; record and identifier of, the sid of the record node they name, a record variant excluded. variant is the object of the fields the chosen record variant declares, beside the fields every variant holds: it stands only as a field's own type, on the record that names the fields choosing its variant.",
+      "$comment": "A field's type in neutral terms, named by is; the technical appendix says how each is checked at runtime. email address is text holding one email address; any value is data of no shape the specification declares; one of carries its values; list of, the type of its members; map of, the type of its values, each kept under a key of text; data record and identifier of, the sid of the data record node they name, a data record variant excluded. variant is the object of the fields the chosen data record variant declares, beside the fields every variant holds: it stands only as a field's own type, on the data record that names the fields choosing its variant.",
       "type": "object",
       "properties": {
         "is": {
@@ -577,7 +577,7 @@
           }
         },
         {
-          "$comment": "The bounds a whole number or a number may take, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the record.",
+          "$comment": "The bounds a whole number or a number may take, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the data record.",
           "if": {
             "properties": {
               "is": {

@@ -6,6 +6,17 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-31 — A release carries out all it states, and every link that can be checked is made
+
+Two rulings of the owner, taken while the first release was prepared. The SpecSheriff tools of a
+release carry out everything the SpecSheriff guidelines of that release state: a gap found between a
+rule and the tools is closed before the release, by the tools or by the rule, and never left for a
+later one; deferred work stays a todo, which states nothing. So `sheriff types`, which waited for the
+worked example, is built for the first release. And wherever a deterministic link that a check can
+follow — a reference or a tag — can be made between two things the method holds, it is made, in a
+form the standard use of the method does not break: the first case is the tag of its data record on
+each type generated from the data record nodes, written by the generator itself.
+
 ### 2026-10-29 — Three parts in one repository: the theory, the skills, the worked example
 
 SpecSheriff is three parts kept in this repository. The theory explains the method to a reader who
@@ -101,8 +112,6 @@ it that bear on more than one node:
 
 - **The spec skill reads the guidelines through `sheriff guide`** rather than holding a copy generated
   into it, so nothing generated is kept beside the nodes but what the checks compare.
-- **`sheriff types` waits for the worked example**, whose record nodes and technical appendix are the
-  first it can be built against.
 - **A node removed while the SpecSheriff guidelines are first written is no longer deleted**: from
   now on a node ever confirmed goes to the archive (§s-f2b5zvc565s242f).
 
@@ -306,7 +315,7 @@ brand tell one story. (Superseded on 2026-10-29: the worked example is a saloon.
 ### 2026-10-27 — Each domain has its owners, and a confirmation names who gave it
 
 A confirmed node means that an owner of the part it stands in read its wording. Each domain names
-its owners in its head; the rules of the SpecSheriff guidelines and the agreements between domains
+its owners in its header; the rules of the SpecSheriff guidelines and the agreements between domains
 have the specification's chief owner. A confirmation is kept in git beside the fingerprint of the
 wording confirmed and the name of whoever confirmed it, and a commit adding a confirmation is
 refused unless it is signed by that person. Working alone, one person owns every domain, and nothing
@@ -400,14 +409,14 @@ example leaves the road to a product open.
 2. ~~The tools~~ — done 2026-10-28: checks of the specification on its own and against the code, the
    export and the map, confirmations naming who gave them, the general parser with TypeScript,
    JavaScript and Python described, the reviewer's contract with its first runner, the git and agent
-   hooks; turned on in this repository. `sheriff types` moved to the worked example.
+   hooks; turned on in this repository. `sheriff types` comes with the first release (2026-10-31).
 3. ~~The skills~~ — done 2026-10-28: spec, spec-review, spec-adopt, and `sheriff init` laying them
    out with the hooks and the SpecSheriff guidelines.
 4. The packaging: the repository laid out as the three parts, with the mark in `brand/`; the theory;
    the rules of the appendix of the tools for the one channel, then the plugin for Claude Code and its
    marketplace; the practitioner's guide, and a test on a clean machine.
-5. The worked example: the frontier town's saloon, its specification, code and tests, `sheriff
-   types`, and the recorded run in which a commit is refused.
+5. The worked example: the frontier town's saloon, its specification, code and tests, and the
+   recorded run in which a commit is refused.
 6. The plugin for Codex CLI, with its runner of the reviewer.
 7. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
    refining it.

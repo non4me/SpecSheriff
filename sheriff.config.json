@@ -1,7 +1,7 @@
 {
   "code": [],
   "tests": [
-    "skills/specsheriff/test/**/*.test.ts",
+    "skills/tools/test/**/*.test.ts",
     "skills/pytest-specsheriff/tests/**/test_*.py"
   ],
   "writesSpecSheriffGuidelines": true,

@@ -22,7 +22,7 @@ const refused: Record<string, object> = {
   "a comment opening with TODO": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "TODO x" }] } },
   "a comment of a type other than problem": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "x", type: "note" }] } },
   "a record node without fields": { ...ok, kind: "record" },
-  "a head without its level": { ...ok, kind: "domain" },
+  "a header without its level": { ...ok, kind: "domain" },
   "an archived node without its reason": { ...ok, archived: { date: "2026-10-28" } },
   "a bound on a field of text": { ...ok, kind: "record", unknown: "refused", fields: [{ name: "a", type: { is: "text", minimum: 1 }, required: true, text: "" }] },
 };
@@ -36,7 +36,7 @@ const accepted: Record<string, object> = {
   "an owner on a section": { ...ok, kind: "section", owner: "a@b.c" },
   "a comment of type problem": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "x", type: "problem" }] } },
   "a bound on a whole number": { ...ok, kind: "record", unknown: "kept", fields: [{ name: "a", type: { is: "whole number", minimum: 1 }, required: true, text: "" }] },
-  "a head with its level, code and index": { ...ok, kind: "domain", level: "core", code: null, sections: [] },
+  "a header with its level, code and index": { ...ok, kind: "domain", level: "core", code: null, sections: [] },
   "an archived node with its reason and replacement": { ...ok, archived: { date: "2026-10-28", reason: "r", replacedBy: "s-aaaaaaaaaaaaaab" } },
 };
 for (const [what, node] of Object.entries(accepted)) {

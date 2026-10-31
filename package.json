@@ -1,11 +1,11 @@
 {
   "private": true,
   "workspaces": [
-    "skills/specsheriff"
+    "skills/tools"
   ],
   "scripts": {
-    "test": "npm run build -w specsheriff && npm test -w specsheriff && python -m pytest skills/pytest-specsheriff/tests -q -p no:asyncio",
-    "typecheck": "npm run typecheck -w specsheriff",
+    "test": "npm run build -w specsheriff-tools && npm test -w specsheriff-tools && python -m pytest skills/pytest-specsheriff/tests -q -p no:asyncio",
+    "typecheck": "npm run typecheck -w specsheriff-tools",
     "release": "node scripts/release.mjs"
   },
   "devDependencies": {

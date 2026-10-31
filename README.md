@@ -28,7 +28,7 @@ text of those rules.
 - **The skills** — what a practitioner installs: the plugin for Claude Code in
   [`skills/claude-code`](skills/claude-code), listed by the marketplace of this repository and
   carrying the skills, the SpecSheriff guidelines and the SpecSheriff tools (the command `sheriff`,
-  built from [`skills/specsheriff`](skills/specsheriff)), and the tools' plugin for pytest in
+  built from [`skills/tools`](skills/tools)), and the tools' plugin for pytest in
   [`skills/pytest-specsheriff`](skills/pytest-specsheriff). Codex CLI comes next.
 - **The worked example** — a saloon in a frontier town, set up the way any project is. It comes after
   the plugin.

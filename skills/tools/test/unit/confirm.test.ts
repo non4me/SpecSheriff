@@ -17,7 +17,7 @@ test("s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the
 function project() {
   return repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("head", { kind: "domain", owner: "bank@example.org", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", owner: "bank@example.org", level: "core", code: null, sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("a", { kind: "section", children: [node("open")] })),
   });
 }

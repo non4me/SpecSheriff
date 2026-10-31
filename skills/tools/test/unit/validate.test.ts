@@ -97,12 +97,27 @@ test(`s-jau82aq9juv9zzh refuses an id other than the address its place gives`, (
   expectOne(root, /bank\/9.*address.*bank\/1\.2/);
 });
 
-test(`s-jau82aq9juv9zzh refuses two term nodes naming one term, and two record nodes sharing a name`, () => {
+test(`s-jau82aq9juv9zzh refuses two term nodes naming one term, and two data record nodes sharing a name`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").title = "user"));
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").title = "account"));
   expectOne(root, /term "user" .*more than one/);
   expectOne(root, /record "account" .*more than one/);
+});
+
+test(`s-jau82aq9juv9zzh refuses two term nodes, or two data record nodes, whose names differ only in the case of their letters`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").title = "User"));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").title = "ACCOUNT"));
+  expectOne(root, /term "user" .*more than one/);
+  expectOne(root, /record "account" .*more than one/);
+});
+
+test(`s-jau82aq9juv9zzh refuses a term node standing outside contracts`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("stray term", { kind: "term", title: "stray" })));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("stray term")}.*a term node outside contracts`));
 });
 
 test(`s-jau82aq9juv9zzh refuses a checked node no confirmation by its owner holds`, () => {
@@ -178,13 +193,13 @@ test(`s-jau82aq9juv9zzh refuses incoming links the outgoing ones do not produce`
   expectOne(root, /incoming links .* outgoing/);
 });
 
-test(`s-jau82aq9juv9zzh refuses a checked node setting words in capitals for stress, a quoted name left out`, () => {
+test(`s-jau82aq9juv9zzh refuses a checked node setting three words or more running in capitals, two words and a quoted name left out`, () => {
   const root = good();
-  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "It MUST NOT close; `NOT CODE` and \"QUOTED NAME\" pass."));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "It MUST NOT EVER close; MUST NOT, REST API, `NOT CODE HERE` and \"QUOTED NAME TOO\" pass."));
   confirm(root, [sid("close")], { me: OWNER });
   const found = messages(root).filter((m) => /capitals/.test(m));
   assert.equal(found.length, 1, found.join("\n"));
-  assert.match(found[0]!, /MUST NOT/);
+  assert.match(found[0]!, /"MUST NOT EVER"/);
 });
 
 test(`s-jau82aq9juv9zzh refuses a checked section holding no rule`, () => {
@@ -195,7 +210,7 @@ test(`s-jau82aq9juv9zzh refuses a checked section holding no rule`, () => {
   expectOne(root, new RegExp(`${sid("empty")}.*holds no rule`));
 });
 
-test(`s-jau82aq9juv9zzh refuses a domain without a head, and a head whose index its sections do not produce`, () => {
+test(`s-jau82aq9juv9zzh refuses a domain without a header, and a header whose index its sections do not produce`, () => {
   const root = good();
   edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].sections = []));
   expectOne(root, /index .* sections/);
@@ -203,7 +218,7 @@ test(`s-jau82aq9juv9zzh refuses a domain without a head, and a head whose index 
   mkdirSync(join(headless, "specs", "loans"));
   writeFileSync(join(headless, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("headless section", { kind: "section", text: "Lending.", children: [node("headless rule")] }))));
   reindex(headless);
-  expectOne(headless, /domain loans has no head/);
+  expectOne(headless, /domain loans has no header/);
 });
 
 test(`s-jau82aq9juv9zzh refuses a level the project's own guidelines do not list`, () => {
@@ -212,11 +227,11 @@ test(`s-jau82aq9juv9zzh refuses a level the project's own guidelines do not list
   expectOne(root, /level "top".*not.*listed/);
 });
 
-test(`s-jau82aq9juv9zzh refuses a consumes link that does not go from a head to a section of another domain`, () => {
+test(`s-jau82aq9juv9zzh refuses a consumes link that does not go from a header to a section of another domain`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "consumes", to: sid("accounts") }));
   reindex(root);
-  expectOne(root, /consumes link .* from a domain's head/);
+  expectOne(root, /consumes link .* from a domain's header/);
 });
 
 test(`s-jau82aq9juv9zzh refuses domains using one another in a cycle`, () => {
@@ -229,7 +244,7 @@ test(`s-jau82aq9juv9zzh refuses domains using one another in a cycle`, () => {
   expectOne(root, /cycle/);
 });
 
-test(`s-jau82aq9juv9zzh refuses a record variant answering to a value its choosing field does not declare, or declaring no field of its own`, () => {
+test(`s-jau82aq9juv9zzh refuses a data record variant answering to a value its choosing field does not declare, or declaring no field of its own`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => {
     nodeIn(d, "savings record").answersTo = { kind: "gold" };
@@ -237,6 +252,32 @@ test(`s-jau82aq9juv9zzh refuses a record variant answering to a value its choosi
   });
   expectOne(root, /"gold".*not declared/);
   expectOne(root, /declares no field of its own/);
+});
+
+test(`s-jau82aq9juv9zzh refuses a data record variant answering to a value its choosing field declares in no list of values`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "account record").fields[0].type = { is: "text" }));
+  expectOne(root, new RegExp(`${sid("savings record")}.*"savings" for kind.*no list of values`));
+});
+
+test(`s-jau82aq9juv9zzh refuses a data record variant whose own fields only repeat those its data record's field of type variant holds`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => nodeIn(d, "account record").fields.push({ name: "terms", type: { is: "variant", fields: [{ name: "rate", type: { is: "number" }, required: true, text: "" }] }, required: "where it holds a value", text: "" }));
+  expectOne(root, new RegExp(`${sid("savings record")}.*declares no field of its own`));
+});
+
+test(`s-jau82aq9juv9zzh refuses a data record variant standing outside the domain whose data record declares the value it answers to`, () => {
+  const root = good();
+  mkdirSync(join(root, "specs", "loans"));
+  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "domain", level: "core", code: null, sections: [] }))));
+  let savings: any;
+  edit(root, "specs/bank/a.json", (d) => {
+    savings = nodeIn(d, "savings record");
+    d.nodes[0].children = d.nodes[0].children.filter((n: any) => n !== savings);
+  });
+  writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [savings] }))));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("savings record")}.*stands in loans.*declared in bank`));
 });
 
 test(`s-jau82aq9juv9zzh refuses a node of the technical appendix outside the stack implementing no node of the base`, () => {

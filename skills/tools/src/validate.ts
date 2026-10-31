@@ -4,7 +4,7 @@ import { loadConfig } from "./config.ts";
 import { everConfirmed, holds, readConfirmations } from "./confirmations.ts";
 import { keysTwice } from "./json-text.ts";
 import { addresses, citations, incoming, LEVELS_RULE, levelsOf, ownerOf, partOf } from "./model.ts";
-import { headIndex, judgedHere } from "./reindex.ts";
+import { headerIndex, judgedHere } from "./reindex.ts";
 import { loadSchema } from "./schema.ts";
 import { specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
@@ -64,7 +64,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   };
   const refuse = (sid: string, message: string) => findings.push({ where: at(sid), message });
 
-  // Sids and ids held once, terms and records named once.
+  // Sids and ids held once, terms and data records named once.
   const count = (values: Array<[string, string]>, what: (v: string) => string) => {
     const seen = new Map<string, string[]>();
     for (const [v, where] of values) seen.set(v, [...(seen.get(v) ?? []), where]);
@@ -75,8 +75,9 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   count(all.map(({ node, path }) => [node.sid, path]), (v) => `sid ${v} is held by more than one node`);
   const live = all.filter(({ path }) => !path.startsWith("specs/_archive/"));
   count(live.map(({ node, path }) => [node.id, path]), (v) => `id ${v} is held by more than one node`);
-  count(live.filter(({ node }) => node.kind === "term").map(({ node, path }) => [node.title, path]), (v) => `term "${v}" is named by more than one term node`);
-  count(live.filter(({ node }) => node.kind === "record").map(({ node, path }) => [node.title, path]), (v) => `record "${v}" is the name of more than one record node`);
+  count(live.filter(({ node }) => node.kind === "term").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `term "${v}" is named by more than one term node`);
+  count(live.filter(({ node }) => node.kind === "record").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `data record "${v}" is the name of more than one data record node`);
+  for (const { node, path } of live) if (node.kind === "term" && partOf(path).part !== "contracts") refuse(node.sid, "a term node outside contracts, where alone a term is declared");
 
   const ids = addresses(spec);
   for (const [sid, { node }] of spec.nodes) {
@@ -140,7 +141,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
       const value = node[field];
       if (typeof value !== "string") continue;
       const bare = value.replace(/`[^`]*`/g, "").replace(/"[^"]*"|“[^”]*”/g, "");
-      for (const m of bare.matchAll(/\b[A-Z][A-Z0-9-]*[A-Z0-9]\b(?:[ \t]+\b[A-Z][A-Z0-9-]*[A-Z0-9]\b)+/g)) {
+      for (const m of bare.matchAll(/\b[A-Z][A-Z0-9-]*[A-Z0-9]\b(?:[ \t]+\b[A-Z][A-Z0-9-]*[A-Z0-9]\b){2,}/g)) {
         refuse(sid, `checked, but its ${field} sets "${m[0]}" in capitals`);
       }
     }
@@ -169,14 +170,14 @@ function holdsRule(section: SpecNode): boolean {
 type Refuse = (sid: string, message: string) => void;
 
 function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse: Refuse, findings: Finding[]): void {
-  const parts = new Map<string, { head?: SpecNode; sections: SpecNode[] }>();
+  const parts = new Map<string, { header?: SpecNode; sections: SpecNode[] }>();
   for (const f of spec.files) {
     const { part } = partOf(f.path);
     if (!isBase(f.path) || part === "contracts") continue;
     if (!parts.has(part)) parts.set(part, { sections: [] });
     const entry = parts.get(part)!;
     for (const n of f.data.nodes) {
-      if (n.kind === "domain") (entry.head = n), entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
+      if (n.kind === "domain") (entry.header = n), entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
       else if (n.kind === "section") entry.sections.push(n);
     }
   }
@@ -184,24 +185,24 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
   const domainOf = new Map<string, string>();
   for (const [part, { sections }] of parts) for (const s of sections) walk([s], (n) => domainOf.set(n.sid, part));
   const uses = new Map<string, Set<string>>();
-  for (const [part, { head, sections }] of parts) {
-    if (!head) {
-      findings.push({ where: `specs/${part}/`, message: `domain ${part} has no head` });
+  for (const [part, { header, sections }] of parts) {
+    if (!header) {
+      findings.push({ where: `specs/${part}/`, message: `domain ${part} has no header` });
       continue;
     }
-    domainOf.set(head.sid, part);
-    if (JSON.stringify(head.sections) !== JSON.stringify(headIndex(spec, sections, built))) {
-      refuse(head.sid, "the index in its head is not what the domain's sections produce");
+    domainOf.set(header.sid, part);
+    if (JSON.stringify(header.sections) !== JSON.stringify(headerIndex(spec, sections, built))) {
+      refuse(header.sid, "the index in its header is not what the domain's sections produce");
     }
-    const level = head.level as string;
-    if (!levels?.includes(level)) refuse(head.sid, `level "${level}" is not listed in the project's own guidelines`);
+    const level = header.level as string;
+    if (!levels?.includes(level)) refuse(header.sid, `level "${level}" is not listed in the project's own guidelines`);
   }
   for (const [sid, { node }] of spec.nodes) {
     for (const r of node.refs.filter((r) => r.type === "consumes" && r.to)) {
       const from = node.kind === "domain" ? domainOf.get(sid) : undefined;
       const to = spec.nodes.get(r.to!)?.node.kind === "section" ? domainOf.get(r.to!) : undefined;
       if (!from || !to || from === to) {
-        refuse(sid, "a consumes link must go from a domain's head to a section of another domain");
+        refuse(sid, "a consumes link must go from a domain's header to a section of another domain");
         continue;
       }
       if (!uses.has(from)) uses.set(from, new Set());
@@ -235,18 +236,23 @@ function findCycle(uses: Map<string, Set<string>>): string[] | null {
   return null;
 }
 
-type Field = { name: string; type: { is: string; values?: string[] } };
+type Field = { name: string; type: { is: string; values?: string[]; fields?: Field[] } };
 
 function variants(spec: Specification, refuse: Refuse): void {
   const record = (sid: string | undefined) => (sid ? spec.nodes.get(sid)?.node : undefined);
   const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "record")?.to);
-  const fieldsUpChain = (n: SpecNode | undefined): Field[] => (n ? [...((n.fields as Field[]) ?? []), ...fieldsUpChain(refined(n))] : []);
+  // A data record's fields, the fields every variant holds in its field of type variant included.
+  const fieldsOf = (n: SpecNode) => ((n.fields as Field[]) ?? []).flatMap((f) => [f, ...(f.type.is === "variant" ? (f.type.fields ?? []) : [])]);
+  const fieldsUpChain = (n: SpecNode | undefined): Field[] => (n ? [...fieldsOf(n), ...fieldsUpChain(refined(n))] : []);
+  const holding = (n: SpecNode | undefined, name: string): SpecNode | undefined =>
+    !n || ((n.fields as Field[]) ?? []).some((f) => f.name === name) ? n : holding(refined(n), name);
+  const part = (n: SpecNode) => partOf(spec.nodes.get(n.sid)!.file.path).part;
   const answers = new Map<string, string[]>();
   for (const [sid, { node }] of spec.nodes) {
     if (node.kind !== "record" || !node.answersTo) continue;
     const parent = refined(node);
     if (!parent) {
-      refuse(sid, "a record variant that refines no record");
+      refuse(sid, "a data record variant that refines no data record");
       continue;
     }
     let chooser: SpecNode | undefined = parent;
@@ -254,15 +260,20 @@ function variants(spec: Specification, refuse: Refuse): void {
     const chosenBy = (chooser?.chosenBy as string[]) ?? [];
     const answersTo = node.answersTo as Record<string, string>;
     if (JSON.stringify(Object.keys(answersTo).sort()) !== JSON.stringify([...chosenBy].sort())) {
-      refuse(sid, `answers to ${Object.keys(answersTo).join(", ")}, not to the fields its record names as choosing it, ${chosenBy.join(", ") || "none"}`);
+      refuse(sid, `answers to ${Object.keys(answersTo).join(", ")}, not to the fields its data record names as choosing it, ${chosenBy.join(", ") || "none"}`);
     }
     const inherited = fieldsUpChain(parent);
+    // A value is declared in its choosing field's own list of values, the only place the tools read
+    // such values, and the variant stands in the part of the data record holding that field.
     for (const [name, value] of Object.entries(answersTo)) {
-      const field = inherited.find((f) => f.name === name);
-      if (field?.type.is === "one of" && !field.type.values!.includes(value)) refuse(sid, `answers to "${value}" for ${name}, which is not declared among its values`);
+      const holder = holding(parent, name);
+      const field = ((holder?.fields as Field[]) ?? []).find((f) => f.name === name);
+      if (field?.type.is !== "one of") refuse(sid, `answers to "${value}" for ${name}, a field with no list of values to declare it in`);
+      else if (!field.type.values!.includes(value)) refuse(sid, `answers to "${value}" for ${name}, which is not declared among its values`);
+      else if (part(node) !== part(holder!)) refuse(sid, `stands in ${part(node)}, while the value "${value}" it answers to for ${name} is declared in ${part(holder!)}`);
     }
     const own = ((node.fields as Field[]) ?? []).filter((f) => !inherited.some((i) => i.name === f.name));
-    if (own.length === 0) refuse(sid, "a record variant that declares no field of its own");
+    if (own.length === 0) refuse(sid, "a data record variant that declares no field of its own");
     const key = `${chooser?.sid} ${JSON.stringify(Object.entries(answersTo).sort())}`;
     answers.set(key, [...(answers.get(key) ?? []), sid]);
   }

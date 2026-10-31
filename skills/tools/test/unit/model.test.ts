@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadSpecification } from "../../src/spec-files.ts";
-import { addresses, citations, fingerprint, incoming, ownerOf, partOf } from "../../src/model.ts";
+import { addresses, citations, fingerprint, incoming, LEVELS_RULE, ownerOf, partOf } from "../../src/model.ts";
 import { REPO } from "../repo.ts";
-import { file, node, OWNER, repo, sid } from "../fixture.ts";
+import { file, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
 test("s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guidelines the address it stands at", () => {
   const spec = loadSpecification(REPO);
@@ -11,15 +11,15 @@ test("s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guidelines th
   for (const [s, at] of spec.nodes) assert.equal(computed.get(s), at.node.id, s);
 });
 
-test("s-kag2m9tzdnduxdx addresses a domain's head by its name and numbers its sections straight through its files", () => {
+test("s-kag2m9tzdnduxdx addresses a domain's header by its name and numbers its sections straight through its files", () => {
   const root = repo({
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("head", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [] })),
     "specs/bank/accounts.json": file("bank", "accounts", node("accounts", { kind: "section", children: [node("open"), node("term", { kind: "term", title: "account" }), node("close")] })),
     "specs/bank/loans.json": file("bank", "loans", node("loans", { kind: "section", children: [node("lend")] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", children: [node("node")] })),
   });
   const ids = addresses(loadSpecification(root));
-  assert.equal(ids.get(sid("head")), "bank");
+  assert.equal(ids.get(sid("header")), "bank");
   assert.equal(ids.get(sid("accounts")), "bank/1");
   assert.equal(ids.get(sid("open")), "bank/1.1");
   assert.equal(ids.get(sid("term")), "bank/account");
@@ -44,10 +44,27 @@ test("s-bpdqd9v72wg7vsz builds the incoming links of the SpecSheriff guidelines 
   }
 });
 
-test("s-67vekyup7y8smap takes a node's owner from the nearest section or head naming one, else the specification's", () => {
+test("s-bpdqd9v72wg7vsz builds into a node of the SpecSheriff guidelines only the links the SpecSheriff guidelines make to it", () => {
+  const root = repo({
+    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", children: [node("base rule")] })),
+    "specs/_guidelines/tools.json": file("_guidelines", "tools", node("tools", { kind: "section", children: [node("tool", { refs: [{ type: "implements", to: sid("base rule") }] })] })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, children: [node("ours", { refs: [{ type: "refines", to: sid("base rule") }] })] })),
+    "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", children: [node("cited", { refs: [{ type: "cites", to: sid("base rule") }] })] })),
+  });
+  assert.deepEqual(incoming(loadSpecification(root)).get(sid("base rule")), [{ type: "implements", from: sid("tool") }]);
+});
+
+test("s-bpdqd9v72wg7vsz builds no link of a project into the SpecSheriff guidelines it takes, and links within the project both ways", () => {
+  const spec = loadSpecification(taking());
+  assert.ok(!spec.nodes.get(LEVELS_RULE)!.node.refs.some((r) => r.from === sid("our levels")));
+  assert.ok(!(incoming(spec).get(LEVELS_RULE) ?? []).some((r) => r.from === sid("our levels")));
+  assert.ok(spec.nodes.get(sid("our levels"))!.node.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE));
+});
+
+test("s-67vekyup7y8smap takes a node's owner from the nearest section or header naming one, else the specification's", () => {
   const root = repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("head", { kind: "domain", owner: "bank@example.org", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", owner: "bank@example.org", level: "core", code: null, sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("a", { kind: "section", children: [node("r1"), node("inner", { kind: "section", owner: "inner@example.org", children: [node("r2")] })] })),
     "specs/contracts/c.json": file("contracts", "c", node("c", { kind: "section", children: [node("r3")] })),
   });
@@ -71,9 +88,9 @@ test("s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind ca
   assert.equal(fingerprint({ ...base, status: "checked", id: "x/9", refs: [{ type: "cites", to: "s-aaaaaaaaaaaaaab" }], meta: { todos: [] }, owner: "x@y.z" }), same);
   assert.notEqual(fingerprint({ ...base, title: "other" }), same);
   assert.notEqual(fingerprint({ ...base, rationale: "other" }), same);
-  const head = node("h", { kind: "domain", level: "core", code: null, sections: [] });
-  assert.equal(fingerprint({ ...head, sections: [{ sid: "s-aaaaaaaaaaaaaab", title: "t", text: "" }] }), fingerprint(head));
-  assert.notEqual(fingerprint({ ...head, level: "auxiliary" }), fingerprint(head));
+  const header = node("h", { kind: "domain", level: "core", code: null, sections: [] });
+  assert.equal(fingerprint({ ...header, sections: [{ sid: "s-aaaaaaaaaaaaaab", title: "t", text: "" }] }), fingerprint(header));
+  assert.notEqual(fingerprint({ ...header, level: "auxiliary" }), fingerprint(header));
   const listed = node("l", { list: { of: "x", members: ["a", "b"] } });
   assert.notEqual(fingerprint({ ...listed, list: { of: "x", members: ["b", "a"] } }), fingerprint(listed));
   assert.equal(fingerprint({ ...listed, list: { members: ["a", "b"], of: "x" } }), fingerprint(listed));

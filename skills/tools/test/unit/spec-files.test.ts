@@ -8,13 +8,12 @@ import { LEVELS_RULE } from "../../src/model.ts";
 import { reindex } from "../../src/reindex.ts";
 import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
-import { sid, taking } from "../fixture.ts";
+import { taking } from "../fixture.ts";
 
 test("s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools", () => {
   const root = taking();
   const at = loadSpecification(root).nodes.get(LEVELS_RULE)!;
   assert.equal(at.file.path, "specs/_guidelines/spec.json");
-  assert.ok(at.node.refs.some((r) => r.type === "refines" && r.from === sid("our levels")), "the project's links are built into them in memory");
   assert.deepEqual(validate(root), []);
   reindex(root);
   assert.ok(!existsSync(join(root, "specs", "_guidelines", "spec.json")), "and never written into the project");

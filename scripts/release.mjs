@@ -18,7 +18,7 @@ if (git("status", "--porcelain")) throw new Error("the working tree is not clean
 if (git("tag", "--list", `v${version}`)) throw new Error(`v${version} is already released`);
 
 // The version, where the tools, the plugin and the plugin for pytest each name it.
-npm(`version ${version} -w specsheriff --no-git-tag-version`);
+npm(`version ${version} -w specsheriff-tools --no-git-tag-version`);
 for (const [path, pattern] of [["skills/claude-code/.claude-plugin/plugin.json", /"version": "[^"]*"/], ["skills/pytest-specsheriff/pyproject.toml", /^version = "[^"]*"/m]]) {
   const text = readFileSync(path, "utf8");
   writeFileSync(path, text.replace(pattern, (found) => found.replace(/"[^"]*"$/, `"${version}"`)));
@@ -27,7 +27,7 @@ git("add", "-A");
 git("commit", "-qm", `Release: ${version}`);
 
 // The release commit: main's tree with the built tools added, on top of main and of the release before.
-npm("run build -w specsheriff");
+npm("run build -w specsheriff-tools");
 const env = { ...process.env, GIT_INDEX_FILE: join(mkdtempSync(join(tmpdir(), "release-")), "index") };
 run("git", ["read-tree", "HEAD"], env);
 run("git", ["add", "-f", "skills/claude-code/tools"], env);

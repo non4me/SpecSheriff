@@ -82,9 +82,12 @@ export type Incoming = { type: string; from: string; ratio?: string };
  */
 export function incoming(spec: Specification): Map<string, Incoming[]> {
   const built = new Map<string, Incoming[]>();
+  const guidelines = (sid: string) => partOf(spec.nodes.get(sid)!.file.path).specSheriffGuidelines;
   for (const [from, { node }] of spec.nodes) {
     for (const ref of node.refs) {
       if (!ref.to || !spec.nodes.has(ref.to)) continue;
+      // The SpecSheriff guidelines hold only the links they make to themselves.
+      if (guidelines(ref.to) && !guidelines(from)) continue;
       if (!built.has(ref.to)) built.set(ref.to, []);
       const ratio = ref.ratio?.split(":").reverse().join(":");
       built.get(ref.to)!.push({ type: ref.type, from, ...(ratio ? { ratio } : {}) });
@@ -93,7 +96,7 @@ export function incoming(spec: Specification): Map<string, Incoming[]> {
   return built;
 }
 
-/** The node's owner: named by the nearest section or head above it or by itself, else by its domain's head, else the specification's. */
+/** The node's owner: named by the nearest section or header above it or by itself, else by its domain's header, else the specification's. */
 export function ownerOf(spec: Specification, sid: string): string | null {
   const at = spec.nodes.get(sid);
   if (!at) return null;
@@ -104,8 +107,8 @@ export function ownerOf(spec: Specification, sid: string): string | null {
   if (!["_guidelines", "tech", "contracts"].includes(part)) {
     for (const f of spec.files) {
       if (partOf(f.path).part !== part) continue;
-      const head = f.data.nodes.find((n) => n.kind === "domain");
-      if (head && typeof head.owner === "string") return head.owner;
+      const header = f.data.nodes.find((n) => n.kind === "domain");
+      if (header && typeof header.owner === "string") return header.owner;
     }
   }
   const owner = spec.files.find((f) => f.path === PROJECT)?.data.nodes[0]?.owner;

@@ -16,7 +16,7 @@ import { validate } from "./validate.ts";
 const USAGE = `Usage: sheriff <command>
 
 Commands:
-  reindex                     give sids, compute addresses, rebuild incoming links and heads' indexes,
+  reindex                     give sids, compute addresses, rebuild incoming links and headers' indexes,
                               empty every status no confirmation by its owner holds
   validate                    check the specification on its own
   confirm [--withdraw] <sid>  record the owner's confirmation of a node's wording, or withdraw it

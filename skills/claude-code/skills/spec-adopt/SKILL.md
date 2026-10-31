@@ -28,7 +28,7 @@ deleted in the same commit: kept beside the nodes, they would be a second versio
 ## 2. Import verbatim
 
 Read each document the owner agreed, whole. Then write it into nodes, one part of the specification per file as the
-appendix of the tools lays them out — a domain under `specs/<domain>/` opening with its head,
+appendix of the tools lays them out — a domain under `specs/<domain>/` opening with its header,
 what the domains share under `specs/contracts/`:
 
 - a heading becomes a section, its preamble the section's text;

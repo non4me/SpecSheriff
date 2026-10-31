@@ -26,7 +26,7 @@ test("s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guideline
   for (const name of ["spec.json", "tools.json"]) assert.equal(read(`${PLUGIN}/tools/guidelines/${name}`), read(join(REPO, "specs", "_guidelines", name)), name);
   for (const name of readdirSync(join(REPO, "specs", "_schema"))) assert.equal(read(`${PLUGIN}/tools/guidelines/_schema/${name}`), read(join(REPO, "specs", "_schema", name)), name);
   const version = spawnSync(process.execPath, [`${PLUGIN}/tools/dist/cli.js`, "--version"], { encoding: "utf8" });
-  assert.equal(version.stdout.trim(), json(join(REPO, "skills", "specsheriff", "package.json")).version, version.stderr);
+  assert.equal(version.stdout.trim(), json(join(REPO, "skills", "tools", "package.json")).version, version.stderr);
 });
 
 test("s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts", () => {
@@ -60,10 +60,10 @@ test("s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of
   assert.deepEqual(marketplace.plugins.map((p: any) => [p.name, p.source]), [["specsheriff", "./skills/claude-code"]]);
 });
 
-test("s-zh2vcr3xjumppg5 the skill spec-init runs sheriff init with the tools the plugin carries", () => {
-  const skill = read(`${PLUGIN}/skills/spec-init/SKILL.md`);
-  assert.match(skill, /node "\$\{CLAUDE_PLUGIN_ROOT\}\/tools\/dist\/cli\.js"/);
-  assert.match(skill, /sheriff init/);
+test("s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, and spec-init runs sheriff init", () => {
+  for (const skill of readdirSync(`${PLUGIN}/skills`)) assert.match(read(`${PLUGIN}/skills/${skill}/SKILL.md`), /node "\$\{CLAUDE_PLUGIN_ROOT\}\/tools\/dist\/cli\.js"/, skill);
+  for (const hook of ["guard.sh", "after-edit.sh"]) assert.match(read(`${PLUGIN}/hooks/${hook}`), /node "\$CLAUDE_PLUGIN_ROOT\/tools\/dist\/cli\.js"/, hook);
+  assert.match(read(`${PLUGIN}/skills/spec-init/SKILL.md`), /Run `sheriff init`/);
 });
 
 test("s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing", () => {

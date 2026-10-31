@@ -44,9 +44,9 @@ function giveSids(files: SpecFile[]): void {
   for (const f of files) if (!partOf(f.path).part.startsWith("_archive")) f.data.nodes = settle(f.data.nodes ?? []);
 }
 
-/** Each domain's head and the sections its index lists. */
-function heads(spec: Specification): Array<{ head: SpecNode; sections: SpecNode[] }> {
-  const parts = new Map<string, { head?: SpecNode; sections: SpecNode[] }>();
+/** Each domain's header and the sections its index lists. */
+function headers(spec: Specification): Array<{ header: SpecNode; sections: SpecNode[] }> {
+  const parts = new Map<string, { header?: SpecNode; sections: SpecNode[] }>();
   for (const f of spec.files) {
     const { part } = partOf(f.path);
     if (["_guidelines", "tech", "contracts"].includes(part)) continue;
@@ -54,16 +54,16 @@ function heads(spec: Specification): Array<{ head: SpecNode; sections: SpecNode[
     const entry = parts.get(part)!;
     for (const n of f.data.nodes) {
       if (n.kind === "domain") {
-        entry.head = n;
+        entry.header = n;
         entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
       } else if (n.kind === "section") entry.sections.push(n);
     }
   }
-  return [...parts.values()].filter((e) => e.head).map((e) => ({ head: e.head!, sections: e.sections }));
+  return [...parts.values()].filter((e) => e.header).map((e) => ({ header: e.header!, sections: e.sections }));
 }
 
-/** The index a head carries, as the domain's sections produce it. */
-export function headIndex(spec: Specification, sections: SpecNode[], built: ReturnType<typeof incoming>) {
+/** The index a header carries, as the domain's sections produce it. */
+export function headerIndex(spec: Specification, sections: SpecNode[], built: ReturnType<typeof incoming>) {
   return sections.map((s) => {
     const usedBy = (built.get(s.sid) ?? []).filter((r) => r.type === "consumes" && spec.nodes.get(r.from)?.node.kind === "domain").map((r) => r.from);
     return { sid: s.sid, title: s.title, text: s.text, ...(usedBy.length ? { usedBy } : {}) };
@@ -99,7 +99,7 @@ export function reindex(root: string): ReindexReport {
     if (ids.has(sid)) node.id = ids.get(sid)!;
     node.refs = [...(node.refs ?? []).filter((r) => !r.from), ...(built.get(sid) ?? [])];
   }
-  for (const { head, sections } of heads(spec)) head.sections = headIndex(spec, sections, built);
+  for (const { header, sections } of headers(spec)) header.sections = headerIndex(spec, sections, built);
 
   const lines = readConfirmations(root);
   for (const [sid, { node, file }] of spec.nodes) {
