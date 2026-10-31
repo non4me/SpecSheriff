@@ -49,6 +49,8 @@ the work deferred on it, and comments, an open problem marked as one.
 ## Nothing unconfirmed is implemented
 
 Anyone may change or add a rule. A rule is implemented only once its owner has confirmed that they
-understood it and that it is legitimate, and a change to its wording leaves it unconfirmed until the
-owner confirms the new wording. The specification has an owner by default; a domain or any section
-may name its own, and a rule's owner is the one named nearest above it.
+understood it and that it is legitimate. A change to its wording leaves it unconfirmed until the
+owner confirms the new wording; a change that only states what the owner has already confirmed, or
+changes no meaning, is confirmed in the owner's name and reported to them. The specification has an
+owner by default; a domain or any section may name its own, and a rule's owner is the one named
+nearest above it.

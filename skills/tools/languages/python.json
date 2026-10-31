@@ -12,5 +12,5 @@
   ],
   "export": null,
   "decorated": "decorated_definition",
-  "tests": { "functions": "test", "mark": "pytest.mark.spec" }
+  "tests": { "functions": "test", "mark": "pytest.mark.spec", "skips": ["pytest.mark.skip", "pytest.mark.skipif", "pytest.mark.xfail"] }
 }

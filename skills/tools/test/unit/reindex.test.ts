@@ -37,6 +37,16 @@ test("s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from the out
   assert.deepEqual(at(root, "shared").refs, [{ type: "consumes", from: sid("header") }]);
 });
 
+test("s-bpdqd9v72wg7vsz empties the incoming lists of the nodes of the archive, and builds none of their links into another node", () => {
+  const root = bank({
+    "specs/_archive/bank.json": file("bank", "bank", { ...node("gone", { refs: [{ type: "cites", from: sid("open") }, { type: "cites", to: sid("close") }] }), id: "bank/1.3", archived: { date: "2026-10-28", reason: "Gone." } }),
+  });
+  reindex(root);
+  const archived = JSON.parse(readFileSync(join(root, "specs", "_archive", "bank.json"), "utf8")).nodes[0];
+  assert.deepEqual(archived.refs, [{ type: "cites", to: sid("close") }]);
+  assert.deepEqual(at(root, "close").refs, [{ type: "cites", from: sid("open") }]);
+});
+
 test("s-yggv9myedprnaa7 rebuilds the index in a domain's header from the domain's sections", () => {
   const root = bank();
   reindex(root);
@@ -60,7 +70,7 @@ test("s-f5rz6b7dhxejjts gives a sid to a node that has none, its address and sid
   reindex(root);
   const added = JSON.parse(readFileSync(path, "utf8")).nodes[0].children[1];
   assert.match(added.sid, SID);
-  assert.equal(added.id, "contracts/1.1");
+  assert.equal(added.id, "contracts/1");
   assert.deepEqual(Object.keys(added).slice(0, 3), ["id", "sid", "kind"]);
 });
 

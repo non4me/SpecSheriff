@@ -1,9 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readCode } from "../../src/code.ts";
+import { sid } from "../fixture.ts";
 
-const A = "s-aaaaaaaaaaaaaab";
-const B = "s-aaaaaaaaaaaaaac";
+const A = sid("a");
+const B = sid("b");
 
 test("s-5z5gnu7pahr82xp reads a tag in the doc comment directly above a TypeScript symbol, several where it carries several", async () => {
   const file = await readCode("src/a.ts", `/**\n * Opens an account.\n * @spec ${A}\n * @spec ${B}\n */\nexport function open() {}\n\n/** @spec none glue the framework needs */\nexport const glue = 1;\n`);
@@ -52,11 +53,21 @@ test("s-zrsc6asgmhv8tnc reads the sid a TypeScript test opens its name with, a t
   assert.equal(file!.tests[0]!.name, `${A} opens an account`);
 });
 
+test("s-4kd2pave7vm4hmd reads a TypeScript test its framework is told to skip, by its call or by its options, as skipped", async () => {
+  const file = await readCode("test/a.test.ts", `test("${A} runs", () => {});\ntest.skip("${A} skipped", () => {});\nit.todo("${A} to do");\ntest("${A} skipped by option", { skip: true }, () => {});\ntest("${A} not skipped", { skip: false }, () => {});\n`);
+  assert.deepEqual(file!.tests.map((t) => [t.name.slice(A.length + 1), t.skipped]), [["runs", false], ["skipped", true], ["to do", true], ["skipped by option", true], ["not skipped", false]]);
+});
+
+test("s-4kd2pave7vm4hmd reads a Python test marked to be skipped or expected to fail as skipped", async () => {
+  const file = await readCode("tests/test_a.py", `import pytest\n\n@pytest.mark.spec("${A}")\ndef test_runs():\n    pass\n\n@pytest.mark.skip(reason="later")\n@pytest.mark.spec("${A}")\ndef test_skipped():\n    pass\n\n@pytest.mark.xfail\n@pytest.mark.spec("${A}")\ndef test_failing():\n    pass\n`);
+  assert.deepEqual(file!.tests.map((t) => [t.name, t.skipped]), [["test_runs", false], ["test_skipped", true], ["test_failing", true]]);
+});
+
 test("s-zrsc6asgmhv8tnc reads the sid a Python test declares by its mark", async () => {
   const file = await readCode("tests/test_a.py", `import pytest\n\n@pytest.mark.spec("${A}")\ndef test_open():\n    pass\n\ndef test_bare():\n    pass\n\nclass TestGroup:\n    @pytest.mark.spec("${B}")\n    def test_inner(self):\n        pass\n`);
   assert.deepEqual(file!.tests.map((t) => [t.name, t.sid]), [["test_open", A], ["test_bare", null], ["TestGroup.test_inner", B]]);
 });
 
 test("s-5z5gnu7pahr82xp reads nothing of a file in a language no description covers", async () => {
-  assert.equal(await readCode("notes.txt", "@spec s-aaaaaaaaaaaaaab"), null);
+  assert.equal(await readCode("notes.txt", `@spec ${A}`), null);
 });

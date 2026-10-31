@@ -85,9 +85,8 @@ way every time.
 
 - **spec** — the guidelines as they stand, printed by the tools rather than copied, for an agent about
   to write a node, a test or code: it works from the rules in force, not from memory.
-- **spec-review** — working on the specification with its owner, one node at a time, shown whole, the
-  original above a reading in the owner's language: a confirmation then means the owner read the
-  wording.
+- **spec-review** — working on the specification with its owner, one node at a time, shown whole: a
+  confirmation then means the owner read the whole wording.
 - **spec-adopt** — bringing a project's existing documents into nodes, walked whole, the owner agreeing
   where each goes: a project rarely starts from nothing.
 - **spec-init** — laying out what the checks depend on: the git hooks, the plugin declared for every

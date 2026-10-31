@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { lineTokens } from "./code.ts";
 
 export interface Line {
   line: number;
@@ -79,12 +80,49 @@ export function normalize(text: string, python: boolean): string {
   return tokens(code.replace(/s-[2-9a-hjkmnp-z]{15}/g, "SID")).join(" ");
 }
 
+/** What the filter of code changes reads beside the changed lines. */
+export interface Texts {
+  /** What a changed file held before the commit, or nothing. */
+  before(change: FileChange): string | null;
+  /** What it holds after the commit, or nothing. */
+  after(change: FileChange): string | null;
+  /** Every name the system's code and its tests spell after the commit. */
+  spelled: Set<string>;
+}
+
+/** The names a file spells outside its comments and its strings; in a file of no language described, every word of it. */
+export async function namesIn(path: string, text: string): Promise<string[]> {
+  const lexed = await lineTokens(path, text);
+  return (lexed ? lexed.flat() : tokens(text)).filter((t) => IDENTIFIER.test(t));
+}
+
+/** Every name the files read as code or tests spell in the working tree, one of them read as the text given in its place. */
+export async function spelledIn(root: string, read: (path: string) => boolean, instead?: { path: string; text: string }): Promise<Set<string>> {
+  const spelled = new Set<string>();
+  for (const path of trackedFiles(root).filter(read)) {
+    const text = path === instead?.path ? instead.text : existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : null;
+    if (text !== null) for (const name of await namesIn(path, text)) spelled.add(name);
+  }
+  if (instead && !trackedFiles(root).includes(instead.path)) for (const name of await namesIn(instead.path, instead.text)) spelled.add(name);
+  return spelled;
+}
+
+/** The texts of the commit being made: the last commit's, the working tree's, and the names the files read as code or tests spell. */
+export async function commitTexts(root: string, read: (path: string) => boolean): Promise<Texts> {
+  return {
+    before: (c) => before(root, c.before ?? c.path),
+    after: (c) => (existsSync(join(root, c.path)) ? readFileSync(join(root, c.path), "utf8") : null),
+    spelled: await spelledIn(root, read),
+  };
+}
+
 /**
  * The lines of a change that change code: a line that holds a tag always does; a line that differs
- * from the one it replaces only in a comment, in the sid a citation names, or in a name the commit
- * renames everywhere it spells it, does not.
+ * from the one it replaces only in a comment, or in a name the commit renames everywhere it spells
+ * it, does not. A line is read as tokens of its language, comments left out and strings kept apart
+ * from names, so that a sid a citation names, which stands in a comment, changes nothing.
  */
-export function codeChanges(changes: FileChange[]): Map<string, { added: Set<number>; removed: Set<number> }> {
+export async function codeChanges(changes: FileChange[], texts: Texts): Promise<Map<string, { added: Set<number>; removed: Set<number> }>> {
   const result = new Map<string, { added: Set<number>; removed: Set<number> }>();
   const renames = new Map<string, string>();
   const tentative: Array<{ path: string; old: Line; neu: Line; pairs: Array<[string, string]> }> = [];
@@ -93,10 +131,16 @@ export function codeChanges(changes: FileChange[]): Map<string, { added: Set<num
     const python = change.path.endsWith(".py");
     const entry = { added: new Set<number>(), removed: new Set<number>() };
     result.set(change.path, entry);
-    for (const l of change.added) for (const t of tokens(l.text)) allAdded.add(t);
-    const meaningful = (lines: Line[]) => lines.filter((l) => l.text.includes("@spec") || normalize(l.text, python) !== "");
-    const removed = meaningful(change.removed);
-    const added = meaningful(change.added);
+    const was = texts.before(change);
+    const now = texts.after(change);
+    const lexedBefore = was === null ? null : await lineTokens(change.before ?? change.path, was);
+    const lexedAfter = now === null ? null : await lineTokens(change.path, now);
+    // A line's tokens as its language reads them, or, in a file of no language described, as its text reads.
+    const tokensOf = (lexed: string[][] | null, l: Line) => (lexed ? (lexed[l.line - 1] ?? []) : tokens(normalize(l.text, python)));
+    for (const l of change.added) for (const t of tokensOf(lexedAfter, l)) allAdded.add(t);
+    const meaningful = (lines: Line[], lexed: string[][] | null) => lines.filter((l) => l.text.includes("@spec") || tokensOf(lexed, l).length > 0);
+    const removed = meaningful(change.removed, lexedBefore);
+    const added = meaningful(change.added, lexedAfter);
     const real = (old?: Line, neu?: Line) => {
       if (old) entry.removed.add(old.line);
       if (neu) entry.added.add(neu.line);
@@ -109,8 +153,8 @@ export function codeChanges(changes: FileChange[]): Map<string, { added: Set<num
     removed.forEach((old, i) => {
       const neu = added[i]!;
       if (old.text.includes("@spec") || neu.text.includes("@spec")) return real(old, neu);
-      const a = tokens(normalize(old.text, python));
-      const b = tokens(normalize(neu.text, python));
+      const a = tokensOf(lexedBefore, old);
+      const b = tokensOf(lexedAfter, neu);
       if (a.join(" ") === b.join(" ")) return;
       if (a.length !== b.length) return real(old, neu);
       const pairs: Array<[string, string]> = [];
@@ -128,7 +172,8 @@ export function codeChanges(changes: FileChange[]): Map<string, { added: Set<num
     renames.set(a, b);
   }
   for (const t of tentative) {
-    const ok = t.pairs.every(([a]) => !consistent.has(`!${a}`) && !allAdded.has(a));
+    // A rename counts only where the old name is spelled nowhere in the code and the tests after the commit.
+    const ok = t.pairs.every(([a]) => !consistent.has(`!${a}`) && !allAdded.has(a) && !texts.spelled.has(a));
     if (!ok) {
       result.get(t.path)!.removed.add(t.old.line);
       result.get(t.path)!.added.add(t.neu.line);

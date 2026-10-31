@@ -3,7 +3,7 @@ import { isAbsolute, join, relative, sep } from "node:path";
 import { readCode, type CodeSymbol } from "./code.ts";
 import { loadConfig, readsAs } from "./config.ts";
 import { holds, readConfirmations } from "./confirmations.ts";
-import { codeChanges, trackedFiles, type Line } from "./diff.ts";
+import { codeChanges, spelledIn, trackedFiles, type Line } from "./diff.ts";
 import { fingerprint, ownerOf } from "./model.ts";
 import { judgedHere } from "./reindex.ts";
 import { loadSpecification, specificationOf, type SpecFile, type SpecNode } from "./spec-files.ts";
@@ -60,6 +60,10 @@ export async function guard(root: string, input: HookInput): Promise<string | nu
   if (!given?.file_path || !["Write", "Edit", "MultiEdit"].includes(tool)) return null;
   const path = relative(root, isAbsolute(given.file_path) ? given.file_path : join(root, given.file_path)).split(sep).join("/");
   if (path.startsWith("..")) return null;
+  // Only the procedure that records a confirmation or withdraws one writes the confirmations.
+  if (path === "specs/_confirmations.jsonl") {
+    return "specs/_confirmations.jsonl is written by sheriff confirm alone, which records a confirmation or its withdrawal on its owner's word: leave the node's status empty for its owner to confirm";
+  }
   const current = existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : "";
   const next = afterEdit(tool, given, current);
   if (next === null) return null;
@@ -79,10 +83,11 @@ export async function guard(root: string, input: HookInput): Promise<string | nu
     const edited = specificationOf([...spec.files.filter((f) => f.path !== path), ...spec.archive, { path, data }]);
     const lines = readConfirmations(root);
     for (const [sid, { node, file }] of edited.nodes) {
-      if (file.path !== path || node.status !== "checked" || !judgedHere(path, config.writesSpecSheriffGuidelines)) continue;
+      if (node.status !== "checked" || !judgedHere(file.path, config.writesSpecSheriffGuidelines) || holds(edited, lines, sid)) continue;
       const old = was.get(sid);
-      const touched = !old || old.status !== "checked" || fingerprint(old) !== fingerprint(node);
-      if (touched && !holds(edited, lines, sid)) {
+      const touched = file.path === path && (!old || old.status !== "checked" || fingerprint(old) !== fingerprint(node));
+      // A node the edit leaves as it was still turns unconfirmed where the edit gives it another owner.
+      if (touched || holds(spec, lines, sid)) {
         reasons.push(`${sid} (${node.id}) would stand checked over a wording its owner ${ownerOf(edited, sid) ?? "(none named)"} has not confirmed: leave its status empty for its owner to confirm`);
       }
     }
@@ -92,7 +97,8 @@ export async function guard(root: string, input: HookInput): Promise<string | nu
     const now = await readCode(path, next);
     const old = await readCode(path, current);
     if (now) {
-      const real = codeChanges([{ path, ...changedLines(current, next) }]).get(path)!;
+      const spelled = await spelledIn(root, (p) => readsAs(config, p) !== null, { path, text: next });
+      const real = (await codeChanges([{ path, ...changedLines(current, next) }], { before: () => current, after: () => next, spelled })).get(path)!;
       const all = (symbols: CodeSymbol[]): CodeSymbol[] => symbols.flatMap((s) => [s, ...all(s.inner)]);
       const at = (symbols: CodeSymbol[], line: number) => all(symbols).filter((s) => (s.start <= line && line <= s.end) || s.tags.some((t) => t.line === line));
       const touched = new Set<CodeSymbol>();

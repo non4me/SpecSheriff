@@ -4,9 +4,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { changedTags, readCommit } from "./binding.ts";
 import { loadConfig, readsAs, type ReviewSettings } from "./config.ts";
-import { base, changes, codeChanges, git } from "./diff.ts";
+import { base, changes, codeChanges, commitTexts, git } from "./diff.ts";
 import { messageText } from "./message.ts";
 import { loadSpecification } from "./spec-files.ts";
+import { typeFiles } from "./types.ts";
 import type { Finding } from "./validate.ts";
 
 export type RunResult = { status: "ok"; out: string } | { status: "missing" | "timeout" | "failed"; detail: string };
@@ -23,10 +24,11 @@ Answer with one JSON object and nothing around it:
 A refusal names at least one finding; a pass names none.`;
 
 /** Whether the commit changes any line of the system's code. */
-function changesCode(root: string): boolean {
+async function changesCode(root: string): Promise<boolean> {
   const config = loadConfig(root);
   const commit = changes(root).filter((c) => readsAs(config, c.path) === "code");
-  return [...codeChanges(commit).values()].some((l) => l.added.size + l.removed.size > 0);
+  const lines = await codeChanges(commit, await commitTexts(root, (p) => readsAs(config, p) !== null));
+  return [...lines.values()].some((l) => l.added.size + l.removed.size > 0);
 }
 
 /** What the reviewer is given: the commit's message, the text of the nodes its message and tags name, and its change. */
@@ -41,8 +43,9 @@ export async function reviewInput(root: string, text: string): Promise<string> {
     if (node.kind === "record") parts.push("", "Fields:", JSON.stringify({ fields: node.fields, unknown: node.unknown }, null, 2));
     return [parts.join("\n")];
   });
-  const paths = changes(root).filter((c) => readsAs(config, c.path) !== null).map((c) => c.path);
-  const diff = paths.length ? git(root, "diff", base(root), "--no-color", "--no-ext-diff", "--", ...paths).out : "";
+  // The whole change, less the files generated from the specification: the binding check compares them with what the nodes produce.
+  const generated = typeFiles(spec).paths.map((p) => `:(exclude)${p}`);
+  const diff = changes(root).length ? git(root, "diff", base(root), "--no-color", "--no-ext-diff", "--", ".", ...generated).out : "";
   return [`# The commit's message\n\n${messageText(text).trim()}`, `# The nodes it names\n\n${nodes.join("\n\n") || "(none)"}`, `# The change\n\n\`\`\`diff\n${diff}\`\`\``].join("\n\n") + "\n";
 }
 
@@ -110,7 +113,7 @@ function readVerdict(out: string): Verdict | null {
 
 /** The review of the commit being made: none where it changes no code; a refusal where the reviewer refuses or no review can be held. */
 export async function review(root: string, text: string, { run = claudeRunner }: { run?: Runner } = {}): Promise<Finding[]> {
-  if (!changesCode(root)) return [];
+  if (!(await changesCode(root))) return [];
   const where = "the review";
   const result = run(await reviewInput(root, text), loadConfig(root).review);
   if (result.status !== "ok") {

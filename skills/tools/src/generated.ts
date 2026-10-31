@@ -13,10 +13,17 @@ function nodeMarkdown(n: SpecNode, depth: number): string {
   return [parts.join("\n"), ...(n.children ?? []).map((c) => nodeMarkdown(c, depth + 1))].join("\n\n");
 }
 
-/** Writes the readable export: one markdown file for each file of the specification, and nothing else under md-version/. */
+/** Empties a directory written from the nodes alone and keeps it out of git, so that no repository stores it whatever its own ignore file says. */
+function regenerated(root: string, dir: string): void {
+  rmSync(join(root, dir), { recursive: true, force: true });
+  mkdirSync(join(root, dir), { recursive: true });
+  writeFileSync(join(root, dir, ".gitignore"), "*\n");
+}
+
+/** Writes the readable export: one markdown file for each file of the specification under md-version/, which git ignores. */
 export function exportMarkdown(root: string): string[] {
   const spec = loadSpecification(root);
-  rmSync(join(root, EXPORT), { recursive: true, force: true });
+  regenerated(root, EXPORT);
   return spec.files.map((f) => {
     const path = f.path.replace(/^specs\//, `${EXPORT}/`).replace(/\.json$/, ".md");
     mkdirSync(dirname(join(root, path)), { recursive: true });
@@ -83,8 +90,7 @@ ${outline(spec).replace(/<\/script/gi, "<\\/script")}</script></div>
 </html>
 `;
   const path = join("specs", "_viewer", "index.html");
-  rmSync(join(root, "specs", "_viewer"), { recursive: true, force: true });
-  mkdirSync(join(root, "specs", "_viewer"), { recursive: true });
+  regenerated(root, join("specs", "_viewer"));
   writeFileSync(join(root, path), page);
   return path.replace(/\\/g, "/");
 }

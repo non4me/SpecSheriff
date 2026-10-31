@@ -1,6 +1,7 @@
 import pytest
 
-SID = "s-aaaaaaaaaaaaaab"
+# The sid the made-up tests declare: the rule on how a test declares the sid it verifies.
+SID = "s-zrsc6asgmhv8tnc"
 
 
 @pytest.mark.spec("s-zrsc6asgmhv8tnc")

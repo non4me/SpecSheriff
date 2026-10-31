@@ -20,7 +20,12 @@ export function loadSchema(root: string): Schema {
   return {
     check(data) {
       if (validate(data)) return [];
-      return (validate.errors ?? []).map((e) => `${e.instancePath || "/"}: ${e.message}`);
+      // The field a message is about, where Ajv keeps it in the error's parameters rather than its path.
+      const field = (p: Record<string, unknown>) => p.unevaluatedProperty ?? p.additionalProperty ?? p.missingProperty;
+      return (validate.errors ?? []).map((e) => {
+        const named = field(e.params as Record<string, unknown>);
+        return `${e.instancePath || "/"}: ${e.message}${named === undefined ? "" : `: "${named}"`}`;
+      });
     },
   };
 }

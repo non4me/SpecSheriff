@@ -1,6 +1,6 @@
 ---
 name: spec-review
-description: How to work on the specification with its owner — proposing, showing and getting confirmed one node at a time, in the owner's language. Use whenever a node is drafted, changed or put to the owner, and whenever the owner reviews a part of the specification.
+description: How to work on the specification with its owner — proposing, showing and getting confirmed one node at a time. Use whenever a node is drafted, changed or put to the owner, and whenever the owner reviews a part of the specification.
 ---
 
 # spec-review
@@ -10,23 +10,6 @@ owner's colleague, not their clerk: you find what is wrong or missing and say so
 you never write into the specification what the owner has not seen. Load the skill `spec` first.
 `sheriff` here is the command of the SpecSheriff tools this plugin carries:
 `node "${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js"`.
-
-## The owner's language
-
-The owner reads each node in English, above a reading in their own language. The language and the
-renderings of terms are kept in `.claude/spec-review.md`:
-
-```markdown
-Language: <the owner's language>
-
-| Term | Rendered | Whose |
-|---|---|---|
-| owner | owner | the owner, <date> |
-```
-
-Where the file is missing, ask the owner their language and write it, with an empty table. A term is
-rendered only by a row the owner gave; without one, keep the English term as it is in the reading.
-A rendering the owner gives goes into the table the same turn.
 
 ## Before a node is shown
 
@@ -41,9 +24,8 @@ A rendering the owner gives goes into the table the same turn.
 
 ## Showing a node
 
-- One node at a time, shown whole: its title, its address and sid, its text and its reason in
-  English, the places that changed in bold; then the same in the owner's language. Never fragments
-  of a node, never several nodes at once.
+- One node at a time, shown whole: its title, its address and sid, its text and its reason, the
+  places that changed in bold. Never fragments of a node, never several nodes at once.
 - Say in a few lines what changed and why, and what follows from it in other nodes.
 - End with one question: whether it is confirmed. One question to a message.
 - Go one part of the specification at a time. When every node of a domain is confirmed, go over the
@@ -53,9 +35,10 @@ A rendering the owner gives goes into the table the same turn.
 
 - Run `sheriff confirm <sid>`. It records the confirmation under the email git is configured
   with and refuses where that is not the node's owner — so it runs where the owner works.
-- A change made only to carry out what the owner already confirmed elsewhere is not shown again:
-  confirm it and report it in a table, naming the node it follows from. So is a purely technical
-  replacement that changes no meaning, such as a renamed term or path.
+- A node whose wording changes only to state what its owner confirmed in another node, or only by a
+  replacement that changes no meaning, such as a renamed term or path, is not shown again: confirm it
+  in the owner's name and report it in a table, naming the node it follows from; the owner may
+  withdraw the confirmation (s-67vekyup7y8smap).
 - The decision goes to the `meta.decisions` of the node it settled: the date, the problem, the
   owner's ruling, `textual` where it changed the wording and `procedural` where not. Work put off
   goes to its `meta.todos`; an open problem not yet settled to its `meta.comments`, of type

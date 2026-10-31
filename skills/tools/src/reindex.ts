@@ -99,6 +99,9 @@ export function reindex(root: string): ReindexReport {
     if (ids.has(sid)) node.id = ids.get(sid)!;
     node.refs = [...(node.refs ?? []).filter((r) => !r.from), ...(built.get(sid) ?? [])];
   }
+  // A node of the archive holds no link pointing at it.
+  const unlinked = (nodes: SpecNode[]) => nodes.forEach((n) => ((n.refs = (n.refs ?? []).filter((r) => !r.from)), unlinked(n.children ?? [])));
+  for (const f of spec.archive) unlinked(f.data.nodes ?? []);
   for (const { header, sections } of headers(spec)) header.sections = headerIndex(spec, sections, built);
 
   const lines = readConfirmations(root);

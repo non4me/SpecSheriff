@@ -19,6 +19,7 @@
       "minLength": 1
     },
     "nodes": {
+      "$comment": "The nodes at the top of the file, in the order they read; the nodes under each are its children, so the file is one tree.",
       "type": "array",
       "items": {
         "$ref": "node.schema.json"

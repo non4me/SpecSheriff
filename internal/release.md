@@ -51,13 +51,15 @@ this working tree.
 
 `npm run release -- <major>.<minor>.<patch>` on a clean `main`:
 
-1. writes the version into `skills/tools/package.json` and the lockfile,
+1. builds the tools and runs `sheriff binding`, and stops where it refuses anything or reports a
+   checked rule not implemented (s-6fw72j65jkqrfpf): a release carries out every rule it states;
+2. writes the version into `skills/tools/package.json` and the lockfile,
    `skills/claude-code/.claude-plugin/plugin.json` and `skills/pytest-specsheriff/pyproject.toml`,
    and commits it on `main` as `Release: <version>`, through the git hooks like any commit;
-2. builds the tools;
-3. makes the release commit: the tree of that commit with `skills/claude-code/tools/` added, its
+3. builds the tools;
+4. makes the release commit: the tree of that commit with `skills/claude-code/tools/` added, its
    parents that commit and the last commit of `release`, where there is one;
-4. tags it `v<version>`, moves `release` to it, and pushes `main`, `release` and the tag in one
+5. tags it `v<version>`, moves `release` to it, and pushes `main`, `release` and the tag in one
    atomic push, the pre-push hook running the tests first.
 
 `release` holds only releases, so a project's marketplace never reads the work in progress on `main`.

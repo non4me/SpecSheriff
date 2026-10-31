@@ -11,6 +11,7 @@ import { review } from "./review.ts";
 import { reindex } from "./reindex.ts";
 import { show } from "./show.ts";
 import { loadSpecification, specificationOf, type SpecFile, type Specification } from "./spec-files.ts";
+import { writeTypes } from "./types.ts";
 import { validate } from "./validate.ts";
 
 const USAGE = `Usage: sheriff <command>
@@ -24,6 +25,8 @@ Commands:
   export                      write the readable export in markdown to md-version/
   render                      write the map to specs/_viewer/
   guide                       print the guidelines and where the specification stands
+  types                       write the types and runtime checks generated from the data records
+                              into the files the technical appendix lists for them
   binding                     check the specification against the code and the tests
   citations                   check the sids in the code, the tests and the documents
   message <file>              check a commit's message against the code it changes
@@ -88,6 +91,13 @@ async function run(command: string | undefined, args: string[]): Promise<number>
     case "guide":
       process.stdout.write(guide(loadSpecification(root)));
       return 0;
+    case "types": {
+      const report = writeTypes(root);
+      for (const f of report.refusals) process.stdout.write(`${f.where}: ${f.message}\n`);
+      for (const sid of report.waiting) process.stdout.write(`${sid}: a data record node not yet checked; the types and runtime checks wait for its confirmation\n`);
+      for (const path of report.written) process.stdout.write(`written: ${path}\n`);
+      return report.refusals.length ? 1 : 0;
+    }
     case "binding": {
       const findings = await binding(root);
       for (const f of findings) process.stdout.write(`${f.where}: ${f.reported ? "reported: " : ""}${f.message}\n`);

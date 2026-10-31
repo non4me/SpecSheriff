@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { confirm, readConfirmations } from "../../src/confirmations.ts";
 import { loadSpecification } from "../../src/spec-files.ts";
 import { fingerprint, LEVELS_RULE } from "../../src/model.ts";
-import { file, node, OWNER, repo, sid, taking } from "../fixture.ts";
+import { file, node, NONE, OWNER, repo, sid, taking } from "../fixture.ts";
 
 test("s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing", () => {
   const root = taking();
@@ -49,7 +49,7 @@ test("s-67vekyup7y8smap refuses a node whose owner is someone else, naming that 
 });
 
 test("s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for", () => {
-  assert.throws(() => confirm(project(), ["s-aaaaaaaaaaaaaab"], { me: OWNER }), /s-aaaaaaaaaaaaaab/);
+  assert.throws(() => confirm(project(), [NONE], { me: OWNER }), new RegExp(NONE));
   const lone = repo({ "specs/contracts/c.json": file("contracts", "c", node("lone")) });
   assert.throws(() => confirm(lone, [sid("lone")], { me: OWNER }), /no owner/);
 });
@@ -63,6 +63,15 @@ test("s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and emptie
   confirm(root, [sid("levels")], { me: OWNER });
   assert.equal(readConfirmations(root).length, 3);
   assert.equal(statusOf(root, "levels"), "checked");
+});
+
+test("s-v4qus7raqnwzneb lets anyone withdraw a confirmation, its line naming whoever withdrew it as by", () => {
+  const root = project();
+  confirm(root, [sid("levels")], { me: OWNER });
+  confirm(root, [sid("levels")], { me: "someone@example.org", withdraw: true });
+  assert.equal(statusOf(root, "levels"), "");
+  const line = readConfirmations(root).at(-1)!;
+  assert.deepEqual({ by: line.by, owner: line.owner, withdrawn: line.withdrawn }, { by: "someone@example.org", owner: undefined, withdrawn: true });
 });
 
 test("s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended", () => {

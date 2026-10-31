@@ -4,7 +4,8 @@ import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
-import { file, node, OWNER, repo, sid } from "../fixture.ts";
+import { confirm } from "../../src/confirmations.ts";
+import { file, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
 const CLI = fileURLToPath(new URL("../../src/cli.ts", import.meta.url));
 const sheriff = (root: string, ...args: string[]) => spawnSync(process.execPath, [CLI, ...args], { cwd: root, encoding: "utf8" });
@@ -29,7 +30,7 @@ test("s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and report
   const run = sheriff(root, "reindex");
   assert.equal(run.status, 0, run.stderr);
   const c = JSON.parse(readFileSync(join(root, "specs", "contracts", "c.json"), "utf8"));
-  assert.equal(c.nodes[0].id, "contracts/1");
+  assert.equal(c.nodes[0].id, "contracts/c");
   assert.deepEqual(c.nodes[0].refs, [{ type: "cites", from: sid("ours") }]);
   assert.match(run.stdout, /written: specs\/contracts\/c\.json/);
 });
@@ -40,7 +41,7 @@ test("s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses 
   const ok = sheriff(root, "validate");
   assert.equal(ok.status, 0, ok.stdout + ok.stderr);
   const path = join(root, "specs", "contracts", "c.json");
-  writeFileSync(path, readFileSync(path, "utf8").replace('"id": "contracts/1"', '"id": "contracts/9"'));
+  writeFileSync(path, readFileSync(path, "utf8").replace('"id": "contracts/c"', '"id": "contracts/9"'));
   const refused = sheriff(root, "validate");
   assert.equal(refused.status, 1);
   assert.match(refused.stdout, /specs\/contracts\/c\.json: .*contracts\/9 is not the address/);
@@ -89,11 +90,34 @@ test("s-f5rz6b7dhxejjts sheriff export, render and guide write the export and th
   assert.ok(guided.stdout.includes(sid("project")));
 });
 
+test("s-f5rz6b7dhxejjts sheriff types writes the types where the technical appendix lists them, and refuses what cannot be generated", () => {
+  const customer = (title: string) => node("customer", { kind: "record", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" });
+  const files = (title: string) => ({
+    "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [customer(title)] })),
+    "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [
+      node("generated types", { refs: [{ type: "implements", to: "s-e877bnfa559tvk9" }], list: { of: "the files of the generated types", members: ["src/types.ts"] } }),
+    ] })),
+  });
+  const root = taking(files("customer"));
+  const waits = sheriff(root, "types");
+  assert.equal(waits.status, 0, waits.stdout + waits.stderr);
+  assert.match(waits.stdout, new RegExp(`${sid("customer")}: a data record node not yet checked; the types and runtime checks wait for its confirmation`));
+  assert.doesNotMatch(waits.stdout, /written:/);
+  confirm(root, [sid("customer")], { me: OWNER });
+  const run = sheriff(root, "types");
+  assert.equal(run.status, 0, run.stdout + run.stderr);
+  assert.match(run.stdout, /written: src\/types\.ts/);
+  assert.match(readFileSync(join(root, "src", "types.ts"), "utf8"), /^export type Customer = \{$/m);
+  const refused = sheriff(taking(files("3d customer")), "types");
+  assert.equal(refused.status, 1);
+  assert.match(refused.stdout, /3dCustomer cannot be generated in src\/types\.ts: not an identifier in TypeScript/);
+});
+
 test("s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address", () => {
   const root = project();
   sheriff(root, "reindex");
-  const run = sheriff(root, "show", "contracts/1");
+  const run = sheriff(root, "show", "contracts/c");
   assert.equal(run.status, 0, run.stderr);
-  assert.match(run.stdout, new RegExp(`contracts/1 · ${sid("shared")}`));
-  assert.match(run.stdout, /cites ← contracts\/2\.1 ours/);
+  assert.match(run.stdout, new RegExp(`contracts/c · ${sid("shared")}`));
+  assert.match(run.stdout, /cites ← contracts\/1\.1 ours/);
 });

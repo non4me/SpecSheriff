@@ -3,7 +3,8 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { confirm } from "../src/confirmations.ts";
 import { reindex } from "../src/reindex.ts";
-import { file, node, OWNER, repo, sid } from "./fixture.ts";
+import { DATA_STRUCTURES, writeTypes } from "../src/types.ts";
+import { file, node, OWNER, repo, sid, taking } from "./fixture.ts";
 
 export const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: root, encoding: "utf8" });
 
@@ -43,6 +44,30 @@ export function codeProject(): string {
   });
   reindex(root);
   confirm(root, [sid("open"), sid("states"), sid("accounts")], { me: OWNER });
+  git(root, "init", "-q");
+  git(root, "config", "user.email", OWNER);
+  git(root, "config", "user.name", "Owner");
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "first");
+  return root;
+}
+
+/**
+ * A project taking the SpecSheriff guidelines whose stack lists where the types go, its types written
+ * and committed; by default the code's globs do not reach them.
+ */
+export function typedProject(title = "customer", code = ["src/app/**"]): string {
+  const root = taking({
+    "sheriff.config.json": { code, tests: ["test/**"] },
+    "specs/contracts/c.json": file("contracts", "c", node("ledger", { kind: "section", text: "Ledger.", children: [
+      node("customer", { kind: "record", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused", meta: { code: [{ file: "src/types.ts" }] } }),
+    ] })),
+    "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [
+      node("generated types", { refs: [{ type: "implements", to: DATA_STRUCTURES }], list: { of: "the files of the generated types and runtime checks", members: ["src/types.ts", "schemas/checks.json"] } }),
+    ] })),
+  });
+  confirm(root, [sid("customer")], { me: OWNER });
+  writeTypes(root);
   git(root, "init", "-q");
   git(root, "config", "user.email", OWNER);
   git(root, "config", "user.name", "Owner");

@@ -6,7 +6,10 @@ import { loadSpecification, takesGuidelines, writeSpecFile, type Specification }
 export interface Confirmation {
   sid: string;
   fingerprint: string;
-  owner: string;
+  /** On a confirmation: the owner who gave it. */
+  owner?: string;
+  /** On a withdrawal: whoever made it, which anyone may. Withdrawals written before named them as owner. */
+  by?: string;
   withdrawn?: true;
 }
 
@@ -68,7 +71,7 @@ export function confirm(root: string, sids: string[], { me, withdraw = false }: 
     const line = latest(lines, sid, print);
     const decided = withdraw ? line === undefined || line.withdrawn === true : line !== undefined && !line.withdrawn && line.owner === me;
     if (!decided) {
-      const added: Confirmation = { sid, fingerprint: print, owner: me, ...(withdraw ? { withdrawn: true as const } : {}) };
+      const added: Confirmation = withdraw ? { sid, fingerprint: print, by: me, withdrawn: true } : { sid, fingerprint: print, owner: me };
       appendFileSync(join(root, FILE), JSON.stringify(added) + "\n");
       lines.push(added);
     }

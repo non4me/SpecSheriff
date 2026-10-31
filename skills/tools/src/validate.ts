@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { loadConfig } from "./config.ts";
 import { everConfirmed, holds, readConfirmations } from "./confirmations.ts";
 import { keysTwice } from "./json-text.ts";
-import { addresses, citations, incoming, LEVELS_RULE, levelsOf, ownerOf, partOf } from "./model.ts";
+import { addresses, citations, incoming, isDomain, LEVELS_RULE, levelsOf, ownerOf, partOf, PROJECT } from "./model.ts";
 import { headerIndex, judgedHere } from "./reindex.ts";
 import { loadSchema } from "./schema.ts";
 import { specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
@@ -97,6 +97,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     walk(f.data.nodes, (node) => {
       archived.set(node.sid, { node, path: f.path });
       if (!node.archived) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive without the reason for its removal" });
+      if (node.refs?.some((r) => r.from)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive holding a link pointing at it" });
       if (!everConfirmed(lines, node.sid)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive, but was never confirmed" });
     });
   }
@@ -141,7 +142,9 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
       const value = node[field];
       if (typeof value !== "string") continue;
       const bare = value.replace(/`[^`]*`/g, "").replace(/"[^"]*"|“[^”]*”/g, "");
-      for (const m of bare.matchAll(/\b[A-Z][A-Z0-9-]*[A-Z0-9]\b(?:[ \t]+\b[A-Z][A-Z0-9-]*[A-Z0-9]\b){2,}/g)) {
+      // A word in capitals of any script, two characters or more; three or more of them running.
+      const word = String.raw`(?<![\p{L}\p{N}_])\p{Lu}[\p{Lu}\p{N}-]*[\p{Lu}\p{N}](?![\p{L}\p{N}_])`;
+      for (const m of bare.matchAll(new RegExp(`${word}(?:[ \\t]+${word}){2,}`, "gu"))) {
         refuse(sid, `checked, but its ${field} sets "${m[0]}" in capitals`);
       }
     }
@@ -197,7 +200,13 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
     const level = header.level as string;
     if (!levels?.includes(level)) refuse(header.sid, `level "${level}" is not listed in the project's own guidelines`);
   }
-  for (const [sid, { node }] of spec.nodes) {
+  for (const [sid, { node, file }] of spec.nodes) {
+    for (const r of node.refs.filter((r) => r.type === "exempts" && r.to)) {
+      const target = spec.nodes.get(r.to!)?.node.kind;
+      if (file.path !== PROJECT || (target !== "rule" && target !== "section")) {
+        refuse(sid, "an exempts link must go from a node of the project's own guidelines to a rule or a section");
+      }
+    }
     for (const r of node.refs.filter((r) => r.type === "consumes" && r.to)) {
       const from = node.kind === "domain" ? domainOf.get(sid) : undefined;
       const to = spec.nodes.get(r.to!)?.node.kind === "section" ? domainOf.get(r.to!) : undefined;
@@ -236,17 +245,67 @@ function findCycle(uses: Map<string, Set<string>>): string[] | null {
   return null;
 }
 
-type Field = { name: string; type: { is: string; values?: string[]; fields?: Field[] } };
+type NeutralType = { is: string; values?: string[]; fields?: Field[]; of?: NeutralType; record?: string };
+type Field = { name: string; type: NeutralType };
 
 function variants(spec: Specification, refuse: Refuse): void {
   const record = (sid: string | undefined) => (sid ? spec.nodes.get(sid)?.node : undefined);
   const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "record")?.to);
+  const chain = (n: SpecNode | undefined): SpecNode[] => (n ? [n, ...chain(refined(n))] : []);
   // A data record's fields, the fields every variant holds in its field of type variant included.
   const fieldsOf = (n: SpecNode) => ((n.fields as Field[]) ?? []).flatMap((f) => [f, ...(f.type.is === "variant" ? (f.type.fields ?? []) : [])]);
-  const fieldsUpChain = (n: SpecNode | undefined): Field[] => (n ? [...fieldsOf(n), ...fieldsUpChain(refined(n))] : []);
+  const fieldsUpChain = (n: SpecNode | undefined): Field[] => chain(n).flatMap(fieldsOf);
   const holding = (n: SpecNode | undefined, name: string): SpecNode | undefined =>
     !n || ((n.fields as Field[]) ?? []).some((f) => f.name === name) ? n : holding(refined(n), name);
   const part = (n: SpecNode) => partOf(spec.nodes.get(n.sid)!.file.path).part;
+
+  // Where each value of a field choosing a variant is declared: its own list, then the lists rules of
+  // domains define for it, each list found by its rule's refines link to a data record of contracts.
+  const declared = new Map<string, Map<string, SpecNode[]>>();
+  const declare = (holder: SpecNode, name: string, value: string, by: SpecNode) => {
+    const key = `${holder.sid} ${name}`;
+    if (!declared.has(key)) declared.set(key, new Map());
+    declared.get(key)!.set(value, [...(declared.get(key)!.get(value) ?? []), by]);
+  };
+  for (const [, { node }] of spec.nodes) {
+    if (node.kind !== "record") continue;
+    for (const f of (node.fields as Field[]) ?? []) if (f.type.is === "one of") for (const v of f.type.values ?? []) declare(node, f.name, v, node);
+    const variantFields = chain(node).flatMap((n) => ((n.fields as Field[]) ?? []).filter((f) => f.type.is === "variant"));
+    if (variantFields.length > 1) refuse(node.sid, `holds two fields of type variant, its inherited ones counted: ${variantFields.map((f) => f.name).join(", ")}`);
+  }
+  for (const [sid, { node }] of spec.nodes) {
+    const list = node.list as { field?: string; members: string[] } | undefined;
+    if (!list?.field) continue;
+    const target = record(node.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "record")?.to);
+    if (!isDomain(part(node))) refuse(sid, `a list of the values of ${list.field} standing in ${part(node)}, not in a domain`);
+    if (!target || part(target) !== "contracts") {
+      refuse(sid, `a list of the values of ${list.field} that refines no data record described in contracts`);
+      continue;
+    }
+    if (!((target.chosenBy as string[] | undefined) ?? []).includes(list.field)) {
+      refuse(sid, `declares values of ${list.field}, not a field ${target.sid} names as choosing its variant`);
+      continue;
+    }
+    const holder = holding(target, list.field);
+    const field = ((holder?.fields as Field[]) ?? []).find((f) => f.name === list.field);
+    if (!holder || field?.type.is !== "one of") refuse(sid, `declares values of ${list.field}, a field with no list of values`);
+    else for (const v of list.members) declare(holder, list.field, v, node);
+  }
+  for (const values of declared.values()) {
+    for (const [value, by] of values) if (by.length > 1) for (const n of by) refuse(n.sid, `"${value}" is declared more than once: ${by.map((b) => b.sid).join(", ")}`);
+  }
+  // A field of type one of holds at least one value: a data record's own field in its list or in a
+  // domain's list for it, one standing inside another type in its own list.
+  for (const [sid, { node }] of spec.nodes) {
+    if (node.kind !== "record") continue;
+    const empty = (name: string, type: NeutralType, own: boolean) => {
+      if (type.is === "one of" && !(own ? declared.get(`${sid} ${name}`)?.size : type.values?.length)) refuse(sid, `${name} is of type one of with no value, in its own list or in a list of a domain`);
+      if (type.of) empty(name, type.of, false);
+      for (const f of type.fields ?? []) empty(f.name, f.type, false);
+    };
+    for (const f of (node.fields as Field[]) ?? []) empty(f.name, f.type, true);
+  }
+
   const answers = new Map<string, string[]>();
   for (const [sid, { node }] of spec.nodes) {
     if (node.kind !== "record" || !node.answersTo) continue;
@@ -263,14 +322,15 @@ function variants(spec: Specification, refuse: Refuse): void {
       refuse(sid, `answers to ${Object.keys(answersTo).join(", ")}, not to the fields its data record names as choosing it, ${chosenBy.join(", ") || "none"}`);
     }
     const inherited = fieldsUpChain(parent);
-    // A value is declared in its choosing field's own list of values, the only place the tools read
-    // such values, and the variant stands in the part of the data record holding that field.
+    // A value is declared in its choosing field's own list or in a domain's list for it, and the
+    // variant stands in the part of the node declaring it.
     for (const [name, value] of Object.entries(answersTo)) {
       const holder = holding(parent, name);
       const field = ((holder?.fields as Field[]) ?? []).find((f) => f.name === name);
+      const by = holder ? declared.get(`${holder.sid} ${name}`)?.get(value) : undefined;
       if (field?.type.is !== "one of") refuse(sid, `answers to "${value}" for ${name}, a field with no list of values to declare it in`);
-      else if (!field.type.values!.includes(value)) refuse(sid, `answers to "${value}" for ${name}, which is not declared among its values`);
-      else if (part(node) !== part(holder!)) refuse(sid, `stands in ${part(node)}, while the value "${value}" it answers to for ${name} is declared in ${part(holder!)}`);
+      else if (!by?.length) refuse(sid, `answers to "${value}" for ${name}, which is not declared among its values`);
+      else if (by.length === 1 && part(node) !== part(by[0]!)) refuse(sid, `stands in ${part(node)}, while the value "${value}" it answers to for ${name} is declared in ${part(by[0]!)}`);
     }
     const own = ((node.fields as Field[]) ?? []).filter((f) => !inherited.some((i) => i.name === f.name));
     if (own.length === 0) refuse(sid, "a data record variant that declares no field of its own");
@@ -278,11 +338,47 @@ function variants(spec: Specification, refuse: Refuse): void {
     answers.set(key, [...(answers.get(key) ?? []), sid]);
   }
   for (const sids of answers.values()) if (sids.length > 1) for (const sid of sids) refuse(sid, "answers to values another variant of its record answers to");
+
+  // An identifier takes the type of the field identifying the data record it names, so that field,
+  // followed from one identifier to the next, ends in a field of another type.
+  const identifying = (n: SpecNode) => fieldsUpChain(n).find((f) => f.name === n.identifiedBy);
+  for (const [sid, { node }] of spec.nodes) {
+    if (node.kind !== "record") continue;
+    const by = node.identifiedBy as string | undefined;
+    if (by && !fieldsUpChain(node).some((f) => f.name === by)) refuse(sid, `identified by ${by}, which is none of its fields`);
+    const visit = (field: string, type: NeutralType) => {
+      if (type.is === "identifier of") {
+        const named = record(type.record);
+        if (!named?.identifiedBy) refuse(sid, `${field} is an identifier of ${type.record}, which names no field identifying it`);
+        const passed = named ? [named.sid] : [];
+        for (let at = named && identifying(named); at?.type.is === "identifier of"; ) {
+          const next = record(at.type.record);
+          if (!next) break;
+          if (passed.includes(next.sid)) {
+            refuse(sid, `${field} leads, from one identifying field to the next, back to ${next.sid}`);
+            break;
+          }
+          passed.push(next.sid);
+          at = identifying(next);
+        }
+      }
+      if (type.of) visit(field, type.of);
+      for (const f of type.fields ?? []) visit(f.name, f.type);
+    };
+    for (const f of (node.fields as Field[]) ?? []) visit(f.name, f.type);
+  }
 }
 
 function appendices(spec: Specification, refuse: Refuse): void {
   const linksTo = (n: SpecNode, types: string[], ok: (path: string) => boolean) =>
     n.refs.some((r) => r.to && types.includes(r.type) && spec.nodes.has(r.to) && ok(spec.nodes.get(r.to)!.file.path));
+  // A section of the technical appendix stands under the name of the domain it implements.
+  const domains = new Set(spec.files.map((f) => partOf(f.path).part).filter(isDomain));
+  for (const f of spec.files) {
+    const { part, file: name } = partOf(f.path);
+    if (part !== "tech" || name === "stack" || name === "debt" || domains.has(name)) continue;
+    for (const top of f.data.nodes) refuse(top.sid, `a section of the technical appendix stands under the name ${name}, which no domain has`);
+  }
   for (const [sid, { node, file }] of spec.nodes) {
     const { part, file: name, specSheriffGuidelines } = partOf(file.path);
     if (node.kind === "section") continue;

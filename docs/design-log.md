@@ -6,6 +6,17 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-10-31 — SpecSheriff is English, and a user's own language belongs to their personal skills
+
+The owner's ruling: everything SpecSheriff stores is in English — the SpecSheriff guidelines and every
+project's specification (§s-7anvune6h4f6mbr), the words the SpecSheriff tools add to what they
+generate and their messages, the skills, the internal documentation and the comments in code. A
+user's own language belongs only to their personal skills, which work with SpecSheriff to add it, such
+as a reading of each node beside the English or a translation of a document, and keep it out of every
+file SpecSheriff stores. So the skill spec-review shows the nodes as they are written and keeps no
+setting of a language and no table of terms. Two exceptions concern this repository alone:
+translations of the documentation into other languages, and the website in several languages.
+
 ### 2026-10-31 — A release carries out all it states, and every link that can be checked is made
 
 Two rulings of the owner, taken while the first release was prepared. The SpecSheriff tools of a
@@ -121,8 +132,7 @@ it that bear on more than one node:
   since every project writes its documents its own way; the owner's reading of every node is what
   guarantees the import. It starts from the directory the owner names, walked whole, the owner
   agreeing which part each document goes into, and the originals are deleted once they stand in the
-  nodes. The owner's language and table of terms for spec-review are a file of the project's,
-  `.claude/spec-review.md`.
+  nodes.
 
 ### 2026-10-28 — The SpecSheriff guidelines read again as a whole, against the principles
 
@@ -169,8 +179,6 @@ once the tools record them (step 2). The rulings of that reading that bear on mo
   of a user interface, no figure measured on one instance; the doctrine's own rule on measured figures
   folded into them.
 - **Every procedure that writes the specification is idempotent**, by that name.
-- **One language for a specification, English recommended** and holding where a project names no
-  other; the SpecSheriff guidelines are in English.
 - **A restriction by list** names what is allowed or what is forbidden by which mistake would go
   unnoticed.
 
@@ -368,10 +376,8 @@ base: they refine them and never contradict them.
   them as they stand, rather than a copy generated into the skill and kept beside the nodes.
 - **spec-review** — how an agent works with the specification's owner: as a colleague rather than a
   clerk; a proposed rule checked by a reviewer apart before it is shown; one node at a time, shown
-  whole, the original above a reading in the owner's language; one part at a time; a confirmation
-  recorded by a script and guarded by a hook; a technical replacement not confirmed again; a domain
-  gone over whole once its nodes are confirmed. The owner's language is a setting, with a table of
-  terms.
+  whole; one part at a time; a confirmation recorded by a script and guarded by a hook; a technical
+  replacement not confirmed again; a domain gone over whole once its nodes are confirmed.
 - **spec-adopt** — bringing a project's existing documents into the model: imported verbatim first,
   every citation moved onto a permanent identifier, numbered by place, then gone over with the owner.
 

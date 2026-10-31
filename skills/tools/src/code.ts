@@ -13,7 +13,8 @@ interface Description {
   symbols: string[];
   export: string | null;
   decorated: string | null;
-  tests: { calls?: string[]; functions?: string; mark?: string };
+  /** skips: what tells the framework to skip a test — a member of the call or a key of its options, or a mark. */
+  tests: { calls?: string[]; functions?: string; mark?: string; skips?: string[] };
 }
 
 export interface Tag {
@@ -40,6 +41,8 @@ export interface CodeTest {
   sid: string | null;
   start: number;
   end: number;
+  /** Its framework is told to skip it, or to expect it to fail, so it does not run as a passing test. */
+  skipped: boolean;
 }
 
 export interface CodeFile {
@@ -78,6 +81,37 @@ function* walk(node: Node): Generator<Node> {
 
 const line = (n: Node) => n.startPosition.row + 1;
 const lastLine = (n: Node) => n.endPosition.row + 1;
+
+/**
+ * The tokens of each line as the file's language reads them: comments left out, and every token of
+ * a string marked with a leading quote, so that the text of a string is never taken for a name. Null
+ * where no language is described for the file.
+ */
+export async function lineTokens(path: string, text: string): Promise<string[][] | null> {
+  const ext = extname(path);
+  const description = descriptions.find((d) => d.extensions.includes(ext));
+  if (!description) return null;
+  ready ??= Parser.init();
+  await ready;
+  const parser = new Parser();
+  parser.setLanguage(await language(description.grammars[ext]!));
+  const tree = parser.parse(text)!;
+  const lines: string[][] = text.split("\n").map(() => []);
+  const visit = (node: Node, literal: boolean) => {
+    if (node.type === description.comment) return;
+    const inString = literal || /string|template/.test(node.type);
+    if (node.childCount === 0) {
+      node.text.split("\n").forEach((piece, i) => {
+        const token = piece.trim();
+        if (token) lines[node.startPosition.row + i]?.push(inString ? `"${token}` : token);
+      });
+      return;
+    }
+    for (const child of node.children) if (child) visit(child, inString);
+  };
+  visit(tree.rootNode, false);
+  return lines;
+}
 
 export async function readCode(path: string, text: string): Promise<CodeFile | null> {
   const ext = extname(path);
@@ -193,22 +227,31 @@ function testOf(node: Node, d: Description): CodeTest | null {
     if (!first || (first.type !== "string" && first.type !== "template_string")) return null;
     const name = first.text.slice(1, -1);
     const leading = first.type === "template_string" ? name.split("${")[0]! : name;
-    return { name, sid: LEADING_SID.exec(leading)?.[1] ?? null, start: line(node), end: lastLine(node) };
+    const skips = d.tests.skips ?? [];
+    const member = fn?.type === "member_expression" ? fn.childForFieldName("property")?.text : undefined;
+    const options = node.childForFieldName("arguments")?.namedChildren[1];
+    const byOption = options?.type === "object" && options.namedChildren.some((p) =>
+      p?.type === "pair" && skips.includes(p.childForFieldName("key")?.text ?? "") && p.childForFieldName("value")?.text !== "false");
+    const skipped = (member !== undefined && skips.includes(member)) || byOption;
+    return { name, sid: LEADING_SID.exec(leading)?.[1] ?? null, start: line(node), end: lastLine(node), skipped };
   }
   if (d.tests.functions && node.type === "function_definition") {
     const name = node.childForFieldName("name")?.text ?? "";
     if (!name.startsWith(d.tests.functions)) return null;
     const holder = node.parent?.type === d.decorated ? node.parent : node;
     let sid: string | null = null;
+    let skipped = false;
     for (const decorator of holder.namedChildren.filter((c) => c?.type === "decorator")) {
       const m = new RegExp(`^@${d.tests.mark!.replace(/\./g, "\\.")}\\(\\s*["'](s-[^"']*)["']`).exec(decorator!.text);
       if (m && SID.test(m[1]!)) sid = m[1]!;
+      const mark = /^@([\w.]+)/.exec(decorator!.text)?.[1];
+      if (mark && (d.tests.skips ?? []).includes(mark)) skipped = true;
     }
     let qualified = name;
     for (let p = holder.parent; p; p = p.parent) {
       if (p.type === "class_definition") qualified = `${p.childForFieldName("name")?.text}.${qualified}`;
     }
-    return { name: qualified, sid, start: line(holder), end: lastLine(holder) };
+    return { name: qualified, sid, start: line(holder), end: lastLine(holder), skipped };
   }
   return null;
 }

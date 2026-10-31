@@ -97,8 +97,8 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
 
 ## Working with the owner
 
-- The owner reviews one node at a time, shown whole: the English original above a reading in
-  Russian, never fragments of it. Their confirmation is the only thing that makes a node checked.
+- The owner reviews one node at a time, shown whole, never fragments of it. Their confirmation is
+  the only thing that makes a node checked.
 - A node changed only to carry out what the owner already confirmed elsewhere is not shown again:
   the owner's agreement to that node covers it, so confirm it and report it in one line, naming the
   node it follows from.

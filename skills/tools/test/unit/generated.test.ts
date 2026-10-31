@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { confirm } from "../../src/confirmations.ts";
@@ -30,9 +31,30 @@ function project(): string {
   return root;
 }
 
+test("s-zefk589ykh37b8u keeps the readable export and the map out of git", () => {
+  const root = project();
+  spawnSync("git", ["init", "-q"], { cwd: root });
+  exportMarkdown(root);
+  render(root);
+  for (const path of ["md-version/contracts/c.md", "specs/_viewer/index.html"]) {
+    assert.equal(spawnSync("git", ["check-ignore", "-q", path], { cwd: root }).status, 0, `${path} is ignored`);
+  }
+});
+
 test("s-uw9n84edf7cbe9n orders the domains each after every domain it uses, the order of their names deciding a tie", () => {
   const spec = loadSpecification(project());
-  assert.deepEqual(domainOrder(spec), ["helper", "zeta", "alpha"]);
+  assert.deepEqual(domainOrder(spec), ["zeta", "alpha", "helper"]);
+});
+
+test("s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it", () => {
+  const header = (name: string, uses: string[] = []) => file(name, `00-${name}`, node(name, { kind: "domain", level: "core", code: null, sections: [], refs: uses.map((u) => ({ type: "consumes", to: sid(`${u} section`) })) }));
+  const section = (name: string) => file(name, "s", node(`${name} section`, { kind: "section", text: "S.", children: [node(`${name} rule`)] }));
+  const root = repo({
+    "specs/a/00-a.json": header("a"), "specs/a/s.json": section("a"),
+    "specs/b/00-b.json": header("b"), "specs/b/s.json": section("b"),
+    "specs/z/00-z.json": header("z", ["a"]), "specs/z/s.json": section("z"),
+  });
+  assert.deepEqual(domainOrder(loadSpecification(root)), ["b", "a", "z"]);
 });
 
 test("s-kh8qcd5kxgh9z3j exports every file of the specification to markdown, each node with its sid, text and reason", () => {
@@ -55,7 +77,7 @@ test("s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of
   rmSync(join(root, "specs", "tech"), { recursive: true });
   exportMarkdown(root);
   assert.equal(readFileSync(join(root, "md-version", "_guidelines", "spec.md"), "utf8"), once);
-  assert.deepEqual(readdirSync(join(root, "md-version")).sort(), ["_guidelines", "alpha", "contracts", "helper", "zeta"]);
+  assert.deepEqual(readdirSync(join(root, "md-version")).sort(), [".gitignore", "_guidelines", "alpha", "contracts", "helper", "zeta"]);
 });
 
 test("s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of", () => {
@@ -63,7 +85,7 @@ test("s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap 
   render(root);
   const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
   assert.match(page, /markmap-autoloader@\d+\.\d+\.\d+/);
-  assert.deepEqual(readdirSync(join(root, "specs", "_viewer")), ["index.html"]);
+  assert.deepEqual(readdirSync(join(root, "specs", "_viewer")).sort(), [".gitignore", "index.html"]);
 });
 
 test("s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last", () => {

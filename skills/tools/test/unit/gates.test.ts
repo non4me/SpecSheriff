@@ -1,13 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { guard } from "../../src/guard.ts";
 import { message } from "../../src/message.ts";
 import { claudeArgs, review, reviewInput, type Runner } from "../../src/review.ts";
 import { loadConfig } from "../../src/config.ts";
-import { sid } from "../fixture.ts";
-import { codeProject, editSpec, nodeIn, OPEN, put } from "../code-project.ts";
+import { writeTypes } from "../../src/types.ts";
+import { NONE, OWNER, sid } from "../fixture.ts";
+import { codeProject, editSpec, git, nodeIn, OPEN, put, typedProject } from "../code-project.ts";
 
 const CHANGED_OPEN = OPEN.replace("return amount;", "return amount * 2;");
 const texts = (findings: Array<{ where: string; message: string }>) => findings.map((f) => `${f.where}: ${f.message}`);
@@ -27,9 +28,9 @@ test("s-ef93u6cnbs2sevr refuses a message leaving out a node a changed symbol's 
 
 test("s-ef93u6cnbs2sevr refuses a message naming a section or a node that does not exist, its comment lines left out", async () => {
   const root = codeProject();
-  const found = texts(await message(root, `Accounts (${sid("accounts")}, s-aaaaaaaaaaaaaab)\n# ${sid("draft")} in a comment\n`));
+  const found = texts(await message(root, `Accounts (${sid("accounts")}, ${NONE})\n# ${sid("draft")} in a comment\n`));
   assert.ok(found.some((m) => m.includes(sid("accounts")) && /section/.test(m)), found.join("\n"));
-  assert.ok(found.some((m) => m.includes("s-aaaaaaaaaaaaaab") && /no node/.test(m)), found.join("\n"));
+  assert.ok(found.some((m) => m.includes(NONE) && /no node/.test(m)), found.join("\n"));
   assert.ok(!found.some((m) => m.includes(sid("draft"))), found.join("\n"));
 });
 
@@ -72,6 +73,22 @@ test("s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node checked
   assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: emptied } }), null);
 });
 
+test("s-83ev4wwesbwnhnp refuses before it is made an edit giving a checked node an owner who never confirmed it", async () => {
+  const root = codeProject();
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const refused = await guard(root, edit(path, `"owner": "${OWNER}"`, `"owner": "other@example.com"`));
+  assert.match(refused ?? "", new RegExp(`${sid("open")}.*other@example\\.com`));
+});
+
+test("s-83ev4wwesbwnhnp refuses before it is made an edit of the confirmations made with the agent's file tools", async () => {
+  const root = codeProject();
+  const path = join(root, "specs", "_confirmations.jsonl");
+  const forged = `{"sid":"${sid("draft")}","fingerprint":"0","owner":"${OWNER}","confirmed":true}\n`;
+  assert.match((await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: readFileSync(path, "utf8") + forged } })) ?? "", /confirmations.*sheriff confirm/);
+  const [first] = readFileSync(path, "utf8").split("\n");
+  assert.match((await guard(root, edit(path, first!, first!.replace(OWNER, "other@example.com")))) ?? "", /confirmations.*sheriff confirm/);
+});
+
 test("s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside the repository's code, tests and specification", async () => {
   const root = codeProject();
   assert.equal(await guard(root, { tool_name: "Read", tool_input: { file_path: join(root, "src", "open.ts") } }), null);
@@ -85,9 +102,33 @@ test("s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes 
   editSpec(root, (d) => (nodeIn(d, "draft").text = "Drafting is described here."));
   put(root, "src/open.ts", CHANGED_OPEN);
   const input = await reviewInput(root, `Accounts (${sid("open")})\n`);
+  const [, nodes] = input.split(/^# The nodes it names$|^# The change$/m);
   assert.ok(input.includes("return amount * 2;"));
-  assert.ok(input.includes("What open requires."));
-  assert.ok(!input.includes("Drafting is described here."));
+  assert.ok(nodes!.includes("What open requires."), nodes);
+  assert.ok(!nodes!.includes("Drafting is described here."), nodes);
+});
+
+test("s-nyh9yk22ba6g77q gives the reviewer the whole change of the commit, its specification, documents and settings included", async () => {
+  const root = codeProject();
+  put(root, "src/open.ts", CHANGED_OPEN);
+  put(root, "README.md", "Opening doubles the amount.\n");
+  editSpec(root, (d) => (nodeIn(d, "draft").title = "draft renamed"));
+  const input = await reviewInput(root, `Accounts (${sid("open")})\n`);
+  assert.ok(input.includes("return amount * 2;"), input);
+  assert.ok(input.includes("+Opening doubles the amount."), input);
+  assert.ok(input.includes("draft renamed"), input);
+});
+
+test("s-nyh9yk22ba6g77q leaves the files generated from the specification out of the change the reviewer is given", async () => {
+  const root = typedProject("customer", ["src/**"]);
+  const path = join(root, "specs", "contracts", "c.json");
+  writeFileSync(path, readFileSync(path, "utf8").replace('"name": "number"', '"name": "reference"'));
+  writeTypes(root);
+  put(root, "src/app/use.ts", `/** @spec ${sid("customer")} */\nexport const usedReference = "r";\n`);
+  git(root, "add", "-A");
+  const input = await reviewInput(root, `Ledger (${sid("customer")})\n`);
+  assert.ok(input.includes("usedReference"), input);
+  assert.ok(!/src\/types\.ts|schemas\/checks\.json|reference: string/.test(input), input);
 });
 
 test("s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding", async () => {

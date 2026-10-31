@@ -13,5 +13,5 @@
   ],
   "export": "export_statement",
   "decorated": null,
-  "tests": { "calls": ["test", "it"] }
+  "tests": { "calls": ["test", "it"], "skips": ["skip", "todo"] }
 }

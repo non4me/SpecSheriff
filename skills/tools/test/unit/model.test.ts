@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { loadSpecification } from "../../src/spec-files.ts";
 import { addresses, citations, fingerprint, incoming, LEVELS_RULE, ownerOf, partOf } from "../../src/model.ts";
 import { REPO } from "../repo.ts";
-import { file, node, OWNER, repo, sid, taking } from "../fixture.ts";
+import { BY_NUMBER, file, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
 test("s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guidelines the address it stands at", () => {
   const spec = loadSpecification(REPO);
@@ -29,9 +29,25 @@ test("s-kag2m9tzdnduxdx addresses a domain's header by its name and numbers its 
   assert.equal(ids.get(sid("node")), "tech/stack/1");
 });
 
+test("s-kag2m9tzdnduxdx addresses the node at the top of a file of contracts by the part's name and the file's, and numbers the rest of contracts straight through its files", () => {
+  const root = repo({
+    "specs/contracts/a.json": file("contracts", "a", node("shared", { kind: "section", children: [node("agree"), node("user", { kind: "term", title: "user" }), node("settle", { kind: "section", children: [node("pay")] })] })),
+    "specs/contracts/b.json": file("contracts", "b", node("more", { kind: "section", children: [node("bind")] })),
+  });
+  const ids = addresses(loadSpecification(root));
+  assert.equal(ids.get(sid("shared")), "contracts/a");
+  assert.equal(ids.get(sid("agree")), "contracts/1");
+  assert.equal(ids.get(sid("user")), "contracts/user");
+  assert.equal(ids.get(sid("settle")), "contracts/2");
+  assert.equal(ids.get(sid("pay")), "contracts/2.1");
+  assert.equal(ids.get(sid("more")), "contracts/b");
+  assert.equal(ids.get(sid("bind")), "contracts/3");
+});
+
 test("s-bpdqd9v72wg7vsz reads the citations of a node outside its links, the nodes under it and spans quoted as code", () => {
-  const n = node("n", { text: "See §s-aaaaaaaaaaaaaab and `§s-aaaaaaaaaaaaaac`.", rationale: "§s-aaaaaaaaaaaaaad, and §1.4.", children: [node("c", { text: "§s-aaaaaaaaaaaaaae" })] });
-  assert.deepEqual(citations(n), { sids: ["s-aaaaaaaaaaaaaab", "s-aaaaaaaaaaaaaad"], addresses: ["§1.4"] });
+  const [b, c, d, e] = ["b", "c", "d", "e"].map((x) => sid(`cited ${x}`));
+  const n = node("n", { text: `See §${b} and \`§${c}\`.`, rationale: `§${d}, and ${BY_NUMBER}.`, children: [node("c", { text: `§${e}` })] });
+  assert.deepEqual(citations(n), { sids: [b, d], addresses: [BY_NUMBER] });
 });
 
 test("s-bpdqd9v72wg7vsz builds the incoming links of the SpecSheriff guidelines as they stand", () => {
@@ -85,11 +101,11 @@ test("s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind ca
   const base = node("f", { kind: "section", rationale: "why" });
   const same = fingerprint(base);
   assert.match(same, /^[0-9a-f]{64}$/);
-  assert.equal(fingerprint({ ...base, status: "checked", id: "x/9", refs: [{ type: "cites", to: "s-aaaaaaaaaaaaaab" }], meta: { todos: [] }, owner: "x@y.z" }), same);
+  assert.equal(fingerprint({ ...base, status: "checked", id: "x/9", refs: [{ type: "cites", to: sid("cited") }], meta: { todos: [] }, owner: "x@y.z" }), same);
   assert.notEqual(fingerprint({ ...base, title: "other" }), same);
   assert.notEqual(fingerprint({ ...base, rationale: "other" }), same);
   const header = node("h", { kind: "domain", level: "core", code: null, sections: [] });
-  assert.equal(fingerprint({ ...header, sections: [{ sid: "s-aaaaaaaaaaaaaab", title: "t", text: "" }] }), fingerprint(header));
+  assert.equal(fingerprint({ ...header, sections: [{ sid: sid("section"), title: "t", text: "" }] }), fingerprint(header));
   assert.notEqual(fingerprint({ ...header, level: "auxiliary" }), fingerprint(header));
   const listed = node("l", { list: { of: "x", members: ["a", "b"] } });
   assert.notEqual(fingerprint({ ...listed, list: { of: "x", members: ["b", "a"] } }), fingerprint(listed));

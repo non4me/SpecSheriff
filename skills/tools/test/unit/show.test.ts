@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadSpecification } from "../../src/spec-files.ts";
 import { show } from "../../src/show.ts";
+import { NONE } from "../fixture.ts";
 import { REPO } from "../repo.ts";
 
 const spec = loadSpecification(REPO);
@@ -30,5 +31,5 @@ test("s-f5rz6b7dhxejjts names every link a node makes or receives by the address
 });
 
 test("s-f5rz6b7dhxejjts refuses a key no node holds", () => {
-  assert.throws(() => show(spec, "s-aaaaaaaaaaaaaab"), /no node/);
+  assert.throws(() => show(spec, NONE), /no node/);
 });

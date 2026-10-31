@@ -5,7 +5,8 @@ import type { SpecNode, Specification } from "./spec-files.ts";
 /** The sid of the base's rule on levels, which the rule of a project's own guidelines listing them refines. */
 export const LEVELS_RULE = "s-nkyty4dy9x2v2a4";
 export const SID = /^s-[2-9a-hjkmnp-z]{15}$/;
-const PROJECT = "specs/_guidelines/project.json";
+/** The file of a project's own guidelines. */
+export const PROJECT = "specs/_guidelines/project.json";
 
 export function partOf(path: string): { part: string; file: string; specSheriffGuidelines: boolean } {
   const [, part = "", ...rest] = path.split("/");
@@ -44,6 +45,15 @@ export function addresses(spec: Specification): Map<string, string> {
       continue;
     }
     if (!straight.has(part)) straight.set(part, { n: 0 });
+    if (part === "contracts") {
+      // The node at the top of a file of contracts is addressed by the file; the rest are numbered straight through.
+      const [top, ...more] = f.data.nodes;
+      if (!top) continue;
+      ids.set(top.sid, `${part}/${file}`);
+      number(top.children ?? [], part, "", straight.get(part));
+      number(more, part, "", straight.get(part));
+      continue;
+    }
     for (const n of f.data.nodes) {
       if (n.kind === "domain") {
         ids.set(n.sid, part);
@@ -131,7 +141,11 @@ export function levelsOf(spec: Specification): string[] | null {
 /** Whether a file's part is a domain: neither the guidelines, nor contracts, nor the technical appendix, nor the archive. */
 export const isDomain = (part: string) => !["_guidelines", "contracts", "tech", "_archive"].includes(part);
 
-/** The domains, each after every domain it uses, the order of their names deciding where the links leave a choice. */
+/**
+ * The domains, each after every domain it uses and as close as possible before the first that uses
+ * it: the domains nobody uses in the order of their names, each preceded by the domains it uses,
+ * taken in the same way; the order of their names decides wherever the links leave a choice.
+ */
 export function domainOrder(spec: Specification): string[] {
   const domainOf = new Map<string, string>();
   for (const f of spec.files) {
@@ -149,12 +163,16 @@ export function domainOrder(spec: Specification): string[] {
     }
   }
   const order: string[] = [];
-  const left = new Set(domains);
-  while (left.size) {
-    const next = [...left].find((d) => [...uses.get(d)!].every((u) => !left.has(u))) ?? [...left][0]!;
-    order.push(next);
-    left.delete(next);
-  }
+  const seen = new Set<string>();
+  const take = (d: string) => {
+    if (seen.has(d)) return;
+    seen.add(d);
+    [...uses.get(d)!].sort().forEach(take);
+    order.push(d);
+  };
+  const used = new Set([...uses.values()].flatMap((s) => [...s]));
+  domains.filter((d) => !used.has(d)).forEach(take);
+  domains.forEach(take); // what a cycle leaves, which the check of the specification refuses anyway
   return order;
 }
 

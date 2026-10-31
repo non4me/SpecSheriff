@@ -1,7 +1,7 @@
 // Makes a release of SpecSheriff, as internal/release.md describes: the version written where each
 // part names it and committed on main, then a commit on the branch release adding the built tools to
 // the plugin for Claude Code, tagged, and pushed with main in one atomic push.
-import { execFileSync, execSync } from "node:child_process";
+import { execFileSync, execSync, spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -16,6 +16,13 @@ const npm = (command) => execSync(`npm ${command}`, { stdio: ["ignore", "ignore"
 if (git("rev-parse", "--abbrev-ref", "HEAD") !== "main") throw new Error("a release is made from main");
 if (git("status", "--porcelain")) throw new Error("the working tree is not clean");
 if (git("tag", "--list", `v${version}`)) throw new Error(`v${version} is already released`);
+
+// A release carries out every rule it states: the check of implementation (s-6fw72j65jkqrfpf) reports nothing.
+npm("run build -w specsheriff-tools");
+const checked = spawnSync(process.execPath, ["skills/tools/dist/cli.js", "binding"], { encoding: "utf8" });
+if (checked.status !== 0) throw new Error(`sheriff binding refuses:\n${checked.stdout}${checked.stderr}`);
+const unimplemented = checked.stdout.split("\n").filter((l) => l.includes("reported: not implemented"));
+if (unimplemented.length) throw new Error(`a release carries out every rule it states, and these are not implemented:\n${unimplemented.join("\n")}`);
 
 // The version, where the tools, the plugin and the plugin for pytest each name it.
 npm(`version ${version} -w specsheriff-tools --no-git-tag-version`);

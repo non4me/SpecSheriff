@@ -1,11 +1,20 @@
 #!/bin/sh
-# The export and the map are written in the working tree; the checks of the specification on its own,
-# against the code and of the citations outside it read the commit being made.
+# The export and the map are written in the working tree, a failure to write them reported and stopping
+# nothing, since the commit holds neither; the checks of the specification on its own,
+# against the code and of the citations outside it read the commit being made. Last, whatever they found,
+# the types the staged data record nodes generate are written there, each file written copied into the
+# working tree for its author to stage, and nothing staged; what the generator refuses stops the commit.
 . "$(dirname "$0")/sheriff.sh"
 . "$(dirname "$0")/staged.sh"
-(cd "$root" && sheriff export >/dev/null && sheriff render >/dev/null) || exit 1
+(cd "$root" && sheriff export >/dev/null && sheriff render >/dev/null) ||
+  echo "sheriff: the export and the map were not written from the working tree; the commit goes on" >&2
 failed=0
 for check in validate binding citations; do
   (cd "$staged" && sheriff "$check") || failed=1
 done
+written=$(cd "$staged" && sheriff types) || { printf '%s\n' "$written"; exit 1; }
+printf '%s\n' "$written" | sed -n 's/^written: //p' | while IFS= read -r path; do
+  mkdir -p "$(dirname "$root/$path")" && cp "$staged/$path" "$root/$path" || exit 1
+  echo "written: $path, to be staged"
+done || exit 1
 exit $failed
