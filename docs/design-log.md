@@ -6,6 +6,16 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-01 — The plugin goes to Anthropic's directory last, with nothing left unfinished
+
+The owner's ruling: the plugin is submitted to Anthropic's plugin directory only once the
+repository, the plugin and the site are all finished and checked, with nothing in them that looks
+unfinished or makeshift. Until then it is installed from the marketplace this repository keeps. The
+directory takes a plugin from a public repository on GitHub through its developer portal, validates
+and scans every version, and has a person review a new listing. What its review would hold, and what
+the plugin must change to come from the directory as well as from this marketplace, are settled when
+the step begins.
+
 ### 2026-10-31 — SpecSheriff is English, and a user's own language belongs to their personal skills
 
 The owner's ruling: everything SpecSheriff stores is in English — the SpecSheriff guidelines and every
@@ -42,7 +52,7 @@ method is shown on itself. The worked example is set up by the skills the way an
 is why the packaging comes before it. The plugin is made for Claude Code now and for Codex CLI next;
 Gemini CLI is being studied. Licences stay by directory: the theory's prose under CC BY 4.0, the
 guidelines, the skills, the tools and the example under Apache 2.0. The plugin goes to Anthropic's
-plugin directory once the worked example and the first article are out.
+plugin directory last, as the entry of 2026-11-01 says.
 
 ### 2026-10-29 — One channel: the plugin carries everything its work needs
 
@@ -430,8 +440,8 @@ example leaves the road to a product open.
 9. The materials for the site: kept in this repository on GitHub, from where the site takes them and
    shows them on its pages; their structure is settled when the step begins.
 10. The first article, in English and in Russian.
-11. The repository opened, the article published, and the plugin submitted to Anthropic's plugin
-    directory.
+11. The article published, and the plugin submitted to Anthropic's plugin directory once the
+    repository, the plugin and the site are all finished and checked.
 
 ## Open questions
 
