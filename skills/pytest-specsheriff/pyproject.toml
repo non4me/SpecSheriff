@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pytest-specsheriff"
-version = "0.0.0"
+version = "0.1.0"
 description = "SpecSheriff's plugin for pytest: a test declares the sid of the rule it verifies, and a run reports it."
 license = "Apache-2.0"
 requires-python = ">=3.10"
