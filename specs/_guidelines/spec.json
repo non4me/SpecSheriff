@@ -852,7 +852,7 @@
               "kind": "rule",
               "title": "Data structures are described in the specification",
               "status": "checked",
-              "text": "A data record the domains pass to one another or keep in a store is described by a node of its own, a data record node: its name, what it is, each of its fields with its type in neutral terms, a whole number's or a number's with any bounds on its value, whether it is required and what it says, what happens to a field nobody declared, and, where another data record refers to it by an identifier, the field that identifies it. The rules that bind one field to another are rules linked to the data record.\n\nThe implementation's types and its checks of data at runtime are generated from the data record nodes and never written beside them; which mechanism performs the checks is described in the technical appendix.",
+              "text": "A data record the domains pass to one another or keep in a store is described by a node of its own, a data record node: its name, what it is, each of its fields with its type in neutral terms, any bounds on the field's value included, whether the field is required and what it says, what happens to a field nobody declared, and, where another data record refers to it by an identifier, the field that identifies it. The rules that bind one field to another are rules linked to the data record.\n\nThe implementation's types and its checks of data at runtime are generated from the data record nodes and never written beside them; which mechanism performs the checks is described in the technical appendix.",
               "refs": [
                 {
                   "type": "refines",
@@ -924,6 +924,12 @@
                     "date": "2026-10-31",
                     "problem": "Nothing said what type an identifier of a data record has, and nothing named the field that identifies a data record.",
                     "ruling": "The owner: an identifier has the type of the field that identifies the data record it names, which that data record's node names.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-01",
+                    "problem": "A data record node could not say that a field of type list of always holds at least one member, so the bound would have been stated only in words and its check written by hand beside the data record.",
+                    "ruling": "The owner: a field's type carries every bound on the field's value, a list's on how many members it holds among them, and this rule names no type, so that which type takes which bound is said where the types are listed.",
                     "type": "textual"
                   }
                 ]

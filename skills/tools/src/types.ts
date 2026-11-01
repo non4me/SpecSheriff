@@ -9,7 +9,9 @@ const STACK = "specs/tech/stack.json";
 const SCHEMA = "https://json-schema.org/draft/2020-12/schema";
 
 type Bounds = { minimum?: number; exclusiveMinimum?: number; maximum?: number; exclusiveMaximum?: number };
-type NeutralType = Bounds & { is: string; values?: string[]; of?: NeutralType; record?: string; fields?: Field[] };
+/** The bounds on how many members a list holds. */
+type ListBounds = { minItems?: number; maxItems?: number };
+type NeutralType = Bounds & ListBounds & { is: string; values?: string[]; of?: NeutralType; record?: string; fields?: Field[] };
 type Field = { name: string; type: NeutralType; required: boolean | string };
 
 /** A type as every language is written from it. */
@@ -20,7 +22,8 @@ type T =
   /** The values of a field of type one of; a type in TypeScript or Python names only those in narrowed, where given. */
   | { t: "enum"; values: string[]; narrowed?: string[] }
   | { t: "const"; value: string }
-  | { t: "array" | "map"; of: T }
+  | { t: "array"; of: T; bounds: ListBounds }
+  | { t: "map"; of: T }
   | { t: "ref"; name: string }
   /** The object of a field of type variant, named for the type of its own Python gives it. */
   | { t: "object"; props: Prop[]; closed: boolean; name: string };
@@ -108,17 +111,19 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
   const valuesOf = (holder: SpecNode | null, name: string, type: NeutralType) => (holder ? declared.get(`${holder.sid} ${name}`) : undefined) ?? [...new Set(type.values ?? [])];
 
   const resolve = (sid: string, type: NeutralType, holder: SpecNode | null, name: string, seen: string[] = []): T => {
-    const bounds = () => Object.fromEntries((["minimum", "exclusiveMinimum", "maximum", "exclusiveMaximum"] as const).filter((k) => type[k] !== undefined).map((k) => [k, type[k]]));
+    const bounds = (keys: Array<keyof Bounds | keyof ListBounds> = ["minimum", "exclusiveMinimum", "maximum", "exclusiveMaximum"]) =>
+      Object.fromEntries(keys.filter((k) => type[k] !== undefined).map((k) => [k, type[k]]));
     switch (type.is) {
       case "email address": return { t: "string", format: "email" };
       case "instant": return { t: "string", format: "date-time" };
+      case "date": return { t: "string", format: "date" };
       case "duration": return { t: "string", format: "duration" };
       case "whole number": return { t: "integer", bounds: bounds() };
       case "number": return { t: "number", bounds: bounds() };
       case "yes/no": return { t: "boolean" };
       case "any value": return { t: "any" };
       case "one of": return { t: "enum", values: valuesOf(holder, name, type) };
-      case "list of": return { t: "array", of: resolve(sid, type.of!, null, name, seen) };
+      case "list of": return { t: "array", of: resolve(sid, type.of!, null, name, seen), bounds: bounds(["minItems", "maxItems"]) };
       case "map of": return { t: "map", of: resolve(sid, type.of!, null, name, seen) };
       case "record": {
         const named = record(type.record);
@@ -318,7 +323,7 @@ const jsonSchema: Language = {
         case "any": return {};
         case "enum": return { enum: t.values };
         case "const": return { const: t.value };
-        case "array": return { type: "array", items: type(t.of) };
+        case "array": return { type: "array", items: type(t.of), ...t.bounds };
         case "map": return { type: "object", additionalProperties: type(t.of) };
         case "ref": return { $ref: `#/$defs/${t.name}` };
         case "object": return object(t.props, t.closed);

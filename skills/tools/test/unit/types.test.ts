@@ -415,10 +415,12 @@ test("s-4npdup7mjkva69y gives each neutral type the type its table names, in eac
     field("ratio", { is: "number", exclusiveMinimum: 0 }),
     field("active", { is: "yes/no" }),
     field("at", { is: "instant" }),
+    field("day", { is: "date" }),
     field("span", { is: "duration" }),
     field("payload", { is: "any value" }),
     field("mode", { is: "one of", values: ["fast", "slow"] }),
     field("levels", { is: "list of", of: { is: "one of", values: ["low", "high"] } }),
+    field("tags", { is: "list of", of: { is: "whole number", minimum: 0 }, minItems: 1, maxItems: 3 }),
     field("scores", { is: "map of", of: { is: "number" } }),
     field("owner", { is: "record", record: sid("customer") }),
     field("ownerNumber", { is: "identifier of", record: sid("customer") }),
@@ -427,15 +429,15 @@ test("s-4npdup7mjkva69y gives each neutral type the type its table names, in eac
   const out = generated(root);
   assert.match(out["src/types.ts"]!, new RegExp([
     "export type Sample = \\{",
-    "  title: string;", "  mail: string;", "  count: number;", "  ratio: number;", "  active: boolean;", "  at: string;", "  span: string;",
-    "  payload: unknown;", '  mode: "fast" \\| "slow";', '  levels: \\("low" \\| "high"\\)\\[\\];', "  scores: Record<string, number>;",
+    "  title: string;", "  mail: string;", "  count: number;", "  ratio: number;", "  active: boolean;", "  at: string;", "  day: string;", "  span: string;",
+    "  payload: unknown;", '  mode: "fast" \\| "slow";', '  levels: \\("low" \\| "high"\\)\\[\\];', "  tags: number\\[\\];", "  scores: Record<string, number>;",
     "  owner: Customer;", "  ownerNumber: string;", "  extra: \\{", "    hint\\?: string;", "  \\};", "\\};",
   ].join("\n")));
   assert.match(out["app/types.py"]!, /^from typing import Any, Literal, NotRequired, TypedDict$/m);
   assert.match(out["app/types.py"]!, new RegExp([
     'Sample = TypedDict\\("Sample", \\{',
-    '    "title": str,', '    "mail": str,', '    "count": int,', '    "ratio": float,', '    "active": bool,', '    "at": str,', '    "span": str,',
-    '    "payload": Any,', '    "mode": Literal\\["fast", "slow"\\],', '    "levels": list\\[Literal\\["low", "high"\\]\\],', '    "scores": dict\\[str, float\\],',
+    '    "title": str,', '    "mail": str,', '    "count": int,', '    "ratio": float,', '    "active": bool,', '    "at": str,', '    "day": str,', '    "span": str,',
+    '    "payload": Any,', '    "mode": Literal\\["fast", "slow"\\],', '    "levels": list\\[Literal\\["low", "high"\\]\\],', '    "tags": list\\[int\\],', '    "scores": dict\\[str, float\\],',
     '    "owner": "Customer",', '    "ownerNumber": str,', '    "extra": "SampleExtra",', "\\}\\)",
     "", `# @spec ${sid("sample")}`, 'SampleExtra = TypedDict\\("SampleExtra", \\{', '    "hint": NotRequired\\[str\\],', "\\}\\)",
   ].join("\n")));
@@ -448,19 +450,32 @@ test("s-4npdup7mjkva69y gives each neutral type the type its table names, in eac
       ratio: { type: "number", exclusiveMinimum: 0 },
       active: { type: "boolean" },
       at: { type: "string", format: "date-time" },
+      day: { type: "string", format: "date" },
       span: { type: "string", format: "duration" },
       payload: {},
       mode: { enum: ["fast", "slow"] },
       levels: { type: "array", items: { enum: ["low", "high"] } },
+      tags: { type: "array", items: { type: "integer", minimum: 0 }, minItems: 1, maxItems: 3 },
       scores: { type: "object", additionalProperties: { type: "number" } },
       owner: { $ref: "#/$defs/Customer" },
       ownerNumber: { type: "string" },
       extra: { type: "object", properties: { hint: { type: "string" } } },
     },
-    required: ["title", "mail", "count", "ratio", "active", "at", "span", "payload", "mode", "levels", "scores", "owner", "ownerNumber", "extra"],
+    required: ["title", "mail", "count", "ratio", "active", "at", "day", "span", "payload", "mode", "levels", "tags", "scores", "owner", "ownerNumber", "extra"],
   });
   assert.deepEqual(typescriptErrors(out["src/types.ts"]!, `import type { Sample } from "./types.ts";\nexport type S = Sample;\n`), []);
   assert.equal(pythonRuns(out["app/types.py"]!), "ok");
+});
+
+test("s-4npdup7mjkva69y bounds how many members a list holds in the runtime checks alone", () => {
+  const root = project([record("order", [field("lines", { is: "list of", of: { is: "text" }, minItems: 1, maxItems: 2 })])]);
+  const out = generated(root);
+  const check = checker(out["schemas/checks.json"]!, "Order");
+  assert.equal(check({ lines: [] }), false, "fewer members than the least");
+  assert.equal(check({ lines: ["a"] }), true);
+  assert.equal(check({ lines: ["a", "b", "c"] }), false, "more members than the most");
+  assert.match(out["src/types.ts"]!, /^ {2}lines: string\[\];$/m);
+  assert.match(out["app/types.py"]!, /^ {4}"lines": list\[str\],$/m);
 });
 
 test("s-4npdup7mjkva69y gives a field of type one of the values the lists of domains declare for it, in the order the specification reads", () => {

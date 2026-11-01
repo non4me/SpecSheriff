@@ -26,6 +26,9 @@ const refused: Record<string, object> = {
   "a header without its level": { ...ok, kind: "domain" },
   "an archived node without its reason": { ...ok, archived: { date: "2026-10-28" } },
   "a bound on a field of text": { ...ok, kind: "record", unknown: "refused", fields: [{ name: "a", type: { is: "text", minimum: 1 }, required: true, text: "" }] },
+  "a bound on how many members a field of text holds": { ...ok, kind: "record", unknown: "refused", fields: [{ name: "a", type: { is: "text", minItems: 1 }, required: true, text: "" }] },
+  "a bound on the value of a field of type list of": { ...ok, kind: "record", unknown: "refused", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minimum: 1 }, required: true, text: "" }] },
+  "a bound on how many members a list holds that is no whole number of zero or more": { ...ok, kind: "record", unknown: "refused", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minItems: -1 }, required: true, text: "" }] },
   "a field of type variant on a data record naming no field choosing its variant": { ...ok, kind: "record", unknown: "refused", fields: [{ name: "context", type: { is: "variant" }, required: "where it holds a value", text: "" }] },
   "a list naming a field with something other than a field name": { ...ok, list: { of: "x", members: ["a"], field: "Not a name" } },
   "a data record holding two fields of type variant": { ...ok, kind: "record", unknown: "refused", fields: [
@@ -43,6 +46,8 @@ const accepted: Record<string, object> = {
   "an owner on a section": { ...ok, kind: "section", owner: "a@b.c" },
   "a comment of type problem": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "x", type: "problem" }] } },
   "a bound on a whole number": { ...ok, kind: "record", unknown: "kept", fields: [{ name: "a", type: { is: "whole number", minimum: 1 }, required: true, text: "" }] },
+  "bounds on how many members a list holds": { ...ok, kind: "record", unknown: "kept", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minItems: 1, maxItems: 3 }, required: true, text: "" }] },
+  "a field of type date": { ...ok, kind: "record", unknown: "kept", fields: [{ name: "a", type: { is: "date" }, required: true, text: "" }] },
   "a data record holding one field of type variant beside others": { ...ok, kind: "record", unknown: "refused", chosenBy: ["kind"], fields: [
     { name: "kind", type: { is: "one of", values: ["a", "b"] }, required: true, text: "" },
     { name: "context", type: { is: "variant", fields: [{ name: "concerns", type: { is: "text" }, required: true, text: "" }] }, required: "where it holds a value", text: "" },

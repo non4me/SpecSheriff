@@ -513,7 +513,7 @@
       }
     },
     "neutralType": {
-      "$comment": "A field's type in neutral terms, named by is; the appendix of the tools says what each generates, and a project's technical appendix names the JSON Schema validator that runs the generated runtime checks. email address is text holding one email address; any value is data of no shape the specification declares; one of lists its values; list of, the type of its members; map of, the type of its values, each kept under a key of text; data record and identifier of, the sid of the data record node they name, a data record variant excluded. variant is the object of the fields the chosen data record variant declares, beside the fields every variant holds: it stands only as a field's own type, on the data record that names the fields choosing its variant.",
+      "$comment": "A field's type in neutral terms, named by is; the appendix of the tools says what each generates, and a project's technical appendix names the JSON Schema validator that runs the generated runtime checks. email address is text holding one email address; instant is a moment of time, carrying its offset from UTC; date is a day of the calendar, with no time of day and no time zone; any value is data of no shape the specification declares; one of lists its values; list of, the type of its members and any bounds on how many members it holds; map of, the type of its values, each kept under a key of text; record and identifier of, the sid of the data record node they name, a data record variant excluded. variant is the object of the fields the chosen data record variant declares, beside the fields every variant holds: it stands only as a field's own type, on the data record that names the fields choosing its variant.",
       "type": "object",
       "properties": {
         "is": {
@@ -524,6 +524,7 @@
             "number",
             "yes/no",
             "instant",
+            "date",
             "duration",
             "any value",
             "one of",
@@ -654,6 +655,28 @@
               },
               "exclusiveMaximum": {
                 "type": "number"
+              }
+            }
+          }
+        },
+        {
+          "$comment": "The bounds on how many members a list holds, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the data record.",
+          "if": {
+            "properties": {
+              "is": {
+                "const": "list of"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "minItems": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "maxItems": {
+                "type": "integer",
+                "minimum": 0
               }
             }
           }
