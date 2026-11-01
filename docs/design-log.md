@@ -427,8 +427,10 @@ example leaves the road to a product open.
 7. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
    refining it.
 8. The four pictures and the cards.
-9. The first article, in English and in Russian.
-10. The repository opened, the article published, and the plugin submitted to Anthropic's plugin
+9. The materials for the site: kept in this repository on GitHub, from where the site takes them and
+   shows them on its pages; their structure is settled when the step begins.
+10. The first article, in English and in Russian.
+11. The repository opened, the article published, and the plugin submitted to Anthropic's plugin
     directory.
 
 ## Open questions
