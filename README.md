@@ -33,11 +33,21 @@ text of those rules.
 - **The worked example** — a saloon in a frontier town, set up the way any project is. It comes after
   the plugin.
 
+## Using it
+
+```sh
+claude plugin marketplace add non4me/SpecSheriff#release
+claude plugin install specsheriff@specsheriff-marketplace
+```
+
+Then ask the agent, in your repository, to set it up for SpecSheriff. [The
+guide](skills/claude-code/README.md) says when to take each skill, what it asks, what it changes, and
+what each refusal of the checks means.
+
 ## Status
 
-Work in progress. The guidelines are confirmed by their owner, the tools hold this repository to
-them, and the plugin for Claude Code carries both; the worked example is being built. Nothing here is
-released yet.
+The first release, 0.1.0, carries the plugin for Claude Code: the guidelines are confirmed by their
+owner, and the tools hold this repository to them. The worked example is being built.
 
 ## License
 
