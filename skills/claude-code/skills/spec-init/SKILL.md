@@ -16,7 +16,9 @@ description: Setting a repository up for SpecSheriff — its git hooks, the plug
 3. A file left as it was is the owner's to settle: show them how it differs from what init would
    write, and change nothing in it yourself.
 4. Ask the owner where the system's code lives, where its tests live and which command runs the
-   tests, and write them into `sheriff.config.json` as `code`, `tests` and `testCommand`.
+   tests, and write them into `sheriff.config.json`: `code` and `tests` as glob patterns of files,
+   such as `src/**/*.ts` and `test/**/*.test.ts`, since a folder's name alone matches no file inside
+   it; `testCommand` as the command.
 5. Commit what init wrote, so that every clone takes the git hooks and the plugin with it.
 
 To bring the project's existing documents into the specification, use the skill `spec-adopt`.
