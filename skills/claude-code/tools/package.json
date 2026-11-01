@@ -1,0 +1,40 @@
+{
+  "name": "specsheriff-tools",
+  "version": "0.2.1",
+  "description": "The toolset of SpecSheriff: checks that hold a specification, its tests and its code to one another.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "sheriff": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "guidelines",
+    "grammars",
+    "assets",
+    "hooks",
+    "languages"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-assets.mjs",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test \"test/unit/**/*.test.ts\"",
+    "test:e2e": "node --test \"test/e2e/**/*.test.ts\""
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "web-tree-sitter": "^0.27.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tree-sitter-javascript": "^0.25.0",
+    "tree-sitter-python": "^0.25.0",
+    "tree-sitter-typescript": "^0.23.2",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,999 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines",
+  "section": "tools",
+  "nodes": [
+    {
+      "id": "_guidelines/tools",
+      "sid": "s-qtq7t32yfqj2yzw",
+      "kind": "section",
+      "title": "The tools",
+      "status": "checked",
+      "text": "How the SpecSheriff tools carry out the base of the guidelines.",
+      "refs": [],
+      "children": [
+        {
+          "id": "_guidelines/tools/1",
+          "sid": "s-zefk589ykh37b8u",
+          "kind": "rule",
+          "title": "Where the files are",
+          "status": "checked",
+          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its header in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: a project's own guidelines in `project.json`, and, in the repository the SpecSheriff guidelines are written in, the base in `spec.json` and the appendix of the tools in `tools.json`, which every other project reads from the plugin for Claude Code (§s-zh2vcr3xjumppg5). A part divided into one file per section keeps its files in its directory.\n\nThe schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in, and every other project reads it from the plugin: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part.\n\nConfirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git.\n\nThe SpecSheriff tools provide the command `sheriff`. In a terminal it is run from the copy that the plugin for Claude Code keeps in its data directory (§s-4mej6ccn7xu3d3p), as `node <data directory>/dist/cli.js`.\n\nTheir plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install \"pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff\"`.\n\nThe settings of the SpecSheriff tools are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the SpecSheriff guidelines are written in says so by the setting `\"writesSpecSheriffGuidelines\": true`.\n\nThe documents are the markdown files the repository keeps outside `specs/`. The tools of the specification are the files of the SpecSheriff tools: a project keeps only the files `sheriff init` writes, and the repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the sids they declare and no file is read for an address.\n\nThe specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-k73czmpkazcx7mu"
+            },
+            {
+              "type": "implements",
+              "to": "s-eferktypcj7njt5"
+            },
+            {
+              "type": "implements",
+              "to": "s-f2b5zvc565s242f"
+            },
+            {
+              "type": "implements",
+              "to": "s-a4rbry4hsu34hy8"
+            },
+            {
+              "type": "implements",
+              "to": "s-67vekyup7y8smap"
+            },
+            {
+              "type": "implements",
+              "to": "s-nkyty4dy9x2v2a4"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            }
+          ],
+          "meta": {
+            "tests": [
+              "skills/tools/test/unit/binding.test.ts::s-zefk589ykh37b8u reads no file of the tools for an address where the SpecSheriff guidelines are written",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file neither names for neither",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads this repository's settings, whose tests are the tools' own",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads whether the SpecSheriff guidelines are written in the repository",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared",
+              "skills/tools/test/unit/generated.test.ts::s-zefk589ykh37b8u keeps the readable export and the map out of git",
+              "skills/tools/test/unit/model.test.ts::s-zefk589ykh37b8u tells a file's part and whether it holds the SpecSheriff guidelines",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u finds each node with the file it stands in and its parent",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part",
+              "skills/tools/test/unit/spec-files.test.ts::s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file"
+            ],
+            "decisions": [
+              {
+                "date": "2026-10-29",
+                "problem": "The toolset SpecSheriff provides was spelled the toolset, SpecSheriff's toolset and the tools: three names for one thing, the first a general word that does not say whose.",
+                "ruling": "The owner: it is named the SpecSheriff tools.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "No package installed the command `sheriff` any more: an agent found the SpecSheriff tools through the plugin for Claude Code, and a person's terminal had no command at all.",
+                "ruling": "The owner: nothing new is built. In a terminal the command is run from the copy of the tools the plugin keeps in its data directory, whose path is the same on every machine; the agent's skills run it from the tools the plugin carries.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "`pytest-specsheriff`, installed by pip, does not follow the plugin for Claude Code when Claude Code updates it.",
+                "ruling": "The owner: nothing is built and no rule says how it is updated. It registers the mark, checks its form and opens the reported name with the sid, while the checks read the sid from the test's source, so an older copy breaks no check; updating it is a person's action, which the practitioner's guide gives.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "By the owner's rule of 2026-10-29, what only the repository the SpecSheriff guidelines are written in does leaves the guidelines for an internal document; this rule says where that repository keeps the guidelines, their schema and its tools, and what it is not read for.",
+                "ruling": "The owner: those clauses stay. They say what the SpecSheriff tools do in a repository that writes the guidelines, which every project's copy of the tools carries out; the procedures only that repository runs — a release, the build, running its own plugin — are in its internal document.",
+                "type": "procedural"
+              }
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/2",
+          "sid": "s-f5rz6b7dhxejjts",
+          "kind": "rule",
+          "title": "The commands",
+          "status": "checked",
+          "text": "`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the table of how each check is made describes them (§s-4kd2pave7vm4hmd).\n\n`sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p); stages with the executable mode, 100755, each hook there that holds what it would write and that git's index does not already hold with that mode, naming each one, or, where it cannot stage a hook, names it and says how to stage it executable; and turns them on; adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there; and, where they are missing, writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no other file that differs from what it would write, naming each one instead, so run again it changes nothing.\n\n`sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's header from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification.\n\nBefore anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file.\n\n`sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb).\n\n`sheriff export` writes the readable export in markdown, one file for each file of the specification.\n\n`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).\n\n`sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked.\n\n`sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end.\n\n`sheriff types` generates, from the data record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand. It writes a file only where the file is missing or holds, line endings aside, anything other than what it generates, and names each file it writes; where the check of generated copies refuses the list of those files or a data record node (§s-4kd2pave7vm4hmd), it names each refusal and writes no file; while a data record node is unchecked, it writes no file and names each such node.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-83ev4wwesbwnhnp"
+            },
+            {
+              "type": "implements",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "implements",
+              "to": "s-jsqxdx47wkkj7gp"
+            },
+            {
+              "type": "implements",
+              "to": "s-bpdqd9v72wg7vsz"
+            },
+            {
+              "type": "implements",
+              "to": "s-kh8qcd5kxgh9z3j"
+            },
+            {
+              "type": "implements",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-v4qus7raqnwzneb"
+            },
+            {
+              "type": "implements",
+              "to": "s-5ah25f6gy99panq"
+            },
+            {
+              "type": "cites",
+              "to": "s-hr7j7scmfkkjnws"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-4kd2pave7vm4hmd"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "to": "s-rpv4fkdqqguptqd"
+            }
+          ],
+          "rationale": "The reindex rewrites whole the files written by hand, so it keeps everything they hold: two values written under one key are each somebody's intent, kept together where both can stand and refused where keeping one would drop the other, since nothing says which was meant; and every merge is named, because one of them may have been written to replace the other.\n\n`sheriff types` runs after every edit an agent makes and at every commit, where the pre-commit hook copies each file it names into the working tree for its author to stage (§s-477gtdrkw34dzxw): the files it names are then exactly those its author has to stage, and a file whose content no edit changed keeps its modification time, so that nothing watching the files takes it for changed. Line endings are set aside because git may check a file out with endings other than those committed, which would make every file differ at every run.\n\nWhere anything is refused, no file is written, so that the files never disagree, one generated from the nodes as they stand beside another left behind them; and each refusal is named, so that whoever runs it, by hand or through a hook, learns which node or list to change.\n\nOn a system whose files keep an executable bit, git runs a hook only where its file has the bit, and a clone checks a file out with the mode its commit records. Git takes that mode from the file when it stages it where files keep the bit, and records it as not executable where they keep none, as on Windows, where git runs a hook whatever its mode; so a hook set up there would reach the clones unable to run, and nothing on the machine that set it up would show it. A mode reaches the clones only staged and committed, and git stages a mode only with the file's content, so `sheriff init` stages the hooks it holds and nothing else: what else a commit holds stays its author's choice.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-07",
+                "problem": "The types and runtime checks generated from the data record nodes had no command.",
+                "ruling": "The owner: a command of their own generates them.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-21",
+                "problem": "The reindex read every file through a parser that keeps the last of two values under one key and drops the first, and wrote back what it read: a ruling written under a second decisions key of a node's metadata hid two earlier rulings on the same rule from every tool, and the next reindex would have deleted them.",
+                "ruling": "The owner: the reindex merges the two values, names each merge, and refuses two it cannot merge, naming both.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-26",
+                "problem": "A command reported a citation as a candidate for a link nobody typed, and the citation check, which a commit runs, was named by no rule.",
+                "ruling": "Following the owner's rulings on citations (§s-bpdqd9v72wg7vsz, §s-hr7j7scmfkkjnws): the command reporting candidates goes, and the citation check is named among the commands.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-27",
+                "problem": "The commands were one repository's package scripts.",
+                "ruling": "The owner: they are the commands of the SpecSheriff tools, described in the appendix of the tools.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "The first sentence gave `sheriff binding` every check between the specification and the code, though the table of how each check is made gives some of them to other commands.",
+                "ruling": "The owner: the sentence names the commands that check and leaves to that table which check each makes, so that it is said in one place.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The rule on sheriff types said neither which files it writes nor what it refuses, and the tool rewrote every listed file at every run, though it now runs after every edit an agent makes and at every commit; the rule read as one block of text, and named the map without saying what it is.",
+                "ruling": "The owner: sheriff types writes a file only where its content changes, names each file it writes, and writes nothing where anything is refused; the checks are implemented as the table describes them; the map is named as the mindmap of the specification's structure; each command stands in a paragraph of its own, sheriff init before sheriff reindex.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "sheriff types wrote the types and runtime checks from data record nodes whether or not they were checked.",
+                "ruling": "Following the owner's ruling on §s-kh8qcd5kxgh9z3j: code generated from the nodes waits until every node it is generated from is checked, no commit changing it meanwhile, and its lag is reported.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "sheriff init made the hooks executable with chmod, which git on Windows does not see, so a project set up there committed them as not executable, and a clone on Linux or macOS ran none of its checks, git skipping each hook with a hint: the worked example's recorded run went through there unrefused.",
+                "ruling": "The owner: sheriff init stages each hook it holds with the executable mode where git's index does not already hold it so, naming each, and nothing else, and where it cannot stage a hook says how to.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts an unknown command is refused, naming it",
+              "skills/tools/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff --version prints the version of the SpecSheriff tools",
+              "skills/tools/test/e2e/cli.test.ts::s-f5rz6b7dhxejjts sheriff with no command lists the commands",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff types writes the types where the technical appendix lists them, and refuses what cannot be generated",
+              "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init declares the marketplace and the plugin beside every other key of the agent's settings",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init replaces no file that differs from what it would write, and names it",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init stages again with the executable mode a hook git's index holds without it",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init stages each hook it holds with the executable mode, naming each, where files keep no such bit, and stages nothing else",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init, where it cannot stage a hook, names it and says how to stage it executable",
+              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts this repository holds what sheriff init writes, so that running it here writes nothing",
+              "skills/tools/test/unit/generated.test.ts::s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads it",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two lists into one holding the first's members, then the second's the first lacks",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two objects key by key, each key where it was first written",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two values JSON Schema holds equal into one",
+              "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge, naming the key and each one's line and value",
+              "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts gives a sid to a node that has none, its address and sid first",
+              "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge",
+              "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts names every link a node makes or receives by the address and title of the node at the other end",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts refuses a key no node holds",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its address the same as by its sid",
+              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its sid: its address, title, status, text and reason",
+              "skills/tools/test/unit/types.test.ts::s-f5rz6b7dhxejjts sheriff types writes no file while a data record node is unchecked, and names each such node",
+              "skills/tools/test/unit/types.test.ts::s-f5rz6b7dhxejjts sheriff types writes only a file that is missing or holds, line endings aside, anything else than it generates, and names each"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/3",
+          "sid": "s-rpv4fkdqqguptqd",
+          "kind": "rule",
+          "title": "Building the map",
+          "status": "checked",
+          "text": "`sheriff render` reads the nodes and writes into `specs/_viewer/` a web page that draws the map from them. The web page draws it with markmap, from an outline in markdown that the command builds and keeps nowhere. Nothing is written by hand at any step: the map is regenerated from the nodes exactly as the readable export is.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-zu8ne3wq84zchc4"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            }
+          ],
+          "rationale": "The nodes are already a structure any drawing tool can read, so the map keeps no format of its own between them and the web page: a kept format would be a second copy of the structure, and one that keeps only titles and nesting, dropping the sids, status and links that anything shown on top of the map would be bound to.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-10",
+                "problem": "The rule called the file the command writes a page, a word a project may keep for a page of its own user interface.",
+                "ruling": "The owner: it is a web page, and the rule says so.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/generated.test.ts::s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/4",
+          "sid": "s-477gtdrkw34dzxw",
+          "kind": "rule",
+          "title": "The hooks",
+          "status": "checked",
+          "text": "Each check lives in a command a git hook calls: `.githooks/pre-commit` runs `sheriff export` and `sheriff render`, then `sheriff validate`, `sheriff binding` and `sheriff citations`, and last `sheriff types`; `.githooks/commit-msg` runs `sheriff message` and then `sheriff review` on the file git hands it; and `.githooks/pre-push` runs the tests of the system's code by the command `sheriff.config.json` names as its `testCommand`.\n\nA clone turns them on with `git config core.hooksPath .githooks`, which the `SessionStart` hook of the plugin for Claude Code runs where `core.hooksPath` is unset, saying so, and reports where it names another directory. The `SessionStart` hook also names each git hook in `.githooks/` that git's index holds without the executable mode and, on a system whose files keep that bit, each whose file lacks it, and says how to make each one executable on every system — `chmod +x <hook>` and `git update-index --chmod=+x <hook>`, then a commit — changing neither the mode of a file nor git's index.\n\nAt a commit, the checks read what is staged, written out to a directory of its own and read there against the repository's history, while the export and the map are written in the working tree, a failure to write them reported and stopping nothing. Whatever the checks found, `sheriff types` then runs in the directory the staged files are written out to; the pre-commit hook copies each file it writes there into the working tree, in place of what stands at the same path, and stages none of them, and what `sheriff types` refuses stops the commit.\n\nBefore a push, the pre-push hook compares the working tree with the commit each ref the push creates or updates names, directly or through a tag, leaving aside the files the working tree ignores. Where a file differs between them, stands in only one of them, or stands in the working tree without having been added, it refuses the push, naming each such file; otherwise it runs the tests in the working tree.\n\nThe agent's hooks described are Claude Code's, which the plugin for Claude Code declares (§s-zh2vcr3xjumppg5): before an edit made with the file tools, `sheriff guard` judges it; after any edit, `sheriff reindex`, `sheriff export`, `sheriff render` and `sheriff types` run, and then `sheriff validate`, `sheriff binding` and `sheriff citations`, all over the working tree, its difference from the last commit read as the commit, and what they refuse is reported to the agent.\n\nAn edit made through the shell is not judged before it is made, nor is a file `sheriff types` writes after an edit; the checks after them and at the commit still read them.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "implements",
+              "to": "s-83ev4wwesbwnhnp"
+            },
+            {
+              "type": "cites",
+              "to": "s-bpdqd9v72wg7vsz"
+            },
+            {
+              "type": "cites",
+              "to": "s-sn6au3vcr9uy5pm"
+            },
+            {
+              "type": "cites",
+              "to": "s-hr7j7scmfkkjnws"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "implements",
+              "to": "s-kh8qcd5kxgh9z3j"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "from": "s-zh2vcr3xjumppg5"
+            }
+          ],
+          "rationale": "A hook runs each check where the commit is made, so that none depends on whoever commits remembering it; kept in the repository and turned on by one setting, the hooks are the same in every clone.\n\nThe agent's hooks come with the plugin for Claude Code, so that every clone's agent is held by them; and that plugin turns the git hooks on, so that no clone's gate depends on its user remembering to.\n\nOn a system whose files keep the executable bit, git skips a hook whose file lacks it, printing a hint and refusing nothing, so a commit there passes no check while the hooks are on. The session start reaches every clone, those where the git hooks are skipped and so cannot report among them, and every repository whose hooks were committed or staged again without the mode. It leaves the mode to the author, since a mode changed in the working tree alone is a difference the pre-push hook refuses, and recording it in the index is staging, which is the author's choice.\n\nThe types and runtime checks generated from the data record nodes are generated after every edit an agent makes and at every commit, so that they follow the nodes at the first edit or commit after every node they are generated from is checked (§s-kh8qcd5kxgh9z3j), and a person who edits the nodes without an agent has no hook between edits. At a commit they are generated from the staged nodes, because a commit is judged only by what it holds (§s-jau82aq9juv9zzh): what `sheriff types` refuses there is a fault of that commit, and the copy it writes is the one that commit has to hold.\n\nAt a commit it runs after the checks, so that they read what is staged rather than a copy the hook wrote, and whatever they found, since the check of the generated copies is among them and refuses exactly the commit whose copies it writes; after an edit it runs before them, so that they read the copies the edited nodes produce rather than report ones about to be replaced.\n\nThe copy goes to the working tree, since the directory the commit is written out to is gone once the hook ends, and the author stages from the working tree; it replaces whatever stands at that path, since a generated copy is never edited (§s-kh8qcd5kxgh9z3j).\n\nWhat a commit holds is its author's choice, so the hook stages nothing; a commit holding a copy left behind nodes that are all checked still does not pass, since the check at the commit comparing each kept generated copy with what the staged nodes produce refuses it until its author stages the new one.\n\nA failure to write the export or the map stops no commit, since the commit holds neither, and every check reads the commit being made and never what it does not hold (§s-jau82aq9juv9zzh).\n\nA test run judges a commit only where the files it reads are those the commit holds, since every check reads the commit being made and never what it does not hold (§s-jau82aq9juv9zzh). The tests run in the working tree rather than in a copy of the commit, because they need what each checkout installs or builds for itself, which a copy of the commit lacks.\n\nThe files the working tree ignores are left out of the comparison of the working tree with each commit, because each checkout makes or keeps its own copy of them, so where a commit holds such a file, as a commit of a build's output does, the working tree's copy need not match it.\n\nThe refusal names the files the push is refused for, because whether each is committed, removed or ignored is for whoever pushes to decide.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-26",
+                "problem": "The citation check was run by no hook, so citations it refused reached the main branch through commits every hook had passed, and nothing checked that a citation in a node had a link.",
+                "ruling": "Following the owner's rulings on citations (§s-bpdqd9v72wg7vsz, §s-sn6au3vcr9uy5pm, §s-hr7j7scmfkkjnws): the pre-commit hook runs the citation check, and the check of the specification refuses a citation with no link.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "An automated security review found that the plugin's session start turns on whatever hooks `.githooks/` holds in a repository whose root holds `sheriff.config.json`, so a repository someone opens could have git run code it brought, which git never does for a clone until its user turns its hooks on.",
+                "ruling": "The owner: the rule stands, and nothing is built against it. The consent that counts is the trust a user gives a folder in Claude Code, before which a plugin the project declares does not load; a repository taking the method runs its own code at every push anyway, since the pre-push hook runs its tests; and the case left open needs together the plugin installed by the user rather than declared by the project, Claude Code run without its dialog of trust, and a clone nobody looked at.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "The todo on this rule asks for post-merge and post-checkout hooks writing the export and the map, which follow a change that reaches the working tree through git only at the next edit an agent makes or the next commit.",
+                "ruling": "The owner: it waits past the first release, 0.1.0, and the todo stays. The export and the map are views kept in the working tree, which git does not keep and no check reads, and they lag only until the next edit or commit.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "Nothing ran sheriff types, so after a change to a data record node the generated types and runtime checks stayed behind the nodes until somebody remembered to run it, while the base requires what is generated from the nodes to be regenerated after every change to them.",
+                "ruling": "The owner: the agent's hooks run sheriff types after every edit, before the checks; the pre-commit hook runs it last, after the checks and whatever they found, on what is staged, its refusal stopping the commit and each file it writes copied into the working tree for the author to stage, nothing staged by the hook.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The pre-push hook ran the tests over the working tree, its uncommitted changes and files never added included, while every check reads the commit being made and never what it does not hold.",
+                "ruling": "The owner: the push is refused while the working tree differs from what it sends, files it ignores left aside, rather than the hook setting such changes aside itself; then the tests run in the working tree.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The pre-commit hook stopped a commit where the export or the map could not be written from the working tree, as from a specification file broken there and not staged, though the commit holds neither.",
+                "ruling": "Following §s-jau82aq9juv9zzh: a failure to write the export or the map at a commit is reported and stops nothing.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The reason had the types regenerated after every change to the nodes, while they now wait until every node they are generated from is checked.",
+                "ruling": "Following the owner's ruling on §s-kh8qcd5kxgh9z3j: code generated from the nodes waits until every node it is generated from is checked, no commit changing it meanwhile, and its lag is reported.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "A repository whose hooks git's index held without the executable mode, as one set up on Windows did, ran none of its checks in a clone on Linux or macOS, git skipping each hook with a hint, and nothing told its user so.",
+                "ruling": "The owner: the session start names each git hook git's index holds without the executable mode and, where files keep that bit, each whose file lacks it, says how to make it executable on every system, and changes neither a file's mode nor the index.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a changed data record node is committed before its confirmation, its types left as they were and their wait reported",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a commit goes on where the export and the map cannot be written from the working tree, which reports it",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw after an agent's edit the types are written before the checks run",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook stops a commit whose staged data record nodes cannot be generated",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-commit hook writes the types the staged nodes generate into the working tree, stages none of them, and the commit waits for its author to stage them",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook compares every ref the push sends, tags and other branches included, leaving aside the files the working tree ignores",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook refuses a push while the working tree differs from the commit it sends, naming each such file",
+              "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
+              "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index",
+              "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory",
+              "skills/tools/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
+            ],
+            "todos": [
+              {
+                "date": "2026-10-28",
+                "by": "the owner",
+                "text": "The export and the map follow a change that reaches the working tree through git — a pull, a merge, a checkout — only at the next edit an agent makes or the next commit; post-merge and post-checkout hooks writing them would close that."
+              }
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/5",
+          "sid": "s-4kd2pave7vm4hmd",
+          "kind": "rule",
+          "title": "How each check is made",
+          "status": "checked",
+          "text": "How each check is made, and by which command:\n\n| Check | How | Command |\n|---|---|---|\n| One key twice | the file is read as text, and the keys of each object are counted | `sheriff validate` |\n| The schema | the file is validated against the schema with a JSON Schema validator | `sheriff validate` |\n| Sids, ids, terms, data records | every sid, id, term and data record node's name is collected and counted, a term's and a data record node's name in lower case; the part each term node stands in is looked up | `sheriff validate` |\n| Addresses | the addresses are computed in memory and compared with what is committed | `sheriff validate` |\n| Confirmations | the latest line for the fingerprint of the wording of each checked node outside the SpecSheriff guidelines the project takes is looked up in the confirmations, and the owner it names is compared with the node's owner | `sheriff validate` |\n| The archive | each sid the commit removes from the specification is looked up in the confirmations, and one a confirmation was ever given for is looked up in the archive, with the reason for its removal; one never confirmed is refused where it stands in the archive | `sheriff validate` |\n| Links and citations in the nodes | every outgoing link's target is resolved against the sids that exist, and the citations in every node are read and set against the links it makes; a `§` followed by a sid and then by no lower-case letter or digit cites it, and one followed by anything else, up to a space, a comma, a semicolon or a closing parenthesis, is a citation by an address | `sheriff validate` |\n| Links between terms | the kind of the node at each end of every outgoing link is looked up and set against the link's type | `sheriff validate` |\n| Headers, their indexes, incoming links | every domain's files are read for its header; the headers' indexes and the incoming links are rebuilt in memory and compared with what is committed | `sheriff validate` |\n| Capitals | the title, text and reason of every checked node are read for three words or more in capitals, each of two characters or more, separated only by spaces or tabs, anything in backticks or double quotation marks left out | `sheriff validate` |\n| Sections | the children of every checked section, and those of each section inside it, are read for a node that counts as a rule (§s-7445ahgjck2aefg) | `sheriff validate` |\n| Consumes and exempts links, cycles among the domains | each consumes link is read for a domain's header at its start and a section of another domain at its end, each exempts link for a node of `project.json` at its start and a rule or a section at its end, and the domains are walked along the consumes links for a domain those links lead back to | `sheriff validate` |\n| Levels | the level each header names is looked up in the list the project's own guidelines hold | `sheriff validate` |\n| Data record variants | each variant's refines link is resolved to the data record it refines; the fields the variant answers to are compared with those the nearest data record up its refines links names as choosing it; each value it answers to is looked up in the list of values of the field it answers for and in the lists rules of domains define for that field, each such rule's refines link resolved to a data record of contracts naming the field as choosing its variant, and a value found in two of those lists or in none is refused; the part the variant stands in is compared with the part of the node declaring its value; the fields the variant declares are compared with those of the data records up its refines links, the fields their fields of type variant hold included, and the fields of type variant along those links are counted; the values each variant answers to are compared with those of every other variant answering to the same data record's choosing fields | `sheriff validate` |\n| Identifiers | the data record each field of type identifier of names is looked up, and the field that data record names as identifying it is looked up among its fields; where that field is itself an identifier, the data record it names is followed in the same way until a field of another type is reached, and a data record reached twice is refused | `sheriff validate` |\n| Values of a field of type one of | the values of each field of type one of are collected from its own list and from the lists rules of domains define for it, and a field holding none is refused | `sheriff validate` |\n| The SpecSheriff guidelines | outside the repository they are written in, a `spec.json` or a `tools.json` under `specs/_guidelines/`, or any file under `specs/_schema/`, is refused | `sheriff validate` |\n| Appendices and a project's own guidelines | the outgoing implements and refines links of each node but a section are resolved, and the part of the node each names is read; the name of each file of the technical appendix but `stack.json` and `debt.json` is looked up among the domains | `sheriff validate` |\n| Tags | every symbol of the system's code is read for its tag, an inner symbol covered by the one it stands in, and a category exempt by where it lives is not read at all; the commit's changed lines are mapped onto the symbols they fall in, a line holding a tag, before the commit or after it, onto the symbol the tag stands on, and a symbol whose every changed line holds no tag and differs from the line it replaces only in a comment, in the sid a citation names or in an identifier the commit renames throughout counts as unchanged; the sid of every tag is looked up among the nodes, and that of a tag on a changed symbol among the checked ones | `sheriff binding` |\n| Tests | every test is read for the sid it carries, resolved against the rules and the terms, and the tests whose text the commit changes against the checked ones; the sids of the tags on the changed symbols are looked up among the sids every test carries | `sheriff binding` |\n| Lists of code and tests, symbols, lists | the tags and the sids the tests carry are collected across the repository and compared with the metadata, and the members of a list with the declaration it names | `sheriff binding` |\n| Addresses outside the specification | the files the repository keeps — tracked by git, or new and not ignored — outside `specs/` and the tools are read for a part's name followed by a place, in any case and whether or not it names a node now | `sheriff binding` |\n| Generated copies | the files the technical appendix lists for the types and runtime checks (§s-pvzms7d8kxb8dk2) are generated in memory and compared with what is committed, or, while a data record node is unchecked, compared with what the last commit holds, each such node reported; a list naming a file of another extension or a path outside the repository, two rules of the stack each defining such a list, a name that cannot be generated (§s-suv42g8r3ra2h6b), and a data record holding two fields of type variant, its inherited ones counted, are refused | `sheriff binding` |\n| Drift | the history of the node is compared with the history of the files in its metadata, a renamed file read under both its names | `sheriff binding` |\n| Implementation | each checked rule outside the SpecSheriff guidelines, `project.json` and `debt.json` is looked up among the sids the tags on the system's code name and among those the tests carry, a test its framework is told to skip left out; a rule linked to it by implements links, followed from it to the rules implementing it and from those in turn, counts for it; one lacking a tag or a test, and not exempted by an exempts link to it or to a section it stands under, is reported, naming what it lacks | `sheriff binding` |\n| Citations outside the specification | each sid in the code, the tests and the documents is resolved, the archive's included, and a number naming a node refused | `sheriff citations` |\n| Before an edit | the edit is applied to the file in memory and its changed lines are mapped onto the symbols as the Tags row maps them; the tags of each changed symbol are looked up among the sids the tests of the working tree carry, the edited file as it would stand included, and a node the edit leaves checked is looked up in the confirmations as the Confirmations row does; an edit of `specs/_confirmations.jsonl` is refused whatever it changes, since `sheriff confirm` records a confirmation and its withdrawal (§s-v4qus7raqnwzneb) | `sheriff guard` |\n| The message | the sids in the message are resolved and set against the tags on the changed symbols, and the kind of each node they name is looked up to refuse a domain's header or a section | `sheriff message` |\n| The review | a runner reads the commit's change against the nodes it names | `sheriff review` |\n| The tests | they are run | the project's test command, from the pre-push hook |",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-83ev4wwesbwnhnp"
+            },
+            {
+              "type": "implements",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
+              "to": "s-eferktypcj7njt5"
+            },
+            {
+              "type": "cites",
+              "to": "s-7445ahgjck2aefg"
+            },
+            {
+              "type": "cites",
+              "to": "s-pvzms7d8kxb8dk2"
+            },
+            {
+              "type": "cites",
+              "to": "s-suv42g8r3ra2h6b"
+            },
+            {
+              "type": "cites",
+              "to": "s-xfu2gpzddjnmgks"
+            },
+            {
+              "type": "cites",
+              "to": "s-v4qus7raqnwzneb"
+            },
+            {
+              "type": "cites",
+              "to": "s-rah8b37kytb682y"
+            },
+            {
+              "type": "cites",
+              "to": "s-6fw72j65jkqrfpf"
+            },
+            {
+              "type": "cites",
+              "to": "s-sn6au3vcr9uy5pm"
+            },
+            {
+              "type": "cites",
+              "to": "s-vj7ercem526zd6v"
+            },
+            {
+              "type": "cites",
+              "to": "s-kh8qcd5kxgh9z3j"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            }
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-21",
+                "problem": "Nothing refused a file whose object holds one key twice. JSON Schema leaves the behaviour of such a document undefined, so it escapes the check that it matches its schema (§s-eferktypcj7njt5), and a tool reading it keeps the last of the two values alone.",
+                "ruling": "The owner: the check of the specification refuses it, so a commit cannot carry it.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "Five checks of the base's table had no row here, so no rule said which command makes them, and several rows did not say all their check does.",
+                "ruling": "The owner: every check of the base's table has its row and its command, the new checks of terms, of names whatever their case and of capitals from three words included, so that the rule on the commands can refer to this table.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The check of data record variants checked a value only where its choosing field held a list of values, so a variant whose field held none passed with any value; nothing held a variant to the domain declaring its value, and the fields a field of type variant holds were not counted among those a variant inherits.",
+                "ruling": "The owner: before the first release, 0.1.0, the tools read such values from the choosing field's own list alone, refuse a value not found there, and hold a variant to the part of the data record holding that field; how a project's own guidelines name another place for such values waits past 0.1.0, and the todo stays. Following the rows of §s-jau82aq9juv9zzh on variants, the row says all the check does.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The check of data record variants read a value from its choosing field's own list alone, held a variant to the part of the data record, and counted no fields of type variant, and no check followed an identifier to the field it takes its type from.",
+                "ruling": "Following the owner's rulings of that day: the row reads the lists rules of domains define for a field of a data record in contracts (§s-xfu2gpzddjnmgks), holds a variant to the part declaring its value, and counts the fields of type variant; a row follows each identifier to the field identifying its data record. The todo on the other place is settled.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "No row looked for a field of type one of holding no value, or followed an identifier past the first identifying field.",
+                "ruling": "Following the two rows the base's table of checks gained that day: the identifiers are followed until a field of another type, and the values of each field of type one of are counted.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The row of generated copies did not name the refusal of a listed path that leaves the repository, which the tools make because each path of the list is taken from the root of the repository.",
+                "ruling": "Carrying out the owner's rule on where the generated files are written (§s-pvzms7d8kxb8dk2): the row names that refusal.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The check before an edit did not look at an edit of the confirmations themselves.",
+                "ruling": "Following the owner's ruling on §s-83ev4wwesbwnhnp: an edit of the confirmations' file is refused whatever it changes, sheriff confirm being what records a confirmation and its withdrawal.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The check resolved a test's sid against every node.",
+                "ruling": "Following the owner's ruling on §s-rah8b37kytb682y: a test's sid is resolved against the rules and the terms.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "No row said how an exempts link is checked or how a rule not implemented is found.",
+                "ruling": "Following the owner's rulings on §s-6fw72j65jkqrfpf and §s-sn6au3vcr9uy5pm: validate reads where each exempts link stands, and binding reports each checked rule within §s-6fw72j65jkqrfpf lacking a tag or a test, a skipped test not counting.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "No row said that the name of a file of the technical appendix is checked against the domains.",
+                "ruling": "Following §s-vj7ercem526zd6v: each file of the technical appendix but the stack's and the technical debt's is named after a domain.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The check compared each kept generated copy with what the nodes produce now, while code generated from the nodes now waits for them to be checked.",
+                "ruling": "Following the owner's ruling on §s-kh8qcd5kxgh9z3j: code generated from the nodes waits until every node it is generated from is checked, no commit changing it meanwhile, and its lag is reported.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/binding.test.ts::s-4kd2pave7vm4hmd holds a generated copy to what the last commit holds while a data record node is unchecked, reporting the node",
+              "skills/tools/test/unit/binding.test.ts::s-4kd2pave7vm4hmd passes the generated copies the data record nodes produce, and refuses one edited by hand, left behind or missing",
+              "skills/tools/test/unit/binding.test.ts::s-4kd2pave7vm4hmd reads a node's file under every name it had, so that renaming it is no change to the node's text",
+              "skills/tools/test/unit/binding.test.ts::s-4kd2pave7vm4hmd reads the tests and the documents of the tools for citations where the SpecSheriff guidelines are written",
+              "skills/tools/test/unit/binding.test.ts::s-4kd2pave7vm4hmd refuses a name that cannot be generated, and a second list of the files of the types",
+              "skills/tools/test/unit/binding.test.ts::s-4kd2pave7vm4hmd refuses a sid in the code, the tests or the documents that names no node, the archive's included, and a number naming a node",
+              "skills/tools/test/unit/code.test.ts::s-4kd2pave7vm4hmd reads a Python test marked to be skipped or expected to fail as skipped",
+              "skills/tools/test/unit/code.test.ts::s-4kd2pave7vm4hmd reads a TypeScript test its framework is told to skip, by its call or by its options, as skipped",
+              "skills/tools/test/unit/gates.test.ts::s-4kd2pave7vm4hmd reads the tests as the edit would leave the working tree",
+              "skills/tools/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds a key an object holds twice, naming the key and both lines",
+              "skills/tools/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd finds nothing where every key is held once",
+              "skills/tools/test/unit/json-text.test.ts::s-4kd2pave7vm4hmd refuses text that is not JSON, naming the line"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/6",
+          "sid": "s-5z5gnu7pahr82xp",
+          "kind": "rule",
+          "title": "The tag that binds a symbol to its rule",
+          "status": "checked",
+          "text": "A tag is the line `@spec <sid>` in the comment directly above the symbol it binds, above its decorators where it has any — in TypeScript and JavaScript its doc comment, in Python a comment line — and a symbol implementing several rules carries several.\n\nA symbol that implements no rule says so with `@spec none`, followed by the reason it carries none, and one standing first in a run of re-exports, with no blank line between them, says it for the whole run.\n\nThe delimiters of the comment may share a tag's line and nothing else may, so that a tag's text is found by a scan in any language. Which symbol a tag stands on is found by parsing the file with tree-sitter and the grammar of the file's language — the parser alone, with no program and no type checker — and a description of each language names what counts as a declaration and as a test in it; TypeScript, JavaScript and Python are described.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-rwqzepmrt77rv35"
+            },
+            {
+              "type": "implements",
+              "to": "s-kgbzk2ph9e6jfb4"
+            },
+            {
+              "type": "cites",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
+              "from": "s-suv42g8r3ra2h6b"
+            }
+          ],
+          "rationale": "A comment above a symbol is where an editor shows a tag and where a reader of the symbol is already looking. A scan finds a tag but cannot see what it is attached to, so a tag standing over nothing would pass it; the parser sees the symbol under the comment, and used alone it answers the same for the same file every time and is cheap enough to run at every commit. One parser with a grammar per language makes a further language a description rather than new code.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-09-22",
+                "problem": "The tag's rule says a tag stands in the doc comment above the symbol it binds, and nothing checked it: the check read tags by scanning, which finds a tag and can say nothing about what it is attached to. A tag naming a rule and standing over a blank line, or trailing a statement, passed. For the same reason the symbols a node names in its metadata were not graded at all, only the files.",
+                "ruling": "Where a tag stands is decided by parsing the file — the parser only, no program and no type checker. A tag binds to the declaration below it where no blank line separates them, and a node that names symbols is held to the ones its tags stand on. A language server was refused for the same job: its answer depends on the state of a running server, and the checks require the same commit to get the same answer every time (§s-jau82aq9juv9zzh).",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-08",
+                "problem": "The exemption stood at the top of a file, while s-kgbzk2ph9e6jfb4 now has every declaration carry its own tag.",
+                "ruling": "The owner: the exemption stands on the declaration, and on the first of a run of re-exports for the whole run.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-27",
+                "problem": "Which declaration a tag stands on was found by one language's parser alone, so the binding could not be held in any other language.",
+                "ruling": "The owner: one general parser, with a grammar per language, reads the code; a language is added by describing what counts as a declaration and as a test in it, and TypeScript, JavaScript and Python are described at launch.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp covers a member by the tag of the class it stands in",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp finds a symbol carrying no tag, and a tag not directly above a symbol",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp lets the first of a run of re-exports say for the whole run that it implements no rule",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a Python tag in the comment lines above a symbol's decorators, and an assignment at the module's level",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads a tag in the doc comment directly above a TypeScript symbol, several where it carries several",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp reads nothing of a file in a language no description covers",
+              "skills/tools/test/unit/code.test.ts::s-5z5gnu7pahr82xp refuses a tag sharing its line with anything but the comment's delimiters"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/7",
+          "sid": "s-zrsc6asgmhv8tnc",
+          "kind": "rule",
+          "title": "How a test declares the rule it verifies",
+          "status": "checked",
+          "text": "In TypeScript and JavaScript a test declares the sid of what it verifies by opening its name with it: `test(\"s-… what it verifies\", …)`. In Python it declares it by a mark on the test, `@pytest.mark.spec(\"s-…\")`; the plugin for pytest of the SpecSheriff tools, `pytest-specsheriff`, registers the mark and opens the name a run reports with the sid. The description of a further language says how a test declares its sid there.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-rwqzepmrt77rv35"
+            },
+            {
+              "type": "implements",
+              "to": "s-rah8b37kytb682y"
+            }
+          ],
+          "rationale": "A test's name is a string in TypeScript and JavaScript, which a sid can open; a Python test is named by its function, which cannot hold a hyphen, so the sid goes into a mark, and the plugin puts it where a run's report shows it.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-27",
+                "problem": "A test bound to its rule by the opening of its name cannot be written in Python, whose names cannot hold a hyphen.",
+                "ruling": "The owner: in Python a test declares its sid by a mark on it; each language's description says how a test declares its sid there.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/pytest-specsheriff/tests/test_plugin.py::test_a_mark_without_one_sid_is_refused",
+              "skills/pytest-specsheriff/tests/test_plugin.py::test_a_run_reports_a_marked_test_by_a_name_its_sid_opens",
+              "skills/pytest-specsheriff/tests/test_plugin.py::test_an_unmarked_test_keeps_its_name",
+              "skills/pytest-specsheriff/tests/test_plugin.py::test_the_mark_is_registered",
+              "skills/tools/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a Python test declares by its mark",
+              "skills/tools/test/unit/code.test.ts::s-zrsc6asgmhv8tnc reads the sid a TypeScript test opens its name with, a template's leading text included"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/8",
+          "sid": "s-xr5xxa9cxf2mq5u",
+          "kind": "rule",
+          "title": "Who runs the reviewer",
+          "status": "checked",
+          "text": "`sheriff review` hands the reviewer's input to the runner named in `sheriff.config.json`, and the runner hands back its answer as JSON: a verdict, pass or refuse, and the findings, each naming the rule, the file, the line and the problem.\n\nA runner is started with no tools, none of the user's settings, memory or hooks, a system prompt of its own and an empty working directory, so that nothing of the session that wrote the code reaches it.\n\nThe runner described is the Claude Code CLI in print mode, asking for the model `fable` and falling back to `opus` where the first is overloaded or not offered; the model, and the time after which a run is ended, twenty minutes unless set otherwise, are settings in the same file.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-nyh9yk22ba6g77q"
+            }
+          ],
+          "rationale": "Print mode answers once and exits, with no session around it to carry anything over. The most capable model is asked for because whether code does only what its rules say is the one judgement among the checks. The limit on a run's time ends a run that hangs rather than hurrying one that reads a large change, which is why it is long.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-27",
+                "problem": "The reviewer was one agent's command line.",
+                "ruling": "The owner: a runner carries the review out, the Claude Code CLI first, then the Codex and Gemini CLIs, then any service speaking the OpenAI-compatible API, which covers models run locally.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The todo on this rule asks for the Codex and Gemini CLIs as runners, then any service speaking the OpenAI-compatible API.",
+                "ruling": "Following the order of work the owner agreed, it waits past the first release, 0.1.0, and the todo stays. That release is the plugin for Claude Code alone, whose every user has the runner described; the runner of Codex CLI comes with the plugin for Codex CLI, and whether Gemini CLI gets a package of its own is being studied.",
+                "type": "procedural"
+              }
+            ],
+            "todos": [
+              {
+                "date": "2026-10-27",
+                "by": "the owner",
+                "text": "Describe the Codex and Gemini CLIs as runners, then any service speaking the OpenAI-compatible API, which covers models run locally."
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/config.test.ts::s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus and twenty minutes unless set otherwise",
+              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, the model and its fallback asked for"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/9",
+          "sid": "s-v4qus7raqnwzneb",
+          "kind": "rule",
+          "title": "How a confirmation is recorded",
+          "status": "checked",
+          "text": "`sheriff confirm <sid>...` appends to `specs/_confirmations.jsonl` one line per node — its sid, the fingerprint of its wording and the owner confirming it, who is the email git is configured with — and sets the node's status to checked. It refuses a node whose owner is someone else, naming that owner, and appends nothing for a node where the latest line for that fingerprint is already a confirmation by its owner.\n\n`sheriff confirm --withdraw <sid>...`, which anyone may run, appends a line withdrawing the confirmation of the wording the node holds, naming as `by` whoever withdraws it, the email git is configured with, and empties its status. Of the lines for one fingerprint, the latest decides.\n\nThe fingerprint is a SHA-256 hash of one canonical string holding the node's title, text and reason and the values its kind carries beside them, but neither the owner a node names nor what the reindex builds, the keys of an object sorted and a list in its own order. An owner is named by an email.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-67vekyup7y8smap"
+            },
+            {
+              "type": "implements",
+              "to": "s-5ah25f6gy99panq"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-4kd2pave7vm4hmd"
+            }
+          ],
+          "rationale": "One line appended per confirmation merges between branches without a conflict and keeps every confirmation ever given, and with the latest line deciding, a withdrawal cannot be undone by typing a status back. SHA-256 is a hash every language provides. The email git is configured with is the one a commit names its author by, so a confirmation and the commit carrying it name the same person. The owner a node names says who reads its wording, not what the wording is, and what the reindex builds is no one's wording.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-27",
+                "problem": "Confirmations were kept in one person's files outside the repository, guarded by that person's hooks, so nobody else could check a status and a lost file would have emptied every status.",
+                "ruling": "The owner: a confirmation is kept with the specification, names who gave it and is accepted only under that owner's signature.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The line withdrawing a confirmation named whoever withdrew it as its owner, though anyone may withdraw one.",
+                "ruling": "Following the owner's ruling on §s-5ah25f6gy99panq: anyone runs the withdrawal, and its line names whoever withdraws it as by.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/commands.test.ts::s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured with, and refuses where that is not the owner",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends nothing where the latest line for that wording is already its owner's confirmation",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and the owner confirming it, and sets it checked",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb lets anyone withdraw a confirmation, its line naming whoever withdrew it as by",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
+              "skills/tools/test/unit/confirm.test.ts::s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides",
+              "skills/tools/test/unit/model.test.ts::s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind carries, not its owner or what the reindex builds"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/10",
+          "sid": "s-4mej6ccn7xu3d3p",
+          "kind": "rule",
+          "title": "A git hook calls its script in the data directory of the plugin for Claude Code",
+          "status": "checked",
+          "text": "When a session starts, the plugin for Claude Code (§s-zh2vcr3xjumppg5) copies the SpecSheriff tools it carries into its data directory, `${CLAUDE_PLUGIN_DATA}`, at `~/.claude/plugins/data/specsheriff-specsheriff-marketplace/`, where the copy there is of another release or missing. Each git hook `sheriff init` writes holds nothing but a call to the script for that hook in `hooks/` of that directory, which runs what the hook is to run (§s-477gtdrkw34dzxw). The hook refuses where that script is missing, saying that a session of Claude Code started on the machine puts it there; the script refuses where Node is missing or older than the tools need, naming the version they need.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-zh2vcr3xjumppg5"
+            }
+          ],
+          "rationale": "Claude Code keeps each version of a plugin in a directory of its own, which changes with every update and is removed some time after, and keeps the plugin's data directory across updates; so a call written once into a project names the data directory, and the plugin keeps there a copy of the release it holds. A hook holding only the call runs what the script of the installed release says, so a hook written once never falls behind a release. A check that cannot run holds nothing, so the hook refuses rather than passing.",
+          "meta": {
+            "tests": [
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a git hook refuses where its script is missing, saying that a session of Claude Code puts it there",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p each git hook sheriff init writes holds nothing but a call to its script in the plugin's data directory",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/11",
+          "sid": "s-zh2vcr3xjumppg5",
+          "kind": "rule",
+          "title": "The plugin for Claude Code carries everything its work needs",
+          "status": "checked",
+          "text": "The plugin for Claude Code, `specsheriff`, carries the skills `spec`, `spec-review`, `spec-adopt` and `spec-init`, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares to Claude Code its hooks: the agent's hooks (§s-477gtdrkw34dzxw) and the one run when a session starts (§s-4mej6ccn7xu3d3p).\n\nIn a repository holding no `sheriff.config.json` at its root, its hooks do nothing but keep its copy of the tools (§s-4mej6ccn7xu3d3p).\n\nThe marketplace `specsheriff-marketplace` lists the plugin by the relative path of its directory. A project declares both in `.claude/settings.json`: the marketplace under `extraKnownMarketplaces`, its source the branch `release` of the repository the SpecSheriff guidelines are written in and `autoUpdate` on, and the plugin under `enabledPlugins`. Each machine runs the release its copy of the plugin holds until Claude Code updates it there.\n\nThe plugin's skills and the agent's hooks run `sheriff` from the SpecSheriff tools the plugin carries, as `node \"${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js\"`. The skill `spec-init` runs `sheriff init`.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-bsya3febm6u64ab"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "implements",
+              "to": "s-83ev4wwesbwnhnp"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-4mej6ccn7xu3d3p"
+            }
+          ],
+          "rationale": "An agent takes up a skill only where it is installed, and Claude Code installs and updates a plugin from a marketplace itself and runs the hooks a plugin declares while it is enabled: declared in the project, the plugin is offered to the agent of every clone and, updating itself, brings every machine the latest release.\n\nCarrying the guidelines and the tools beside the skills, it keeps everything of one release together on the machine, and nothing of a release in the project but the calls to it.\n\nA plugin installed for a user runs in every project they open, and a project not taking the method is held to nothing of it.\n\nThe marketplace is read from `release`, which holds only releases, so an agent loads a release and never the work in progress on `main`. Claude Code writes the directory of the plugin's installed release wherever a skill or a hook names `${CLAUDE_PLUGIN_ROOT}`, so each runs the tools of its own release.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-29",
+                "problem": "How a practitioner takes up the method.",
+                "ruling": "The owner: the main channel is a plugin of skills for the agents, distributed through a marketplace; the plugin is made for Claude Code now and for Codex CLI next, and Gemini CLI is being studied.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-30",
+                "problem": "Only the skill spec-init was said to run the SpecSheriff tools the plugin carries; where the other skills and the agent's hooks run them from, no rule said.",
+                "ruling": "The owner: the plugin's skills and the agent's hooks run them from the tools the plugin carries, by the directory Claude Code writes in for the installed release.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, and spec-init runs sheriff init"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/12",
+          "sid": "s-pvzms7d8kxb8dk2",
+          "kind": "rule",
+          "title": "Where the types and runtime checks generated from the data records are written",
+          "status": "checked",
+          "text": "`sheriff types` writes the types and runtime checks it generates from the data record nodes into the files the project's technical appendix lists for them. The list of those files is defined in the section of the technical appendix that describes the technologies the whole system is built with, the stack, in the rule that describes how the system generates its types and runtime checks from its data record nodes, as the rule on data structures requires (§s-e877bnfa559tvk9); each path in it is taken from the root of the repository. Where the technical appendix defines no such list, `sheriff types` writes nothing.\n\nA file's extension says what is written into it: `.ts` the types in TypeScript, `.py` the types in Python, `.json` the runtime checks in JSON Schema of draft 2020-12. Those checks are run by the JSON Schema validator the technical appendix names, which asserts `format` rather than taking it as a note.\n\n`sheriff binding` reads a file of types as the system's code even where the glob patterns naming where that code lives do not reach it.",
+          "rationale": "Which files the generated types go to is a choice covering the whole system, and such choices are described in the stack section (§s-vj7ercem526zd6v). Defined as a list in one rule, those files are read by the tools as the levels of the domains are read from a list in the project's own guidelines, rather than looked for in prose. The extension already says what a file holds. A validator taking `format` as a mere note would pass an instant that is no instant. A project with no code yet has nowhere to write the types. Read as code, a file of types has its tags read, so that each data record node's list of code names the types generated from it.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-vj7ercem526zd6v"
+            },
+            {
+              "type": "cites",
+              "from": "s-4kd2pave7vm4hmd"
+            }
+          ],
+          "meta": {
+            "tests": [
+              "skills/tools/test/unit/binding.test.ts::s-pvzms7d8kxb8dk2 reads a file of types as the system's code where the globs naming the code do not reach it",
+              "skills/tools/test/unit/types.test.ts::s-pvzms7d8kxb8dk2 refuses a listed file of another extension, and two rules of the stack each listing files, and then writes nothing",
+              "skills/tools/test/unit/types.test.ts::s-pvzms7d8kxb8dk2 takes the list from a rule of the stack only",
+              "skills/tools/test/unit/types.test.ts::s-pvzms7d8kxb8dk2 writes each file the stack's rule lists, its extension saying what goes into it",
+              "skills/tools/test/unit/types.test.ts::s-pvzms7d8kxb8dk2 writes nothing where the technical appendix lists no files for the types"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/13",
+          "sid": "s-suv42g8r3ra2h6b",
+          "kind": "rule",
+          "title": "What a data record node generates",
+          "status": "checked",
+          "text": "From each data record node, `sheriff types` writes a type into each file of types and a definition under `$defs` into each file of runtime checks. It takes the nodes in the order the specification reads: its files in the code-point order of their paths, and the nodes of each file in the order they stand.\n\nEvery type and definition is named by the data record's name with the first letter of each word raised and the spaces dropped. Each type is tagged with the sid of its data record, as a symbol of code is tagged with the rule it implements (§s-5z5gnu7pahr82xp).\n\nA type and a definition hold the fields of every data record above the node along its refines links, the topmost first, then the node's own fields, except a variant's own, which stand where the rule on data record variants places them (§s-nk8td3ez58gahc4); each field keeps its name and the order its node gives it, and is required where its node says so and optional otherwise. A field of type record refers to the type of that data record by its name, and the object of a field of type variant is written out in full. Where the data record node refuses a field nobody declared, its definition refuses any property its fields do not declare.\n\nA name that is not an identifier in the language of its file, or that the file already uses — the names it imports and those its language builds in included — cannot be generated.\n\nIn TypeScript a type is written `export type <name> = {...}`.\n\nIn Python a type is written `<name> = TypedDict(\"<name>\", {...})`, every name it uses imported from `typing`, a reference to another type written as a string, an optional field marked `NotRequired`, and the object of a field of type variant given a type of its own, named by the type it stands in followed by the field's name with its first letter raised, and tagged with the same sid.",
+          "rationale": "One name in every file lets a reader follow a data record from its node to each copy, and a fixed order makes each file come out the same at every run, which the comparison of generated copies needs. The generator writes the tag itself, so that the link from each type to its node is made anew with the type and never kept by hand.\n\nA data record that refines another holds that one's fields, as the schema of the nodes says, and a field keeps the name its node gives because the code uses that name as it stands. Only a runtime check can refuse an undeclared property; a type in TypeScript or Python cannot.\n\nA name the file already uses would break its compilation or hide what it imports.\n\nThe functional form of `TypedDict` takes any field name, a keyword of Python included; a reference written as a string may name a type written later in the file, or the type itself; and Python can name the object of a field only by a type of its own.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-5z5gnu7pahr82xp"
+            },
+            {
+              "type": "cites",
+              "to": "s-nk8td3ez58gahc4"
+            },
+            {
+              "type": "cites",
+              "from": "s-4kd2pave7vm4hmd"
+            }
+          ],
+          "meta": {
+            "tests": [
+              "skills/tools/test/unit/types.test.ts::s-suv42g8r3ra2h6b cannot generate a name that is no identifier in its file's language, or that the file already uses",
+              "skills/tools/test/unit/types.test.ts::s-suv42g8r3ra2h6b holds the fields of every data record up the refines links first, the topmost first",
+              "skills/tools/test/unit/types.test.ts::s-suv42g8r3ra2h6b refers to a data record by the name of its type, in Python as a string, and the files compile and run",
+              "skills/tools/test/unit/types.test.ts::s-suv42g8r3ra2h6b takes the files in the code-point order of their paths and the nodes in the order they stand",
+              "skills/tools/test/unit/types.test.ts::s-suv42g8r3ra2h6b writes each data record as a type tagged with its sid and a definition under $defs, in each language"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/14",
+          "sid": "s-nk8td3ez58gahc4",
+          "kind": "rule",
+          "title": "A data record its variants refine",
+          "status": "checked",
+          "text": "A data record that variants refine — data records each answering to values of its choosing fields, the fields whose values choose which variant a data record is — is written as the union of its members: in JSON Schema a definition holding `oneOf` the members, in TypeScript a union type, in Python `<name> = Union[...]`. Its members are each variant, referred to by the name of its type, and, where some combination of the choosing fields' values has no variant, a member for those combinations, named by the data record's name followed by `Other`: a type and a definition of their own, the type tagged with the data record's sid.\n\nA variant holds each choosing field, required and fixed to the value it answers to, and its own fields inside the data record's field of type variant, beside the fields that field holds, or, where the data record has no such field, beside the data record's fields; the variant's node decides whether a property nobody declared is refused there and around it.\n\nThe member for the other combinations holds the data record's fields, its choosing fields required where their node says so. Its definition refuses every combination of values a variant answers to; its type gives a choosing field the values no variant answers to where one field chooses, and all its values where several do; the data record's node decides whether a property nobody declared is refused.\n\nA field of type variant is required where its object holds a field and is not declared otherwise, whether or not variants refine its data record.",
+          "rationale": "A union whose members the choosing fields tell apart is how JSON Schema, TypeScript and Python each state that a data record's fields depend on its values, and with the choosing fields required in every variant at most one member matches. A value that brings no fields of its own has no variant, as the rule on variants says (§s-z3dnru6qqdf9m6j), so the data record itself answers for it, under a name its own name gives and with its own tag.\n\nEach member follows its own node on undeclared properties, so that no node's setting overrides another's. A runtime check can refuse every combination of values a variant claims; a type can name only the values each field holds, which is exact where one field chooses.\n\nAn object with no field in it holds nothing, so the field for it is not declared.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-z3dnru6qqdf9m6j"
+            },
+            {
+              "type": "cites",
+              "from": "s-suv42g8r3ra2h6b"
+            }
+          ],
+          "meta": {
+            "tests": [
+              "skills/tools/test/unit/types.test.ts::s-nk8td3ez58gahc4 follows each node on a property nobody declared, and leaves out a field of type variant whose object would hold nothing",
+              "skills/tools/test/unit/types.test.ts::s-nk8td3ez58gahc4 gives the other member every value of each choosing field where several choose, and refuses only the combinations a variant answers to",
+              "skills/tools/test/unit/types.test.ts::s-nk8td3ez58gahc4 lets exactly one member hold each payment, in every language",
+              "skills/tools/test/unit/types.test.ts::s-nk8td3ez58gahc4 sets a variant's own fields beside the data record's where it has no field of type variant, and leaves out the member nobody needs",
+              "skills/tools/test/unit/types.test.ts::s-nk8td3ez58gahc4 writes a data record its variants refine as the union of each variant and a member for the values no variant answers to"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/15",
+          "sid": "s-4npdup7mjkva69y",
+          "kind": "rule",
+          "title": "The type each neutral type of a field gives",
+          "status": "checked",
+          "text": "Each neutral type a field may have gives, in a file of runtime checks and in a file of types, the values of a field of type one of being those of its own list and those the lists of domains declare for it, in the order the specification reads:\n\n| Field's type | JSON Schema | TypeScript | Python |\n|---|---|---|---|\n| text | `{\"type\": \"string\"}` | `string` | `str` |\n| email address | `{\"type\": \"string\", \"format\": \"email\"}` | `string` | `str` |\n| whole number | `{\"type\": \"integer\"}`, with its bounds | `number` | `int` |\n| number | `{\"type\": \"number\"}`, with its bounds | `number` | `float` |\n| yes/no | `{\"type\": \"boolean\"}` | `boolean` | `bool` |\n| instant | `{\"type\": \"string\", \"format\": \"date-time\"}` | `string` | `str` |\n| date | `{\"type\": \"string\", \"format\": \"date\"}` | `string` | `str` |\n| duration | `{\"type\": \"string\", \"format\": \"duration\"}` | `string` | `str` |\n| any value | `{}` | `unknown` | `Any` |\n| one of | `{\"enum\": [<its values>]}` | the union of its values as literals | `Literal[<its values>]` |\n| list of | `{\"type\": \"array\", \"items\": <its members' type>}`, with its bounds on how many members it holds | `<its members' type>[]` | `list[<its members' type>]` |\n| map of | `{\"type\": \"object\", \"additionalProperties\": <its values' type>}` | `Record<string, <its values' type>>` | `dict[str, <its values' type>]` |\n| record | `{\"$ref\": \"#/$defs/<its type's name>\"}` | its type's name | its type's name, as a string |\n| identifier of | what the field identifying that data record gives | what that field gives | what that field gives |\n| variant | an object holding its fields | an object holding its fields | its own type |",
+          "rationale": "JSON Schema is the standard every language has a validator for, and the bounds on a number's value and on how many members a field of type list of holds are already named in the nodes as JSON Schema names them. Each language's own type for a value is the one its code reads without a conversion: an instant, a date and a duration travel as text, each in the form of ISO 8601 its `format` names. A bound is carried by the runtime checks alone, which run alike in every language; a type in Python can state none. An identifier has the type of the field that identifies the data record it names, so that a value moving from that field to a field referring to it keeps its type and passes the same check.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-e877bnfa559tvk9"
+            }
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-31",
+                "problem": "Nothing said what type an identifier of a data record has: text, as JSON:API requires of every identifier, or whatever the identified data record makes it from.",
+                "ruling": "The owner: an identifier has the type of the field that identifies the data record it names, which that data record's node names, so that the type comes from the specification and the link from the identifier to that field can be checked.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-01",
+                "problem": "A field holding a day of the calendar had no neutral type but text, or an instant, which adds a time of day and an offset the day does not have; as text, two spellings of one day passed as two days, and a check of the spelling would have been written beside the data record. And the table gave no place to a bound on how many members a field of type list of holds.",
+                "ruling": "The owner: a neutral type date is added, a day of the calendar with no time of day and no time zone, checked by the `date` format of JSON Schema; a field of type list of takes bounds on how many members it holds, named as JSON Schema names them.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/types.test.ts::s-4npdup7mjkva69y bounds how many members a list holds in the runtime checks alone",
+              "skills/tools/test/unit/types.test.ts::s-4npdup7mjkva69y gives a field of type one of the values the lists of domains declare for it, in the order the specification reads",
+              "skills/tools/test/unit/types.test.ts::s-4npdup7mjkva69y gives an identifier the type of the field identifying the data record it names",
+              "skills/tools/test/unit/types.test.ts::s-4npdup7mjkva69y gives each neutral type the type its table names, in each language"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
