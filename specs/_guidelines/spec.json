@@ -879,6 +879,10 @@
                   "from": "s-jau82aq9juv9zzh"
                 },
                 {
+                  "type": "cites",
+                  "from": "s-nyh9yk22ba6g77q"
+                },
+                {
                   "type": "implements",
                   "from": "s-f5rz6b7dhxejjts"
                 },
@@ -2057,11 +2061,15 @@
               "kind": "rule",
               "title": "The reviewer sees only the change and the nodes it names",
               "status": "checked",
-              "text": "The independent reviewer of a commit is given the commit's change, less the files generated from the specification, and the text of the nodes its message and tags name, a data record with its fields — and nothing of the session that wrote the code. It refuses the commit where the code does something no named node states or leaves out what one requires, and names the node and the line of each finding. A review that cannot be held — no reviewer to run, a run that does not end, an answer that cannot be read — refuses the commit and says why.",
+              "text": "The independent reviewer of a commit is given the commit's change, less the files generated from the specification, and the text of the nodes its message and tags name, a data record with its fields — and nothing of the session that wrote the code. Each file left out is named to it as holding the types and runtime checks generated from the data records, which the check of the generated copies compares with what the nodes produce. It refuses the commit where the code does something no named node states or leaves out what one requires, what a data record requires counted as carried out by the types and runtime checks generated from it (§s-e877bnfa559tvk9), and names the node and the line of each finding. A review that cannot be held — no reviewer to run, a run that does not end, an answer that cannot be read — refuses the commit and says why.",
               "refs": [
                 {
                   "type": "refines",
                   "to": "s-jau82aq9juv9zzh"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-e877bnfa559tvk9"
                 },
                 {
                   "type": "cites",
@@ -2072,7 +2080,7 @@
                   "from": "s-xr5xxa9cxf2mq5u"
                 }
               ],
-              "rationale": "Given nothing of the session that wrote the code, the reviewer reads the code against the nodes rather than against its author's intent, and a refusal naming the node and the line can be checked by anyone. The generated files are left out because the binding check already compares them with what the nodes produce. A review that passes whenever it could not be held is a review nobody can rely on.",
+              "rationale": "Given nothing of the session that wrote the code, the reviewer reads the code against the nodes rather than against its author's intent, and a refusal naming the node and the line can be checked by anyone. The generated files are left out because the check of the generated copies already compares them with what the nodes produce, so what a data record requires is decided there rather than judged. A reviewer judges what a commit leaves out only from what it is shown, so a file withheld from it, or one whose content it is not told is held elsewhere, reads to it as missing. A review that passes whenever it could not be held is a review nobody can rely on.",
               "meta": {
                 "decisions": [
                   {
@@ -2086,12 +2094,19 @@
                     "problem": "The reviewer was one agent's command line, so the method read as one vendor's tool, and a reader without that agent could not run it.",
                     "ruling": "The owner: the base states the reviewer's contract; who carries the review out is a runner described in the appendix of the tools, and a review that cannot be held refuses the commit.",
                     "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-01",
+                    "problem": "The types and runtime checks generated from a project's data records are its code, so a commit adding them is reviewed, but they were left out of the change the reviewer was given without its being told so: given a message naming the data records and a change holding none of their types, the reviewer refused the commit as leaving them out.",
+                    "ruling": "The owner: each file left out is named to the reviewer as holding the types and runtime checks generated from the data records, which the check of the generated copies compares with what the nodes produce, and what a data record requires counts as carried out by them.",
+                    "type": "textual"
                   }
                 ],
                 "tests": [
                   "skills/tools/test/unit/gates.test.ts::s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes its message and tags name, and nothing else",
                   "skills/tools/test/unit/gates.test.ts::s-nyh9yk22ba6g77q gives the reviewer the whole change of the commit, its specification, documents and settings included",
                   "skills/tools/test/unit/gates.test.ts::s-nyh9yk22ba6g77q leaves the files generated from the specification out of the change the reviewer is given",
+                  "skills/tools/test/unit/gates.test.ts::s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a data record requires as carried out by the types and runtime checks generated from it",
                   "skills/tools/test/unit/gates.test.ts::s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding",
                   "skills/tools/test/unit/gates.test.ts::s-nyh9yk22ba6g77q refuses a review that cannot be held, and says why"
                 ]

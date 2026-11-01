@@ -19,6 +19,8 @@ export const SYSTEM_PROMPT = `You are the independent reviewer of one commit. Yo
 
 Refuse the commit where the code does something no named node states, or leaves out something a named node requires. Pass it otherwise. Judge only what the change adds or changes.
 
+The files generated from the specification are left out of the change, and the input names them: they hold the types and runtime checks generated from the data records, which another check compares with what the nodes produce. Count what a data record requires as carried out by the types and runtime checks generated from it, and never refuse a commit because those files are not in the change.
+
 Answer with one JSON object and nothing around it:
 {"verdict": "pass" | "refuse", "findings": [{"rule": "<the sid of the node>", "file": "<path>", "line": <line in the new file>, "problem": "<what the code does or leaves out>"}]}
 A refusal names at least one finding; a pass names none.`;
@@ -43,10 +45,17 @@ export async function reviewInput(root: string, text: string): Promise<string> {
     if (node.kind === "record") parts.push("", "Fields:", JSON.stringify({ fields: node.fields, unknown: node.unknown }, null, 2));
     return [parts.join("\n")];
   });
-  // The whole change, less the files generated from the specification: the binding check compares them with what the nodes produce.
-  const generated = typeFiles(spec).paths.map((p) => `:(exclude)${p}`);
+  // The whole change, less the files generated from the specification: the binding check compares them with what the nodes produce,
+  // and each is named to the reviewer as such, so that their absence does not read to it as something the commit leaves out.
+  const paths = typeFiles(spec).paths;
+  const generated = paths.map((p) => `:(exclude)${p}`);
   const diff = changes(root).length ? git(root, "diff", base(root), "--no-color", "--no-ext-diff", "--", ".", ...generated).out : "";
-  return [`# The commit's message\n\n${messageText(text).trim()}`, `# The nodes it names\n\n${nodes.join("\n\n") || "(none)"}`, `# The change\n\n\`\`\`diff\n${diff}\`\`\``].join("\n\n") + "\n";
+  const sections = [`# The commit's message\n\n${messageText(text).trim()}`, `# The nodes it names\n\n${nodes.join("\n\n") || "(none)"}`, `# The change\n\n\`\`\`diff\n${diff}\`\`\``];
+  if (paths.length) {
+    const named = paths.map((p) => `- ${p}`).join("\n");
+    sections.push(`# The files left out of the change\n\nThese files hold the types and runtime checks generated from the data records, and another check compares them with what the nodes produce; they are left out of the change whether the commit changes them or not:\n\n${named}`);
+  }
+  return sections.join("\n\n") + "\n";
 }
 
 export function claudeArgs(settings: ReviewSettings, promptFile: string): string[] {

@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { guard } from "../../src/guard.ts";
 import { message } from "../../src/message.ts";
-import { claudeArgs, review, reviewInput, type Runner } from "../../src/review.ts";
+import { claudeArgs, review, reviewInput, SYSTEM_PROMPT, type Runner } from "../../src/review.ts";
 import { loadConfig } from "../../src/config.ts";
 import { writeTypes } from "../../src/types.ts";
 import { NONE, OWNER, sid } from "../fixture.ts";
@@ -127,8 +127,25 @@ test("s-nyh9yk22ba6g77q leaves the files generated from the specification out of
   put(root, "src/app/use.ts", `/** @spec ${sid("customer")} */\nexport const usedReference = "r";\n`);
   git(root, "add", "-A");
   const input = await reviewInput(root, `Ledger (${sid("customer")})\n`);
-  assert.ok(input.includes("usedReference"), input);
-  assert.ok(!/src\/types\.ts|schemas\/checks\.json|reference: string/.test(input), input);
+  const [, change] = input.split(/^# The change$|^# The files left out of the change$/m);
+  assert.ok(change!.includes("usedReference"), input);
+  assert.ok(!/src\/types\.ts|schemas\/checks\.json|reference: string/.test(change!), input);
+});
+
+test("s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a data record requires as carried out by the types and runtime checks generated from it", async () => {
+  const root = typedProject("customer", ["src/**"]);
+  const path = join(root, "specs", "contracts", "c.json");
+  writeFileSync(path, readFileSync(path, "utf8").replace('"name": "number"', '"name": "reference"'));
+  writeTypes(root);
+  git(root, "add", "-A");
+  const input = await reviewInput(root, `Ledger (${sid("customer")})\n`);
+  const [, left] = input.split(/^# The files left out of the change$/m);
+  assert.ok(left, input);
+  assert.match(left!, /src\/types\.ts/);
+  assert.match(left!, /schemas\/checks\.json/);
+  assert.match(left!, /types and runtime checks generated from the data records/);
+  assert.match(left!, /compares them with what the nodes produce/);
+  assert.match(SYSTEM_PROMPT, /what a data record requires .*carried out by the types and runtime checks generated from it/i);
 });
 
 test("s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding", async () => {
