@@ -38,6 +38,16 @@ export function init(root: string): InitReport {
   };
   for (const hook of ["pre-commit", "commit-msg", "pre-push"]) write(`.githooks/${hook}`, HOOK, true);
 
+  // A hook's mode reaches the clones only through git's index, which on Windows takes no mode from the
+  // file: each hook holding what init writes is staged executable where the index does not hold it so.
+  for (const hook of ["pre-commit", "commit-msg", "pre-push"]) {
+    const path = `.githooks/${hook}`;
+    if (readFileSync(join(root, path), "utf8") !== HOOK) continue;
+    if (git(root, "ls-files", "-s", "--", path).out.startsWith("100755 ")) continue;
+    if (git(root, "add", "--chmod=+x", "--", path).ok) report.notes.push(`staged executable: ${path}`);
+    else report.notes.push(`${path} is not staged executable: git add --chmod=+x ${path} once git can stage it`);
+  }
+
   // The marketplace and the plugin are added beside every other key; a declaration of them that says otherwise is left as it is.
   const settingsPath = join(root, ".claude", "settings.json");
   let settings: Record<string, unknown> = {};

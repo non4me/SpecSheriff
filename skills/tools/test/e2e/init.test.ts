@@ -41,12 +41,44 @@ test("s-f5rz6b7dhxejjts sheriff init writes the git hooks and turns them on, dec
   assert.equal(validate.status, 0, validate.stdout);
 });
 
+const modes = (root: string) => git(root, "ls-files", "-s", "--", ".githooks").stdout.trim().split("\n").map((l) => `${l.split(/\s+/)[0]} ${l.split("\t")[1]}`);
+
+test("s-f5rz6b7dhxejjts sheriff init stages each hook it holds with the executable mode, naming each, where files keep no such bit, and stages nothing else", () => {
+  const root = fresh();
+  git(root, "config", "core.fileMode", "false");
+  const run = sheriff(root, "init");
+  assert.equal(run.status, 0, run.stderr);
+  assert.deepEqual(modes(root), ["100755 .githooks/commit-msg", "100755 .githooks/pre-commit", "100755 .githooks/pre-push"]);
+  assert.deepEqual(git(root, "diff", "--cached", "--name-only").stdout.trim().split("\n"), [".githooks/commit-msg", ".githooks/pre-commit", ".githooks/pre-push"]);
+  for (const hook of ["pre-commit", "commit-msg", "pre-push"]) assert.match(run.stdout, new RegExp(`staged executable: \\.githooks/${hook}`));
+});
+
+test("s-f5rz6b7dhxejjts sheriff init stages again with the executable mode a hook git's index holds without it", () => {
+  const root = fresh();
+  git(root, "config", "core.fileMode", "false");
+  sheriff(root, "init");
+  git(root, "update-index", "--chmod=-x", ".githooks/pre-push");
+  const run = sheriff(root, "init");
+  assert.match(run.stdout, /staged executable: \.githooks\/pre-push/);
+  assert.doesNotMatch(run.stdout, /staged executable: \.githooks\/pre-commit/);
+  assert.ok(modes(root).includes("100755 .githooks/pre-push"), modes(root).join("\n"));
+});
+
+test("s-f5rz6b7dhxejjts sheriff init, where it cannot stage a hook, names it and says how to stage it executable", () => {
+  const root = mkdtempSync(join(tmpdir(), "sheriff-init-plain-"));
+  const run = sheriff(root, "init");
+  assert.equal(run.status, 0, run.stderr);
+  for (const hook of ["pre-commit", "commit-msg", "pre-push"]) {
+    assert.match(run.stdout, new RegExp(`\\.githooks/${hook} is not staged executable: git add --chmod=\\+x \\.githooks/${hook}`));
+  }
+});
+
 test("s-jsqxdx47wkkj7gp run again, sheriff init changes nothing", () => {
   const root = fresh();
   sheriff(root, "init");
   const again = sheriff(root, "init");
   assert.equal(again.status, 0);
-  assert.doesNotMatch(again.stdout, /written/);
+  assert.doesNotMatch(again.stdout, /written|staged/);
 });
 
 test("s-f5rz6b7dhxejjts sheriff init replaces no file that differs from what it would write, and names it", () => {

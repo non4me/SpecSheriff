@@ -116,6 +116,27 @@ test("s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older t
   }
 });
 
+test("s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index", () => {
+  const root = gitRepo(true);
+  mkdirSync(join(root, ".githooks"));
+  for (const hook of ["pre-commit", "commit-msg"]) writeFileSync(join(root, ".githooks", hook), "#!/bin/sh\nexit 0\n");
+  git(root, "add", "--chmod=-x", ".githooks/pre-commit");
+  git(root, "add", "--chmod=+x", ".githooks/commit-msg");
+  const p = plugins();
+  const start = pluginHook("session-start.sh", p, root);
+  const index = () => git(root, "ls-files", "-s", "--", ".githooks").stdout;
+  assert.match(start.stdout, /\.githooks\/pre-commit/);
+  assert.match(start.stdout, /chmod \+x \.githooks\/pre-commit/);
+  assert.match(start.stdout, /git update-index --chmod=\+x \.githooks\/pre-commit/);
+  assert.match(index(), /^100644 \S+ 0\t\.githooks\/pre-commit$/m);
+  if (git(root, "config", "core.fileMode").stdout.trim() !== "false") {
+    // Where files keep the bit, a hook the index records executable is still named while its file lacks it.
+    assert.match(start.stdout, /\.githooks\/commit-msg/);
+  } else {
+    assert.doesNotMatch(start.stdout, /\.githooks\/commit-msg/);
+  }
+});
+
 test("s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory", () => {
   const root = gitRepo(true);
   const p = plugins();
