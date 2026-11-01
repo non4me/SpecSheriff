@@ -1,4 +1,5 @@
 {
+  "name": "SpecSheriff",
   "private": true,
   "workspaces": [
     "skills/tools"
