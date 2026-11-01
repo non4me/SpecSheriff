@@ -87,8 +87,17 @@ fault costs no version number:
    `release` under the latest pytest. A second release made in the stand-in alone, from a clone of
    its own, must then reach the project by itself, within ten minutes of an interactive session's
    first message, and the git hooks at the session after.
-4. All passing, the rehearsed commits are fetched here and pushed to GitHub as they are — `main` at
+4. A project is also set up on Windows, by the `sheriff init` of the release in the stand-in, as
+   `spec-init` runs it, and its setup committed there; cloned on the clean machine, with the plugin
+   installed, a session started and a commit of untagged code made, the commit must be refused —
+   git on Windows records no executable bit of its own, so only this shows that the hooks reach a
+   clone able to run.
+5. All passing, the rehearsed commits are fetched here and pushed to GitHub as they are — `main` at
    `v<version>^1`, `release` and the tag at `v<version>`. The project on the clean machine is
    switched to GitHub by the guide's lines, installs and makes one commit.
-5. A fault is fixed on `main`, the stand-in deleted, and the rehearsal run again with the same
+6. A fault is fixed on `main`, the stand-in deleted, and the rehearsal run again with the same
    number; a round after a fix runs again what the fix can reach.
+
+Every command run on the clean machine starts in a folder of its own, such as `cd ~`: a `wsl`
+command starts in the Windows folder it is run from, and `claude plugin` commands run from this
+repository rewrite its `.claude/settings.json` and `.claude/settings.local.json`.
