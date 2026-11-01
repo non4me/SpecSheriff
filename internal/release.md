@@ -73,17 +73,23 @@ fault costs no version number:
 
 1. A clone of `main` whose `origin` is a bare repository on disk stands in for GitHub, and
    `npm run release -- <version>` runs there unchanged.
-2. A clean machine — here WSL, with Node, Claude Code and uv in the user's home — opens an empty
-   project that declares the marketplace as a `git` source by the stand-in's `file://` URL at the
-   ref `release`, so that Claude Code clones the plugin into its cache as it would from GitHub,
-   where this repository loads it in place.
-3. There the plugin is installed, `spec-init` sets the project up, the agent and a person each make
-   a commit and a commit is refused, and the plugin for pytest is installed by pip from `release`.
-   A second release made in the stand-in alone must then reach the project by itself at the next
-   session start.
-4. All passing, the rehearsed commits are pushed to GitHub as they are — `main` at
-   `v<version>^1`, `release` and the tag at `v<version>` — and `main` is fetched back here. The
-   project on the clean machine is switched to the `github` source, installs and makes one commit;
-   git there takes the access to the private repository from Windows' credential manager.
+2. A clean machine — here WSL, with Node, Claude Code and uv in the user's home — serves the
+   stand-in over smart http, `git http-backend` behind a CGI server, since Claude Code takes no
+   `file://` marketplace and clones shallow, which plain http cannot serve. An empty project there
+   adds the marketplace by `claude plugin marketplace add "<url>#release" --scope local`, since a
+   marketplace a settings file declares applies only after an interactive session's trust dialog,
+   so that Claude Code clones the plugin into its cache as it would from GitHub, where this
+   repository loads it in place.
+3. There the plugin is installed, `spec-init` sets the project up in an interactive session, the
+   agent and a person each make a commit and a commit is refused, the agent takes a rule from the
+   owner's words to a commit through its test and code, the guide's recipe for CI passes a branch
+   and refuses one made around the hooks, and the plugin for pytest is installed by pip from
+   `release` under the latest pytest. A second release made in the stand-in alone, from a clone of
+   its own, must then reach the project by itself, within ten minutes of an interactive session's
+   first message, and the git hooks at the session after.
+4. All passing, the rehearsed commits are fetched here and pushed to GitHub as they are — `main` at
+   `v<version>^1`, `release` and the tag at `v<version>`. The project on the clean machine is
+   switched to GitHub by the guide's lines, installs and makes one commit; git there takes the
+   access to the private repository from Windows' credential manager.
 5. A fault is fixed on `main`, the stand-in deleted, and the rehearsal run again with the same
-   number.
+   number; a round after a fix runs again what the fix can reach.
