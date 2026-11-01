@@ -1,0 +1,9 @@
+#!/bin/sh
+# Written by sheriff init: runs this hook's script from the SpecSheriff tools that the plugin for
+# Claude Code keeps on this machine, so that the hook runs the release the plugin holds.
+hook="${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsheriff-specsheriff-marketplace/hooks/$(basename "$0")"
+if [ ! -f "$hook" ]; then
+  echo "sheriff: $hook is missing; a session of Claude Code started on this machine puts it there" >&2
+  exit 1
+fi
+exec sh "$hook" "$@"
