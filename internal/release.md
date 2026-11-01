@@ -55,7 +55,9 @@ this working tree.
    checked rule not implemented (s-6fw72j65jkqrfpf): a release carries out every rule it states;
 2. writes the version into `skills/tools/package.json` and the lockfile,
    `skills/claude-code/.claude-plugin/plugin.json` and `skills/pytest-specsheriff/pyproject.toml`,
-   and commits it on `main` as `Release: <version>`, through the git hooks like any commit;
+   and the tag into the guide's recipe for CI, `skills/claude-code/README.md`, so that the recipe
+   clones the tools of the release a project's plugin runs; and commits it on `main` as
+   `Release: <version>`, through the git hooks like any commit;
 3. builds the tools;
 4. makes the release commit: the tree of that commit with `skills/claude-code/tools/` added, its
    parents that commit and the last commit of `release`, where there is one;

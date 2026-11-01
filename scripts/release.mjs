@@ -24,11 +24,17 @@ if (checked.status !== 0) throw new Error(`sheriff binding refuses:\n${checked.s
 const unimplemented = checked.stdout.split("\n").filter((l) => l.includes("reported: not implemented"));
 if (unimplemented.length) throw new Error(`a release carries out every rule it states, and these are not implemented:\n${unimplemented.join("\n")}`);
 
-// The version, where the tools, the plugin and the plugin for pytest each name it.
+// The version, where the tools, the plugin and the plugin for pytest each name it, and the tag the guide's
+// recipe for CI clones the tools at.
 npm(`version ${version} -w specsheriff-tools --no-git-tag-version`);
-for (const [path, pattern] of [["skills/claude-code/.claude-plugin/plugin.json", /"version": "[^"]*"/], ["skills/pytest-specsheriff/pyproject.toml", /^version = "[^"]*"/m]]) {
+for (const [path, pattern, written] of [
+  ["skills/claude-code/.claude-plugin/plugin.json", /"version": "[^"]*"/, `"version": "${version}"`],
+  ["skills/pytest-specsheriff/pyproject.toml", /^version = "[^"]*"/m, `version = "${version}"`],
+  ["skills/claude-code/README.md", /--branch v\d+\.\d+\.\d+ /, `--branch v${version} `],
+]) {
   const text = readFileSync(path, "utf8");
-  writeFileSync(path, text.replace(pattern, (found) => found.replace(/"[^"]*"$/, `"${version}"`)));
+  if (!pattern.test(text)) throw new Error(`${path} names no version where the release writes it`);
+  writeFileSync(path, text.replace(pattern, () => written));
 }
 git("add", "-A");
 git("commit", "-qm", `Release: ${version}`);
