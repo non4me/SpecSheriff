@@ -30,8 +30,10 @@ text of those rules.
   carrying the skills, the SpecSheriff guidelines and the SpecSheriff tools (the command `sheriff`,
   built from [`skills/tools`](skills/tools)), and the tools' plugin for pytest in
   [`skills/pytest-specsheriff`](skills/pytest-specsheriff). Codex CLI comes next.
-- **The worked example** — a saloon in a frontier town, set up the way any project is. It comes after
-  the plugin.
+- **The worked example** — [the saloon](https://github.com/non4me/specsheriff-saloon) of a frontier
+  town, in a repository of its own, set up the way any project is: its history shows every rule
+  confirmed by its owner, every test written before its code, and a recorded run in which the
+  reviewer refuses a commit that every test and every other check let through.
 
 ## Using it
 
@@ -46,8 +48,8 @@ what each refusal of the checks means.
 
 ## Status
 
-The first release, 0.1.0, carries the plugin for Claude Code: the guidelines are confirmed by their
-owner, and the tools hold this repository to them. The worked example is being built.
+The release 0.2.0 carries the plugin for Claude Code: the guidelines are confirmed by their owner,
+and the tools hold this repository to them. The worked example, the saloon, is built and published.
 
 ## License
 

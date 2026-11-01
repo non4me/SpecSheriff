@@ -99,5 +99,5 @@ How to use them, and which to take when, is the practitioner's guide, kept with 
 
 - The skills and the tools: [`skills/`](../skills/) — the plugin for Claude Code carrying the
   skills, the SpecSheriff guidelines and the SpecSheriff tools, and the tools' plugin for pytest.
-- The worked example, a saloon in a frontier town: to come.
+- The worked example, a saloon in a frontier town: [its repository](https://github.com/non4me/specsheriff-saloon).
 - The decisions taken so far, and why: [the design log](design-log.md).

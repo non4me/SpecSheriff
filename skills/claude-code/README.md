@@ -3,7 +3,8 @@
 The plugin `specsheriff` carries the method into a project: the skills an agent takes up, the
 agent's hooks that check every edit, the SpecSheriff guidelines, and the SpecSheriff tools with
 their command `sheriff`. The git hooks it sets up check every commit, whether the agent or a person
-makes it. What the method is and why: [the method on one page](../../docs/README.md).
+makes it. What the method is and why: [the method on one page](../../docs/README.md). A project set
+up and built with it from the start: [the saloon](https://github.com/non4me/specsheriff-saloon).
 
 ## What it needs
 

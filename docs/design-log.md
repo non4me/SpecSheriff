@@ -6,6 +6,16 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-01 — The worked example lives in a repository of its own
+
+The owner's ruling: the saloon is a repository of its own, set up by spec-init as any project is,
+and this repository links to it as the example. Kept in a folder here, its commits would be held by
+this repository's hooks rather than its own: their messages could not name its nodes, the reviewer
+would not read its code, and the tools would need a rule to leave a nested project alone; a reader
+opening the folder would meet this repository's checks rather than the saloon's. In a repository of
+its own every commit passes its own checks and its own reviewer, so its history shows the method at
+work, and a reader clones it to try breaking a rule.
+
 ### 2026-11-01 — The plugin goes to Anthropic's directory last, with nothing left unfinished
 
 The owner's ruling: the plugin is submitted to Anthropic's plugin directory only once the
@@ -52,7 +62,8 @@ method is shown on itself. The worked example is set up by the skills the way an
 is why the packaging comes before it. The plugin is made for Claude Code now and for Codex CLI next;
 Gemini CLI is being studied. Licences stay by directory: the theory's prose under CC BY 4.0, the
 guidelines, the skills, the tools and the example under Apache 2.0. The plugin goes to Anthropic's
-plugin directory last, as the entry of 2026-11-01 says.
+plugin directory last, as the entry of 2026-11-01 says. (Changed on 2026-11-01: the worked example
+lives in a repository of its own, which this one links to.)
 
 ### 2026-10-29 — One channel: the plugin carries everything its work needs
 
@@ -106,7 +117,10 @@ and the contracts between them naturally, is judged by nobody against a real one
 saloon is the genre's own scene. The bank was set aside because one subject showed the domains, their
 levels and the contracts poorly, and readers from finance judge a bank by a real one; the agent only
 dropping the check, because an ordinary run of the tests catches that, and the scene would show
-nothing the tests do not.
+nothing the tests do not. (Changed on 2026-11-01: a room is let for 24 hours from the instant its
+booking is made, the owner's ruling, kept on the term booking of the saloon's specification; and in
+the recorded run the agent drops the debt from the comparison with the limit and rewrites the tests
+that broke.)
 
 ### 2026-10-29 — The mark is the sheriff's coin and its star
 
@@ -431,8 +445,9 @@ example leaves the road to a product open.
 4. The packaging: the repository laid out as the three parts, with the mark in `brand/`; the theory;
    the rules of the appendix of the tools for the one channel, then the plugin for Claude Code and its
    marketplace; the practitioner's guide, and a test on a clean machine.
-5. The worked example: the frontier town's saloon, its specification, code and tests, and the
-   recorded run in which a commit is refused.
+5. ~~The worked example~~ — done 2026-11-01: the frontier town's saloon in a repository of its own,
+   its specification confirmed by the owner node by node, its code and tests, and the recorded run
+   in which the reviewer refuses a commit every test and every other check let through.
 6. The plugin for Codex CLI, with its runner of the reviewer.
 7. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
    refining it.
