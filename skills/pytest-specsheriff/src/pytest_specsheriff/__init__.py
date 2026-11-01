@@ -25,4 +25,10 @@ def pytest_collection_modifyitems(items):
         if not isinstance(sid, str) or not SID.match(sid):
             raise pytest.UsageError(f"{item.nodeid}: the spec mark needs one sid, s- and fifteen characters")
         head, _, name = item.nodeid.rpartition("::")
-        item._nodeid = f"{head}::{sid} {name}"
+        renamed = f"{head}::{sid} {name}"
+        # pytest offers no public way to rename a node: up to 8 it keeps the id as a string, from 9 as
+        # a structured id its string is built from.
+        if hasattr(item, "_id"):
+            item._id = type(item._id).parse(renamed)
+        else:
+            item._nodeid = renamed
