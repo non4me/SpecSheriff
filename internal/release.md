@@ -89,7 +89,6 @@ fault costs no version number:
    first message, and the git hooks at the session after.
 4. All passing, the rehearsed commits are fetched here and pushed to GitHub as they are — `main` at
    `v<version>^1`, `release` and the tag at `v<version>`. The project on the clean machine is
-   switched to GitHub by the guide's lines, installs and makes one commit; git there takes the
-   access to the private repository from Windows' credential manager.
+   switched to GitHub by the guide's lines, installs and makes one commit.
 5. A fault is fixed on `main`, the stand-in deleted, and the rehearsal run again with the same
    number; a round after a fix runs again what the fix can reach.
