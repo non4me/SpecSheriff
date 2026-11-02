@@ -6,6 +6,22 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-02 — The pictures are a frontier ledger, in English first, each kept as a page
+
+The owner was shown three directions, each drawn whole: a blueprint, editorial paper and a frontier
+ledger. Having seen the blueprint finished, the owner chose the ledger as closer to the idea:
+parchment, ink and a stamp red, Rye for titles and Courier Prime for text, every step a ticket in a
+double border and every verdict a rubber stamp. The first set is in English only; its Russian is a
+step of its own, since Rye and Courier Prime have no Cyrillic and the faces that replace them belong
+to the style guide.
+
+Each picture is kept in `docs/images/html/` as a page of its own, its source, and rendered from it by
+a committed script into PNG at twice its size and SVG with the text as outlines, each format in a
+folder of its own, as the owner asked. The page is the source because its text stays live, which the
+translation and the site both need; the renders are never edited, as the exports of the mark are not.
+A card names the rule it shows broken by sid: an address in a picture would go stale at the first
+renumbering, which is the very decay the cards are about.
+
 ### 2026-11-01 — The worked example lives in a repository of its own
 
 The owner's ruling: the saloon is a repository of its own, set up by spec-init as any project is,
@@ -458,11 +474,16 @@ example leaves the road to a product open.
    effort each user confirms once, at their cost.
 7. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
    refining it.
-8. The four pictures and the cards.
-9. The materials for the site: kept in this repository on GitHub, from where the site takes them and
-   shows them on its pages; their structure is settled when the step begins.
-10. The first article, in English and in Russian.
-11. The article published, and the plugin submitted to Anthropic's plugin directory once the
+8. ~~The four pictures and the cards~~ — done 2026-11-02: the pictures of the first article and a
+   card for each rule of how a rule is written, drawn as a frontier ledger, in `docs/images/` as
+   pages rendered to PNG and SVG.
+9. The style guide: one style for the site and every picture, its tokens, its CSS and its
+   components taken from one place (the owner, 2026-11-02).
+10. The materials for the site: kept in this repository on GitHub, from where the site takes them and
+    shows them on its pages; their structure is settled when the step begins.
+11. The pictures in Russian, in the faces the style guide names for Cyrillic.
+12. The first article, in English and in Russian.
+13. The article published, and the plugin submitted to Anthropic's plugin directory once the
     repository, the plugin and the site are all finished and checked.
 
 ## Open questions

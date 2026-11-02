@@ -101,3 +101,4 @@ How to use them, and which to take when, is the practitioner's guide, kept with 
   skills, the SpecSheriff guidelines and the SpecSheriff tools, and the tools' plugin for pytest.
 - The worked example, a saloon in a frontier town: [its repository](https://github.com/non4me/specsheriff-saloon).
 - The decisions taken so far, and why: [the design log](design-log.md).
+- The pictures of the method and the cards on how requirements decay: [`images/`](images/).
