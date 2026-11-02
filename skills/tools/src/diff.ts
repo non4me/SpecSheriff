@@ -97,13 +97,14 @@ export async function namesIn(path: string, text: string): Promise<string[]> {
 }
 
 /** Every name the files read as code or tests spell in the working tree, one of them read as the text given in its place. */
-export async function spelledIn(root: string, read: (path: string) => boolean, instead?: { path: string; text: string }): Promise<Set<string>> {
+export async function spelledIn(root: string, read: (path: string) => boolean, instead: Map<string, string | null> = new Map()): Promise<Set<string>> {
   const spelled = new Set<string>();
-  for (const path of trackedFiles(root).filter(read)) {
-    const text = path === instead?.path ? instead.text : existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : null;
+  const tracked = trackedFiles(root);
+  for (const path of tracked.filter(read)) {
+    const text = instead.has(path) ? instead.get(path)! : existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : null;
     if (text !== null) for (const name of await namesIn(path, text)) spelled.add(name);
   }
-  if (instead && !trackedFiles(root).includes(instead.path)) for (const name of await namesIn(instead.path, instead.text)) spelled.add(name);
+  for (const [path, text] of instead) if (text !== null && read(path) && !tracked.includes(path)) for (const name of await namesIn(path, text)) spelled.add(name);
   return spelled;
 }
 

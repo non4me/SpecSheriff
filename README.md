@@ -26,10 +26,11 @@ text of those rules.
   [`specs/_guidelines/`](specs/_guidelines/): the base in `spec.json`, and in `tools.json` the
   appendix saying how the tools carry it out.
 - **The skills** — what a practitioner installs: the plugin for Claude Code in
-  [`skills/claude-code`](skills/claude-code), listed by the marketplace of this repository and
-  carrying the skills, the SpecSheriff guidelines and the SpecSheriff tools (the command `sheriff`,
-  built from [`skills/tools`](skills/tools)), and the tools' plugin for pytest in
-  [`skills/pytest-specsheriff`](skills/pytest-specsheriff). Codex CLI comes next.
+  [`skills/claude-code`](skills/claude-code) and the plugin for Codex CLI in
+  [`skills/codex`](skills/codex), listed by the marketplace of this repository, each installed and
+  updated by its own agent and carrying the skills, the SpecSheriff guidelines and the SpecSheriff
+  tools (the command `sheriff`, built from [`skills/tools`](skills/tools)); and the tools' plugin for
+  pytest in [`skills/pytest-specsheriff`](skills/pytest-specsheriff).
 - **The worked example** — [the saloon](https://github.com/non4me/specsheriff-saloon) of a frontier
   town, in a repository of its own, set up the way any project is: its history shows every rule
   confirmed by its owner, every test written before its code, and a recorded run in which the

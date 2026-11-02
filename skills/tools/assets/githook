@@ -1,9 +1,32 @@
 #!/bin/sh
-# Written by sheriff init: runs this hook's script from the SpecSheriff tools that the plugin for
-# Claude Code keeps on this machine, so that the hook runs the release the plugin holds.
-hook="${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsheriff-specsheriff-marketplace/hooks/$(basename "$0")"
-if [ ! -f "$hook" ]; then
-  echo "sheriff: $hook is missing; a session of Claude Code started on this machine puts it there" >&2
-  exit 1
+# Written by sheriff init: runs this hook's script from the SpecSheriff tools a plugin keeps on this
+# machine — the copy in the data directory of the plugin for Claude Code, or the tools of the plugin for
+# Codex CLI in Codex's cache — those of the higher release where both are there. Where neither is, the
+# commit or the push goes through and the git hooks are turned off in this clone, which says so.
+newer() {
+  a=$1 b=$2
+  while [ -n "$a$b" ]; do
+    x=${a%%.*} y=${b%%.*}
+    x=${x%%[!0-9]*} y=${y%%[!0-9]*}
+    [ "${x:-0}" -gt "${y:-0}" ] && return 0
+    [ "${x:-0}" -lt "${y:-0}" ] && return 1
+    case $a in *.*) a=${a#*.} ;; *) a= ;; esac
+    case $b in *.*) b=${b#*.} ;; *) b= ;; esac
+  done
+  return 1
+}
+codex=${CODEX_HOME:-$HOME/.codex}
+case $codex in *\\*) codex=$(printf '%s' "$codex" | tr '\\' /) ;; esac
+tools= version=
+for dir in "${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsheriff-specsheriff-marketplace" \
+  "$codex"/plugins/cache/specsheriff-marketplace/specsheriff/*/tools; do
+  [ -f "$dir/release" ] || continue
+  release=$(sed -n '1s/ .*//p' "$dir/release")
+  if [ -z "$tools" ] || newer "$release" "$version"; then tools=$dir version=$release; fi
+done
+if [ -z "$tools" ]; then
+  [ "$(git config --local core.hooksPath)" = .githooks ] && git config --local --unset core.hooksPath
+  echo "sheriff: no check ran: the SpecSheriff tools of no plugin are on this machine, so the git hooks are turned off in this clone; git config core.hooksPath .githooks turns them on again" >&2
+  exit 0
 fi
-exec sh "$hook" "$@"
+exec sh "$tools/hooks/$(basename "$0")" "$@"

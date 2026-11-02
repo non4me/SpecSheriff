@@ -14,18 +14,40 @@ function withConfig(text: string): string {
 
 test("s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live", () => {
   const config = loadConfig(withConfig('{ "code": ["src/**/*.ts"], "tests": ["test/**/*.test.ts"] }'));
-  assert.deepEqual(config, { code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesSpecSheriffGuidelines: false, testCommand: null, review: { runner: "claude", model: "fable", fallbackModel: "opus", minutes: 20 } });
+  assert.deepEqual(config, {
+    code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesSpecSheriffGuidelines: false, testCommand: null,
+    review: { runner: "claude", minutes: 20 },
+  });
 });
 
 test("s-477gtdrkw34dzxw reads the command that runs the tests of the system's code", () => {
   assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "testCommand": "npm test" }')).testCommand, "npm test");
 });
 
-test("s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus and twenty minutes unless set otherwise", () => {
-  const set = loadConfig(withConfig('{ "code": [], "tests": [], "review": { "model": "opus", "minutes": 5 } }')).review;
-  assert.deepEqual(set, { runner: "claude", model: "opus", fallbackModel: "opus", minutes: 5 });
+test("s-xr5xxa9cxf2mq5u reads the reviewer's runner and time limit from the project's settings, twenty minutes unless set, and no model or effort", () => {
+  const set = loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "codex", "minutes": 5 } }')).review;
+  assert.deepEqual(set, { runner: "codex", minutes: 5 });
   assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "other" } }')), /runner/);
   assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "review": { "colour": 1 } }')), /colour/);
+});
+
+test("s-zefk589ykh37b8u refuses a model or an effort in the project's settings, naming the key of the user's git configuration that holds it", () => {
+  for (const [review, key] of [
+    ['{ "model": "opus" }', "specsheriff.review.claudeModel"],
+    ['{ "fallbackModel": "sonnet" }', "specsheriff.review.claudeFallbackModel"],
+    ['{ "claude": { "model": "opus" } }', "specsheriff.review.claudeModel"],
+    ['{ "codex": { "model": "gpt-6" } }', "specsheriff.review.codexModel"],
+  ] as const) {
+    assert.throws(() => loadConfig(withConfig(`{ "code": [], "tests": [], "review": ${review} }`)), new RegExp(key.replaceAll(".", "\\.")));
+  }
+});
+
+test("s-xr5xxa9cxf2mq5u takes the runner of the plugin whose tools run unless the settings name one, and claude for tools naming no agent", () => {
+  const root = withConfig('{ "code": [], "tests": [] }');
+  assert.equal(loadConfig(root, "codex").review.runner, "codex");
+  assert.equal(loadConfig(root, "claude").review.runner, "claude");
+  assert.equal(loadConfig(root, null).review.runner, "claude");
+  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "claude" } }'), "codex").review.runner, "claude");
 });
 
 test("s-zefk589ykh37b8u reads whether the SpecSheriff guidelines are written in the repository", () => {

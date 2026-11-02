@@ -1,14 +1,17 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { delimiter, join } from "node:path";
 import { guard } from "../../src/guard.ts";
 import { message } from "../../src/message.ts";
-import { claudeArgs, review, reviewInput, SYSTEM_PROMPT, type Runner } from "../../src/review.ts";
+import { claudeArgs, codexArgs, codexRunner, review, reviewInput, runnerSettings, SYSTEM_PROMPT, VERDICT_SCHEMA, type Runner } from "../../src/review.ts";
+import { spawnSync } from "node:child_process";
+import { gitConfig } from "../repo.ts";
 import { loadConfig } from "../../src/config.ts";
 import { writeTypes } from "../../src/types.ts";
 import { NONE, OWNER, sid } from "../fixture.ts";
-import { codeProject, editSpec, git, nodeIn, OPEN, put, typedProject } from "../code-project.ts";
+import { codeProject, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, typedProject } from "../code-project.ts";
 
 const CHANGED_OPEN = OPEN.replace("return amount;", "return amount * 2;");
 const texts = (findings: Array<{ where: string; message: string }>) => findings.map((f) => `${f.where}: ${f.message}`);
@@ -95,7 +98,94 @@ test("s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside t
   assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: join(root, "notes.txt"), content: "x" } }), null);
 });
 
+const patch = (...lines: string[]) => ({ tool_name: "apply_patch", tool_input: { command: ["*** Begin Patch", ...lines, "*** End Patch"].join("\n") } });
+
+test("s-n76wt2bkqdmh78x judges each file a patch adds, updates, deletes or moves as an edit made with the file tools", async () => {
+  const root = codeProject();
+  const line = readFileSync(join(root, "specs", "contracts", "c.json"), "utf8").split("\n").find((l) => l.includes("What open requires."))!;
+  const reworded = await guard(root, patch("*** Update File: specs/contracts/c.json", "@@", `-${line}`, `+${line.replace("requires.", "requires, reworded.")}`));
+  assert.match(reworded ?? "", new RegExp(`${sid("open")}.*checked`));
+  const added = await guard(root, patch("*** Add File: src/draft.ts", `+/** @spec ${sid("draft")} */`, "+export const drafted = 1;"));
+  assert.match(added ?? "", new RegExp(`no test carries ${sid("draft")}`));
+  assert.match((await guard(root, patch("*** Delete File: specs/_confirmations.jsonl"))) ?? "", /confirmations.*sheriff confirm/);
+  const moved = await guard(root, patch("*** Update File: README.md", "*** Move to: specs/_confirmations.jsonl", "@@", `-See §${sid("open")}.`, "+forged"));
+  assert.match(moved ?? "", /confirmations.*sheriff confirm/);
+  assert.equal(await guard(root, patch("*** Update File: src/open.ts", "@@", " export function open(amount: number) {", "-  return amount;", "+  return amount * 2;")), null);
+  const declared = OPEN_TEST.trimEnd();
+  assert.equal(await guard(root, patch("*** Update File: test/open.test.ts", "*** Move to: test/opened.test.ts", "@@", `-${declared}`, `+${declared.replace("an account", "an account at once")}`)), null);
+});
+
+test("s-n76wt2bkqdmh78x refuses the whole patch where it refuses one of its files", async () => {
+  const root = codeProject();
+  const refused = await guard(root, patch("*** Add File: notes.txt", "+one", "*** Add File: src/draft.ts", `+/** @spec ${sid("draft")} */`, "+export const drafted = 1;"));
+  assert.match(refused ?? "", new RegExp(`no test carries ${sid("draft")}`));
+});
+
+test("s-n76wt2bkqdmh78x refuses a patch it cannot read or apply", async () => {
+  const root = codeProject();
+  assert.match((await guard(root, { tool_name: "apply_patch", tool_input: { command: "not a patch" } })) ?? "", /cannot read the patch/);
+  assert.match((await guard(root, patch("*** Frobnicate File: src/open.ts"))) ?? "", /cannot read the patch/);
+  assert.match((await guard(root, patch("*** Update File: src/open.ts", "@@", "-  return nothing;", "+  return amount;"))) ?? "", /cannot apply the patch to src\/open\.ts/);
+  assert.match((await guard(root, patch("*** Update File: src/missing.ts", "@@", "-a", "+b"))) ?? "", /cannot apply the patch to src\/missing\.ts/);
+  assert.match((await guard(root, patch("*** Add File: notes.txt", "one"))) ?? "", /cannot read the patch/);
+});
+
+test("s-n76wt2bkqdmh78x reads the paths of a patch from the directory the session works in", async () => {
+  const root = codeProject();
+  const input = { ...patch("*** Add File: draft.ts", `+/** @spec ${sid("draft")} */`, "+export const drafted = 1;"), cwd: join(root, "src") };
+  assert.match((await guard(root, input)) ?? "", new RegExp(`no test carries ${sid("draft")}`));
+});
+
 const answer = (verdict: string, findings: object[] = []): Runner => () => ({ status: "ok", out: JSON.stringify({ verdict, findings }) });
+
+/** Runs `body` with the user's global git configuration a file of its own holding `settings`, written as git writes them. */
+async function withUserConfig<T>(settings: Record<string, string>, body: (file: string) => T | Promise<T>): Promise<T> {
+  const file = gitConfig();
+  for (const [key, value] of Object.entries(settings)) spawnSync("git", ["config", "--file", file, `specsheriff.review.${key}`, value]);
+  const saved = process.env.GIT_CONFIG_GLOBAL;
+  process.env.GIT_CONFIG_GLOBAL = file;
+  try {
+    return await body(file);
+  } finally {
+    process.env.GIT_CONFIG_GLOBAL = saved;
+  }
+}
+
+test("s-xr5xxa9cxf2mq5u reads each runner's settings from the user's git configuration, an empty one confirmed, and takes the default of each it lacks", async () => {
+  const root = codeProject();
+  await withUserConfig({ claudeModel: "sonnet", codexModel: "" }, () => {
+    assert.deepEqual(runnerSettings(root, "claude"), {
+      values: { claudeModel: "sonnet", claudeFallbackModel: "sonnet", claudeEffort: "high" },
+      defaulted: ["claudeFallbackModel", "claudeEffort"],
+    });
+    assert.deepEqual(runnerSettings(root, "codex"), { values: { codexModel: "", codexEffort: "high" }, defaulted: ["codexEffort"] });
+  });
+  await withUserConfig({}, () => {
+    assert.deepEqual(runnerSettings(root, "claude"), {
+      values: { claudeModel: "opus", claudeFallbackModel: "sonnet", claudeEffort: "high" },
+      defaulted: ["claudeModel", "claudeFallbackModel", "claudeEffort"],
+    });
+  });
+});
+
+test("s-xr5xxa9cxf2mq5u runs the reviewer at the settings read, and with every review held at a default names each setting it took and how the user confirms it", async () => {
+  const root = codeProject();
+  put(root, "src/open.ts", CHANGED_OPEN);
+  const msg = `Accounts (${sid("open")})\n`;
+  let given: unknown;
+  const notices: string[] = [];
+  const run: Runner = (_input, settings) => ((given = settings), { status: "ok", out: JSON.stringify({ verdict: "pass", findings: [] }) });
+  await withUserConfig({ claudeModel: "sonnet" }, () => review(root, msg, { run, notice: (m) => notices.push(m) }));
+  assert.deepEqual(given, { minutes: 20, values: { claudeModel: "sonnet", claudeFallbackModel: "sonnet", claudeEffort: "high" } });
+  assert.equal(notices.length, 1);
+  for (const key of ["claudeFallbackModel", "claudeEffort"]) assert.match(notices[0]!, new RegExp(`specsheriff\\.review\\.${key}`));
+  assert.doesNotMatch(notices[0]!, /specsheriff\.review\.claudeModel /);
+  assert.match(notices[0]!, /git config --global specsheriff\.review\.claudeEffort high/);
+  assert.match(notices[0]!, /\/config/);
+  notices.length = 0;
+  await withUserConfig({ claudeModel: "opus", claudeFallbackModel: "sonnet", claudeEffort: "high" }, () => review(root, msg, { run, notice: (m) => notices.push(m) }));
+  assert.deepEqual(notices, []);
+});
 
 test("s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes its message and tags name, and nothing else", async () => {
   const root = codeProject();
@@ -173,13 +263,78 @@ test("s-jau82aq9juv9zzh asks no review of a commit that changes no code", async 
   assert.equal(asked, false);
 });
 
-test("s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, the model and its fallback asked for", () => {
-  const args = claudeArgs(loadConfig(codeProject()).review, "/prompt.md");
+test("s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, at the model, the effort and the fallback model given", () => {
+  const args = claudeArgs({ claudeModel: "opus", claudeFallbackModel: "sonnet", claudeEffort: "high" }, "/prompt.md");
   for (const flag of ["-p", "--strict-mcp-config", "--no-session-persistence", "--disable-slash-commands"]) assert.ok(args.includes(flag), flag);
   const value = (flag: string) => args[args.indexOf(flag) + 1];
-  assert.equal(value("--model"), "fable");
-  assert.equal(value("--fallback-model"), "opus");
+  assert.equal(value("--model"), "opus");
+  assert.equal(value("--fallback-model"), "sonnet");
+  assert.equal(value("--effort"), "high");
   assert.equal(value("--tools"), "");
   assert.equal(value("--setting-sources"), "");
   assert.equal(value("--system-prompt-file"), "/prompt.md");
+});
+
+test("s-xr5xxa9cxf2mq5u starts the Codex CLI in codex exec, read-only and unkept, with no skill and every tool a setting reaches turned off, its answer held to the verdict's schema", () => {
+  const args = codexArgs({ codexModel: "", codexEffort: "high" }, { prompt: "/prompt.md", schema: "/schema.json", out: "/out.json" });
+  const value = (flag: string) => args[args.indexOf(flag) + 1];
+  const values = (flag: string) => args.flatMap((a, i) => (a === flag ? [args[i + 1]] : []));
+  assert.equal(args[0], "exec");
+  for (const flag of ["--ephemeral", "--skip-git-repo-check"]) assert.ok(args.includes(flag), flag);
+  assert.equal(value("-s"), "read-only");
+  assert.equal(value("--output-schema"), "/schema.json");
+  assert.equal(value("-o"), "/out.json");
+  for (const setting of ["model_reasoning_effort='high'", "model_instructions_file='/prompt.md'", "skills.include_instructions=false", "skills.bundled.enabled=false", "web_search='disabled'"]) {
+    assert.ok(values("-c").includes(setting), setting);
+  }
+  for (const feature of ["shell_tool", "unified_exec", "apps", "browser_use", "computer_use", "hooks", "image_generation", "multi_agent", "plugins", "view_image"]) {
+    assert.ok(values("--disable").includes(feature), feature);
+  }
+  assert.ok(!args.includes("-m"), "an empty model asks for the one Codex chooses for the account");
+  assert.equal(args.at(-1), "-", "the input read from standard input");
+  const chosen = codexArgs({ codexModel: "gpt-6", codexEffort: "high" }, { prompt: "/p", schema: "/s", out: "/o" });
+  assert.equal(chosen[chosen.indexOf("-m") + 1], "gpt-6");
+  const schema = JSON.parse(VERDICT_SCHEMA);
+  assert.deepEqual(schema.properties.verdict.enum, ["pass", "refuse"]);
+  assert.deepEqual(schema.properties.findings.items.required, ["rule", "file", "line", "problem"]);
+});
+
+test("s-xr5xxa9cxf2mq5u runs the Codex CLI in an empty directory with a Codex home of its own holding a copy of the user's sign-in and nothing else, deleted after the run", () => {
+  const user = mkdtempSync(join(tmpdir(), "sheriff-user-codex-"));
+  const held: Array<[string, string]> = [["auth.json", '{"token":"t"}'], ["config.toml", 'model = "x"\n'], ["AGENTS.md", "Be someone.\n"], ["hooks.json", "{}"]];
+  for (const [name, text] of held) writeFileSync(join(user, name), text);
+  const bin = mkdtempSync(join(tmpdir(), "sheriff-fake-codex-"));
+  const log = join(bin, "log.json");
+  // A stand-in for the Codex CLI: it records what it was given and answers with a verdict where -o names.
+  writeFileSync(join(bin, "fake.mjs"), [
+    'import { readdirSync, readFileSync, writeFileSync } from "node:fs";',
+    "const args = process.argv.slice(2);",
+    "const home = process.env.CODEX_HOME;",
+    "const prompt = args.find((a) => a.startsWith(\"model_instructions_file='\")).slice(25, -1);",
+    "const schema = args[args.indexOf(\"--output-schema\") + 1];",
+    `writeFileSync(${JSON.stringify(log)}, JSON.stringify({ home, files: readdirSync(home), auth: readFileSync(home + "/auth.json", "utf8"), cwd: readdirSync(process.cwd()), input: readFileSync(0, "utf8"), prompt: readFileSync(prompt, "utf8"), schema: readFileSync(schema, "utf8") }));`,
+    'writeFileSync(args[args.indexOf("-o") + 1], JSON.stringify({ verdict: "pass", findings: [] }));',
+  ].join("\n"));
+  writeFileSync(join(bin, "codex"), '#!/bin/sh\nexec node "$(dirname "$0")/fake.mjs" "$@"\n', { mode: 0o755 });
+  writeFileSync(join(bin, "codex.cmd"), '@node "%~dp0fake.mjs" %*\r\n');
+  const saved = { PATH: process.env.PATH, CODEX_HOME: process.env.CODEX_HOME };
+  process.env.PATH = [bin, process.env.PATH].join(delimiter);
+  process.env.CODEX_HOME = user;
+  try {
+    const result = codexRunner("the reviewer's input\n", { minutes: 20, values: { codexModel: "", codexEffort: "high" } });
+    assert.equal(result.status, "ok", JSON.stringify(result));
+    assert.deepEqual(JSON.parse((result as { out: string }).out), { verdict: "pass", findings: [] });
+    const seen = JSON.parse(readFileSync(log, "utf8"));
+    assert.deepEqual(seen.files, ["auth.json"]);
+    assert.equal(seen.auth, '{"token":"t"}');
+    assert.deepEqual(seen.cwd, []);
+    assert.equal(seen.input, "the reviewer's input\n");
+    assert.ok(!existsSync(seen.home), "the Codex home deleted after the run");
+    assert.equal(seen.prompt, SYSTEM_PROMPT);
+    assert.equal(seen.schema, VERDICT_SCHEMA);
+  } finally {
+    process.env.PATH = saved.PATH;
+    if (saved.CODEX_HOME === undefined) delete process.env.CODEX_HOME;
+    else process.env.CODEX_HOME = saved.CODEX_HOME;
+  }
 });

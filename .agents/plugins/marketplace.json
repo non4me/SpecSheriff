@@ -1,0 +1,17 @@
+{
+  "name": "specsheriff-marketplace",
+  "plugins": [
+    {
+      "name": "specsheriff",
+      "source": {
+        "source": "local",
+        "path": "./skills/codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

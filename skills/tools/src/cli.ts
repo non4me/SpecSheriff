@@ -5,7 +5,7 @@ import { confirm } from "./confirmations.ts";
 import { binding, citationsOutside } from "./binding.ts";
 import { exportMarkdown, guide, render } from "./generated.ts";
 import { guard } from "./guard.ts";
-import { init } from "./init.ts";
+import { init, remove } from "./init.ts";
 import { message } from "./message.ts";
 import { review } from "./review.ts";
 import { reindex } from "./reindex.ts";
@@ -32,7 +32,8 @@ Commands:
   message <file>              check a commit's message against the code it changes
   review <file>               ask the independent reviewer for its verdict on the commit being made
   guard                       judge the edit an agent's harness describes on standard input
-  init                        set the repository up: the git hooks, the plugin for Claude Code, settings
+  init [--agent claude|codex] set the repository up: the git hooks, the agent's plugin or hooks, settings
+  remove                      take out of the repository what init writes, leaving specs/ as it is
 
 Options:
   --version  print the version of the SpecSheriff tools
@@ -107,7 +108,8 @@ async function run(command: string | undefined, args: string[]): Promise<number>
     case "review": {
       if (!args[0]) throw new Error("name the file holding the commit's message");
       const text = readFileSync(args[0], "utf8");
-      const findings = command === "message" ? await message(root, text) : await review(root, text);
+      const notice = (m: string) => process.stderr.write(m);
+      const findings = command === "message" ? await message(root, text) : await review(root, text, { notice });
       for (const f of findings) process.stdout.write(`${f.where}: ${f.message}\n`);
       return findings.length ? 1 : 0;
     }
@@ -118,9 +120,18 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       return reason ? 2 : 0;
     }
     case "init": {
-      const report = init(root);
+      if (args.length && (args[0] !== "--agent" || args.length !== 2)) throw new Error("the only option is --agent claude or --agent codex");
+      const report = init(root, args[1]);
       for (const p of report.written) process.stdout.write(`written: ${p}\n`);
+      for (const p of report.replaced) process.stdout.write(`replaced: ${p}, which an earlier release of sheriff init wrote\n`);
       for (const p of report.left) process.stdout.write(`left as it is: ${p} differs from what init would write\n`);
+      for (const n of report.notes) process.stdout.write(`${n}\n`);
+      return 0;
+    }
+    case "remove": {
+      const report = remove(root);
+      for (const p of report.removed) process.stdout.write(`removed: ${p}\n`);
+      for (const p of report.left) process.stdout.write(`left as it is: ${p}\n`);
       for (const n of report.notes) process.stdout.write(`${n}\n`);
       return 0;
     }

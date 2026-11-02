@@ -1,6 +1,7 @@
 // Makes a release of SpecSheriff, as internal/release.md describes: the version written where each
 // part names it and committed on main, then a commit on the branch release adding the built tools to
-// the plugin for Claude Code, tagged, and pushed with main in one atomic push.
+// the plugin for Claude Code and the built skills, hooks and tools to the plugin for Codex CLI, tagged,
+// and pushed with main in one atomic push.
 import { execFileSync, execSync, spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -24,11 +25,12 @@ if (checked.status !== 0) throw new Error(`sheriff binding refuses:\n${checked.s
 const unimplemented = checked.stdout.split("\n").filter((l) => l.includes("reported: not implemented"));
 if (unimplemented.length) throw new Error(`a release carries out every rule it states, and these are not implemented:\n${unimplemented.join("\n")}`);
 
-// The version, where the tools, the plugin and the plugin for pytest each name it, and the tag the guide's
+// The version, where the tools, each plugin and the plugin for pytest name it, and the tag the guide's
 // recipe for CI clones the tools at.
 npm(`version ${version} -w specsheriff-tools --no-git-tag-version`);
 for (const [path, pattern, written] of [
   ["skills/claude-code/.claude-plugin/plugin.json", /"version": "[^"]*"/, `"version": "${version}"`],
+  ["skills/codex/.codex-plugin/plugin.json", /"version": "[^"]*"/, `"version": "${version}"`],
   ["skills/pytest-specsheriff/pyproject.toml", /^version = "[^"]*"/m, `version = "${version}"`],
   ["skills/claude-code/README.md", /--branch v\d+\.\d+\.\d+ /, `--branch v${version} `],
 ]) {
@@ -39,15 +41,16 @@ for (const [path, pattern, written] of [
 git("add", "-A");
 git("commit", "-qm", `Release: ${version}`);
 
-// The release commit: main's tree with the built tools added, on top of main and of the release before.
+// The release commit: main's tree with what the build lays out in the two plugins added, on top of main
+// and of the release before.
 npm("run build -w specsheriff-tools");
 const env = { ...process.env, GIT_INDEX_FILE: join(mkdtempSync(join(tmpdir(), "release-")), "index") };
 run("git", ["read-tree", "HEAD"], env);
-run("git", ["add", "-f", "skills/claude-code/tools"], env);
+run("git", ["add", "-f", "skills/claude-code/tools", "skills/codex/skills", "skills/codex/hooks", "skills/codex/tools"], env);
 const tree = run("git", ["write-tree"], env);
 const previous = git("ls-remote", "origin", "refs/heads/release").split(/\s/)[0];
 if (previous) git("fetch", "-q", "origin", "release");
-const commit = git("commit-tree", tree, "-p", "HEAD", ...(previous ? ["-p", previous] : []), "-m", `Release ${version}: the plugin for Claude Code with its built tools`);
+const commit = git("commit-tree", tree, "-p", "HEAD", ...(previous ? ["-p", previous] : []), "-m", `Release ${version}: the plugins for Claude Code and Codex CLI with what the build lays out in them`);
 git("tag", `v${version}`, commit);
 git("branch", "-f", "release", commit);
 execFileSync("git", ["push", "--atomic", "origin", "main", "release", `v${version}`], { stdio: "inherit" });

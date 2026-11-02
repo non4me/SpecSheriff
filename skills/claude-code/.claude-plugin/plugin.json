@@ -7,5 +7,26 @@
     "url": "https://github.com/non4me"
   },
   "license": "Apache-2.0",
-  "repository": "https://github.com/non4me/SpecSheriff"
+  "repository": "https://github.com/non4me/SpecSheriff",
+  "userConfig": {
+    "claudeModel": {
+      "type": "string",
+      "title": "Reviewer's model",
+      "description": "The model the independent reviewer runs at, at your cost, at every commit that changes code. Default: opus. Any model name or alias Claude Code takes.",
+      "required": true
+    },
+    "claudeFallbackModel": {
+      "type": "string",
+      "title": "Reviewer's fallback model",
+      "description": "The model the reviewer falls back to where the first is overloaded or not offered. Default: sonnet.",
+      "required": true
+    },
+    "claudeEffort": {
+      "type": "string",
+      "title": "Reviewer's reasoning effort",
+      "description": "The reasoning effort the reviewer runs at. Default: high, the lowest at which its verdicts were seen to agree from run to run.",
+      "options": ["low", "medium", "high", "xhigh", "max"],
+      "required": true
+    }
+  }
 }

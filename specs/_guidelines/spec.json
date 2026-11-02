@@ -808,6 +808,10 @@
                 {
                   "type": "implements",
                   "from": "s-zh2vcr3xjumppg5"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-2pdy9gw2jrjvfb4"
                 }
               ],
               "rationale": "The SpecSheriff guidelines, shared by every project, are what lets a tool, a skill or a reader carry from one project to the next, and a project needs what they cannot foresee. Refining or implementing the SpecSheriff guidelines and never contradicting them, a project's own rules extend them as the technical appendix extends the base, so that a rule of the SpecSheriff guidelines can be relied on in every project without reading that project's own.\n\nComing whole with the skills, the SpecSheriff guidelines read the same in every project working by one release, and stand confirmed there as they were confirmed where they are written; a copy changed in one project would be a second version nobody who writes them reads.",
@@ -1917,6 +1921,10 @@
                 },
                 {
                   "type": "implements",
+                  "from": "s-7unxytshhc4md54"
+                },
+                {
+                  "type": "implements",
                   "from": "s-477gtdrkw34dzxw"
                 },
                 {
@@ -1930,6 +1938,10 @@
                 {
                   "type": "implements",
                   "from": "s-4mej6ccn7xu3d3p"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-n76wt2bkqdmh78x"
                 }
               ],
               "rationale": "A person asking whether a commit will go through must find the whole answer in one place: spread across several rules, the answer comes apart, and one rule ends up contradicting another without anybody seeing it.\n\nEvery check but the review is binary, so refusing costs nobody a judgement, and a check that sometimes refuses for a reason nobody can reproduce is bypassed at the first chance and never trusted again. The review is the one judgement, because whether code does only what its rules say cannot be decided by a script.\n\nA check reads the commit being made, because a judgement of anything else would pass or refuse what is not being committed. The tests run before a commit is shared rather than when it is made, since a suite takes longer than a commit should wait, and a commit not yet shared misleads nobody.\n\nThe check of drift only reports, because a rule outrunning its code is drift worth knowing about and not the fault of whoever's commit found it. A checked rule not implemented is reported rather than refused, since a rule is checked before its test and its code are written (§s-rah8b37kytb682y).",
@@ -2132,6 +2144,10 @@
                 {
                   "type": "implements",
                   "from": "s-f5rz6b7dhxejjts"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-7unxytshhc4md54"
                 }
               ],
               "rationale": "Whoever works on the specification may run such a procedure at any time, by hand or as part of a check, without knowing whether it has run before; one whose second run changed anything would damage the specification the next time it ran. A procedure written for one state of the specification can damage a later one.",
@@ -2179,6 +2195,10 @@
                 },
                 {
                   "type": "implements",
+                  "from": "s-7unxytshhc4md54"
+                },
+                {
+                  "type": "implements",
                   "from": "s-477gtdrkw34dzxw"
                 },
                 {
@@ -2188,6 +2208,10 @@
                 {
                   "type": "implements",
                   "from": "s-zh2vcr3xjumppg5"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-n76wt2bkqdmh78x"
                 }
               ],
               "rationale": "An agent told of a refusal at the edit that caused it mends it there, rather than at the commit among every other.\n\nA node is confirmed by its owner, or in the owner's name by the agent working for that owner where its change states nothing new (§s-67vekyup7y8smap), so an agent that could set a status, or write a confirmation itself, could confirm what its owner never agreed to; and every later check takes the confirmations as given, so they can be held only where they are written. The procedure that records a confirmation takes the wording the node already holds and refuses a node whose owner is someone else, and a withdrawal only leaves a node unchecked.\n\nA commit holds a test and its code together whichever was written first, so the order of the work can be held only where the edits are made.",

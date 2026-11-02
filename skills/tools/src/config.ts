@@ -1,15 +1,25 @@
 import { readFileSync } from "node:fs";
 import { join, posix } from "node:path";
 
+/** The runners the reviewer's input can be handed to: the Claude Code CLI and the Codex CLI. */
+export const RUNNERS = ["claude", "codex"] as const;
+
+/** The reviewer's settings a project shares; the models and efforts of its runs are each user's, in their git configuration. */
 export interface ReviewSettings {
   /** The runner the reviewer's input is handed to. */
-  runner: "claude";
-  model: string;
-  /** The model asked for where the first is overloaded or not offered. */
-  fallbackModel: string;
+  runner: (typeof RUNNERS)[number];
   /** The time after which a run is ended, in minutes. */
   minutes: number;
 }
+
+/** The agent of the plugin whose tools these are, which the `agent` file the build writes beside `release` names; null where there is none. */
+export const AGENT: string | null = (() => {
+  try {
+    return readFileSync(new URL("../agent", import.meta.url), "utf8").trim() || null;
+  } catch {
+    return null;
+  }
+})();
 
 export interface Config {
   /** Globs naming where the system's code lives: read for tags. */
@@ -25,9 +35,8 @@ export interface Config {
 
 const FILE = "sheriff.config.json";
 const KEYS = ["code", "tests"] as const;
-const REVIEW: ReviewSettings = { runner: "claude", model: "fable", fallbackModel: "opus", minutes: 20 };
-
-export function loadConfig(root: string): Config {
+/** Reads the settings of the SpecSheriff tools; unless they name the reviewer's runner, it is that of the agent `agent` names, and claude where it names none. */
+export function loadConfig(root: string, agent: string | null = AGENT): Config {
   let raw: Record<string, unknown>;
   try {
     raw = JSON.parse(readFileSync(join(root, FILE), "utf8"));
@@ -45,10 +54,7 @@ export function loadConfig(root: string): Config {
   }
   if (raw.writesSpecSheriffGuidelines !== undefined && typeof raw.writesSpecSheriffGuidelines !== "boolean") throw new Error(`${FILE}: writesSpecSheriffGuidelines must be true or false`);
   if (raw.testCommand !== undefined && typeof raw.testCommand !== "string") throw new Error(`${FILE}: testCommand must be a command`);
-  const review = { ...REVIEW, ...((raw.review as object | undefined) ?? {}) } as ReviewSettings;
-  for (const key of Object.keys(review)) if (!(key in REVIEW)) throw new Error(`${FILE}: review.${key} is no setting of the reviewer`);
-  if (review.runner !== "claude") throw new Error(`${FILE}: review.runner names no runner the SpecSheriff tools describe: ${review.runner}`);
-  if (typeof review.minutes !== "number" || review.minutes <= 0) throw new Error(`${FILE}: review.minutes must be a number of minutes`);
+  const review = readReview(raw.review ?? {}, agent);
   return {
     code: raw.code as string[],
     tests: raw.tests as string[],
@@ -56,6 +62,29 @@ export function loadConfig(root: string): Config {
     testCommand: (raw.testCommand as string | undefined) ?? null,
     review,
   };
+}
+
+/** Where a model or an effort a project's settings once held is kept now: the user's git configuration. */
+const MOVED: Record<string, string> = {
+  model: "specsheriff.review.claudeModel",
+  fallbackModel: "specsheriff.review.claudeFallbackModel",
+  claude: "specsheriff.review.claudeModel, claudeFallbackModel and claudeEffort",
+  codex: "specsheriff.review.codexModel and codexEffort",
+};
+
+/** The reviewer's settings a project shares, each refused where it is not one the tools describe, its default where it is not set. */
+function readReview(raw: unknown, agent: string | null): ReviewSettings {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) throw new Error(`${FILE}: review must be an object`);
+  const review = raw as Record<string, unknown>;
+  for (const key of Object.keys(review)) {
+    if (key in MOVED) throw new Error(`${FILE}: review.${key} is each user's to confirm, in their git configuration: ${MOVED[key]}`);
+    if (key !== "runner" && key !== "minutes") throw new Error(`${FILE}: review.${key} is no setting of the reviewer`);
+  }
+  const runner = review.runner ?? ((RUNNERS as readonly unknown[]).includes(agent) ? agent : "claude");
+  if (!(RUNNERS as readonly unknown[]).includes(runner)) throw new Error(`${FILE}: review.runner names no runner the SpecSheriff tools describe: ${runner}`);
+  const minutes = review.minutes ?? 20;
+  if (typeof minutes !== "number" || minutes <= 0) throw new Error(`${FILE}: review.minutes must be a number of minutes`);
+  return { runner: runner as ReviewSettings["runner"], minutes };
 }
 
 /** How a file, by its path from the root with forward slashes, is read: a test wins over code where both name it. */

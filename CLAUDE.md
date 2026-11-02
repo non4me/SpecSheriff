@@ -5,11 +5,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this repository is
 
 SpecSheriff is a method of spec-anchored development and the upstream of what a project takes
-from it: the plugin for Claude Code carrying the skills, the SpecSheriff guidelines and the
-SpecSheriff tools. The worked example, the saloon, is a repository of its own,
+from it: the plugins for Claude Code and for Codex CLI, each carrying the skills, the SpecSheriff
+guidelines and the SpecSheriff tools. The worked example, the saloon, is a repository of its own,
 `non4me/specsheriff-saloon`, which this one links to. `npm install` at the root builds the tools in
-`skills/tools/`, links `sheriff`, and lays the built tools out in the plugin,
-`skills/claude-code/tools/` (ignored here, committed only on the branch `release`); `npm test` builds
+`skills/tools/`, links `sheriff`, and lays the built tools out in both plugins,
+`skills/claude-code/tools/`, and `skills/codex/` with its skills and hooks' scripts taken from the
+plugin for Claude Code (ignored here, committed only on the branch `release`); `npm test` builds
 them again and runs their unit and end-to-end tests and those of `skills/pytest-specsheriff/`
 (Python 3.10 or later with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
 guidelines are written here, so their nodes are confirmed in `specs/_confirmations.jsonl` by the

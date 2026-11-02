@@ -37,13 +37,58 @@ read for nothing, which is how the repository's own scripts and configuration st
 **What it changes.** `sheriff init` writes the git hooks into `.githooks/` and turns them on;
 declares the marketplace and the plugin in `.claude/settings.json`, with automatic updates on;
 writes `sheriff.config.json`; and writes `specs/_guidelines/project.json`, the project's own
-guidelines, naming the owner. It replaces no file that differs from what it would write: it names
-each one, and the skill shows you how it differs. The agent then commits what init wrote.
+guidelines, naming the owner. It replaces a git hook or a declaration an earlier release of it wrote,
+naming each, and no other file that differs from what it would write: it names each one, and the
+skill shows you how it differs. The agent then commits what init wrote. When a session starts, the
+plugin names each git hook an earlier release wrote, so that you run `spec-init` again.
 
 **For everyone else.** A teammate who clones the repository and opens Claude Code in it is offered
 the marketplace and the plugin once they trust the folder. The first session on a machine copies the
-tools to where the git hooks find them and turns the hooks on; until then a commit is refused with a
-message saying so.
+tools to where the git hooks find them and turns the hooks on. A git hook that finds the tools of no
+plugin on the machine lets the commit through, says that no check ran, and turns the hooks off in
+that clone until a session of the plugin turns them on again.
+
+## The reviewer's model and effort
+
+The skills work in your session, at the model and the effort you choose there; the plugin sets
+neither. The one run outside your session is the independent reviewer, at every commit that changes
+code, and you pay for it. Claude Code asks you for its settings once, when it enables the plugin, as
+the plugin's options; the defaults are named in each and set for none:
+
+| Option | Default | Kept in your git configuration as |
+|---|---|---|
+| Reviewer's model | `opus` | `specsheriff.review.claudeModel` |
+| Reviewer's fallback model | `sonnet` | `specsheriff.review.claudeFallbackModel` |
+| Reviewer's reasoning effort | `high` | `specsheriff.review.claudeEffort` |
+
+The session start writes what you gave into your global git configuration, where the git hooks read
+it, and writes it again when you change an option in `/config`. Where Claude Code enabled the plugin
+without asking, the first session in a project taking the method asks you once, through the agent.
+A setting you have not confirmed runs at its default, and every review held so says which and how to
+confirm it.
+
+## Moving between Claude Code and Codex CLI
+
+The method has a plugin for each agent, installed and updated by each on its own; the plugin for
+Codex CLI has [its own guide](../codex/README.md). A project set up for one agent is set up for the
+other by running `spec-init` there: the git hooks are the same, and each agent's declarations are
+added beside the other's. Where a machine has both plugins, the git hooks run the tools of the newer
+release. The reviewer is run by the agent whose plugin runs the git hooks, unless `review.runner` in
+`sheriff.config.json` names one for everyone.
+
+## Taking SpecSheriff out: the skill `spec-remove`
+
+`sheriff remove` takes out of the repository what `sheriff init` writes, for either agent: the git
+hooks, the declarations, `core.hooksPath` and `sheriff.config.json`. It keeps `specs/`, which is the
+project's own, and each hook or declaration that differs from what init writes, naming each. It stages
+nothing; the agent commits it once you agree, and then offers to remove the plugin from the machine:
+
+```sh
+claude plugin uninstall specsheriff@specsheriff-marketplace
+```
+
+Removing the plugin alone leaves no hook failing: a git hook that finds the tools of no plugin lets
+the commit through, as above.
 
 ## The other skills
 
@@ -103,7 +148,8 @@ is handed what they refuse and fixes it.
 - `commit-msg` checks that a commit changing code names every checked rule its changed symbols' tags
   name (`sheriff message`), and then an independent reviewer — Claude Code run with no tools and no
   settings, given only the change and the text of those rules — judges whether the code does what
-  they say and nothing they do not (`sheriff review`).
+  they say and nothing they do not (`sheriff review`). With the plugin for Codex CLI, Codex runs it
+  the same way.
 - `pre-push` runs the tests by the command `sheriff.config.json` names, after refusing a working tree
   that differs from what the push sends.
 

@@ -18,7 +18,7 @@
           "kind": "rule",
           "title": "Where the files are",
           "status": "checked",
-          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its header in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: a project's own guidelines in `project.json`, and, in the repository the SpecSheriff guidelines are written in, the base in `spec.json` and the appendix of the tools in `tools.json`, which every other project reads from the plugin for Claude Code (§s-zh2vcr3xjumppg5). A part divided into one file per section keeps its files in its directory.\n\nThe schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in, and every other project reads it from the plugin: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part.\n\nConfirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git.\n\nThe SpecSheriff tools provide the command `sheriff`. In a terminal it is run from the copy that the plugin for Claude Code keeps in its data directory (§s-4mej6ccn7xu3d3p), as `node <data directory>/dist/cli.js`.\n\nTheir plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install \"pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff\"`.\n\nThe settings of the SpecSheriff tools are kept in `sheriff.config.json` at the root of the repository. Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the SpecSheriff guidelines are written in says so by the setting `\"writesSpecSheriffGuidelines\": true`.\n\nThe documents are the markdown files the repository keeps outside `specs/`. The tools of the specification are the files of the SpecSheriff tools: a project keeps only the files `sheriff init` writes, and the repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the sids they declare and no file is read for an address.\n\nThe specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
+          "text": "Each domain of the specification is kept under `specs/<domain>/`, opening with its header in `specs/<domain>/00-<domain>.json`, contracts under `specs/contracts/`, the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `<domain>.json`, the stack's in `stack.json`, the technical debt's in `debt.json` — and the guidelines under `specs/_guidelines/`: a project's own guidelines in `project.json`, and, in the repository the SpecSheriff guidelines are written in, the base in `spec.json` and the appendix of the tools in `tools.json`, which every other project reads from the plugin of its agent (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4). A part divided into one file per section keeps its files in its directory.\n\nThe schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in, and every other project reads it from the plugin: `node.schema.json` for a node and its metadata, `section-file.schema.json` for the file of a part.\n\nConfirmations are kept in `specs/_confirmations.jsonl`, the archive of removed nodes in `specs/_archive/<name>.json`. `specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification and not stored in git.\n\nThe SpecSheriff tools provide the command `sheriff`. In a terminal it is run from the tools a plugin keeps on the machine (§s-4mej6ccn7xu3d3p), as `node <tools>/dist/cli.js`, `<tools>` being the data directory of the plugin for Claude Code or the `tools/` of the plugin for Codex CLI in Codex's cache.\n\nTheir plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install \"pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff\"`.\n\nThe settings of the SpecSheriff tools that a project shares are kept in `sheriff.config.json` at the root of the repository; those of the reviewer's runs, which each user confirms, are kept in the user's git configuration (§s-xr5xxa9cxf2mq5u). Among them, glob patterns name where the system's code lives and where its tests live: the code is read for tags, the tests for the sids they declare, and a file neither names for neither — which is how the repository's tools, its configuration and its tests are exempt from tags by where they live. The repository the SpecSheriff guidelines are written in says so by the setting `\"writesSpecSheriffGuidelines\": true`.\n\nThe documents are the markdown files the repository keeps outside `specs/`. The tools of the specification are the files of the SpecSheriff tools: a project keeps only the files `sheriff init` writes, and the repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the sids they declare and no file is read for an address.\n\nThe specification's owner is the one the top node of `project.json` names, and the levels its domains stand at are the members of the list carried by the rule of `project.json` that refines §s-nkyty4dy9x2v2a4.",
           "refs": [
             {
               "type": "implements",
@@ -51,6 +51,14 @@
             {
               "type": "cites",
               "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "to": "s-2pdy9gw2jrjvfb4"
+            },
+            {
+              "type": "cites",
+              "to": "s-xr5xxa9cxf2mq5u"
             }
           ],
           "meta": {
@@ -60,6 +68,7 @@
               "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live",
               "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads this repository's settings, whose tests are the tools' own",
               "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u reads whether the SpecSheriff guidelines are written in the repository",
+              "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u refuses a model or an effort in the project's settings, naming the key of the user's git configuration that holds it",
               "skills/tools/test/unit/config.test.ts::s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared",
               "skills/tools/test/unit/generated.test.ts::s-zefk589ykh37b8u keeps the readable export and the map out of git",
               "skills/tools/test/unit/model.test.ts::s-zefk589ykh37b8u tells a file's part and whether it holds the SpecSheriff guidelines",
@@ -92,6 +101,12 @@
                 "problem": "By the owner's rule of 2026-10-29, what only the repository the SpecSheriff guidelines are written in does leaves the guidelines for an internal document; this rule says where that repository keeps the guidelines, their schema and its tools, and what it is not read for.",
                 "ruling": "The owner: those clauses stay. They say what the SpecSheriff tools do in a repository that writes the guidelines, which every project's copy of the tools carries out; the procedures only that repository runs — a release, the build, running its own plugin — are in its internal document.",
                 "type": "procedural"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "The rule kept every setting of the SpecSheriff tools in sheriff.config.json, which every clone shares, while the settings of the reviewer's runs are each user's to confirm (§s-xr5xxa9cxf2mq5u).",
+                "ruling": "Following the owner's ruling on §s-xr5xxa9cxf2mq5u: the settings of the reviewer's runs are kept in each user's git configuration rather than in sheriff.config.json.",
+                "type": "textual"
               }
             ]
           }
@@ -102,7 +117,7 @@
           "kind": "rule",
           "title": "The commands",
           "status": "checked",
-          "text": "`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the table of how each check is made describes them (§s-4kd2pave7vm4hmd).\n\n`sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p); stages with the executable mode, 100755, each hook there that holds what it would write and that git's index does not already hold with that mode, naming each one, or, where it cannot stage a hook, names it and says how to stage it executable; and turns them on; adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there; and, where they are missing, writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no other file that differs from what it would write, naming each one instead, so run again it changes nothing.\n\n`sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's header from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification.\n\nBefore anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file.\n\n`sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb).\n\n`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.\n\n`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).\n\n`sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked.\n\n`sheriff show` prints a node, found by its sid or its address, as §s-k4nqjr96ux7a5m7 says.\n\n`sheriff types` generates, from the data record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand. It writes a file only where the file is missing or holds, line endings aside, anything other than what it generates, and names each file it writes; where the check of generated copies refuses the list of those files or a data record node (§s-4kd2pave7vm4hmd), it names each refusal and writes no file; while a data record node is unchecked, it writes no file and names each such node.",
+          "text": "`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the table of how each check is made describes them (§s-4kd2pave7vm4hmd).\n\n`sheriff init` sets a repository up for the SpecSheriff tools, and `sheriff remove` takes SpecSheriff out of it (§s-7unxytshhc4md54).\n\n`sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's header from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification.\n\nBefore anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file.\n\n`sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb).\n\n`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.\n\n`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).\n\n`sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked.\n\n`sheriff show` prints a node, found by its sid or its address, as §s-k4nqjr96ux7a5m7 says.\n\n`sheriff types` generates, from the data record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand. It writes a file only where the file is missing or holds, line endings aside, anything other than what it generates, and names each file it writes; where the check of generated copies refuses the list of those files or a data record node (§s-4kd2pave7vm4hmd), it names each refusal and writes no file; while a data record node is unchecked, it writes no file and names each such node.",
           "refs": [
             {
               "type": "implements",
@@ -138,18 +153,6 @@
             },
             {
               "type": "cites",
-              "to": "s-hr7j7scmfkkjnws"
-            },
-            {
-              "type": "cites",
-              "to": "s-4mej6ccn7xu3d3p"
-            },
-            {
-              "type": "cites",
-              "to": "s-zh2vcr3xjumppg5"
-            },
-            {
-              "type": "cites",
               "to": "s-4kd2pave7vm4hmd"
             },
             {
@@ -163,9 +166,17 @@
             {
               "type": "cites",
               "to": "s-k4nqjr96ux7a5m7"
+            },
+            {
+              "type": "cites",
+              "to": "s-7unxytshhc4md54"
+            },
+            {
+              "type": "cites",
+              "to": "s-hr7j7scmfkkjnws"
             }
           ],
-          "rationale": "The reindex rewrites whole the files written by hand, so it keeps everything they hold: two values written under one key are each somebody's intent, kept together where both can stand and refused where keeping one would drop the other, since nothing says which was meant; and every merge is named, because one of them may have been written to replace the other.\n\n`sheriff types` runs after every edit an agent makes and at every commit, where the pre-commit hook copies each file it names into the working tree for its author to stage (§s-477gtdrkw34dzxw): the files it names are then exactly those its author has to stage, and a file whose content no edit changed keeps its modification time, so that nothing watching the files takes it for changed. Line endings are set aside because git may check a file out with endings other than those committed, which would make every file differ at every run.\n\nWhere anything is refused, no file is written, so that the files never disagree, one generated from the nodes as they stand beside another left behind them; and each refusal is named, so that whoever runs it, by hand or through a hook, learns which node or list to change.\n\nOn a system whose files keep an executable bit, git runs a hook only where its file has the bit, and a clone checks a file out with the mode its commit records. Git takes that mode from the file when it stages it where files keep the bit, and records it as not executable where they keep none, as on Windows, where git runs a hook whatever its mode; so a hook set up there would reach the clones unable to run, and nothing on the machine that set it up would show it. A mode reaches the clones only staged and committed, and git stages a mode only with the file's content, so `sheriff init` stages the hooks it holds and nothing else: what else a commit holds stays its author's choice.",
+          "rationale": "The reindex rewrites whole the files written by hand, so it keeps everything they hold: two values written under one key are each somebody's intent, kept together where both can stand and refused where keeping one would drop the other, since nothing says which was meant; and every merge is named, because one of them may have been written to replace the other.\n\n`sheriff types` runs after every edit an agent makes and at every commit, where the pre-commit hook copies each file it names into the working tree for its author to stage (§s-477gtdrkw34dzxw): the files it names are then exactly those its author has to stage, and a file whose content no edit changed keeps its modification time, so that nothing watching the files takes it for changed. Line endings are set aside because git may check a file out with endings other than those committed, which would make every file differ at every run.\n\nWhere anything is refused, no file is written, so that the files never disagree, one generated from the nodes as they stand beside another left behind them; and each refusal is named, so that whoever runs it, by hand or through a hook, learns which node or list to change.",
           "meta": {
             "decisions": [
               {
@@ -209,12 +220,6 @@
                 "problem": "sheriff types wrote the types and runtime checks from data record nodes whether or not they were checked.",
                 "ruling": "Following the owner's ruling on §s-kh8qcd5kxgh9z3j: code generated from the nodes waits until every node it is generated from is checked, no commit changing it meanwhile, and its lag is reported.",
                 "type": "textual"
-              },
-              {
-                "date": "2026-11-02",
-                "problem": "sheriff init made the hooks executable with chmod, which git on Windows does not see, so a project set up there committed them as not executable, and a clone on Linux or macOS ran none of its checks, git skipping each hook with a hint: the worked example's recorded run went through there unrefused.",
-                "ruling": "The owner: sheriff init stages each hook it holds with the executable mode where git's index does not already hold it so, naming each, and nothing else, and where it cannot stage a hook says how to.",
-                "type": "textual"
               }
             ],
             "tests": [
@@ -226,13 +231,6 @@
               "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address",
               "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff types writes the types where the technical appendix lists them, and refuses what cannot be generated",
               "skills/tools/test/e2e/commands.test.ts::s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where",
-              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init declares the marketplace and the plugin beside every other key of the agent's settings",
-              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init replaces no file that differs from what it would write, and names it",
-              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init stages again with the executable mode a hook git's index holds without it",
-              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init stages each hook it holds with the executable mode, naming each, where files keep no such bit, and stages nothing else",
-              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines",
-              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts sheriff init, where it cannot stage a hook, names it and says how to stage it executable",
-              "skills/tools/test/e2e/init.test.ts::s-f5rz6b7dhxejjts this repository holds what sheriff init writes, so that running it here writes nothing",
               "skills/tools/test/unit/generated.test.ts::s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole",
               "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads it",
               "skills/tools/test/unit/json-text.test.ts::s-f5rz6b7dhxejjts merges two lists into one holding the first's members, then the second's the first lacks",
@@ -251,6 +249,86 @@
         },
         {
           "id": "_guidelines/tools/3",
+          "sid": "s-7unxytshhc4md54",
+          "kind": "rule",
+          "title": "Setting a repository up and taking SpecSheriff out of it",
+          "status": "checked",
+          "text": "`sheriff init` sets a repository up for the SpecSheriff tools. It writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p); stages with the executable mode, 100755, each hook there that holds what it would write and that git's index does not already hold with that mode, naming each one, or, where it cannot stage a hook, names it and says how to stage it executable; and turns them on.\n\nFor the agent `--agent` names, `claude` or `codex`, `claude` where the option is not given, `sheriff init` adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there, or writes the agent's hooks for Codex into `.codex/hooks.json` (§s-n76wt2bkqdmh78x), keeping every other hook there. It refuses another name, naming the two it takes.\n\nWhere they are missing, `sheriff init` writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces a hook or a declaration that holds what an earlier release of `sheriff init` wrote, naming each, and no other file that differs from what it would write, naming each one instead; so run again it changes nothing. A hook or a declaration holds what an earlier release wrote where, line endings aside, it equals one of the texts the earlier releases wrote, which the SpecSheriff tools keep.\n\n`sheriff remove` takes out of a repository what `sheriff init` writes outside `specs/`, for both agents: each git hook, the marketplace and the plugin in `.claude/settings.json` and the agent's hooks for Codex in `.codex/hooks.json`, where each holds what `sheriff init` writes now or wrote in an earlier release; `core.hooksPath` where it names `.githooks`; a key left holding nothing, a file left holding no key, and `.githooks/`, `.claude/` or `.codex/` where that leaves it empty; and `sheriff.config.json`, whatever it holds. It leaves each hook and declaration that differs, naming it, and leaves `specs/` as it is, naming it. It stages nothing, and run again it changes nothing.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "implements",
+              "to": "s-83ev4wwesbwnhnp"
+            },
+            {
+              "type": "implements",
+              "to": "s-jsqxdx47wkkj7gp"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-n76wt2bkqdmh78x"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "from": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "from": "s-2pdy9gw2jrjvfb4"
+            },
+            {
+              "type": "cites",
+              "from": "s-n76wt2bkqdmh78x"
+            }
+          ],
+          "rationale": "On a system whose files keep an executable bit, git runs a hook only where its file has the bit, and a clone checks a file out with the mode its commit records. Git takes that mode from the file when it stages it where files keep the bit, and records it as not executable where they keep none, as on Windows, where git runs a hook whatever its mode; so a hook set up there would reach the clones unable to run, and nothing on the machine that set it up would show it. A mode reaches the clones only staged and committed, and git stages a mode only with the file's content, so `sheriff init` stages the hooks it holds and nothing else: what else a commit holds stays its author's choice.\n\nClaude Code reads its plugin from `.claude/settings.json` and Codex its hooks from `.codex/hooks.json`, so `sheriff init` writes for the agent the project is set up with, and a project moving to another agent runs it again for that one. A hook or a declaration written by an earlier release is the tools' own, so it is replaced; one that differs otherwise was changed by hand and is the project's.\n\n`sheriff remove` takes out what `sheriff init` writes and no more. `sheriff.config.json` goes whatever it holds, because a repository holding it is one the plugins act in (§s-zh2vcr3xjumppg5) and its settings serve only the tools; `specs/` stays, being the project's own content. What `sheriff remove` takes out is in git's history, and what a commit holds stays its author's choice, so it stages nothing.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-02",
+                "problem": "sheriff init made the hooks executable with chmod, which git on Windows does not see, so a project set up there committed them as not executable, and a clone on Linux or macOS ran none of its checks, git skipping each hook with a hint: the worked example's recorded run went through there unrefused.",
+                "ruling": "The owner: sheriff init stages each hook it holds with the executable mode where git's index does not already hold it so, naming each, and nothing else, and where it cannot stage a hook says how to.",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init --agent codex writes the agent's hooks for Codex beside every other hook there, and declares nothing to Claude Code",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init declares the marketplace and the plugin beside every other key of the agent's settings",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init refuses an agent it does not know, naming the two it takes",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init replaces a hook an earlier release of it wrote, line endings aside, naming each",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init replaces no file that differs from what it would write, and names it",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init stages again with the executable mode a hook git's index holds without it",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init stages each hook it holds with the executable mode, naming each, where files keep no such bit, and stages nothing else",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff init, where it cannot stage a hook, names it and says how to stage it executable",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff remove keeps every other key and hook, and each hook and declaration that differs, naming it",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff remove takes out a hook an earlier release of sheriff init wrote",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes for both agents, keeps specs/ naming it, stages nothing, and run again changes nothing",
+              "skills/tools/test/e2e/init.test.ts::s-7unxytshhc4md54 this repository holds what sheriff init writes, so that running it here writes nothing"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/4",
           "sid": "s-rpv4fkdqqguptqd",
           "kind": "rule",
           "title": "Building the map",
@@ -282,7 +360,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/4",
+          "id": "_guidelines/tools/5",
           "sid": "s-k4nqjr96ux7a5m7",
           "kind": "rule",
           "title": "What the export, the guide and `sheriff show` write of a node",
@@ -316,12 +394,12 @@
           }
         },
         {
-          "id": "_guidelines/tools/5",
+          "id": "_guidelines/tools/6",
           "sid": "s-477gtdrkw34dzxw",
           "kind": "rule",
           "title": "The hooks",
           "status": "checked",
-          "text": "Each check lives in a command a git hook calls: `.githooks/pre-commit` runs `sheriff export` and `sheriff render`, then `sheriff validate`, `sheriff binding` and `sheriff citations`, and last `sheriff types`; `.githooks/commit-msg` runs `sheriff message` and then `sheriff review` on the file git hands it; and `.githooks/pre-push` runs the tests of the system's code by the command `sheriff.config.json` names as its `testCommand`.\n\nA clone turns them on with `git config core.hooksPath .githooks`, which the `SessionStart` hook of the plugin for Claude Code runs where `core.hooksPath` is unset, saying so, and reports where it names another directory. The `SessionStart` hook also names each git hook in `.githooks/` that git's index holds without the executable mode and, on a system whose files keep that bit, each whose file lacks it, and says how to make each one executable on every system — `chmod +x <hook>` and `git update-index --chmod=+x <hook>`, then a commit — changing neither the mode of a file nor git's index.\n\nAt a commit, the checks read what is staged, written out to a directory of its own and read there against the repository's history, while the export and the map are written in the working tree, a failure to write them reported and stopping nothing. Whatever the checks found, `sheriff types` then runs in the directory the staged files are written out to; the pre-commit hook copies each file it writes there into the working tree, in place of what stands at the same path, and stages none of them, and what `sheriff types` refuses stops the commit.\n\nBefore a push, the pre-push hook compares the working tree with the commit each ref the push creates or updates names, directly or through a tag, leaving aside the files the working tree ignores. Where a file differs between them, stands in only one of them, or stands in the working tree without having been added, it refuses the push, naming each such file; otherwise it runs the tests in the working tree.\n\nThe agent's hooks described are Claude Code's, which the plugin for Claude Code declares (§s-zh2vcr3xjumppg5): before an edit made with the file tools, `sheriff guard` judges it; after any edit, `sheriff reindex`, `sheriff export`, `sheriff render` and `sheriff types` run, and then `sheriff validate`, `sheriff binding` and `sheriff citations`, all over the working tree, its difference from the last commit read as the commit, and what they refuse is reported to the agent.\n\nAn edit made through the shell is not judged before it is made, nor is a file `sheriff types` writes after an edit; the checks after them and at the commit still read them.",
+          "text": "Each check lives in a command a git hook calls: `.githooks/pre-commit` runs `sheriff export` and `sheriff render`, then `sheriff validate`, `sheriff binding` and `sheriff citations`, and last `sheriff types`; `.githooks/commit-msg` runs `sheriff message` and then `sheriff review` on the file git hands it; and `.githooks/pre-push` runs the tests of the system's code by the command `sheriff.config.json` names as its `testCommand`.\n\nA clone turns them on with `git config core.hooksPath .githooks`, which the `SessionStart` hook of the agent, the plugin's for Claude Code or the project's for Codex (§s-n76wt2bkqdmh78x), runs where `core.hooksPath` is unset, saying so, and reports where it names another directory. The `SessionStart` hook also names each git hook in `.githooks/` that git's index holds without the executable mode and, on a system whose files keep that bit, each whose file lacks it, and says how to make each one executable on every system — `chmod +x <hook>` and `git update-index --chmod=+x <hook>`, then a commit — changing neither the mode of a file nor git's index.\n\nThe `SessionStart` hook of the plugin for Claude Code writes into the git configuration of the user, by `git config --global`, each setting of the runner `claude` (§s-xr5xxa9cxf2mq5u) the user has given as an option of that plugin (§s-zh2vcr3xjumppg5), wherever the configuration lacks it or holds another value. Where the git configuration lacks a setting of the runner `sheriff review` would take at a commit in the repository (§s-xr5xxa9cxf2mq5u, §s-4mej6ccn7xu3d3p), the `SessionStart` hook of either agent names each such setting, with the default `sheriff review` takes for it, and asks the agent to offer the user each default to confirm or replace and to write with `git config --global` the value the user answers, the default included. It asks so once for each runner on each machine, and marks it asked in the git configuration, as `specsheriff.review.claudeAsked` or `specsheriff.review.codexAsked`; where the mark stands it asks nothing.\n\nAt a commit, the checks read what is staged, written out to a directory of its own and read there against the repository's history, while the export and the map are written in the working tree, a failure to write them reported and stopping nothing. Whatever the checks found, `sheriff types` then runs in the directory the staged files are written out to; the pre-commit hook copies each file it writes there into the working tree, in place of what stands at the same path, and stages none of them, and what `sheriff types` refuses stops the commit.\n\nBefore a push, the pre-push hook compares the working tree with the commit each ref the push creates or updates names, directly or through a tag, leaving aside the files the working tree ignores. Where a file differs between them, stands in only one of them, or stands in the working tree without having been added, it refuses the push, naming each such file; otherwise it runs the tests in the working tree.\n\nThe agent's hooks are Claude Code's, which the plugin for Claude Code declares (§s-zh2vcr3xjumppg5), and Codex's, which `sheriff init` writes into the project (§s-n76wt2bkqdmh78x): before an edit made with the file tools or with `apply_patch`, `sheriff guard` judges it; after any edit, `sheriff reindex`, `sheriff export`, `sheriff render` and `sheriff types` run, and then `sheriff validate`, `sheriff binding` and `sheriff citations`, all over the working tree, its difference from the last commit read as the commit, and what they refuse is reported to the agent.\n\nAn edit made through the shell is not judged before it is made, nor is a file `sheriff types` writes after an edit; the checks after them and at the commit still read them.",
           "refs": [
             {
               "type": "implements",
@@ -353,7 +431,23 @@
             },
             {
               "type": "cites",
+              "to": "s-n76wt2bkqdmh78x"
+            },
+            {
+              "type": "cites",
+              "to": "s-xr5xxa9cxf2mq5u"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
               "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-xr5xxa9cxf2mq5u"
             },
             {
               "type": "cites",
@@ -362,9 +456,17 @@
             {
               "type": "cites",
               "from": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "from": "s-2pdy9gw2jrjvfb4"
+            },
+            {
+              "type": "cites",
+              "from": "s-n76wt2bkqdmh78x"
             }
           ],
-          "rationale": "A hook runs each check where the commit is made, so that none depends on whoever commits remembering it; kept in the repository and turned on by one setting, the hooks are the same in every clone.\n\nThe agent's hooks come with the plugin for Claude Code, so that every clone's agent is held by them; and that plugin turns the git hooks on, so that no clone's gate depends on its user remembering to.\n\nOn a system whose files keep the executable bit, git skips a hook whose file lacks it, printing a hint and refusing nothing, so a commit there passes no check while the hooks are on. The session start reaches every clone, those where the git hooks are skipped and so cannot report among them, and every repository whose hooks were committed or staged again without the mode. It leaves the mode to the author, since a mode changed in the working tree alone is a difference the pre-push hook refuses, and recording it in the index is staging, which is the author's choice.\n\nThe types and runtime checks generated from the data record nodes are generated after every edit an agent makes and at every commit, so that they follow the nodes at the first edit or commit after every node they are generated from is checked (§s-kh8qcd5kxgh9z3j), and a person who edits the nodes without an agent has no hook between edits. At a commit they are generated from the staged nodes, because a commit is judged only by what it holds (§s-jau82aq9juv9zzh): what `sheriff types` refuses there is a fault of that commit, and the copy it writes is the one that commit has to hold.\n\nAt a commit it runs after the checks, so that they read what is staged rather than a copy the hook wrote, and whatever they found, since the check of the generated copies is among them and refuses exactly the commit whose copies it writes; after an edit it runs before them, so that they read the copies the edited nodes produce rather than report ones about to be replaced.\n\nThe copy goes to the working tree, since the directory the commit is written out to is gone once the hook ends, and the author stages from the working tree; it replaces whatever stands at that path, since a generated copy is never edited (§s-kh8qcd5kxgh9z3j).\n\nWhat a commit holds is its author's choice, so the hook stages nothing; a commit holding a copy left behind nodes that are all checked still does not pass, since the check at the commit comparing each kept generated copy with what the staged nodes produce refuses it until its author stages the new one.\n\nA failure to write the export or the map stops no commit, since the commit holds neither, and every check reads the commit being made and never what it does not hold (§s-jau82aq9juv9zzh).\n\nA test run judges a commit only where the files it reads are those the commit holds, since every check reads the commit being made and never what it does not hold (§s-jau82aq9juv9zzh). The tests run in the working tree rather than in a copy of the commit, because they need what each checkout installs or builds for itself, which a copy of the commit lacks.\n\nThe files the working tree ignores are left out of the comparison of the working tree with each commit, because each checkout makes or keeps its own copy of them, so where a commit holds such a file, as a commit of a build's output does, the working tree's copy need not match it.\n\nThe refusal names the files the push is refused for, because whether each is committed, removed or ignored is for whoever pushes to decide.",
+          "rationale": "A hook runs each check where the commit is made, so that none depends on whoever commits remembering it; kept in the repository and turned on by one setting, the hooks are the same in every clone.\n\nThe agent's hooks come with the plugin for Claude Code and with the project for Codex, so that every clone's agent is held by them; and they turn the git hooks on, so that no clone's gate depends on its user remembering to.\n\nOn a system whose files keep the executable bit, git skips a hook whose file lacks it, printing a hint and refusing nothing, so a commit there passes no check while the hooks are on. The session start reaches every clone, those where the git hooks are skipped and so cannot report among them, and every repository whose hooks were committed or staged again without the mode. It leaves the mode to the author, since a mode changed in the working tree alone is a difference the pre-push hook refuses, and recording it in the index is staging, which is the author's choice.\n\nThe settings the reviewer runs at are a choice of what the user pays, so only the user makes it (§s-xr5xxa9cxf2mq5u), and they make it once, when they install the plugin, as they decide to take the plugin itself, so that no later session is interrupted by it. Claude Code asks for a plugin's options when it enables the plugin and hands them to the plugin's own components, while the git hooks that run the reviewer run outside Claude Code; so the plugin's session start writes them where the git hooks read them, in any repository, so that a project set up later finds them there, and wherever they differ, so that a change the user makes to them reaches the reviewer. Codex asks nothing for a plugin it installs, and its agent's hooks stand in the project (§s-n76wt2bkqdmh78x), so the first session in a repository taking the method is the earliest its user can be asked; a user Claude Code enabled the plugin for without asking is in the same case. A hook cannot ask the user anything, so it has the agent ask. The question is put once, its mark keeping it from being put again, since a setting left unanswered is named at every review it costs (§s-xr5xxa9cxf2mq5u). Only the runner that would run is asked for, since a user is asked only about what they will pay for.\n\nThe types and runtime checks generated from the data record nodes are generated after every edit an agent makes and at every commit, so that they follow the nodes at the first edit or commit after every node they are generated from is checked (§s-kh8qcd5kxgh9z3j), and a person who edits the nodes without an agent has no hook between edits. At a commit they are generated from the staged nodes, because a commit is judged only by what it holds (§s-jau82aq9juv9zzh): what `sheriff types` refuses there is a fault of that commit, and the copy it writes is the one that commit has to hold.\n\nAt a commit it runs after the checks, so that they read what is staged rather than a copy the hook wrote, and whatever they found, since the check of the generated copies is among them and refuses exactly the commit whose copies it writes; after an edit it runs before them, so that they read the copies the edited nodes produce rather than report ones about to be replaced.\n\nThe copy goes to the working tree, since the directory the commit is written out to is gone once the hook ends, and the author stages from the working tree; it replaces whatever stands at that path, since a generated copy is never edited (§s-kh8qcd5kxgh9z3j).\n\nWhat a commit holds is its author's choice, so the hook stages nothing; a commit holding a copy left behind nodes that are all checked still does not pass, since the check at the commit comparing each kept generated copy with what the staged nodes produce refuses it until its author stages the new one.\n\nA failure to write the export or the map stops no commit, since the commit holds neither, and every check reads the commit being made and never what it does not hold (§s-jau82aq9juv9zzh).\n\nA test run judges a commit only where the files it reads are those the commit holds, since every check reads the commit being made and never what it does not hold (§s-jau82aq9juv9zzh). The tests run in the working tree rather than in a copy of the commit, because they need what each checkout installs or builds for itself, which a copy of the commit lacks.\n\nThe files the working tree ignores are left out of the comparison of the working tree with each commit, because each checkout makes or keeps its own copy of them, so where a commit holds such a file, as a commit of a build's output does, the working tree's copy need not match it.\n\nThe refusal names the files the push is refused for, because whether each is committed, removed or ignored is for whoever pushes to decide.",
           "meta": {
             "decisions": [
               {
@@ -414,9 +516,17 @@
                 "problem": "A repository whose hooks git's index held without the executable mode, as one set up on Windows did, ran none of its checks in a clone on Linux or macOS, git skipping each hook with a hint, and nothing told its user so.",
                 "ruling": "The owner: the session start names each git hook git's index holds without the executable mode and, where files keep that bit, each whose file lacks it, says how to make it executable on every system, and changes neither a file's mode nor the index.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
+                "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user.",
+                "type": "textual"
               }
             ],
             "tests": [
+              "skills/tools/test/e2e/codex.test.ts::s-477gtdrkw34dzxw the session start of the agent's hooks for Codex names each setting of the runner codex the user's configuration lacks, with its default, and has the agent ask for them once on each machine",
+              "skills/tools/test/e2e/codex.test.ts::s-477gtdrkw34dzxw the session start of the agent's hooks for Codex turns the git hooks on where core.hooksPath is unset, saying so",
               "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a changed data record node is committed before its confirmation, its types left as they were and their wait reported",
               "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written",
               "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw a commit goes on where the export and the map cannot be written from the working tree, which reports it",
@@ -429,8 +539,10 @@
               "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook compares every ref the push sends, tags and other branches included, leaving aside the files the working tree ignores",
               "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook refuses a push while the working tree differs from the commit it sends, naming each such file",
               "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
+              "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw in a repository taking the method the session start names each setting the user's configuration lacks, with its default, and has the agent ask for them once on each machine",
               "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index",
               "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory",
+              "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the session start of the plugin for Claude Code writes each setting the user gave as an option, in any repository, wherever the configuration lacks it or holds another value",
               "skills/tools/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
             ],
             "todos": [
@@ -443,7 +555,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/6",
+          "id": "_guidelines/tools/7",
           "sid": "s-4kd2pave7vm4hmd",
           "kind": "rule",
           "title": "How each check is made",
@@ -505,6 +617,10 @@
             {
               "type": "cites",
               "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-n76wt2bkqdmh78x"
             }
           ],
           "meta": {
@@ -593,7 +709,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/7",
+          "id": "_guidelines/tools/8",
           "sid": "s-5z5gnu7pahr82xp",
           "kind": "rule",
           "title": "The tag that binds a symbol to its rule",
@@ -651,7 +767,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/8",
+          "id": "_guidelines/tools/9",
           "sid": "s-zrsc6asgmhv8tnc",
           "kind": "rule",
           "title": "How a test declares the rule it verifies",
@@ -688,19 +804,47 @@
           }
         },
         {
-          "id": "_guidelines/tools/9",
+          "id": "_guidelines/tools/10",
           "sid": "s-xr5xxa9cxf2mq5u",
           "kind": "rule",
           "title": "Who runs the reviewer",
           "status": "checked",
-          "text": "`sheriff review` hands the reviewer's input to the runner named in `sheriff.config.json`, and the runner hands back its answer as JSON: a verdict, pass or refuse, and the findings, each naming the rule, the file, the line and the problem.\n\nA runner is started with no tools, none of the user's settings, memory or hooks, a system prompt of its own and an empty working directory, so that nothing of the session that wrote the code reaches it.\n\nThe runner described is the Claude Code CLI in print mode, asking for the model `fable` and falling back to `opus` where the first is overloaded or not offered; the model, and the time after which a run is ended, twenty minutes unless set otherwise, are settings in the same file.",
+          "text": "`sheriff review` hands the reviewer's input to a runner, and the runner hands back its answer as JSON: a verdict, pass or refuse, and the findings, each naming the rule, the file, the line and the problem.\n\nA runner is started with none of the user's settings, memory or hooks, a system prompt of its own, an empty working directory and every tool its command line can turn off turned off, so that nothing of the session that wrote the code reaches it.\n\nThe runner `claude` is the Claude Code CLI in print mode, asking for the model and the reasoning effort the settings below give, and falling back to the fallback model they give where the first is overloaded or not offered.\n\nThe runner `codex` is the Codex CLI in `codex exec`, with a Codex home of its own, made in a temporary directory for the run and deleted after it, that holds a copy of the user's sign-in and nothing else; its sandbox is read-only, its session is not kept, no skill is offered, and its answer is held to the schema of the verdict. It asks for the model and the reasoning effort the settings below give, and for no model where the model is empty.\n\n`sheriff review` reads the settings of each runner from the git configuration of the user who commits: `specsheriff.review.claudeModel`, `specsheriff.review.claudeFallbackModel` and `specsheriff.review.claudeEffort` for the runner `claude`, and `specsheriff.review.codexModel` and `specsheriff.review.codexEffort` for the runner `codex`, where an empty `codexModel` stands for the model Codex chooses for the signed-in account. A setting the configuration holds, empty or not, is confirmed. The hooks and the skills of either plugin write a setting only as the user whose configuration it is answers, the default written as any other value, and ask for none the configuration holds; the session start (§s-477gtdrkw34dzxw) and the skill `spec-init` (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4) say when each is asked for. The defaults are, for the runner `claude`, the model `opus` at the reasoning effort `high`, falling back to `sonnet`, and, for the runner `codex`, the model Codex chooses at the reasoning effort `high`. Where the configuration lacks a setting of the runner that runs, `sheriff review` takes that setting's default and, with every review it holds so, names each setting it took a default for and how the user confirms it.\n\nThe settings of the reviewer in `sheriff.config.json` are `review.runner` and `review.minutes`, the time after which a run is ended, twenty minutes unless set; `sheriff review` takes no model and no effort from it. Unless `review.runner` is set, the runner is that of the plugin whose tools run `sheriff review`, which the `agent` file the build writes beside `release` names: `claude` for the plugin for Claude Code and `codex` for the plugin for Codex CLI; tools holding no such file take `claude`.",
           "refs": [
             {
               "type": "implements",
               "to": "s-nyh9yk22ba6g77q"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-2pdy9gw2jrjvfb4"
+            },
+            {
+              "type": "cites",
+              "from": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "cites",
+              "from": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "from": "s-2pdy9gw2jrjvfb4"
             }
           ],
-          "rationale": "Print mode answers once and exits, with no session around it to carry anything over. The most capable model is asked for because whether code does only what its rules say is the one judgement among the checks. The limit on a run's time ends a run that hangs rather than hurrying one that reads a large change, which is why it is long.",
+          "rationale": "Print mode and `codex exec` answer once and exit, with no session around them to carry anything over.\n\nA run of the reviewer is paid for by the user who commits, from their own account, so it runs at the models and the efforts that user has confirmed, kept on their machine rather than in the project, which every clone shares. The git configuration is read by the git hooks with no agent running and outlives an update or a removal of either plugin, and its global scope serves every project of the user, so one answer on each machine holds wherever they commit. A confirmed setting holds its value, so that a release of the SpecSheriff tools offering other defaults changes nothing a user has confirmed.\n\nWhere a setting is not confirmed the review still runs, at its default, since a commit whose review cannot be held is refused (§s-nyh9yk22ba6g77q), and refusing would hold every commit of a user nobody has asked yet, as one committing from a terminal or in CI; the default is named with every review it runs, so that nobody pays long without knowing at what.\n\nWhether code does only what its rules say is the one judgement among the checks, so it is asked at high effort: with Codex, high was the lowest effort tried at which the reviewer refused, in every run, a change it must refuse, which at lower efforts it passed in some runs or in all. Nothing was measured with Claude, whose runner is asked the same effort so that the two runners judge alike. The default of the runner `claude` is `opus`, the model Anthropic names as its default, rather than its most capable model, which costs the user more for each review; it falls back to `sonnet` so that a review is held where `opus` is overloaded or not offered. Which models Codex offers depends on how its user signs in, so the default of the runner `codex` is the one Codex chooses for that account. Codex offers no run without tools, so its runner turns off every one a setting reaches, and its sandbox lets nothing be written.\n\nThe runner follows the plugin a user has, since a user with one agent has no other to run; a project wanting one reviewer for everyone names it. The limit on a run's time ends a run that hangs rather than hurrying one that reads a large change, which is why it is long.",
           "meta": {
             "decisions": [
               {
@@ -714,23 +858,41 @@
                 "problem": "The todo on this rule asks for the Codex and Gemini CLIs as runners, then any service speaking the OpenAI-compatible API.",
                 "ruling": "Following the order of work the owner agreed, it waits past the first release, 0.1.0, and the todo stays. That release is the plugin for Claude Code alone, whose every user has the runner described; the runner of Codex CLI comes with the plugin for Codex CLI, and whether Gemini CLI gets a package of its own is being studied.",
                 "type": "procedural"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "No runner served a project whose agent is Codex CLI.",
+                "ruling": "The runner `codex` comes with the plugin for Codex CLI, and the runner follows the plugin whose tools run the review unless the project names one.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "The reviewer ran at the models the tools or the project's settings chose, the same for every clone, though each run is paid for by the user who commits; and at the effort Codex takes by default its verdicts on one and the same change differed from run to run: with Codex CLI 0.166.0, a ChatGPT sign-in and gpt-6-luna, a function no named rule states passed in one run of four at the default effort and in three of three at medium, and was refused in three of three at high and at max.",
+                "ruling": "The owner: no choice that costs a user tokens is made without their consent. The skills work at the model and the effort the user has chosen in their session; every run outside it, now the reviewer's, at the model and the effort the user has confirmed on their machine, offered first at defaults, one model for each agent at an effort set by the task: opus at high falling back to sonnet, since a model above opus is not worth its cost to the user here and Anthropic itself now recommends opus over fable, and the model Codex chooses at high. Each user confirms on their own machine; where they have not, the defaults run with a notice at every commit.",
+                "type": "textual"
               }
             ],
             "todos": [
               {
                 "date": "2026-10-27",
                 "by": "the owner",
-                "text": "Describe the Codex and Gemini CLIs as runners, then any service speaking the OpenAI-compatible API, which covers models run locally."
+                "text": "Describe the Gemini CLI as a runner, then any service speaking the OpenAI-compatible API, which covers models run locally."
               }
             ],
             "tests": [
-              "skills/tools/test/unit/config.test.ts::s-xr5xxa9cxf2mq5u reads the reviewer's model and time limit, fable, opus and twenty minutes unless set otherwise",
-              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, the model and its fallback asked for"
+              "skills/tools/test/e2e/codex.test.ts::s-xr5xxa9cxf2mq5u the build writes beside each plugin's release the agent whose runner its tools take",
+              "skills/tools/test/unit/config.test.ts::s-xr5xxa9cxf2mq5u reads the reviewer's runner and time limit from the project's settings, twenty minutes unless set, and no model or effort",
+              "skills/tools/test/unit/config.test.ts::s-xr5xxa9cxf2mq5u takes the runner of the plugin whose tools run unless the settings name one, and claude for tools naming no agent",
+              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u reads each runner's settings from the user's git configuration, an empty one confirmed, and takes the default of each it lacks",
+              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u runs the Codex CLI in an empty directory with a Codex home of its own holding a copy of the user's sign-in and nothing else, deleted after the run",
+              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u runs the reviewer at the settings read, and with every review held at a default names each setting it took and how the user confirms it",
+              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, at the model, the effort and the fallback model given",
+              "skills/tools/test/unit/gates.test.ts::s-xr5xxa9cxf2mq5u starts the Codex CLI in codex exec, read-only and unkept, with no skill and every tool a setting reaches turned off, its answer held to the verdict's schema"
             ]
           }
         },
         {
-          "id": "_guidelines/tools/10",
+          "id": "_guidelines/tools/11",
           "sid": "s-v4qus7raqnwzneb",
           "kind": "rule",
           "title": "How a confirmation is recorded",
@@ -784,12 +946,12 @@
           }
         },
         {
-          "id": "_guidelines/tools/11",
+          "id": "_guidelines/tools/12",
           "sid": "s-4mej6ccn7xu3d3p",
           "kind": "rule",
-          "title": "A git hook calls its script in the data directory of the plugin for Claude Code",
+          "title": "A git hook runs the SpecSheriff tools a plugin keeps on the machine",
           "status": "checked",
-          "text": "When a session starts, the plugin for Claude Code (§s-zh2vcr3xjumppg5) copies the SpecSheriff tools it carries into its data directory, `${CLAUDE_PLUGIN_DATA}`, at `~/.claude/plugins/data/specsheriff-specsheriff-marketplace/`, where the copy there is of another release or missing. Each git hook `sheriff init` writes holds nothing but a call to the script for that hook in `hooks/` of that directory, which runs what the hook is to run (§s-477gtdrkw34dzxw). The hook refuses where that script is missing, saying that a session of Claude Code started on the machine puts it there; the script refuses where Node is missing or older than the tools need, naming the version they need.",
+          "text": "When a session starts, the plugin for Claude Code (§s-zh2vcr3xjumppg5) copies the SpecSheriff tools it carries into its data directory, `<plugins>/data/specsheriff-specsheriff-marketplace/`, where the copy there is of another release or missing; `<plugins>` is `CLAUDE_CODE_PLUGIN_CACHE_DIR` where it is set and `~/.claude/plugins` otherwise. The plugin for Codex CLI (§s-2pdy9gw2jrjvfb4) keeps no copy: its tools stand in its directory in Codex's cache, `<Codex home>/plugins/cache/specsheriff-marketplace/specsheriff/<version>/tools/`, where `<Codex home>` is `CODEX_HOME` where it is set and `~/.codex` otherwise. `~` is the user's home directory, on Windows their profile directory.\n\nEach git hook `sheriff init` writes holds the lookup of those tools, a call to the script for that hook in their `hooks/`, and what it does where it finds none. Where it finds the tools of both plugins, it takes those whose `release` file opens with the higher version, compared as semantic versions, and either where the two are equal. The script runs what the hook is to run (§s-477gtdrkw34dzxw), and refuses where Node is missing or older than the tools need, naming the version they need.\n\nWhere the hook finds the tools of neither plugin, it lets the commit or the push through and turns the git hooks off in that clone, unsetting `core.hooksPath` where it names `.githooks`. It says that no check ran because it found the SpecSheriff tools of no plugin on the machine, and that `git config core.hooksPath .githooks` turns the hooks on again.\n\nThe script run when a session starts names each git hook in `.githooks/`, and each of the agent's hooks for Codex in `.codex/hooks.json`, that holds what an earlier release of `sheriff init` wrote, and says that `sheriff init` replaces it (§s-7unxytshhc4md54).",
           "refs": [
             {
               "type": "implements",
@@ -805,34 +967,61 @@
             },
             {
               "type": "cites",
+              "to": "s-2pdy9gw2jrjvfb4"
+            },
+            {
+              "type": "cites",
+              "to": "s-7unxytshhc4md54"
+            },
+            {
+              "type": "cites",
               "from": "s-zefk589ykh37b8u"
             },
             {
               "type": "cites",
-              "from": "s-f5rz6b7dhxejjts"
+              "from": "s-7unxytshhc4md54"
+            },
+            {
+              "type": "cites",
+              "from": "s-477gtdrkw34dzxw"
             },
             {
               "type": "cites",
               "from": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "from": "s-n76wt2bkqdmh78x"
             }
           ],
-          "rationale": "Claude Code keeps each version of a plugin in a directory of its own, which changes with every update and is removed some time after, and keeps the plugin's data directory across updates; so a call written once into a project names the data directory, and the plugin keeps there a copy of the release it holds. A hook holding only the call runs what the script of the installed release says, so a hook written once never falls behind a release. A check that cannot run holds nothing, so the hook refuses rather than passing.",
+          "rationale": "Claude Code keeps each version of a plugin in a directory of its own, which changes with every update, and keeps the plugin's data directory across updates; so the plugin keeps a copy of its release there, at a path a hook written once can name. Codex keeps the one installed version of a plugin in its cache and deletes the cache when the plugin is removed, while it leaves the plugin's data directory; a copy kept there would outlive the plugin, so the hook looks in the cache, which goes with it.\n\nThe hook looks for the tools of both plugins because a user may move from one agent to the other, and takes the higher release because it holds every fix of the lower.\n\nA hook that finds no tools is most often one whose user removed the plugin. Refusing would hold every commit of that user while checking nothing, so the hook lets it through, turns itself off so as not to say so at every commit, and tells the user how the commit was made and how to turn the hooks on again. Where the tools are found but cannot run, the plugin is there and its user expects the checks to hold, so the script refuses.\n\nA hook is a file of the project, which only a commit changes, so a hook written by an earlier release keeps its lookup until `sheriff init` replaces it; the session start says so, because it runs in every clone.",
           "meta": {
             "tests": [
-              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a git hook refuses where its script is missing, saying that a session of Claude Code puts it there",
+              "skills/tools/test/e2e/codex.test.ts::s-4mej6ccn7xu3d3p the session start of the agent's hooks for Codex names each git hook an earlier release of sheriff init wrote",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a git hook runs the tools of the higher release where it finds both plugins', those of the plugin for Claude Code where the two are equal, and either where it finds one",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets the commit through, turns the git hooks off in that clone, and says how to turn them on again",
               "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need",
-              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p each git hook sheriff init writes holds nothing but a call to its script in the plugin's data directory",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p each git hook sheriff init writes holds the lookup of the tools of both plugins and a call to the script for that hook, and nothing else",
+              "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p the session start names each git hook an earlier release of sheriff init wrote, saying that sheriff init replaces it",
               "skills/tools/test/e2e/plugin.test.ts::s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing"
+            ],
+            "decisions": [
+              {
+                "date": "2026-11-02",
+                "problem": "The git hook refused where its script was missing, so once the plugin for Claude Code was uninstalled from its last scope, which deletes its data directory, a clone whose hooks a session had turned on would refuse every commit.",
+                "ruling": "The owner: removing a plugin leaves no hook failing; a hook that finds the tools of no plugin lets the commit through with a notice and turns the hooks off in that clone.",
+                "type": "textual"
+              }
             ]
           }
         },
         {
-          "id": "_guidelines/tools/12",
+          "id": "_guidelines/tools/13",
           "sid": "s-zh2vcr3xjumppg5",
           "kind": "rule",
           "title": "The plugin for Claude Code carries everything its work needs",
           "status": "checked",
-          "text": "The plugin for Claude Code, `specsheriff`, carries the skills `spec`, `spec-review`, `spec-adopt` and `spec-init`, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares to Claude Code its hooks: the agent's hooks (§s-477gtdrkw34dzxw) and the one run when a session starts (§s-4mej6ccn7xu3d3p).\n\nIn a repository holding no `sheriff.config.json` at its root, its hooks do nothing but keep its copy of the tools (§s-4mej6ccn7xu3d3p).\n\nThe marketplace `specsheriff-marketplace` lists the plugin by the relative path of its directory. A project declares both in `.claude/settings.json`: the marketplace under `extraKnownMarketplaces`, its source the branch `release` of the repository the SpecSheriff guidelines are written in and `autoUpdate` on, and the plugin under `enabledPlugins`. Each machine runs the release its copy of the plugin holds until Claude Code updates it there.\n\nThe plugin's skills and the agent's hooks run `sheriff` from the SpecSheriff tools the plugin carries, as `node \"${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js\"`. The skill `spec-init` runs `sheriff init`.",
+          "text": "The plugin for Claude Code, `specsheriff`, carries the skills `spec`, `spec-review`, `spec-adopt`, `spec-init` and `spec-remove`, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares to Claude Code its hooks: the agent's hooks (§s-477gtdrkw34dzxw) and the one run when a session starts (§s-4mej6ccn7xu3d3p). It declares each setting of the runner `claude` (§s-xr5xxa9cxf2mq5u) as one of its options, which Claude Code asks the user for when it enables the plugin; each option names its default and takes no default value, so that a value Claude Code holds for it is one the user gave.\n\nIn a repository holding no `sheriff.config.json` at its root, its hooks do nothing but keep its copy of the tools (§s-4mej6ccn7xu3d3p) and write the settings the user gave as its options (§s-477gtdrkw34dzxw).\n\nThe marketplace `specsheriff-marketplace` lists the plugin by the relative path of its directory. A project declares both in `.claude/settings.json`: the marketplace under `extraKnownMarketplaces`, its source the branch `release` of the repository the SpecSheriff guidelines are written in and `autoUpdate` on, and the plugin under `enabledPlugins`. Each machine runs the release its copy of the plugin holds until Claude Code updates it there.\n\nThe plugin's skills and the agent's hooks run `sheriff` from the SpecSheriff tools the plugin carries, as `node \"${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js\"`. The skill `spec-init` runs `sheriff init` and then offers the user, at its default, each setting of the runner `sheriff review` would take that their git configuration does not hold and they were not asked for (§s-477gtdrkw34dzxw), to confirm or replace, writing what they answer and marking it asked (§s-xr5xxa9cxf2mq5u); `spec-remove` runs `sheriff remove` (§s-7unxytshhc4md54) and then offers to remove the plugin from the machine.\n\nThe skills set neither a model nor a reasoning effort, for themselves or for any agent they start: they work at those the user has chosen in their session.",
           "refs": [
             {
               "type": "implements",
@@ -852,11 +1041,19 @@
             },
             {
               "type": "cites",
+              "to": "s-7unxytshhc4md54"
+            },
+            {
+              "type": "cites",
+              "to": "s-xr5xxa9cxf2mq5u"
+            },
+            {
+              "type": "cites",
               "from": "s-zefk589ykh37b8u"
             },
             {
               "type": "cites",
-              "from": "s-f5rz6b7dhxejjts"
+              "from": "s-7unxytshhc4md54"
             },
             {
               "type": "cites",
@@ -864,10 +1061,18 @@
             },
             {
               "type": "cites",
+              "from": "s-xr5xxa9cxf2mq5u"
+            },
+            {
+              "type": "cites",
               "from": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "from": "s-2pdy9gw2jrjvfb4"
             }
           ],
-          "rationale": "An agent takes up a skill only where it is installed, and Claude Code installs and updates a plugin from a marketplace itself and runs the hooks a plugin declares while it is enabled: declared in the project, the plugin is offered to the agent of every clone and, updating itself, brings every machine the latest release.\n\nCarrying the guidelines and the tools beside the skills, it keeps everything of one release together on the machine, and nothing of a release in the project but the calls to it.\n\nA plugin installed for a user runs in every project they open, and a project not taking the method is held to nothing of it.\n\nThe marketplace is read from `release`, which holds only releases, so an agent loads a release and never the work in progress on `main`. Claude Code writes the directory of the plugin's installed release wherever a skill or a hook names `${CLAUDE_PLUGIN_ROOT}`, so each runs the tools of its own release.",
+          "rationale": "An agent takes up a skill only where it is installed, and Claude Code installs and updates a plugin from a marketplace itself and runs the hooks a plugin declares while it is enabled: declared in the project, the plugin is offered to the agent of every clone and, updating itself, brings every machine the latest release.\n\nCarrying the guidelines and the tools beside the skills, it keeps everything of one release together on the machine, and nothing of a release in the project but the calls to it.\n\nA plugin installed for a user runs in every project they open, and a project not taking the method is held to nothing of it.\n\nThe marketplace is read from `release`, which holds only releases, so an agent loads a release and never the work in progress on `main`. Claude Code writes the directory of the plugin's installed release wherever a skill or a hook names `${CLAUDE_PLUGIN_ROOT}`, so each runs the tools of its own release.\n\nA plugin is installed for its user on the machine, beyond any one project, so `spec-remove` offers its removal and leaves the choice to the user.\n\nThe user pays for their session at the model and the effort they choose in it, so the skills set neither. The reviewer runs outside the session at the cost of the user who commits, at the settings that user confirms (§s-xr5xxa9cxf2mq5u), which Claude Code asks for when it enables the plugin, as its options. A default value declared for an option would be taken for a user who gave none, and the hooks could not tell it from an answer, so the options declare none. Where Claude Code enabled the plugin without asking, `spec-init` asks before the first commit of a project it sets up is reviewed, unless the user was asked before.",
           "meta": {
             "decisions": [
               {
@@ -881,19 +1086,150 @@
                 "problem": "Only the skill spec-init was said to run the SpecSheriff tools the plugin carries; where the other skills and the agent's hooks run them from, no rule said.",
                 "ruling": "The owner: the plugin's skills and the agent's hooks run them from the tools the plugin carries, by the directory Claude Code writes in for the installed release.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
+                "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user. The plugin for Claude Code declares the settings of the runner claude as its options, each naming its default and taking no default value; spec-init offers the defaults of any setting still lacking that was never asked for; the skills set no model and no effort.",
+                "type": "textual"
               }
             ],
             "tests": [
               "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 spec-init offers each setting of the runner the configuration lacks and was not asked for, writing what the user answers and marking it asked; the skills set no model and no effort",
               "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory",
               "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools",
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin declares each setting of the runner claude as an option naming its default and taking no default value",
               "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts",
-              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, and spec-init runs sheriff init"
+              "skills/tools/test/e2e/plugin.test.ts::s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, spec-init runs sheriff init, and spec-remove sheriff remove, offering to remove the plugin"
             ]
           }
         },
         {
-          "id": "_guidelines/tools/13",
+          "id": "_guidelines/tools/14",
+          "sid": "s-2pdy9gw2jrjvfb4",
+          "kind": "rule",
+          "title": "The plugin for Codex CLI carries everything its work needs",
+          "status": "checked",
+          "text": "The plugin for Codex CLI, `specsheriff`, carries the skills `spec`, `spec-review`, `spec-adopt`, `spec-init` and `spec-remove`, the SpecSheriff guidelines and their schema, and the SpecSheriff tools. It declares no hooks; the agent's hooks for Codex stand in the project (§s-n76wt2bkqdmh78x).\n\nThe marketplace `specsheriff-marketplace` lists it by the relative path of its directory in `.agents/plugins/marketplace.json`, beside the file listing the plugin for Claude Code (§s-zh2vcr3xjumppg5). The practitioner's guide, the plugin's `README.md`, gives the commands that install it on a machine: `codex plugin marketplace add non4me/SpecSheriff@release` and `codex plugin add specsheriff@specsheriff-marketplace`.\n\nThe plugin's skills run `sheriff` from the SpecSheriff tools the plugin carries, as `node <plugin>/tools/dist/cli.js`; a skill takes `<plugin>` from the path of its `SKILL.md`, `<plugin>/skills/<skill>/SKILL.md`. The skill `spec-init` runs `sheriff init --agent codex` and then offers the user, at its default, each setting of the runner `sheriff review` would take that their git configuration does not hold and they were not asked for (§s-477gtdrkw34dzxw), to confirm or replace, writing what they answer and marking it asked (§s-xr5xxa9cxf2mq5u); `spec-remove` runs `sheriff remove` (§s-7unxytshhc4md54) and then offers to remove the plugin from the machine.\n\nThe skills set neither a model nor a reasoning effort, for themselves or for any agent they start: they work at those the user has chosen in their session.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-bsya3febm6u64ab"
+            },
+            {
+              "type": "cites",
+              "to": "s-n76wt2bkqdmh78x"
+            },
+            {
+              "type": "cites",
+              "to": "s-zh2vcr3xjumppg5"
+            },
+            {
+              "type": "cites",
+              "to": "s-7unxytshhc4md54"
+            },
+            {
+              "type": "cites",
+              "to": "s-xr5xxa9cxf2mq5u"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "cites",
+              "from": "s-xr5xxa9cxf2mq5u"
+            },
+            {
+              "type": "cites",
+              "from": "s-4mej6ccn7xu3d3p"
+            }
+          ],
+          "rationale": "An agent takes up a skill only where it is installed. Codex installs a plugin for the user who adds it and none that a project declares, so each user installs it, as they install Codex. Codex reads `.agents/plugins/marketplace.json` before the file listing the plugin for Claude Code, so each agent finds its own plugin.\n\nCodex admits no plugin carrying hooks into its public directory, so the plugin carries none.\n\nCarrying the guidelines and the tools beside the skills, the plugin keeps everything of one release together on the machine. Each agent installs and updates its own plugin, so neither waits on the other, and each can change for its agent alone.\n\nA skill reaches the tools beside it by the path of its own file, which Codex gives it. A plugin is installed for its user on the machine, beyond any one project, so `spec-remove` offers its removal and leaves the choice to the user.\n\nThe user pays for their session at the model and the effort they choose in it, so the skills set neither. The reviewer runs outside the session at the cost of the user who commits, at the settings that user confirms (§s-xr5xxa9cxf2mq5u). Codex asks nothing for a plugin it installs, and the session in which a project is set up started before `sheriff init` wrote the agent's hooks for Codex into it (§s-n76wt2bkqdmh78x), so no session start asked for them there; `spec-init` asks in its place, before the first commit is reviewed, unless the user was asked before.",
+          "meta": {
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::s-2pdy9gw2jrjvfb4 spec-init offers each setting of the runner codex the configuration lacks and was not asked for, writing what the user answers and marking it asked",
+              "skills/tools/test/e2e/codex.test.ts::s-2pdy9gw2jrjvfb4 the guide of the plugin for Codex CLI gives the commands that install it on a machine",
+              "skills/tools/test/e2e/codex.test.ts::s-2pdy9gw2jrjvfb4 the marketplace lists the plugin for Codex CLI by the relative path of its directory, beside the file listing the plugin for Claude Code",
+              "skills/tools/test/e2e/codex.test.ts::s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares no hooks",
+              "skills/tools/test/e2e/codex.test.ts::s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, by the path of their SKILL.md; spec-init runs sheriff init for Codex, and spec-remove sheriff remove, offering to remove the plugin"
+            ],
+            "decisions": [
+              {
+                "date": "2026-11-02",
+                "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
+                "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user. spec-init offers the defaults of any setting still lacking that was never asked for; the skills set no model and no effort.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/15",
+          "sid": "s-n76wt2bkqdmh78x",
+          "kind": "rule",
+          "title": "The agent's hooks for Codex CLI",
+          "status": "checked",
+          "text": "The agent's hooks for Codex stand in the project's `.codex/hooks.json`, where `sheriff init --agent codex` writes them (§s-7unxytshhc4md54): one when a session starts, one before an edit made with `apply_patch`, and one after such an edit or a shell command. Each holds only the lookup of the plugin for Codex CLI in Codex's cache (§s-4mej6ccn7xu3d3p) and a call to the plugin's script for that hook, `hooks/session-start.sh`, `hooks/guard.sh` or `hooks/after-edit.sh`; where it finds no plugin, it does nothing.\n\nThe scripts do what the agent's hooks do (§s-477gtdrkw34dzxw), and nothing in a repository holding no `sheriff.config.json`.\n\nBefore an edit, `sheriff guard` reads from the patch each file it adds, updates, deletes or moves, applies the patch to them in memory, a moved file taken as deleted at its old path and added at its new one, and judges each as an edit made with the file tools (§s-4kd2pave7vm4hmd). It refuses the whole patch where it refuses one of its files or cannot read or apply the patch.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-83ev4wwesbwnhnp"
+            },
+            {
+              "type": "implements",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
+              "to": "s-7unxytshhc4md54"
+            },
+            {
+              "type": "cites",
+              "to": "s-4mej6ccn7xu3d3p"
+            },
+            {
+              "type": "cites",
+              "to": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "to": "s-4kd2pave7vm4hmd"
+            },
+            {
+              "type": "cites",
+              "from": "s-7unxytshhc4md54"
+            },
+            {
+              "type": "cites",
+              "from": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-2pdy9gw2jrjvfb4"
+            }
+          ],
+          "rationale": "Codex admits no plugin carrying hooks into its public directory, so the hooks are the project's. Codex runs a project's hooks once its user trusts the project and each hook as it stands; a hook holding only the lookup and the call changes only where its lookup does, and is trusted again then, while what the scripts do follows the release. A hook that finds no plugin does nothing, so removing the plugin leaves no hook failing in the project.\n\nCodex hands an edit as one patch, which may touch several files and is applied whole, so the guard judges each file and refuses the patch whole.",
+          "meta": {
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::s-n76wt2bkqdmh78x after an edit, the hook runs the checks over the working tree and reports to the agent what they refuse",
+              "skills/tools/test/e2e/codex.test.ts::s-n76wt2bkqdmh78x before an edit made with apply_patch, the hook refuses the whole patch where sheriff guard refuses one of its files",
+              "skills/tools/test/e2e/codex.test.ts::s-n76wt2bkqdmh78x each of the agent's hooks for Codex holds only the lookup of the plugin in Codex's cache and a call to its script, and does nothing where it finds no plugin",
+              "skills/tools/test/e2e/codex.test.ts::s-n76wt2bkqdmh78x the scripts the agent's hooks for Codex call do nothing in a repository holding no sheriff.config.json",
+              "skills/tools/test/unit/gates.test.ts::s-n76wt2bkqdmh78x judges each file a patch adds, updates, deletes or moves as an edit made with the file tools",
+              "skills/tools/test/unit/gates.test.ts::s-n76wt2bkqdmh78x reads the paths of a patch from the directory the session works in",
+              "skills/tools/test/unit/gates.test.ts::s-n76wt2bkqdmh78x refuses a patch it cannot read or apply",
+              "skills/tools/test/unit/gates.test.ts::s-n76wt2bkqdmh78x refuses the whole patch where it refuses one of its files"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/16",
           "sid": "s-pvzms7d8kxb8dk2",
           "kind": "rule",
           "title": "Where the types and runtime checks generated from the data records are written",
@@ -925,7 +1261,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/14",
+          "id": "_guidelines/tools/17",
           "sid": "s-suv42g8r3ra2h6b",
           "kind": "rule",
           "title": "What a data record node generates",
@@ -961,7 +1297,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/15",
+          "id": "_guidelines/tools/18",
           "sid": "s-nk8td3ez58gahc4",
           "kind": "rule",
           "title": "A data record its variants refine",
@@ -993,7 +1329,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/16",
+          "id": "_guidelines/tools/19",
           "sid": "s-4npdup7mjkva69y",
           "kind": "rule",
           "title": "The type each neutral type of a field gives",
