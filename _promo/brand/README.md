@@ -5,7 +5,7 @@ owner's: `coin.svg`, the coin for full-size use; `icon.svg`, the star for icons 
 heavier so that it holds at 16 px; `star.svg`, the star above that. `exports/` holds everything made
 from them — the coin for the README in light and dark, the star for a dark ground, the browser's
 icons, the icons of an installed app and the repository's social preview — rendered by
-`node brand/render.mjs`. An export is never edited: the drawing is changed and the script run again.
+`node _promo/brand/render.mjs`. An export is never edited: the drawing is changed and the script run again.
 
 ## Using the mark
 

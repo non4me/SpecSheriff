@@ -16,7 +16,7 @@ Load the fonts, then `tokens.css`, then `specsheriff.css`:
 ```
 
 - `tokens.json` is the one source of every value. Change a value there and run
-  `node docs/style/build.mjs`, which writes `tokens.css`; never edit `tokens.css` by hand.
+  `node _promo/style/build.mjs`, which writes `tokens.css`; never edit `tokens.css` by hand.
 - `specsheriff.css` styles the page itself (the ground, headings, links, code) and the components,
   each a class beginning `ss-`. It takes every value from a token; a new rule does the same.
 - Each component's guidelines and live preview are in `components/<Name>/`.
@@ -71,12 +71,12 @@ Load the fonts, then `tokens.css`, then `specsheriff.css`:
 ## The mark
 
 The star — one line, an S inside it, each point ending in a ring — is the owner's drawing in
-`brand/`; it is used unchanged and never redrawn. On the site and in the pictures it is inlined from
-`brand/icon.svg` with its stroke in `ink`, beside "SpecSheriff" in `display`. The mark is under no
-open licence: `brand/README.md` says how it may be used.
+`_promo/brand/`; it is used unchanged and never redrawn. On the site and in the pictures it is inlined from
+`_promo/brand/icon.svg` with its stroke in `ink`, beside "SpecSheriff" in `display`. The mark is under no
+open licence: `_promo/brand/README.md` says how it may be used.
 
 ## Pictures
 
-The pictures and the cards in `docs/images/` are drawn in this style: a ground of `paper`, steps as
+The pictures and the cards in `_promo/images/` are drawn in this style: a ground of `paper`, steps as
 tickets, verdicts as stamps, the brand and the motto at the foot. A new picture starts from one of
-them, and is rendered by `docs/images/render.mjs`.
+them, and is rendered by `_promo/images/render.mjs`.

@@ -1,5 +1,5 @@
 // Writes tokens.css beside this script from tokens.json, so that every value of the style has one
-// source: `node docs/style/build.mjs` after a token changes. tokens.css is never edited by hand.
+// source: `node _promo/style/build.mjs` after a token changes. tokens.css is never edited by hand.
 import { readFileSync, writeFileSync } from "node:fs";
 
 const here = new URL(".", import.meta.url);
@@ -19,4 +19,4 @@ for (const [family, { tokens: list }] of Object.entries(tokens)) {
 }
 
 writeFileSync(new URL("tokens.css", here), `/* SpecSheriff style guide — generated from tokens.json */\n:root {\n${lines.join("\n")}\n}\n`);
-console.log(`docs/style/tokens.css: ${lines.filter((l) => l.startsWith("  --")).length} tokens`);
+console.log(`_promo/style/tokens.css: ${lines.filter((l) => l.startsWith("  --")).length} tokens`);

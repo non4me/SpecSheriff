@@ -1,6 +1,6 @@
-# Asks the host to build the site again when a material the site shows changes (docs/site.md says
-# which). The host's build hook is the repository secret SITE_BUILD_HOOK; until it is set, the job
-# says so and does nothing.
+# Asks the host to build the site again when a material the site shows changes (_promo/site/README.md
+# says which). The host's build hook is the repository secret SITE_BUILD_HOOK; until it is set, the
+# job says so and does nothing.
 name: site
 
 on:
@@ -13,7 +13,7 @@ on:
       - "specs/_confirmations.jsonl"
       - "skills/claude-code/README.md"
       - "skills/codex/README.md"
-      - "brand/**"
+      - "_promo/**"
   workflow_dispatch:
 
 permissions: {}

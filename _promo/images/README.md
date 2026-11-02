@@ -10,7 +10,7 @@ how a rule is written (§s-3w8puyqn2ramsre). Each is kept in three formats, a fo
   fonts are missing and scales to any size.
 
 The files of `png/` and `svg/` are never edited: the page in `html/` is changed and
-`node docs/images/render.mjs` run again, or `node docs/images/render.mjs <name>` for one picture. It
+`node _promo/images/render.mjs` run again, or `node _promo/images/render.mjs <name>` for one picture. It
 needs Chrome (another Chromium named by `CHROME`) and Python with PyMuPDF (`pip install pymupdf`; an
 interpreter other than `python3`, or `python` on Windows, named by `PYTHON`).
 
@@ -39,5 +39,5 @@ interpreter other than `python3`, or `python` on Windows, named by `PYTHON`).
 A card names its rule by sid, as everything outside the specification does: an address would go
 stale the first time the guidelines are renumbered.
 
-The pictures are under CC BY 4.0, as the rest of `docs/` is. The mark drawn in them is not: it is used
-as [`brand/README.md`](../../brand/README.md) says.
+The pictures are under CC BY 4.0, as the rest of `_promo/` is but the mark. The mark drawn in them is not: it is used
+as [`_promo/brand/README.md`](../brand/README.md) says.

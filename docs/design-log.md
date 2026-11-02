@@ -6,6 +6,18 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-02 — Every promotional material lives in `_promo/`
+
+The owner's ruling: the promotional materials live in one folder and nowhere else — the mark
+(`_promo/brand/`, formerly `brand/`), the pictures and the cards (`_promo/images/`), the style guide
+(`_promo/style/`), the articles (`_promo/articles/`) and the site's brief (`_promo/site/`), moved
+there whole with no copy left behind. Its name begins with an underscore, as this repository's other
+folders of a special kind do, rather than a dot, which hides a folder and which tools that walk a
+tree pass over by default. The theory stays in `docs/`, the guidelines in `specs/` and the guides in
+`skills/`: they are the method itself, which the tools, the plugins and this repository's own
+instructions read where they are, and the site shows them from there. `_promo/` is under CC BY 4.0
+as `docs/` is, but for the mark, which is under no open licence.
+
 ### 2026-11-02 — The site is built from this repository by a generator kept in a repository of its own
 
 The owner's plan: everything the site shows is kept in this repository, and a builder at the host
@@ -30,7 +42,7 @@ The pages, agreed with the owner the same day: the home, the method, the princip
 a page for each node, a mind map of the specification, the guides, the landscape, the design log,
 the articles and the example. The pictures and the cards have no page of their own: they are
 promotional material, shown where a page uses them and as previews when a page is shared. The site
-is built and run by an agent of its own, from the brief in `docs/site.md`, which says what each page
+is built and run by an agent of its own, from the brief in `_promo/site/README.md`, which says what each page
 is made of and what has been decided.
 
 ### 2026-11-02 — The pictures are a frontier ledger, in English first, each kept as a page
@@ -42,7 +54,7 @@ double border and every verdict a rubber stamp. The pictures are in English only
 is until the rest is ready; the localisation comes last, into several languages at once (the owner,
 2026-11-02).
 
-Each picture is kept in `docs/images/html/` as a page of its own, its source, and rendered from it by
+Each picture is kept in `_promo/images/html/` as a page of its own, its source, and rendered from it by
 a committed script into PNG at twice its size and SVG with the text as outlines, each format in a
 folder of its own, as the owner asked. The page is the source because its text stays live, which the
 translation and the site both need; the renders are never edited, as the exports of the mark are not.
@@ -173,7 +185,7 @@ that broke.)
 The mark is a five-pointed star drawn as one continuous line, an S tilted inside it whose ends join
 the star, each point ending in a small open ring. Full size, it is the coin: the star inside two pairs
 of rings, SPECSHERIFF along the top and NO CODE WITHOUT A RULE along the bottom; every icon is the
-bare star, since the coin's lettering cannot be read at icon sizes. One folder, `brand/`, holds the
+bare star, since the coin's lettering cannot be read at icon sizes. One folder, `_promo/brand/`, holds the
 owner's drawings and every export, rendered from them by a committed script; the README, the plugins
 and the promo site copy from it. The marks are under no open licence: anyone may use them unchanged
 to refer to SpecSheriff — in an article, a post, a talk, a badge — and nobody may change them or use
@@ -490,7 +502,7 @@ example leaves the road to a product open.
    hooks; turned on in this repository. `sheriff types` comes with the first release (2026-10-31).
 3. ~~The skills~~ — done 2026-10-28: spec, spec-review, spec-adopt, and `sheriff init` laying them
    out with the hooks and the SpecSheriff guidelines.
-4. The packaging: the repository laid out as the three parts, with the mark in `brand/`; the theory;
+4. The packaging: the repository laid out as the three parts, with the mark in `_promo/brand/`; the theory;
    the rules of the appendix of the tools for the one channel, then the plugin for Claude Code and its
    marketplace; the practitioner's guide, and a test on a clean machine.
 5. ~~The worked example~~ — done 2026-11-01: the frontier town's saloon in a repository of its own,
@@ -504,15 +516,15 @@ example leaves the road to a product open.
 7. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
    refining it.
 8. ~~The four pictures and the cards~~ — done 2026-11-02: the pictures of the first article and a
-   card for each rule of how a rule is written, drawn as a frontier ledger, in `docs/images/` as
+   card for each rule of how a rule is written, drawn as a frontier ledger, in `_promo/images/` as
    pages rendered to PNG and SVG.
 9. ~~The style guide~~ — done 2026-11-02: one style for the site and every picture, taken from
-   `docs/style/` — its tokens the one source of every value, the stylesheet built on them, the
+   `_promo/style/` — its tokens the one source of every value, the stylesheet built on them, the
    components the pictures are drawn with, and the brand book; an article's body set in Libre Caslon
    Text, the typewriter kept for labels, stamps and code.
 10. ~~The materials for the site~~ — done 2026-11-02: the pages agreed with the owner, each made
     from a document kept here; a home for the articles; the workflow that asks the host to rebuild;
-    and the brief, `docs/site.md`, for the agent that builds the site.
+    and the brief, `_promo/site/README.md`, for the agent that builds the site.
 11. The site, built by an agent of its own from the brief, in a repository of its own, by Astro,
     served by Cloudflare Pages, the host connected by the owner.
 12. The first article, in English.

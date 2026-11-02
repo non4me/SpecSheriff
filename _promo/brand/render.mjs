@@ -1,5 +1,5 @@
 // Renders every export of the mark from the owner's three drawings beside this script, each at its exact
-// size, so that a change to a drawing is one run of `node brand/render.mjs` and the exports never drift.
+// size, so that a change to a drawing is one run of `node _promo/brand/render.mjs` and the exports never drift.
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { Resvg } from "@resvg/resvg-js";
@@ -13,7 +13,7 @@ const SQUARE = '<rect width="1500" height="1500" fill="#fff"/>';
 const read = (name) => readFileSync(new URL(name, import.meta.url), "utf8");
 const coin = read("coin.svg");
 if (createHash("sha256").update(coin).digest("hex") !== COIN_SHA256 || !coin.includes(SQUARE)) {
-  throw new Error("brand/coin.svg is not the owner's drawing: ask the owner for the original file");
+  throw new Error("_promo/brand/coin.svg is not the owner's drawing: ask the owner for the original file");
 }
 const icon = read("icon.svg"); // up to 128 px: its line is heavier and its rings larger
 const star = read("star.svg"); // above 128 px

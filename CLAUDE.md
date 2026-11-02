@@ -40,7 +40,10 @@ all work here:
   layout, commands, hooks, the table of how each check is made, tag and test syntax, the reviewer's
   runner, how a confirmation is recorded. It is the specification the tools are built from.
 
-What a project installs (tools, skills, guidelines, example) is Apache 2.0; `docs/` is CC BY 4.0.
+What a project installs (tools, skills, guidelines, example) is Apache 2.0; `docs/` and `_promo/`
+are CC BY 4.0, except the mark in `_promo/brand/`, which is under no open licence. `_promo/` holds
+every promotional material — the mark, the pictures, the style guide, the articles and the site's
+brief — and nothing of it is kept anywhere else.
 
 ## The node files
 

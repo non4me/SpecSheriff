@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/exports/coin-dark.svg">
-    <img src="brand/exports/coin-light.svg" alt="SpecSheriff — no code without a rule" width="220">
+    <source media="(prefers-color-scheme: dark)" srcset="_promo/brand/exports/coin-dark.svg">
+    <img src="_promo/brand/exports/coin-light.svg" alt="SpecSheriff — no code without a rule" width="220">
   </picture>
 </p>
 
@@ -55,7 +55,7 @@ and the tools hold this repository to them. The worked example, the saloon, is b
 ## License
 
 What a project installs — the tools, the skills, the guidelines and the worked example — is licensed
-under the [Apache License 2.0](LICENSE). What is read and shared — everything under `docs/`, the
-articles and the infographics — is licensed under
+under the [Apache License 2.0](LICENSE). What is read and shared — everything under `docs/` and
+`_promo/`, the articles and the pictures among it — is licensed under
 [Creative Commons Attribution 4.0 International](LICENSE-docs): reuse it freely, naming SpecSheriff
-and linking here. The mark in [`brand/`](brand/) is under neither: [how it may be used](brand/README.md).
+and linking here. The mark in [`_promo/brand/`](_promo/brand/) is under neither: [how it may be used](_promo/brand/README.md).
