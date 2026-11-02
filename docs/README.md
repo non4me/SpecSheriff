@@ -103,3 +103,4 @@ How to use them, and which to take when, is the practitioner's guide, kept with 
 - The decisions taken so far, and why: [the design log](design-log.md).
 - The pictures of the method and the cards on how requirements decay: [`images/`](images/).
 - The style of the site and the pictures, its tokens, stylesheet and components: [`style/`](style/).
+- The articles: [`articles/`](articles/); how the site is made from these documents: [its brief](site.md).

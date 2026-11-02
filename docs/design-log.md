@@ -26,6 +26,13 @@ the example this repository gives of itself, as the saloon's repository of its o
 a key of the host kept in GitHub's settings and one small step of automation. Netlify works the same
 way; GitHub Pages was set aside because its cache cannot be set.
 
+The pages, agreed with the owner the same day: the home, the method, the principles, the rules with
+a page for each node, a mind map of the specification, the guides, the landscape, the design log,
+the articles and the example. The pictures and the cards have no page of their own: they are
+promotional material, shown where a page uses them and as previews when a page is shared. The site
+is built and run by an agent of its own, from the brief in `docs/site.md`, which says what each page
+is made of and what has been decided.
+
 ### 2026-11-02 — The pictures are a frontier ledger, in English first, each kept as a page
 
 The owner was shown three directions, each drawn whole: a blueprint, editorial paper and a frontier
@@ -503,13 +510,15 @@ example leaves the road to a product open.
    `docs/style/` — its tokens the one source of every value, the stylesheet built on them, the
    components the pictures are drawn with, and the brand book; an article's body set in Libre Caslon
    Text, the typewriter kept for labels, stamps and code.
-10. The materials for the site: kept in this repository on GitHub, from where the site, built by
-    Astro in a repository of its own and served by Cloudflare Pages, takes them and shows them on its
-    pages; their structure is settled when the step begins.
-11. The first article, in English.
-12. The article published, and the plugin submitted to Anthropic's plugin directory once the
+10. ~~The materials for the site~~ — done 2026-11-02: the pages agreed with the owner, each made
+    from a document kept here; a home for the articles; the workflow that asks the host to rebuild;
+    and the brief, `docs/site.md`, for the agent that builds the site.
+11. The site, built by an agent of its own from the brief, in a repository of its own, by Astro,
+    served by Cloudflare Pages, the host connected by the owner.
+12. The first article, in English.
+13. The article published, and the plugin submitted to Anthropic's plugin directory once the
     repository, the plugin and the site are all finished and checked.
-13. The localisation, once everything else is ready: the materials, the site and the pictures in
+14. The localisation, once everything else is ready: the materials, the site and the pictures in
     several languages at once (the owner, 2026-11-02).
 
 ## Open questions
