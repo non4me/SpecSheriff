@@ -29,7 +29,8 @@ description: Setting a repository up for SpecSheriff — its git hooks, the plug
    ask them to confirm it or name another; write each value they answer, the default included, with
    `git config --global specsheriff.review.<setting> <value>`, write nothing they have not answered,
    and then set the mark with `git config --global` to `true`. Until a setting is written, each
-   review runs at its default and says so.
+   review runs at its default and says so. A setting the user gave as an option of this plugin is
+   changed in `/config`, since the session start writes the option over the git configuration.
 6. Commit what init wrote, so that every clone takes the git hooks and the plugin with it.
 
 To bring the project's existing documents into the specification, use the skill `spec-adopt`.

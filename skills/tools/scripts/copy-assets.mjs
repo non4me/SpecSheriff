@@ -85,6 +85,11 @@ const OVERLAYS = [
     from: "For this plugin's runner, `claude`, they\n   are `specsheriff.review.claudeModel` (default `opus`), `specsheriff.review.claudeFallbackModel`\n   (default `sonnet`) and `specsheriff.review.claudeEffort` (default `high`), and the mark that the\n   question was put is `specsheriff.review.claudeAsked`.",
     to: "For this plugin's runner, `codex`, they\n   are `specsheriff.review.codexModel` (default empty, the model Codex chooses for the signed-in\n   account) and `specsheriff.review.codexEffort` (default `high`), and the mark that the question\n   was put is `specsheriff.review.codexAsked`.",
   },
+  {
+    skills: ["spec-init"],
+    from: " A setting the user gave as an option of this plugin is\n   changed in `/config`, since the session start writes the option over the git configuration.",
+    to: "",
+  },
   { skills: ["spec-adopt"], from: "the git hooks, the plugin declared for every\nclone,", to: "the git hooks, the agent's hooks for\nCodex," },
   { skills: ["spec-remove"], from: "its git hooks, the plugin declared for every clone", to: "its git hooks, the agent's hooks for Codex" },
   { skills: ["spec-remove"], from: "`claude plugin uninstall specsheriff@specsheriff-marketplace`", to: "`codex plugin remove specsheriff@specsheriff-marketplace`" },
