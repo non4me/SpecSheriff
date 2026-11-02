@@ -171,7 +171,7 @@ hold for a branch whatever machine it came from runs the same hooks in CI, readi
 the commit being made:
 
 ```sh
-git clone --depth 1 --branch v0.2.1 https://github.com/non4me/SpecSheriff "$RUNNER_TEMP/specsheriff"
+git clone --depth 1 --branch v0.2.2 https://github.com/non4me/SpecSheriff "$RUNNER_TEMP/specsheriff"
 hooks="$RUNNER_TEMP/specsheriff/skills/claude-code/tools/hooks"
 base=$(git merge-base HEAD origin/main)
 git log --format=%B "$base..HEAD" > "$RUNNER_TEMP/message"
