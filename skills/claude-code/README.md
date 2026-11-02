@@ -61,9 +61,16 @@ the plugin's options; the defaults are named in each and set for none:
 | Reviewer's fallback model | `sonnet` | `specsheriff.review.claudeFallbackModel` |
 | Reviewer's reasoning effort | `high` | `specsheriff.review.claudeEffort` |
 
-The session start writes what you gave into your global git configuration, where the git hooks read
-it, and writes it again when you change an option in `/config`. Where Claude Code enabled the plugin
-without asking, the first session in a project taking the method asks you once, through the agent.
+`claude plugin install` in a terminal asks for none of them: give them there, as
+
+```sh
+claude plugin install specsheriff@specsheriff-marketplace --config claudeModel=opus --config claudeFallbackModel=sonnet --config claudeEffort=high
+```
+
+or later in a session by `/plugin configure specsheriff@specsheriff-marketplace`. The session start
+writes what you gave into your global git configuration, where the git hooks read it, and writes it
+again when you change an option in `/config`. Where you gave none, the first session in a project
+taking the method asks you once, through the agent.
 A setting you have not confirmed runs at its default, and every review held so says which and how to
 confirm it.
 

@@ -35,7 +35,8 @@ specification. Ask the agent to set the repository up for SpecSheriff.
 them on; writes the agent's hooks for Codex into `.codex/hooks.json`, beside any hook already there;
 writes `sheriff.config.json`; and writes `specs/_guidelines/project.json`, naming the owner. It
 replaces no file that differs from what it would write, naming each one. The agent then commits what
-init wrote.
+init wrote. Codex's sandbox lets nothing write into `.codex/` or git's index, so the agent asks you
+to let `sheriff init` and the commit run outside it.
 
 **The agent's hooks.** One runs when a session starts, one before an edit made with `apply_patch`,
 and one after such an edit or a shell command. Each only looks for this plugin in Codex's cache and
