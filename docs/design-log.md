@@ -63,7 +63,9 @@ is why the packaging comes before it. The plugin is made for Claude Code now and
 Gemini CLI is being studied. Licences stay by directory: the theory's prose under CC BY 4.0, the
 guidelines, the skills, the tools and the example under Apache 2.0. The plugin goes to Anthropic's
 plugin directory last, as the entry of 2026-11-01 says. (Changed on 2026-11-01: the worked example
-lives in a repository of its own, which this one links to.)
+lives in a repository of its own, which this one links to. Changed on 2026-11-02: the plugin for Codex
+CLI came in 0.3.0, a plugin of its own that Codex installs and updates by itself, built from the same
+source (§s-2pdy9gw2jrjvfb4).)
 
 ### 2026-10-29 — One channel: the plugin carries everything its work needs
 
@@ -80,7 +82,8 @@ cost of a version each project keeps and moves; the owner took the standard road
 every release reaches every machine through the marketplace's update and a machine not yet updated is
 its user's matter. How a version is released is this repository's own procedure, described in an
 internal document rather than in the guidelines. Codex admits no plugin carrying hooks into its public
-directory, which its plugin will have to meet.
+directory, which its plugin will have to meet. (Met on 2026-11-02: the agent's hooks for Codex stand
+in the project, where sheriff init writes them, §s-n76wt2bkqdmh78x.)
 
 ### 2026-10-29 — The final gate stands on each participant's machine
 
@@ -448,7 +451,11 @@ example leaves the road to a product open.
 5. ~~The worked example~~ — done 2026-11-01: the frontier town's saloon in a repository of its own,
    its specification confirmed by the owner node by node, its code and tests, and the recorded run
    in which the reviewer refuses a commit every test and every other check let through.
-6. The plugin for Codex CLI, with its runner of the reviewer.
+6. ~~The plugin for Codex CLI~~ — done 2026-11-02, released in 0.3.0: a plugin of its own beside the
+   one for Claude Code, its agent's hooks in the project, the guard reading Codex's patch, the
+   reviewer on `codex exec`; `sheriff remove`, the reverse of `sheriff init`; a git hook that finds
+   no plugin lets the commit through and turns itself off; and the reviewer at the model and the
+   effort each user confirms once, at their cost.
 7. The origin project takes the SpecSheriff guidelines from here and keeps its own rules as a part
    refining it.
 8. The four pictures and the cards.
