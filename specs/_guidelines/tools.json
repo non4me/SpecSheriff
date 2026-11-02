@@ -102,7 +102,7 @@
           "kind": "rule",
           "title": "The commands",
           "status": "checked",
-          "text": "`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the table of how each check is made describes them (§s-4kd2pave7vm4hmd).\n\n`sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p); stages with the executable mode, 100755, each hook there that holds what it would write and that git's index does not already hold with that mode, naming each one, or, where it cannot stage a hook, names it and says how to stage it executable; and turns them on; adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there; and, where they are missing, writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no other file that differs from what it would write, naming each one instead, so run again it changes nothing.\n\n`sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's header from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification.\n\nBefore anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file.\n\n`sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb).\n\n`sheriff export` writes the readable export in markdown, one file for each file of the specification.\n\n`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).\n\n`sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — with its sid, text and reason, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked.\n\n`sheriff show` prints a node, found by its sid or its address: its address, title, status, text and reason, and every link it makes or receives, named by the address and title of the node at the other end.\n\n`sheriff types` generates, from the data record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand. It writes a file only where the file is missing or holds, line endings aside, anything other than what it generates, and names each file it writes; where the check of generated copies refuses the list of those files or a data record node (§s-4kd2pave7vm4hmd), it names each refusal and writes no file; while a data record node is unchecked, it writes no file and names each such node.",
+          "text": "`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the table of how each check is made describes them (§s-4kd2pave7vm4hmd).\n\n`sheriff init` sets a repository up for the SpecSheriff tools: it writes the git hooks into `.githooks/` (§s-4mej6ccn7xu3d3p); stages with the executable mode, 100755, each hook there that holds what it would write and that git's index does not already hold with that mode, naming each one, or, where it cannot stage a hook, names it and says how to stage it executable; and turns them on; adds the marketplace and the plugin to `.claude/settings.json` as a project declares them (§s-zh2vcr3xjumppg5), keeping every other key there; and, where they are missing, writes a `sheriff.config.json` and a `specs/_guidelines/project.json` naming as the specification's owner the email git is configured with. It replaces no other file that differs from what it would write, naming each one instead, so run again it changes nothing.\n\n`sheriff reindex` gives a sid to every node that has none, computes every node's address from where it stands, empties every incoming list and rebuilds it from the outgoing ones, rebuilds the index in every domain's header from the domain's sections, and empties the status of every checked node outside the SpecSheriff guidelines the project takes unless the latest line for its wording's fingerprint is a confirmation by the node's owner; it is run after every change to the specification.\n\nBefore anything else, `sheriff reindex` merges, in every file it rewrites, the values an object holds under one key, each into those written before it: two lists into one holding the members of the first and then those of the second that the first does not hold, two objects key by key in the same way with each key where it was first written, and two values JSON Schema holds equal into one. It names every key it merged, with the file and each value's line, and refuses any other two, naming the file, the key and each one's line and value, and then writes no file.\n\n`sheriff confirm` records an owner's confirmation (§s-v4qus7raqnwzneb).\n\n`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.\n\n`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).\n\n`sheriff guide` prints every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says, and the figures counted off the model as it prints: how many nodes each part holds and how many of them are checked.\n\n`sheriff show` prints a node, found by its sid or its address, as §s-k4nqjr96ux7a5m7 says.\n\n`sheriff types` generates, from the data record nodes, the types and the runtime checks of the system's code, where the technical appendix says they stand. It writes a file only where the file is missing or holds, line endings aside, anything other than what it generates, and names each file it writes; where the check of generated copies refuses the list of those files or a data record node (§s-4kd2pave7vm4hmd), it names each refusal and writes no file; while a data record node is unchecked, it writes no file and names each such node.",
           "refs": [
             {
               "type": "implements",
@@ -159,6 +159,10 @@
             {
               "type": "cites",
               "to": "s-rpv4fkdqqguptqd"
+            },
+            {
+              "type": "cites",
+              "to": "s-k4nqjr96ux7a5m7"
             }
           ],
           "rationale": "The reindex rewrites whole the files written by hand, so it keeps everything they hold: two values written under one key are each somebody's intent, kept together where both can stand and refused where keeping one would drop the other, since nothing says which was meant; and every merge is named, because one of them may have been written to replace the other.\n\n`sheriff types` runs after every edit an agent makes and at every commit, where the pre-commit hook copies each file it names into the working tree for its author to stage (§s-477gtdrkw34dzxw): the files it names are then exactly those its author has to stage, and a file whose content no edit changed keeps its modification time, so that nothing watching the files takes it for changed. Line endings are set aside because git may check a file out with endings other than those committed, which would make every file differ at every run.\n\nWhere anything is refused, no file is written, so that the files never disagree, one generated from the nodes as they stand beside another left behind them; and each refusal is named, so that whoever runs it, by hand or through a hook, learns which node or list to change.\n\nOn a system whose files keep an executable bit, git runs a hook only where its file has the bit, and a clone checks a file out with the mode its commit records. Git takes that mode from the file when it stages it where files keep the bit, and records it as not executable where they keep none, as on Windows, where git runs a hook whatever its mode; so a hook set up there would reach the clones unable to run, and nothing on the machine that set it up would show it. A mode reaches the clones only staged and committed, and git stages a mode only with the file's content, so `sheriff init` stages the hooks it holds and nothing else: what else a commit holds stays its author's choice.",
@@ -238,10 +242,8 @@
               "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts gives a sid to a node that has none, its address and sid first",
               "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge",
               "skills/tools/test/unit/reindex.test.ts::s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file",
-              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts names every link a node makes or receives by the address and title of the node at the other end",
               "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts refuses a key no node holds",
               "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its address the same as by its sid",
-              "skills/tools/test/unit/show.test.ts::s-f5rz6b7dhxejjts shows a node found by its sid: its address, title, status, text and reason",
               "skills/tools/test/unit/types.test.ts::s-f5rz6b7dhxejjts sheriff types writes no file while a data record node is unchecked, and names each such node",
               "skills/tools/test/unit/types.test.ts::s-f5rz6b7dhxejjts sheriff types writes only a file that is missing or holds, line endings aside, anything else than it generates, and names each"
             ]
@@ -281,6 +283,40 @@
         },
         {
           "id": "_guidelines/tools/4",
+          "sid": "s-k4nqjr96ux7a5m7",
+          "kind": "rule",
+          "title": "What the export, the guide and `sheriff show` write of a node",
+          "status": "checked",
+          "text": "`sheriff export` and `sheriff show` write a node with every value its file holds for it. They write each link with its type, its direction, its ratio where it holds one, and the sid, address and title of the node at the other end.\n\n`sheriff guide` writes each node of the guidelines as the export does, except its metadata.\n\nEach of them writes a value that is not text, other than its links and its children, under its key as JSON. The export and the guide write a node's children after it, each under a heading one level deeper than its parent's; `sheriff show` writes the node alone.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-kh8qcd5kxgh9z3j"
+            },
+            {
+              "type": "cites",
+              "to": "s-gqbj8849rf224qa"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            }
+          ],
+          "rationale": "A person reads the specification in the export, since a structure a schema checks is hard to read (§s-kh8qcd5kxgh9z3j), and a person or an agent reads one node through `sheriff show`. A value either leaves out, such as a data record's fields, a rule's list or a decision taken on the node (§s-gqbj8849rf224qa), is one its reader never learns of and works without. A sid alone tells a reader nothing of the node it names.\n\nAn agent reads the guide whole before it works on the specification, to follow the guidelines: it needs each node as it binds, its links included, since a link may exempt a rule from implementation or narrow it. The metadata serves whoever changes a node, who reads it whole through `sheriff show`; written into the guide, it would only lengthen what every agent reads.\n\nJSON is the form the file already holds a value in, so its reader learns no form of its own for it. The export and the guide keep the tree of the file they are written from, while `sheriff show` is asked for one node.",
+          "meta": {
+            "tests": [
+              "skills/tools/test/unit/generated.test.ts::s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the export does, except its metadata",
+              "skills/tools/test/unit/generated.test.ts::s-k4nqjr96ux7a5m7 the export writes a node with every value its file holds, each that is not text under its key as JSON",
+              "skills/tools/test/unit/generated.test.ts::s-k4nqjr96ux7a5m7 the export writes a node's children after it, each under a heading one level deeper than its parent's",
+              "skills/tools/test/unit/generated.test.ts::s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction, its ratio and the sid, address and title of the node at the other end",
+              "skills/tools/test/unit/show.test.ts::s-k4nqjr96ux7a5m7 names every link a node makes or receives by its type, its direction, its ratio and the sid, address and title of the node at the other end",
+              "skills/tools/test/unit/show.test.ts::s-k4nqjr96ux7a5m7 shows a node alone, without the nodes under it",
+              "skills/tools/test/unit/show.test.ts::s-k4nqjr96ux7a5m7 shows a node found by its sid with every value its file holds, each that is not text under its key as JSON"
+            ]
+          }
+        },
+        {
+          "id": "_guidelines/tools/5",
           "sid": "s-477gtdrkw34dzxw",
           "kind": "rule",
           "title": "The hooks",
@@ -407,7 +443,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/5",
+          "id": "_guidelines/tools/6",
           "sid": "s-4kd2pave7vm4hmd",
           "kind": "rule",
           "title": "How each check is made",
@@ -557,7 +593,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/6",
+          "id": "_guidelines/tools/7",
           "sid": "s-5z5gnu7pahr82xp",
           "kind": "rule",
           "title": "The tag that binds a symbol to its rule",
@@ -615,7 +651,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/7",
+          "id": "_guidelines/tools/8",
           "sid": "s-zrsc6asgmhv8tnc",
           "kind": "rule",
           "title": "How a test declares the rule it verifies",
@@ -652,7 +688,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/8",
+          "id": "_guidelines/tools/9",
           "sid": "s-xr5xxa9cxf2mq5u",
           "kind": "rule",
           "title": "Who runs the reviewer",
@@ -694,7 +730,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/9",
+          "id": "_guidelines/tools/10",
           "sid": "s-v4qus7raqnwzneb",
           "kind": "rule",
           "title": "How a confirmation is recorded",
@@ -748,7 +784,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/10",
+          "id": "_guidelines/tools/11",
           "sid": "s-4mej6ccn7xu3d3p",
           "kind": "rule",
           "title": "A git hook calls its script in the data directory of the plugin for Claude Code",
@@ -791,7 +827,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/11",
+          "id": "_guidelines/tools/12",
           "sid": "s-zh2vcr3xjumppg5",
           "kind": "rule",
           "title": "The plugin for Claude Code carries everything its work needs",
@@ -857,7 +893,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/12",
+          "id": "_guidelines/tools/13",
           "sid": "s-pvzms7d8kxb8dk2",
           "kind": "rule",
           "title": "Where the types and runtime checks generated from the data records are written",
@@ -889,7 +925,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/13",
+          "id": "_guidelines/tools/14",
           "sid": "s-suv42g8r3ra2h6b",
           "kind": "rule",
           "title": "What a data record node generates",
@@ -925,7 +961,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/14",
+          "id": "_guidelines/tools/15",
           "sid": "s-nk8td3ez58gahc4",
           "kind": "rule",
           "title": "A data record its variants refine",
@@ -957,7 +993,7 @@
           }
         },
         {
-          "id": "_guidelines/tools/15",
+          "id": "_guidelines/tools/16",
           "sid": "s-4npdup7mjkva69y",
           "kind": "rule",
           "title": "The type each neutral type of a field gives",

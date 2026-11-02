@@ -118,6 +118,6 @@ test("s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its address", (
   sheriff(root, "reindex");
   const run = sheriff(root, "show", "contracts/c");
   assert.equal(run.status, 0, run.stderr);
-  assert.match(run.stdout, new RegExp(`contracts/c · ${sid("shared")}`));
-  assert.match(run.stdout, /cites ← contracts\/1\.1 ours/);
+  assert.match(run.stdout, new RegExp(`^# contracts/c shared\n\n\`${sid("shared")}\``));
+  assert.match(run.stdout, /cites ← s-\w{15} contracts\/1\.1 ours/);
 });

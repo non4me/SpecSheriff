@@ -1,17 +1,11 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { domainOrder, isDomain, levelsOf, partOf } from "./model.ts";
+import { nodeMarkdown } from "./show.ts";
 import { loadSpecification, type SpecNode, type Specification } from "./spec-files.ts";
 
 const EXPORT = "md-version";
 const MARKMAP = "https://cdn.jsdelivr.net/npm/markmap-autoloader@0.18.12";
-
-function nodeMarkdown(n: SpecNode, depth: number): string {
-  const parts = [`${"#".repeat(Math.min(depth, 6))} ${n.id} ${n.title}`, "", `\`${n.sid}\` · ${n.status || "unchecked"}`];
-  if (n.text) parts.push("", n.text);
-  if (n.rationale) parts.push("", `*Why:* ${n.rationale}`);
-  return [parts.join("\n"), ...(n.children ?? []).map((c) => nodeMarkdown(c, depth + 1))].join("\n\n");
-}
 
 /** Empties a directory written from the nodes alone and keeps it out of git, so that no repository stores it whatever its own ignore file says. */
 function regenerated(root: string, dir: string): void {
@@ -27,7 +21,7 @@ export function exportMarkdown(root: string): string[] {
   return spec.files.map((f) => {
     const path = f.path.replace(/^specs\//, `${EXPORT}/`).replace(/\.json$/, ".md");
     mkdirSync(dirname(join(root, path)), { recursive: true });
-    writeFileSync(join(root, path), f.data.nodes.map((n) => nodeMarkdown(n, 1)).join("\n\n") + "\n");
+    writeFileSync(join(root, path), f.data.nodes.map((n) => nodeMarkdown(spec, n, 1)).join("\n\n") + "\n");
     return path;
   });
 }
@@ -106,6 +100,6 @@ export function guide(spec: Specification): string {
     counts.set(part, c);
   }
   const figures = [...counts].sort(([a], [b]) => a.localeCompare(b)).map(([part, c]) => `- ${part}: ${c.nodes} nodes, ${c.checked} checked`);
-  const guidelines = spec.files.filter((f) => partOf(f.path).part === "_guidelines").flatMap((f) => f.data.nodes.map((n) => nodeMarkdown(n, 1)));
+  const guidelines = spec.files.filter((f) => partOf(f.path).part === "_guidelines").flatMap((f) => f.data.nodes.map((n) => nodeMarkdown(spec, n, 1, { metadata: false })));
   return [`# Where the specification stands\n\nCounted off the model as this was printed.\n\n${figures.join("\n")}`, ...guidelines].join("\n\n") + "\n";
 }

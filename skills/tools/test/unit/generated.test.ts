@@ -7,7 +7,7 @@ import { confirm } from "../../src/confirmations.ts";
 import { exportMarkdown, guide, render } from "../../src/generated.ts";
 import { domainOrder } from "../../src/model.ts";
 import { reindex } from "../../src/reindex.ts";
-import { loadSpecification } from "../../src/spec-files.ts";
+import { loadSpecification, type SpecNode } from "../../src/spec-files.ts";
 import { REPO } from "../repo.ts";
 import { file, node, OWNER, repo, sid } from "../fixture.ts";
 import { LEVELS_RULE } from "../../src/model.ts";
@@ -68,6 +68,94 @@ test("s-kh8qcd5kxgh9z3j exports every file of the specification to markdown, eac
   }
   assert.ok(md.includes("Because."));
   assert.ok(existsSync(join(root, "md-version", "alpha", "a.md")));
+});
+
+/** A specification whose nodes hold, between them, every kind of value a node's file can hold. */
+function everything(): string {
+  const root = repo({
+    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [
+      node("listed rule", {
+        rationale: "Because.",
+        refs: [{ type: "implements", to: sid("base") }],
+        list: { of: "the colours", members: ["red", "green"], declaredIn: { file: "src/colour.ts", declaration: "Colour" } },
+        meta: {
+          decisions: [{ date: "2026-11-02", problem: "Which colours.", ruling: "Two of them.", type: "textual" }],
+          todos: [{ date: "2026-11-02", by: OWNER, text: "Add blue." }],
+          comments: [{ date: "2026-11-02", by: OWNER, text: "Red reads badly on dark ground.", type: "problem" }],
+          tests: ["test/colour.test.ts::lists the colours"],
+        },
+        children: [node("nested rule")],
+      }),
+    ] })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
+      node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core"] } }),
+    ] })),
+    "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [
+      node("Invoice", { kind: "record", text: "A bill sent to a customer.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
+      node("customer", { kind: "term", text: "Whoever is billed.", refs: [{ type: "term-relation", to: sid("Invoice"), ratio: "1:0..N" }] }),
+    ] })),
+    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "domain", owner: OWNER, level: "core", code: "src/alpha", sections: [] })),
+    "specs/alpha/a.json": file("alpha", "a", node("alpha section", { kind: "section", text: "A.", children: [node("alpha rule")] })),
+  });
+  reindex(root);
+  return root;
+}
+
+/** Every value a node's file holds for it, other than the text written as headings, links and children: each as the export writes it. */
+function values(n: SpecNode): string[] {
+  const { id, sid: s, kind, title, status, text, rationale, refs, children, ...rest } = n;
+  return [s, kind, title, text, ...(rationale ? [rationale] : []), ...Object.entries(rest).map(([k, v]) => (typeof v === "string" ? v : JSON.stringify(v, null, 2)))];
+}
+
+const exported = (root: string, part: string) => readFileSync(join(root, "md-version", `${part}.md`), "utf8");
+
+test("s-k4nqjr96ux7a5m7 the export writes a node with every value its file holds, each that is not text under its key as JSON", () => {
+  const root = everything();
+  exportMarkdown(root);
+  const spec = loadSpecification(root);
+  for (const [name, part] of [["listed rule", "_guidelines/spec"], ["Invoice", "contracts/c"], ["customer", "contracts/c"], ["alpha", "alpha/00-alpha"]] as const) {
+    const md = exported(root, part);
+    for (const v of values(spec.nodes.get(sid(name))!.node)) assert.ok(md.includes(v), `${name}: ${v}`);
+  }
+  assert.ok(exported(root, "_guidelines/spec").includes(`**list:**\n\n\`\`\`json\n${JSON.stringify(spec.nodes.get(sid("listed rule"))!.node.list, null, 2)}\n\`\`\``));
+});
+
+test("s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction, its ratio and the sid, address and title of the node at the other end", () => {
+  const root = everything();
+  exportMarkdown(root);
+  const spec = loadSpecification(root);
+  const at = (name: string) => spec.nodes.get(sid(name))!.node;
+  const md = exported(root, "contracts/c");
+  assert.ok(md.includes(`- term-relation 1:0..N → ${sid("Invoice")} ${at("Invoice").id} Invoice`));
+  assert.ok(md.includes(`- term-relation 0..N:1 ← ${sid("customer")} ${at("customer").id} customer`));
+  assert.ok(exported(root, "_guidelines/spec").includes(`- implements ← ${sid("listed rule")} ${at("listed rule").id} listed rule`));
+});
+
+test("s-k4nqjr96ux7a5m7 the export writes a node's children after it, each under a heading one level deeper than its parent's", () => {
+  const root = everything();
+  exportMarkdown(root);
+  const spec = loadSpecification(root);
+  const md = exported(root, "_guidelines/spec");
+  const heading = (name: string, level: number) => {
+    const n = spec.nodes.get(sid(name))!.node;
+    const i = md.indexOf(`${"#".repeat(level)} ${n.id} ${n.title}\n`);
+    assert.ok(i >= 0 && md[i - 1] !== "#", `${name} at level ${level}`);
+    return i;
+  };
+  const order = [heading("base", 1), heading("listed rule", 2), heading("nested rule", 3)];
+  assert.deepEqual(order, [...order].sort((a, b) => a - b));
+});
+
+test("s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the export does, except its metadata", () => {
+  const root = everything();
+  exportMarkdown(root);
+  const out = guide(loadSpecification(root));
+  const md = exported(root, "_guidelines/spec");
+  const metadata = md.slice(md.indexOf("**meta:**"), md.indexOf("**Links:**", md.indexOf("**meta:**")));
+  assert.ok(metadata.includes("Which colours."));
+  assert.ok(out.includes(md.replace(metadata, "").trimEnd()), "the export of the base, its metadata left out");
+  assert.ok(!out.includes("Which colours.") && !out.includes("**meta:**"));
+  assert.ok(out.includes(`**list:**`) && out.includes(`- implements → ${sid("base")}`));
 });
 
 test("s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of a file that is gone", () => {

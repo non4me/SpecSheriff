@@ -54,7 +54,7 @@ specification, and before it answers how the specification works. Ask it about t
 about any rule, and it takes this skill.
 
 **What it asks.** Nothing. It prints the guidelines — the SpecSheriff guidelines and the project's
-own — with every node's sid, text and reason, and works by them.
+own — with every node's wording and links, and works by them.
 
 **What it changes.** Nothing.
 

@@ -51,6 +51,10 @@
                 },
                 {
                   "type": "implements",
+                  "from": "s-k4nqjr96ux7a5m7"
+                },
+                {
+                  "type": "implements",
                   "from": "s-477gtdrkw34dzxw"
                 },
                 {
@@ -418,7 +422,12 @@
               "title": "A decision lives on the rule it settled",
               "status": "checked",
               "text": "A decision records what was settled about a rule. It is kept in that rule's metadata, never as a document of its own. A decision usually changes the rule's wording; a procedural one changes none.",
-              "refs": [],
+              "refs": [
+                {
+                  "type": "cites",
+                  "from": "s-k4nqjr96ux7a5m7"
+                }
+              ],
               "rationale": "A decision is not specification but the history of one rule, and it is read beside that rule. The procedural kind would otherwise leave no trace, because nothing in the wording shows it. And the number of decisions on one rule measures how well it was written: a rule that keeps collecting them was written badly."
             },
             {
