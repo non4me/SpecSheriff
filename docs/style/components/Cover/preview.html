@@ -1,0 +1,47 @@
+<!-- @dsCard height=328 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SpecSheriff style guide — cover</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&amp;family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;family=Courier+Prime:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="../../tokens.css">
+<link rel="stylesheet" href="../../specsheriff.css">
+<style>
+body { padding: 0; }
+.cover { position: relative; width: 960px; height: 328px; overflow: hidden; }
+.band { position: absolute; left: 0; top: 0; }
+.blk { rx: var(--radius-none); }
+.b-stamp { fill: var(--stamp); }
+.b-ink { fill: var(--ink); }
+.b-ticket { fill: var(--ticket); }
+.r-rule { stroke: var(--rule); stroke-width: var(--border-hair); }
+.r-margin { stroke: var(--stamp); stroke-width: var(--border-hair); }
+.name { position: absolute; left: 48px; bottom: 32px; width: 440px; display: flex; flex-direction: column; gap: 8px; }
+.name h1 { font-family: var(--font-display); font-size: 64px; line-height: 0.95; }
+.name p { color: var(--ink-soft); font: 400 14px/20px var(--font-type); }
+</style>
+</head>
+<body>
+<div class="cover">
+<svg class="band" width="960" height="112" viewBox="0 0 960 112" aria-hidden="true">
+<!-- blocks: stamp 288×112, ink 96×112, ticket 576×112 — widths in space-6 (32px) steps, height 7 × space-4 -->
+<!-- arrangement: a strip of unequal bands across the top, the head of a ledger page; the name below, too wide for its zone at 64px -->
+<!-- pattern: ledger ruling, because the brand is a ruled account book — rule hairlines at the space-5 pitch across the ticket band, and the red double margin rule (stamp, border-hair) a space-1 apart -->
+<!-- steps and radii: space-1, space-4, space-5, space-6; radius-none: paper is cut square -->
+<rect class="blk b-stamp" x="0" y="0" width="288" height="112"/>
+<rect class="blk b-ink" x="288" y="0" width="96" height="112"/>
+<rect class="blk b-ticket" x="384" y="0" width="576" height="112"/>
+<line class="r-rule" x1="384" y1="32" x2="960" y2="32"/>
+<line class="r-rule" x1="384" y1="56" x2="960" y2="56"/>
+<line class="r-rule" x1="384" y1="80" x2="960" y2="80"/>
+<line class="r-margin" x1="432" y1="0" x2="432" y2="112"/>
+<line class="r-margin" x1="436" y1="0" x2="436" y2="112"/>
+</svg>
+<div class="name">
+<h1>SpecSheriff<br>style guide</h1>
+<p>The frontier ledger: parchment, ink and a stamp red.</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+/* SpecSheriff style guide — generated from tokens.json */
+:root {
+  /* colour */
+  --paper: #ece2cc;
+  --paper-glow: rgba(255, 250, 235, 0.55);
+  --paper-shade: rgba(120, 90, 50, 0.1);
+  --ticket: #f6efdf;
+  --ink: #2a1e14;
+  --ink-soft: #4e3f2f;
+  --ink-faint: #6b5a46;
+  --stamp: #a3321f;
+  --stamp-deep: #7c2214;
+  --stamp-ground: rgba(246, 239, 223, 0.85);
+  --rule: rgba(42, 30, 20, 0.25);
+  /* type */
+  --font-display: 'Rye', Georgia, serif;
+  --font-text: 'Libre Caslon Text', Georgia, serif;
+  --font-type: 'Courier Prime', 'Courier New', monospace;
+  /* spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  /* radius */
+  --radius-none: 0px;
+  --radius-stamp: 4px;
+  --radius-ring: 50%;
+  /* border */
+  --border-hair: 1px;
+  --border-line: 2px;
+  --border-stamp: 3px;
+  --border-ticket: 4px;
+  --border-frame: 6px;
+  /* angle */
+  --tilt-stamp: -6deg;
+  --tilt-seal: -4deg;
+  /* layout */
+  --measure: 68ch;
+  --page-width: 1120px;
+}

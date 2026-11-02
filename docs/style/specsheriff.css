@@ -1,0 +1,241 @@
+/* SpecSheriff — the frontier ledger. The base of a page and the components the pictures are drawn
+   with, on the custom properties of tokens.css, which loads first. A value with a token takes it. */
+
+/* The page */
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(circle at 18% 22%, var(--paper-glow), transparent 55%),
+    radial-gradient(circle at 85% 90%, var(--paper-shade), transparent 50%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 18px;
+  line-height: 30px;
+}
+
+h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 400; color: var(--ink); text-wrap: balance; }
+h1 { font-size: clamp(36px, 7vw, 56px); line-height: 1.08; }
+h2 { font-size: clamp(28px, 5vw, 36px); line-height: 1.17; }
+h3 { font-size: 26px; line-height: 32px; }
+h4 { font-size: 20px; line-height: 26px; }
+p, ul, ol, dl, figure, blockquote, pre, table { margin: 0; }
+
+a { color: var(--stamp); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--stamp-deep); }
+:focus-visible { outline: var(--border-line) solid var(--stamp); outline-offset: 3px; }
+::selection { background: var(--stamp); color: var(--ticket); }
+
+code, kbd, samp, pre { font-family: var(--font-type); }
+code, kbd, samp { font-size: 0.86em; }
+hr { margin: 0; border: 0; border-top: var(--border-hair) solid var(--rule); }
+
+/* A page: the content's width, with a side gutter that clears a phone's notch */
+
+.ss-page {
+  box-sizing: border-box;
+  max-width: calc(var(--page-width) + 2 * var(--space-6));
+  margin-inline: auto;
+  padding-left: max(var(--space-4), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--space-4), env(safe-area-inset-right, 0px));
+}
+
+/* Prose: an article or any page of running text */
+
+.ss-prose { max-width: var(--measure); }
+.ss-prose > * + * { margin-top: var(--space-4); }
+.ss-prose > :is(h2, h3, h4):not(:first-child) { margin-top: var(--space-7); }
+.ss-prose > :is(h2, h3, h4) + * { margin-top: var(--space-3); }
+.ss-prose :is(ul, ol) { padding-left: var(--space-5); }
+.ss-prose li + li { margin-top: var(--space-2); }
+.ss-prose pre {
+  overflow-x: auto;
+  padding: var(--space-4) var(--space-5);
+  background: var(--ticket);
+  border: var(--border-line) solid var(--ink);
+  font-size: 15px;
+  line-height: 24px;
+}
+.ss-prose pre code { font-size: inherit; }
+.ss-prose blockquote {
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-line) dashed var(--ink-faint);
+  color: var(--ink-soft);
+}
+
+/* A ledger: a table drawn as the ruled lines of an account book */
+
+.ss-ledger { overflow-x: auto; }
+.ss-ledger table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 26px; font-variant-numeric: tabular-nums; }
+.ss-ledger th {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-line) solid var(--ink);
+  color: var(--ink-faint);
+  font: 700 13px/18px var(--font-type);
+  letter-spacing: 0.1em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.ss-ledger td { padding: var(--space-2) var(--space-3); border-bottom: var(--border-hair) solid var(--rule); vertical-align: top; }
+
+/* A ticket: a slip of paper in a double border — a step, a box set apart */
+
+.ss-ticket {
+  padding: var(--space-4) var(--space-5);
+  background: var(--ticket);
+  border: var(--border-ticket) double var(--ink);
+  border-radius: var(--radius-none);
+  font-size: 16px;
+  line-height: 26px;
+}
+.ss-ticket--key { border-color: var(--stamp); }
+
+/* The frame: the double rule round a whole card */
+
+.ss-frame { padding: var(--space-8); border: var(--border-frame) double var(--ink); }
+
+/* A stamp: a verdict, never set straight */
+
+.ss-stamp {
+  display: inline-block;
+  padding: 2px 14px;
+  background: var(--stamp-ground);
+  border: var(--border-stamp) solid var(--stamp);
+  border-radius: var(--radius-stamp);
+  color: var(--stamp);
+  font: 700 18px/24px var(--font-type);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(var(--tilt-stamp));
+}
+.ss-stamp--seal {
+  padding: 6px 16px;
+  border: var(--border-ticket) double var(--stamp);
+  font: 400 24px/32px var(--font-display);
+  letter-spacing: 0.06em;
+  transform: rotate(var(--tilt-seal));
+}
+
+/* A kicker: the label above a title */
+
+.ss-kicker {
+  color: var(--ink-faint);
+  font: 700 13px/18px var(--font-type);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* A sid: a rule cited by its permanent identifier */
+
+.ss-sid { color: var(--stamp); font-family: var(--font-type); font-size: 0.86em; letter-spacing: 0; text-transform: none; white-space: nowrap; }
+a.ss-sid { text-decoration: none; }
+a.ss-sid:hover { text-decoration: underline; }
+
+/* The fault in a rule: underlined in a wave, or a single word ringed */
+
+.ss-mark {
+  color: var(--stamp);
+  text-decoration: underline wavy var(--stamp);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+}
+.ss-ring {
+  padding: 0 0.3em;
+  border: var(--border-stamp) solid var(--stamp);
+  border-radius: var(--radius-ring);
+  color: var(--stamp);
+}
+
+/* A slip: a rule as it is written, with the stamp that judges it */
+
+.ss-slip {
+  position: relative;
+  padding: var(--space-5) var(--space-6);
+  background: var(--ticket);
+  border: var(--border-line) solid var(--ink);
+  font: 400 20px/30px var(--font-type);
+}
+.ss-slip > .ss-stamp { position: absolute; right: var(--space-5); bottom: -18px; }
+
+/* A pair: what went wrong, and what to write instead */
+
+.ss-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--space-6); }
+.ss-pair > * { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.ss-pair__label { font: 400 20px/26px var(--font-display); }
+.ss-pair__label--instead { color: var(--stamp); }
+
+/* A note: a remark set apart, in a dashed line */
+
+.ss-note {
+  padding: var(--space-4) var(--space-5);
+  background: var(--stamp-ground);
+  border: var(--border-line) dashed var(--stamp);
+  font-size: 16px;
+  line-height: 26px;
+}
+
+/* A button: a ticket that does something */
+
+.ss-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 18px;
+  background: var(--ticket);
+  border: var(--border-ticket) double var(--ink);
+  border-radius: var(--radius-none);
+  color: var(--ink);
+  cursor: pointer;
+  font: 700 15px/20px var(--font-type);
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.ss-button:hover { border-color: var(--stamp-deep); color: var(--stamp-deep); }
+.ss-button--key { border-color: var(--stamp); color: var(--stamp); }
+
+/* The masthead and the colophon: the top and the foot of every page */
+
+.ss-masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  border-bottom: var(--border-hair) solid var(--rule);
+}
+.ss-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--ink);
+  font: 400 22px/28px var(--font-display);
+  text-decoration: none;
+}
+.ss-brand :is(svg, img) { flex: none; width: 34px; height: 34px; }
+.ss-nav { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font: 400 15px/22px var(--font-type); }
+.ss-nav a { color: var(--ink); text-decoration: none; }
+.ss-nav a:hover, .ss-nav a[aria-current="page"] { color: var(--stamp); text-decoration: underline; }
+
+.ss-colophon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  padding-block: var(--space-5);
+  border-top: var(--border-ticket) double var(--ink);
+  color: var(--ink-soft);
+  font: 400 15px/22px var(--font-type);
+}
+
+/* A figure: a picture with its caption */
+
+.ss-figure { display: flex; flex-direction: column; gap: var(--space-2); }
+.ss-figure img { display: block; max-width: 100%; height: auto; border: var(--border-line) solid var(--ink); }
+.ss-figure figcaption { color: var(--ink-soft); font: 400 15px/22px var(--font-type); }

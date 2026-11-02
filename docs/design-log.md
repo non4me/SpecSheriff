@@ -6,14 +6,34 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-02 — The site is built from this repository by a generator kept in a repository of its own
+
+The owner's plan: everything the site shows is kept in this repository, and a builder at the host
+takes it from here and lays it out as the site; a change merged here reaches the site by itself, its
+pages cached, and the site is nearly static, so that search engines index all of it. Settled on that
+plan, with the owner's agreement: the site's templates and navigation live in a repository of their
+own, built by a static generator, Astro, and served by Cloudflare Pages. A push to main that touches
+the materials asks the host to build again; the build takes the templates, fetches the materials from
+here, writes every page as plain HTML and replaces the published site whole. The pages are cached at
+the edge and dropped at every deployment, the browser checking each time; styles, fonts and images
+carry a digest of their content in their names and are cached for good. Each node of the guidelines
+gets a page of its own at an address made from its sid, and a citation by sid becomes a link to it.
+
+The site's code is kept apart because this repository is held by its own checks — every commit through
+the hooks and the reviewer, all code bound to a rule — and here the site's code would have to be bound
+to rules of the method that say nothing of a site, or be taken out of the checks; either would blur
+the example this repository gives of itself, as the saloon's repository of its own avoids. The cost is
+a key of the host kept in GitHub's settings and one small step of automation. Netlify works the same
+way; GitHub Pages was set aside because its cache cannot be set.
+
 ### 2026-11-02 — The pictures are a frontier ledger, in English first, each kept as a page
 
 The owner was shown three directions, each drawn whole: a blueprint, editorial paper and a frontier
 ledger. Having seen the blueprint finished, the owner chose the ledger as closer to the idea:
 parchment, ink and a stamp red, Rye for titles and Courier Prime for text, every step a ticket in a
-double border and every verdict a rubber stamp. The first set is in English only; its Russian is a
-step of its own, since Rye and Courier Prime have no Cyrillic and the faces that replace them belong
-to the style guide.
+double border and every verdict a rubber stamp. The pictures are in English only, as every material
+is until the rest is ready; the localisation comes last, into several languages at once (the owner,
+2026-11-02).
 
 Each picture is kept in `docs/images/html/` as a page of its own, its source, and rendered from it by
 a committed script into PNG at twice its size and SVG with the text as outlines, each format in a
@@ -290,7 +310,9 @@ same week; the comments on Habr feed the second, hands-on article.
 
 English alone was set aside because it gives up Habr, where the method's readers like to argue about
 process and the author writes in his own language; Russian first as a trial, because the English
-text would lose time while the niche fills.
+text would lose time while the niche fills. (Changed on 2026-11-02 by the owner: every material is in
+English until the rest is ready; the Russian text, with the other languages, comes with the
+localisation, done last and into several languages at once.)
 
 ### 2026-10-27 — The first article is written for team leads and architects
 
@@ -477,14 +499,18 @@ example leaves the road to a product open.
 8. ~~The four pictures and the cards~~ — done 2026-11-02: the pictures of the first article and a
    card for each rule of how a rule is written, drawn as a frontier ledger, in `docs/images/` as
    pages rendered to PNG and SVG.
-9. The style guide: one style for the site and every picture, its tokens, its CSS and its
-   components taken from one place (the owner, 2026-11-02).
-10. The materials for the site: kept in this repository on GitHub, from where the site takes them and
-    shows them on its pages; their structure is settled when the step begins.
-11. The pictures in Russian, in the faces the style guide names for Cyrillic.
-12. The first article, in English and in Russian.
-13. The article published, and the plugin submitted to Anthropic's plugin directory once the
+9. ~~The style guide~~ — done 2026-11-02: one style for the site and every picture, taken from
+   `docs/style/` — its tokens the one source of every value, the stylesheet built on them, the
+   components the pictures are drawn with, and the brand book; an article's body set in Libre Caslon
+   Text, the typewriter kept for labels, stamps and code.
+10. The materials for the site: kept in this repository on GitHub, from where the site, built by
+    Astro in a repository of its own and served by Cloudflare Pages, takes them and shows them on its
+    pages; their structure is settled when the step begins.
+11. The first article, in English.
+12. The article published, and the plugin submitted to Anthropic's plugin directory once the
     repository, the plugin and the site are all finished and checked.
+13. The localisation, once everything else is ready: the materials, the site and the pictures in
+    several languages at once (the owner, 2026-11-02).
 
 ## Open questions
 
