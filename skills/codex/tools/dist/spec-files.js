@@ -1,0 +1,77 @@
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join, posix } from "node:path";
+import { fileURLToPath } from "node:url";
+/** Directories under specs/ that hold no part of the specification. */
+const NOT_PARTS = new Set(["_schema", "_viewer"]);
+function jsonFiles(root, dir) {
+    return readdirSync(join(root, dir), { withFileTypes: true })
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .flatMap((entry) => {
+        const path = posix.join(dir, entry.name);
+        if (entry.isDirectory())
+            return dir === "specs" && NOT_PARTS.has(entry.name) ? [] : jsonFiles(root, path);
+        return entry.name.endsWith(".json") ? [path] : [];
+    });
+}
+function readSpecFile(root, path) {
+    try {
+        return { path, data: JSON.parse(readFileSync(join(root, path), "utf8")) };
+    }
+    catch (error) {
+        throw new Error(`${path}: ${error.message}`);
+    }
+}
+/** The paths of the files of the specification and of its archive, in the order they are read. */
+export function specPaths(root) {
+    return jsonFiles(root, "specs");
+}
+/** The specification the files make, the archive's set apart. */
+export function specificationOf(files) {
+    const spec = { files: [], archive: [], nodes: new Map() };
+    for (const file of files) {
+        if (file.path.startsWith("specs/_archive/")) {
+            spec.archive.push(file);
+            continue;
+        }
+        spec.files.push(file);
+        const walk = (node, parent) => {
+            spec.nodes.set(node.sid, { node, file, parent });
+            for (const child of node.children ?? [])
+                walk(child, node);
+        };
+        for (const node of file.data.nodes ?? [])
+            walk(node, null);
+    }
+    return spec;
+}
+export function loadSpecification(root) {
+    return withTaken(root, specPaths(root).map((path) => readSpecFile(root, path)));
+}
+/** The SpecSheriff guidelines and their schema as the SpecSheriff tools carry them. */
+export const CARRIED = fileURLToPath(new URL("../guidelines/", import.meta.url));
+/** Whether the repository is set up for the SpecSheriff tools and takes the SpecSheriff guidelines from them, rather than writing them. */
+export function takesGuidelines(root) {
+    try {
+        return JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).writesSpecSheriffGuidelines !== true;
+    }
+    catch {
+        return false;
+    }
+}
+/**
+ * The specification the repository's own files make, with the SpecSheriff guidelines it takes from
+ * the tools where it takes them, standing where they are written; a copy the project holds is left out.
+ */
+export function withTaken(root, own) {
+    if (!takesGuidelines(root))
+        return specificationOf(own);
+    const taken = ["spec.json", "tools.json"].map((name) => ({ path: `specs/_guidelines/${name}`, data: JSON.parse(readFileSync(join(CARRIED, name), "utf8")) }));
+    return specificationOf([...own.filter((f) => !taken.some((t) => t.path === f.path)), ...taken]);
+}
+/** The one formatting of a file of the specification: two spaces, keys in their order, text as it is, LF. */
+export function canonical(data) {
+    return JSON.stringify(data, null, 2) + "\n";
+}
+export function writeSpecFile(root, file) {
+    writeFileSync(join(root, file.path), canonical(file.data));
+}
