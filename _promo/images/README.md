@@ -8,7 +8,9 @@ how a rule is written (§s-3w8puyqn2ramsre). Each is kept in three formats, a fo
   elsewhere, its title, its lead and its diagram, is its element of the class `drawing`, under a class
   of its own; its `<style class="drawing">` lays that element out again for a column narrower than
   700 px, every rule of it under that class, so that it reads on a phone, and at the page's own size
-  none of it applies.
+  none of it applies. Each colour of the drawing names its token of the style, with its value in the
+  light theme as the fallback, `var(--ink, #2a1e14)`: alone, the page is drawn in the light theme, and
+  on a page of the site in that page's theme.
 - `png/` — each page rendered at twice its size, for a post or a media platform.
 - `svg/` — the same render as vectors, its text drawn as outlines, so that it looks the same where the
   fonts are missing and scales to any size.

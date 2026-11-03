@@ -1,5 +1,6 @@
 /* SpecSheriff style guide — generated from tokens.json */
 :root {
+  color-scheme: light;
   /* colour */
   --paper: #ece2cc;
   --paper-glow: rgba(255, 250, 235, 0.55);
@@ -12,6 +13,11 @@
   --stamp-deep: #7c2214;
   --stamp-ground: rgba(246, 239, 223, 0.85);
   --rule: rgba(42, 30, 20, 0.25);
+  --paper-60: rgba(236, 226, 204, 0.6);
+  --ticket-45: rgba(246, 239, 223, 0.45);
+  --ticket-60: rgba(246, 239, 223, 0.6);
+  --ticket-90: rgba(246, 239, 223, 0.9);
+  --ink-30: rgba(42, 30, 20, 0.3);
   /* type */
   --font-display: 'Rye', Georgia, serif;
   --font-text: 'Libre Caslon Text', Georgia, serif;
@@ -41,4 +47,48 @@
   /* layout */
   --measure: 68ch;
   --page-width: 1120px;
+}
+/* Ledger, dark: a page whose root names it */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  /* colour */
+  --paper: #1e1711;
+  --paper-glow: rgba(255, 214, 150, 0.07);
+  --paper-shade: rgba(0, 0, 0, 0.3);
+  --ticket: #2a2018;
+  --ink: #ece2cc;
+  --ink-soft: #c2b398;
+  --ink-faint: #a5937a;
+  --stamp: #e8735a;
+  --stamp-deep: #f29a82;
+  --stamp-ground: rgba(42, 32, 24, 0.85);
+  --rule: rgba(236, 226, 204, 0.25);
+  --paper-60: rgba(30, 23, 17, 0.6);
+  --ticket-45: rgba(42, 32, 24, 0.45);
+  --ticket-60: rgba(42, 32, 24, 0.6);
+  --ticket-90: rgba(42, 32, 24, 0.9);
+  --ink-30: rgba(236, 226, 204, 0.3);
+}
+/* Ledger, dark: a browser that asks for it, unless the root of the page names the light theme */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    /* colour */
+    --paper: #1e1711;
+    --paper-glow: rgba(255, 214, 150, 0.07);
+    --paper-shade: rgba(0, 0, 0, 0.3);
+    --ticket: #2a2018;
+    --ink: #ece2cc;
+    --ink-soft: #c2b398;
+    --ink-faint: #a5937a;
+    --stamp: #e8735a;
+    --stamp-deep: #f29a82;
+    --stamp-ground: rgba(42, 32, 24, 0.85);
+    --rule: rgba(236, 226, 204, 0.25);
+    --paper-60: rgba(30, 23, 17, 0.6);
+    --ticket-45: rgba(42, 32, 24, 0.45);
+    --ticket-60: rgba(42, 32, 24, 0.6);
+    --ticket-90: rgba(42, 32, 24, 0.9);
+    --ink-30: rgba(236, 226, 204, 0.3);
+  }
 }

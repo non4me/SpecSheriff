@@ -42,8 +42,16 @@ Load the fonts, then `tokens.css`, then `specsheriff.css`:
   figure. Keep it rare: a page where everything is red has no verdict left. Under the pointer a link
   turns `stamp-deep`.
 - Hairlines that mean nothing — the rows of a table, a divider — are `rule`.
-- Every text colour holds at least 4.5:1 on `paper` and on `ticket`; the figures are in each token's
-  note.
+- Every text colour holds at least 4.5:1 on `paper` and on `ticket`, in both themes; the figures are
+  in each token's note.
+- There are two themes. `Ledger` is the light one; `Ledger, dark` is the same ledger on a dark ground:
+  the paper a dark brown, the ink the colour of the light paper, the stamp a lighter red that holds its
+  contrast there. Every colour token has a value in each, and `tokens.css` writes both: a page is dark
+  when its root says `data-theme="dark"`, or when it names no theme and the browser asks for a dark one.
+- A picture draws in the tokens too: each colour it uses names its token, with its value in the light
+  theme beside it, `var(--ink, #2a1e14)`, so that the picture alone is drawn in the light theme and on
+  a page in that page's. The washes a picture draws, a token at a part of its strength, are tokens of
+  their own: `paper-60`, `ticket-45`, `ticket-60`, `ticket-90`, `ink-30`.
 
 ## Type
 

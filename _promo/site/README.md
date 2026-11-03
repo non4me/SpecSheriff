@@ -4,7 +4,8 @@ This is what the site of SpecSheriff shows, where each of its pages comes from, 
 decided about it. It is written for the agent that builds and runs the site; the owner of this
 repository, Vladimir Trojanenko, settles what it leaves open. The decisions behind it are in
 [the design log](../../docs/design-log.md), in the entries of 2026-11-02 on the site, the pictures and the
-order of work, and of 2026-11-03 on how the site is served and shown and on the pictures shown as HTML.
+order of work, and of 2026-11-03 on how the site is served and shown, on the pictures shown as HTML and
+on its two themes.
 
 ## What has been decided
 
@@ -27,6 +28,13 @@ order of work, and of 2026-11-03 on how the site is served and shown and on the 
   for other languages now, but keep the addresses free to take a language prefix later.
 - **One style**, the frontier ledger of [`_promo/style/`](../style/): its tokens, stylesheet and
   components, never values of the site's own.
+- **A light theme and a dark one**, the two of the style: a page is shown in the one the reader's
+  browser asks for, from the first moment it is drawn. A switch at the top right of every page, a
+  button named "Dark theme", pressed while the dark theme is shown, changes it; the choice is kept in
+  that browser for every page and every later visit, and until it is made a change of the browser's
+  setting applies at once. Without scripts a page follows the browser and shows no switch. The
+  pictures and the cards on a page take its theme; their PNG and SVG exports, and the previews when a
+  page is shared, stay light.
 
 ## The pages
 

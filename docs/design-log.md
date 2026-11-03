@@ -6,6 +6,27 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — The site has a light theme and a dark one
+
+The owner's ruling: the site has a dark theme and a light one, a switch at the top right of the page
+between them, and shows at first the one the reader's browser is set to. So the style has two themes,
+and the dark one is the same ledger on a dark ground, not a grey of its own: the paper a dark brown, the
+warm light of a lamp at its top left, the ink the colour of the light paper, and the stamp a lighter
+red, which holds 5.9:1 on that ground where the light theme's red would hold 2.6:1. Every colour token
+has a value in each theme, both written by `build.mjs` from `tokens.json`, and every text colour holds
+at least 4.5:1 on paper and on ticket in both. The mark keeps its own exports, the coin in slate and
+pale grey for a light ground and for a dark one: the home shows the one its theme asks for, and on a
+page the star is drawn in ink, as before, and takes the theme with it. The pictures and the cards are
+drawn in the tokens too: each colour names its token, with its light value as the fallback, so that a
+page of `_promo/images/html/` alone is what it was, its exports rendered again the same and every SVG
+byte for byte, and on the site it takes the page's theme. The five washes the pictures drew outside the
+tokens, the paper, a ticket or the ink at a part of its strength, are tokens of their own, so that every
+colour a picture draws has one source. The switch is a button named "Dark theme", pressed while the dark
+theme is shown. The reader's choice is kept in the browser and set on the page before anything of it is
+drawn, so that a page never shows the other theme first; without scripts a page follows the browser and
+has no switch, since a button that does nothing is worse than none. The PNG and SVG exports, and the
+previews when a page is shared, stay light: they are images of the source pages, which nobody switches.
+
 ### 2026-11-03 — The pictures sit on the page, and a narrow screen has a layout of their own
 
 The owner's ruling, on the site as reviewed: the ground under the pictures goes too, and a small screen
