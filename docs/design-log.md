@@ -576,9 +576,10 @@ example leaves the road to a product open.
    hooks; turned on in this repository. `sheriff types` comes with the first release (2026-10-31).
 3. ~~The skills~~ — done 2026-10-28: spec, spec-review, spec-adopt, and `sheriff init` laying them
    out with the hooks and the SpecSheriff guidelines.
-4. The packaging: the repository laid out as the three parts, with the mark in `_promo/brand/`; the theory;
-   the rules of the appendix of the tools for the one channel, then the plugin for Claude Code and its
-   marketplace; the practitioner's guide, and a test on a clean machine.
+4. ~~The packaging~~ — done 2026-11-01, released in 0.1.0: the repository laid out as the three
+   parts, with the mark in `_promo/brand/`; the theory; the rules of the appendix of the tools for
+   the one channel, then the plugin for Claude Code and its marketplace; the practitioner's guide,
+   and a test on a clean machine.
 5. ~~The worked example~~ — done 2026-11-01: the frontier town's saloon in a repository of its own,
    its specification confirmed by the owner node by node, its code and tests, and the recorded run
    in which the reviewer refuses a commit every test and every other check let through.
