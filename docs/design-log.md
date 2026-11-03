@@ -6,6 +6,23 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — Try opens with the installation, and each guide has a page under it
+
+The owner's review of the entry below, on the site as published: Try did not show the block "Installing
+it" the home had shown, because the guide it held had the same text further down, and that block is
+what he asked to see there; under it go two links, For Claude Code and For Codex CLI, each to a page of
+its own holding what Try held. So Try shows, under its name, the section "Installing it" of the guide
+for Claude Code as the home showed it before, from its heading to the next heading of its level: the
+commands and the paragraph after them; then a link to each guide's page. The home's button to install
+the plugin, whose place those links take, does not come back. The guide for Claude Code is shown whole
+at `/try/claude-code/` and the guide for Codex CLI at `/try/codex/`, each a page of one document titled
+by its own first heading, as the guides' pages were before; the installation's text so stands on two
+pages, Try and its guide's, by intent. The two pages are reached from Try, not listed on the home. A
+link to a guide leads to its page, and the guides' old addresses answer a permanent redirect to those
+pages, so that the anchor of a heading in an old link still leads to that heading. On the owner's
+answer to a question the entry below left, the method's page names the survey of what already exists
+without linking it: the words stay, the link to its file goes.
+
 ### 2026-11-03 — Try takes the place of the guides, and the principles stand on the home
 
 The owner's ruling, on the site as published: the guide's page is renamed Try and takes the

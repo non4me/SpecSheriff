@@ -5,7 +5,7 @@ decided about it. It is written for the agent that builds and runs the site; the
 repository, Vladimir Trojanenko, settles what it leaves open. The decisions behind it are in
 [the design log](../../docs/design-log.md), in the entries of 2026-11-02 on the site, the pictures and the
 order of work, and of 2026-11-03 on how the site is served and shown, on the pictures shown as HTML, on
-its two themes and on Try, which takes the place of the guides.
+its two themes, and on Try, which opens with the installation and leads to a page for each guide.
 
 ## What has been decided
 
@@ -45,15 +45,22 @@ its two themes and on Try, which takes the place of the guides.
 | The rules | `/rules/` | The guidelines, [`specs/_guidelines/`](../../specs/_guidelines/): `spec.json`, `tools.json` and `project.json`, as a contents of their sections and rules. |
 | A rule | `/rules/<sid>/` | One node of those files (below). |
 | The map | `/map/` | The same nodes as a mind map (below). |
-| Try | `/try/` | The guides of the two plugins: [`skills/claude-code/README.md`](../../skills/claude-code/README.md), then [`skills/codex/README.md`](../../skills/codex/README.md). |
+| Try | `/try/` | The section "Installing it" of [`skills/claude-code/README.md`](../../skills/claude-code/README.md), then a link to each of the two pages below, whose addresses are under it. |
+| For Claude Code | `/try/claude-code/` | The guide of the plugin for Claude Code, [`skills/claude-code/README.md`](../../skills/claude-code/README.md). |
+| For Codex CLI | `/try/codex/` | The guide of the plugin for Codex CLI, [`skills/codex/README.md`](../../skills/codex/README.md). |
 | Articles | `/articles/` and `/articles/<slug>/` | [`_promo/articles/`](../articles/), as its README says; the list newest first. |
 | The example | `/example/` | The README of the worked example, [non4me/specsheriff-saloon](https://github.com/non4me/specsheriff-saloon), fetched at build time, with a link to its repository. |
 
 A page shows the markdown documents its row links, in that order. The first opens the page, its first
 heading the page's own, and every other is a section of the page under its own first heading, its
-headings a level below; a page other than the home made of several documents, Try, is titled by its
-name, and every document of it is such a section. A link to a document shown as a section leads to
-that section. A row that links no document is made from what its first link names.
+headings a level below; a page other than the home made of several documents is titled by its name,
+and every document of it is such a section. A link to a document shown as a section leads to that
+section. A row may instead name one section of a document, as `the section "…" of` a link to it: the
+page is titled by its name and shows that section as the document has it, from its heading to the next
+heading of its level or above, and a link to the document still leads to the page whose row shows it
+whole. A page whose address is under another page's is listed on that page, by its name and in the
+order of this table, and not on the home. A row that links no document is made from what its first
+link names.
 
 Nothing else of the repository is a page: not this brief, not the design log, which is internal to
 the project, not `internal/`, not the survey of what already exists,

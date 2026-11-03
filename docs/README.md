@@ -62,7 +62,7 @@ and tags in code and tests in the traceability tools of regulated industries; a 
 written before the code, guiding an agent, in Spec Kit, Kiro and their kin; a sign-off tied to the
 hash of the text, and a deterministic gate, in SpecGate; a model judging a pull request against its
 ticket in Qodo, where it advises rather than refuses. No source found holds them together.
-[The survey](research/landscape.md), dated and with its sources, says what each shares with
+The survey, dated and with its sources, says what each shares with
 SpecSheriff and what it lacks.
 
 ## The guidelines
