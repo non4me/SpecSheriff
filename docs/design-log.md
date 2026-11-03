@@ -6,6 +6,24 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — The site is served from the owner's own server, and shown as the owner reviewed it
+
+The owner's ruling, on the site as first published: it is served from the owner's own server rather
+than by Cloudflare Pages, and the server builds it again when main moves, here or in the site's own
+repository. The server finds a change by itself, so the workflow that asked a host to rebuild,
+`.github/workflows/site.yml`, is removed with the secret it read, and no list of paths has to follow
+a new kind of material. A public file names nothing of how the server is run — no host, address,
+path, schedule, port, account or credential: the brief says only what the site shows and where each
+page's material comes from.
+
+The design log is internal to the project and has no page on the site. The map does not repeat the
+rules, which have a page of their own: without scripts it points to `/rules/`; with them it takes
+the width of the window and grows in height with what is shown, so that nothing of it is cut off,
+and it opens collapsed to the main branches, fitting within the visible area. The home shows the four
+pictures in one column, each with the question it answers above it as a heading rather than a caption
+below. The site shows copies of every picture made at build time, resized and in modern formats, each
+a link to its original, which stays in this repository unchanged.
+
 ### 2026-11-02 — Every promotional material lives in `_promo/`
 
 The owner's ruling: the promotional materials live in one folder and nowhere else — the mark
@@ -36,14 +54,17 @@ the hooks and the reviewer, all code bound to a rule — and here the site's cod
 to rules of the method that say nothing of a site, or be taken out of the checks; either would blur
 the example this repository gives of itself, as the saloon's repository of its own avoids. The cost is
 a key of the host kept in GitHub's settings and one small step of automation. Netlify works the same
-way; GitHub Pages was set aside because its cache cannot be set.
+way; GitHub Pages was set aside because its cache cannot be set. (Changed on 2026-11-03: the site is
+served from the owner's own server, which finds a change by itself, so no key of a host is kept and
+no workflow asks it to build.)
 
 The pages, agreed with the owner the same day: the home, the method, the principles, the rules with
 a page for each node, a mind map of the specification, the guides, the landscape, the design log,
 the articles and the example. The pictures and the cards have no page of their own: they are
 promotional material, shown where a page uses them and as previews when a page is shared. The site
 is built and run by an agent of its own, from the brief in `_promo/site/README.md`, which says what each page
-is made of and what has been decided.
+is made of and what has been decided. (Changed on 2026-11-03: the design log has no page; it is
+internal to the project.)
 
 ### 2026-11-02 — The pictures are a frontier ledger, in English first, each kept as a page
 
@@ -523,10 +544,10 @@ example leaves the road to a product open.
    components the pictures are drawn with, and the brand book; an article's body set in Libre Caslon
    Text, the typewriter kept for labels, stamps and code.
 10. ~~The materials for the site~~ — done 2026-11-02: the pages agreed with the owner, each made
-    from a document kept here; a home for the articles; the workflow that asks the host to rebuild;
-    and the brief, `_promo/site/README.md`, for the agent that builds the site.
+    from a document kept here; a home for the articles; the workflow that asked the host to rebuild,
+    removed on 2026-11-03; and the brief, `_promo/site/README.md`, for the agent that builds the site.
 11. The site, built by an agent of its own from the brief, in a repository of its own, by Astro,
-    served by Cloudflare Pages, the host connected by the owner.
+    served from the owner's own server.
 12. The first article, in English.
 13. The article published, and the plugin submitted to Anthropic's plugin directory once the
     repository, the plugin and the site are all finished and checked.
