@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="_promo/brand/exports/coin-dark.svg">
-    <img src="_promo/brand/exports/coin-light.svg" alt="SpecSheriff — no code without a rule" width="220">
-  </picture>
+  <img src="_promo/brand/exports/coin-dark.svg" alt="SpecSheriff — no code without a rule" width="220">
 </p>
 
 # SpecSheriff

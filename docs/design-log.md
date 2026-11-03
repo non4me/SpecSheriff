@@ -6,6 +6,13 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — The coin is always the dark one
+
+The owner's ruling: the mark is shown in its dark form, whatever the theme around it. So the README
+shows `coin-dark.svg` alone, with no source for a light ground: on GitHub in either of its themes, and
+on the site's home, which shows the README's picture, in either of its own. `coin-light.svg` stays an
+export, for a use that asks for it.
+
 ### 2026-11-03 — The site has a light theme and a dark one
 
 The owner's ruling: the site has a dark theme and a light one, a switch at the top right of the page
@@ -15,8 +22,8 @@ warm light of a lamp at its top left, the ink the colour of the light paper, and
 red, which holds 5.9:1 on that ground where the light theme's red would hold 2.6:1. Every colour token
 has a value in each theme, both written by `build.mjs` from `tokens.json`, and every text colour holds
 at least 4.5:1 on paper and on ticket in both. The mark keeps its own exports, the coin in slate and
-pale grey for a light ground and for a dark one: the home shows the one its theme asks for, and on a
-page the star is drawn in ink, as before, and takes the theme with it. The pictures and the cards are
+pale grey for a light ground and for a dark one, and the README, and so the home, shows the dark one in
+both themes (the next entry); on a page the star is drawn in ink, as before, and takes the theme with it. The pictures and the cards are
 drawn in the tokens too: each colour names its token, with its light value as the fallback, so that a
 page of `_promo/images/html/` alone is what it was, its exports rendered again the same and every SVG
 byte for byte, and on the site it takes the page's theme. The five washes the pictures drew outside the
