@@ -151,7 +151,9 @@ unfinished or makeshift. Until then it is installed from the marketplace this re
 directory takes a plugin from a public repository on GitHub through its developer portal, validates
 and scans every version, and has a person review a new listing. What its review would hold, and what
 the plugin must change to come from the directory as well as from this marketplace, are settled when
-the step begins.
+the step begins. (Changed on 2026-11-03: the submission is no step of the order of work but the
+owner's own act, made if and when they are sure it is needed; anyone installs the plugin without it,
+from this repository's marketplace by `claude plugin marketplace add non4me/SpecSheriff#release`.)
 
 ### 2026-10-31 — SpecSheriff is English, and a user's own language belongs to their personal skills
 
@@ -192,7 +194,8 @@ guidelines, the skills, the tools and the example under Apache 2.0. The plugin g
 plugin directory last, as the entry of 2026-11-01 says. (Changed on 2026-11-01: the worked example
 lives in a repository of its own, which this one links to. Changed on 2026-11-02: the plugin for Codex
 CLI came in 0.3.0, a plugin of its own that Codex installs and updates by itself, built from the same
-source (§s-2pdy9gw2jrjvfb4).)
+source (§s-2pdy9gw2jrjvfb4). Changed on 2026-11-03: whether the plugin goes to the directory at all is
+the owner's own decision, as that entry now says.)
 
 ### 2026-10-29 — One channel: the plugin carries everything its work needs
 
@@ -605,8 +608,7 @@ example leaves the road to a product open.
 12. ~~The first article, in English~~ — done 2026-11-03:
     [No code without a rule](../_promo/articles/no-code-without-a-rule.md), the method set between
     vibe coding and writing by hand, with the four pictures.
-13. The article published, and the plugin submitted to Anthropic's plugin directory once the
-    repository, the plugin and the site are all finished and checked.
+13. The article published.
 14. The localisation, once everything else is ready: the materials, the site and the pictures in
     several languages at once (the owner, 2026-11-02).
 
