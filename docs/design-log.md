@@ -24,6 +24,25 @@ pictures in one column, each with the question it answers above it as a heading 
 below. The site shows copies of every picture made at build time, resized and in modern formats, each
 a link to its original, which stays in this repository unchanged.
 
+### 2026-11-02 — The first article sets the method between vibe coding and writing by hand
+
+The owner's thesis: the method answers two ways of losing. Vibe coding loses the developer's
+understanding of the application's logic and their control of it; writing the code by hand keeps
+both, at the cost of speed and of attention spent on the code rather than on what the system must do.
+As spec-driven development generally, SpecSheriff puts the specification first and keeps the
+developer's attention there, so that they understand all the logic and control it through the
+specification, while the code is written by an agent held by the skills and the checks. The method
+is told as an assembly of techniques each known elsewhere, since it came of steady study of them
+rather than of one moment. The article explains the principles and what they give simply and
+briefly, each principle citing its rules by sid, its claims checked against the guidelines by a
+reviewer who read them apart from the author's reading; it ends with the way in, the plugin for
+Claude Code or for Codex CLI and a first try on the saloon or on the reader's own repository. It is
+[`_promo/articles/no-code-without-a-rule.md`](../_promo/articles/no-code-without-a-rule.md).
+
+Opening on a single moment of the origin project was set aside, since the method came of no single
+moment; an article holding the whole method, since the guides and the site carry it and the first
+article's reader needs only enough to decide whether to try it.
+
 ### 2026-11-02 — Every promotional material lives in `_promo/`
 
 The owner's ruling: the promotional materials live in one folder and nowhere else — the mark
@@ -352,7 +371,9 @@ English alone was set aside because it gives up Habr, where the method's readers
 process and the author writes in his own language; Russian first as a trial, because the English
 text would lose time while the niche fills. (Changed on 2026-11-02 by the owner: every material is in
 English until the rest is ready; the Russian text, with the other languages, comes with the
-localisation, done last and into several languages at once.)
+localisation, done last and into several languages at once. On 2026-11-03 the owner took on the
+Russian text of the first article for Habr themselves: written for Habr from the English one, and
+kept outside this repository.)
 
 ### 2026-10-27 — The first article is written for team leads and architects
 
@@ -548,7 +569,9 @@ example leaves the road to a product open.
     removed on 2026-11-03; and the brief, `_promo/site/README.md`, for the agent that builds the site.
 11. The site, built by an agent of its own from the brief, in a repository of its own, by Astro,
     served from the owner's own server.
-12. The first article, in English.
+12. ~~The first article, in English~~ — done 2026-11-03:
+    [No code without a rule](../_promo/articles/no-code-without-a-rule.md), the method set between
+    vibe coding and writing by hand, with the four pictures.
 13. The article published, and the plugin submitted to Anthropic's plugin directory once the
     repository, the plugin and the site are all finished and checked.
 14. The localisation, once everything else is ready: the materials, the site and the pictures in

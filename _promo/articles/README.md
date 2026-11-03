@@ -1,7 +1,8 @@
 # Articles
 
 The articles about the method, each a Markdown file of its own, `_promo/articles/<slug>.md`, its slug
-the address it takes on the site (`/articles/<slug>/`). The first is being written.
+the address it takes on the site (`/articles/<slug>/`). The first is
+[No code without a rule](no-code-without-a-rule.md).
 
 An article opens with a block the site reads for its page:
 
