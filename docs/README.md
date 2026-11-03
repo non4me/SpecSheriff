@@ -100,7 +100,6 @@ How to use them, and which to take when, is the practitioner's guide, kept with 
 - The skills and the tools: [`skills/`](../skills/) — the plugin for Claude Code carrying the
   skills, the SpecSheriff guidelines and the SpecSheriff tools, and the tools' plugin for pytest.
 - The worked example, a saloon in a frontier town: [its repository](https://github.com/non4me/specsheriff-saloon).
-- The decisions taken so far, and why: [the design log](design-log.md).
 - The pictures of the method and the cards on how requirements decay: [`images/`](../_promo/images/).
 - The style of the site and the pictures, its tokens, stylesheet and components: [`style/`](../_promo/style/).
 - The articles: [`articles/`](../_promo/articles/); how the site is made from these documents: [its brief](../_promo/site/README.md).

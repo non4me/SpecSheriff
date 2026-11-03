@@ -2,11 +2,7 @@
 
 This is what the site of SpecSheriff shows, where each of its pages comes from, and what has been
 decided about it. It is written for the agent that builds and runs the site; the owner of this
-repository, Vladimir Trojanenko, settles what it leaves open. The decisions behind it are in
-[the design log](../../docs/design-log.md), in the entries of 2026-11-02 on the site, the pictures and the
-order of work, and of 2026-11-03 on how the site is served and shown, on the pictures shown as HTML, on
-its two themes, and on The plugin, the page once named Try, which opens with the installation and
-leads to a page for each guide.
+repository, Vladimir Trojanenko, settles what it leaves open.
 
 ## What has been decided
 
@@ -67,8 +63,7 @@ GitHub, as a link to a document no page shows does. A page whose address is
 under another page's is listed on that page, by its name and in the order of this table, and not on the
 home. A row that links no document is made from what its first link names.
 
-Nothing else of the repository is a page: not this brief, not the design log, which is internal to
-the project, not `internal/`, not the survey of what already exists,
+Nothing else of the repository is a page: not this brief, not `internal/`, not the survey of what already exists,
 [`docs/research/landscape.md`](../../docs/research/landscape.md), not the READMEs of
 `_promo/images/` and `_promo/style/`. The pictures and the cards have no page of their own: they are
 promotional material, used where a page shows them and as previews when a page is shared.

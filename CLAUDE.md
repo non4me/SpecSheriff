@@ -27,9 +27,7 @@ out quietly.
 
 @docs/principles.md
 
-`docs/design-log.md` holds the decisions (newest first), the order of work and the open questions;
-read it before proposing anything. A decision moves onto the rule it settled once that rule exists,
-and the log keeps only what no rule carries.
+Decisions are not kept separately, only in the commit messages.
 
 `specs/_guidelines/` holds the SpecSheriff guidelines — the method's own specification, normative for
 all work here:
@@ -110,7 +108,7 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
 - Files outside `specs/` — the docs, this file, later the code — cite a node by its sid, never by its
   address; the tools refuse an address outside the specification.
 - Commit messages follow the history: the part first, then what changed, in plain sentences
-  ("Design log: …", "SpecSheriff guidelines: …").
+  ("SpecSheriff guidelines: …").
 
 ## When code arrives
 
