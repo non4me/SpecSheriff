@@ -6,6 +6,23 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — The pictures sit on the page, and a narrow screen has a layout of their own
+
+The owner's ruling, on the site as reviewed: the ground under the pictures goes too, and a small screen
+gets a form of its own, the schemes turned from rows to columns, or their boxes breaking onto the next
+row below a width. So the site shows each picture and card on the page itself, without the fill and
+the texture of its canvas and the star drawn faint behind it; a star the drawing holds as its content,
+SpecSheriff's place on the map, stays. Which box follows which on a narrow screen and where a note
+sits belong to the picture, so they are made in its page in `_promo/images/html/`, not in the site:
+each page marks what is shown as its element of the class `drawing`, and its `<style class="drawing">`
+lays that element out again for a column narrower than 700 px, a width under the narrowest column in
+which the site shows a drawing on a wide screen. The flows of the first three pictures run downward,
+their arrows turned with them and each note beside what it annotates. The map keeps its three columns
+and is read level by level, the tools of a level in the columns they stand in, since a tool's place is
+where its level and its column meet and a column stacked whole would part the levels from each other.
+A card's lines take the full width. At its own size a page is what it was, so its PNG and its SVG stay
+as they are: rendered again, every SVG is the same byte for byte.
+
 ### 2026-11-03 — The pictures are shown as HTML
 
 The owner's ruling, on the home as reviewed: it shows each of the four pictures from its page in

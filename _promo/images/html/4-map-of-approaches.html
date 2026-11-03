@@ -2,40 +2,78 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=1200">
+<meta name="viewport" content="width=device-width">
 <title>How does it differ from Spec Kit? — SpecSheriff</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&amp;family=Courier+Prime:wght@400;700&amp;display=swap">
 <style>
 @page{size:1200px 675px;margin:0}
-html,body{margin:0;width:1200px;height:675px;overflow:hidden}
+html,body{margin:0}
+@media (min-width:700px){html,body{width:1200px;height:675px;overflow:hidden}}
+body{container-type:inline-size}
+@container (max-width: 699px){body>div{width:auto!important;height:auto!important;padding:24px 16px!important}body>div>div:not(.drawing){position:static!important;width:auto!important;margin-top:24px;text-align:left!important}}
 *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 a{color:#a3321f}a:hover{color:#7c2214}
+</style>
+<style class="drawing">
+@container (max-width: 699px) {
+.map-of-approaches { height: auto !important; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 8px; padding-bottom: 16px;
+  grid-template-areas: "title title title" "lead lead lead" "h1 h2 h3" "d1 d2 d3" "gated gated gated" "g1 g2 g3" "traced traced traced" "t1 t2 t3" "guided guided guided" "u1 u2 u3" "caption caption caption"; }
+.map-of-approaches > * { position: relative !important; left: auto !important; top: auto !important; }
+.map-of-approaches > .title { grid-area: title; justify-self: start; font-size: 30px !important; line-height: 36px !important; }
+.map-of-approaches > .lead { grid-area: lead; justify-self: stretch; width: auto !important; margin: 12px 0 24px; font-size: 16px !important; line-height: 24px !important; }
+.map-of-approaches > .h1 { grid-area: h1; }
+.map-of-approaches > .h2 { grid-area: h2; }
+.map-of-approaches > .h3 { grid-area: h3; }
+.map-of-approaches > .d1 { grid-area: d1; }
+.map-of-approaches > .d2 { grid-area: d2; }
+.map-of-approaches > .d3 { grid-area: d3; }
+.map-of-approaches > .gated { grid-area: gated; }
+.map-of-approaches > .traced { grid-area: traced; }
+.map-of-approaches > .guided { grid-area: guided; }
+.map-of-approaches > .u1 { grid-area: u1; }
+.map-of-approaches > .t2 { grid-area: t2; }
+.map-of-approaches > .g2 { grid-area: g2; }
+.map-of-approaches > .g3 { grid-area: g3; }
+.map-of-approaches > .head { width: auto !important; align-self: end; font-size: 13px !important; line-height: 18px !important; }
+.map-of-approaches > .desc { width: auto !important; margin: 4px 0 8px; }
+.map-of-approaches > .lane { display: none; }
+.map-of-approaches > .rule-line { grid-column: 1 / -1; align-self: start; width: auto !important; justify-self: stretch; }
+.map-of-approaches > .rl1 { grid-row: traced; }
+.map-of-approaches > .rl2 { grid-row: guided; }
+.map-of-approaches > .level { width: auto !important; margin: 12px 6px 8px; }
+.map-of-approaches > .item { width: auto !important; height: auto !important; min-height: 64px; margin: 0 2px 8px; padding: 6px 4px !important; font-size: 12px !important; line-height: 16px !important; }
+.map-of-approaches > .sheriff { flex-direction: column; gap: 4px !important; font-size: 13px !important; line-height: 16px !important; }
+.map-of-approaches > .partly { grid-area: g3; justify-self: start; align-self: center; width: 20px !important; margin-left: -14px; }
+.map-of-approaches > .caption { grid-area: caption; width: auto !important; margin-top: 12px; }
+}
 </style>
 </head>
 <body>
 <div style="position: relative; width: 1200px; height: 675px; overflow: hidden; background-color: #ece2cc; background-image: radial-gradient(circle at 18% 22%, rgba(255,250,235,0.55), transparent 55%), radial-gradient(circle at 85% 90%, rgba(120,90,50,0.10), transparent 50%); color: #2a1e14; font-family: 'Courier Prime', 'Courier New', monospace">
-<div style="position: absolute; left: 304px; top: 240px; width: 256px; height: 304px; box-sizing: border-box; background: rgba(246,239,223,0.45); border: 1px solid rgba(42,30,20,0.25)"></div>
-<div style="position: absolute; left: 580px; top: 240px; width: 256px; height: 304px; box-sizing: border-box; background: rgba(246,239,223,0.45); border: 1px solid rgba(42,30,20,0.25)"></div>
-<div style="position: absolute; left: 856px; top: 240px; width: 256px; height: 304px; box-sizing: border-box; background: rgba(246,239,223,0.45); border: 1px solid rgba(42,30,20,0.25)"></div>
-<svg width="808" height="8" viewBox="0 0 808 8" preserveAspectRatio="none" style="position: absolute; left: 304px; top: 337px; width: 808px; height: 8px; overflow: visible; fill: none; stroke: rgba(42,30,20,0.3); stroke-width: 1; stroke-dasharray: 4 6"><path d="M 0 4 L 808 4"></path></svg>
-<svg width="808" height="8" viewBox="0 0 808 8" preserveAspectRatio="none" style="position: absolute; left: 304px; top: 438px; width: 808px; height: 8px; overflow: visible; fill: none; stroke: rgba(42,30,20,0.3); stroke-width: 1; stroke-dasharray: 4 6"><path d="M 0 4 L 808 4"></path></svg>
-<svg width="40" height="8" viewBox="0 0 40 8" preserveAspectRatio="none" style="position: absolute; left: 826px; top: 286px; width: 40px; height: 8px; overflow: visible; fill: none; stroke: #a3321f; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 6 6"><defs><marker id="dc-arrow-head-filled-1" orient="auto" markerWidth="5" markerHeight="5" refX="2" refY="2" overflow="visible"><path d="M0 0 L4 2 L0 4 Z" fill="#a3321f" stroke="none" style="stroke: none; fill: #a3321f; fill: context-stroke"/></marker></defs><path d="M 0 4 L 36 4" marker-end="url(#dc-arrow-head-filled-1)"></path></svg>
-<div style="position: absolute; left: 64px; top: 54px; font-family: 'Rye', Georgia, serif; font-size: 42px; line-height: 52px">How does it differ from Spec Kit?</div>
-<div style="position: absolute; left: 64px; top: 120px; width: 1072px; font-size: 18px; line-height: 26px; color: #4e3f2f">Where the specification lives, and what holds the code to it.</div>
-<div style="position: absolute; left: 304px; top: 168px; width: 256px; text-align: center; font-size: 17px; line-height: 22px; font-weight: 700">spec-first</div>
-<div style="position: absolute; left: 580px; top: 168px; width: 256px; text-align: center; font-size: 17px; line-height: 22px; font-weight: 700">spec-anchored</div>
-<div style="position: absolute; left: 856px; top: 168px; width: 256px; text-align: center; font-size: 17px; line-height: 22px; font-weight: 700">spec-as-source</div>
-<div style="position: absolute; left: 304px; top: 194px; width: 256px; text-align: center; font-size: 12px; line-height: 16px; color: #4e3f2f">written before a change,<br>not kept after it</div>
-<div style="position: absolute; left: 580px; top: 194px; width: 256px; text-align: center; font-size: 12px; line-height: 16px; color: #4e3f2f">kept for the life of the system,<br>the code held to it</div>
-<div style="position: absolute; left: 856px; top: 194px; width: 256px; text-align: center; font-size: 12px; line-height: 16px; color: #4e3f2f">maintained in place of the code,<br>which is generated from it</div>
-<div style="position: absolute; left: 64px; top: 266px; width: 220px; font-size: 13px; line-height: 18px"><b style="font-family: 'Rye', Georgia, serif; font-weight: 400; font-size: 18px; line-height: 24px">Gated</b><br><span style="color: #4e3f2f">every commit checked, a reviewer judges the code</span></div>
-<div style="position: absolute; left: 64px; top: 368px; width: 220px; font-size: 13px; line-height: 18px"><b style="font-family: 'Rye', Georgia, serif; font-weight: 400; font-size: 18px; line-height: 24px">Traced</b><br><span style="color: #4e3f2f">ids and coverage, for audit by people</span></div>
-<div style="position: absolute; left: 64px; top: 469px; width: 220px; font-size: 13px; line-height: 18px"><b style="font-family: 'Rye', Georgia, serif; font-weight: 400; font-size: 18px; line-height: 24px">Guided</b><br><span style="color: #4e3f2f">the specification steers an agent</span></div>
-<div style="position: absolute; left: 314px; top: 457px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 10px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f6efdf; border: 2px solid #2a1e14; font-size: 13px; line-height: 18px"><span>Spec Kit · Kiro · OpenSpec<br>BMAD-METHOD · Tessl</span></div>
-<div style="position: absolute; left: 590px; top: 356px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 10px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f6efdf; border: 2px solid #2a1e14; font-size: 13px; line-height: 18px"><span>OpenFastTrace · StrictDoc<br>Doorstop · Sphinx-Needs</span></div>
-<div style="position: absolute; left: 590px; top: 254px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 10px; display: flex; align-items: center; justify-content: center; gap: 10px; background: #f6efdf; border: 4px double #a3321f; font-family: 'Rye', Georgia, serif; font-size: 20px; line-height: 24px"><svg aria-hidden="true" viewBox="-32.5 -25 740 740" width="30" height="30" style="flex: none"><path d="M143.2,393.2 L49.3,308.0 A38.7,38.7 0 1 1 68.9,253.4 L243,246 L307.1,65.7 A38.7,38.7 0 1 1 365.1,65.6 L430,246 L311.5,266.9 A25.6,32 -10 0 0 322.6,329.9 L342.3,326.4 A38.4,38.4 0 0 1 355.7,402.1 L186.0,432.0 L141.0,612.4 A38.7,38.7 0 1 0 188.5,645.7 L336,546 L483.5,645.6 A38.7,38.7 0 1 0 531.1,612.4 L487,432 L625.6,307.9 A38.7,38.7 0 1 0 606.1,253.3 L487.8,248.4" fill="none" stroke="#2a1e14" stroke-width="40" stroke-linejoin="round" stroke-linecap="round"/></svg><span>SpecSheriff</span></div>
-<div style="position: absolute; left: 866px; top: 254px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 12px; display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed #a3321f; font-size: 13px; line-height: 17px; color: #a3321f"><span>in part: types and runtime checks generated from its records</span></div>
-<div style="position: absolute; left: 304px; top: 556px; width: 832px; font-size: 12px; line-height: 16px; color: #6b5a46">Levels after B. Böckeler, “Understanding Spec-Driven-Development”, martinfowler.com, 2025. Placement from SpecSheriff's survey of the landscape.</div>
+<div class="drawing map-of-approaches" style="position: relative; height: 652px">
+<div class="lane lane1" style="position: absolute; left: 304px; top: 240px; width: 256px; height: 304px; box-sizing: border-box; background: rgba(246,239,223,0.45); border: 1px solid rgba(42,30,20,0.25)"></div>
+<div class="lane lane2" style="position: absolute; left: 580px; top: 240px; width: 256px; height: 304px; box-sizing: border-box; background: rgba(246,239,223,0.45); border: 1px solid rgba(42,30,20,0.25)"></div>
+<div class="lane lane3" style="position: absolute; left: 856px; top: 240px; width: 256px; height: 304px; box-sizing: border-box; background: rgba(246,239,223,0.45); border: 1px solid rgba(42,30,20,0.25)"></div>
+<svg class="rule-line rl1" width="808" height="8" viewBox="0 0 808 8" preserveAspectRatio="none" style="position: absolute; left: 304px; top: 337px; width: 808px; height: 8px; overflow: visible; fill: none; stroke: rgba(42,30,20,0.3); stroke-width: 1; stroke-dasharray: 4 6"><path d="M 0 4 L 808 4"></path></svg>
+<svg class="rule-line rl2" width="808" height="8" viewBox="0 0 808 8" preserveAspectRatio="none" style="position: absolute; left: 304px; top: 438px; width: 808px; height: 8px; overflow: visible; fill: none; stroke: rgba(42,30,20,0.3); stroke-width: 1; stroke-dasharray: 4 6"><path d="M 0 4 L 808 4"></path></svg>
+<svg class="partly" width="40" height="8" viewBox="0 0 40 8" preserveAspectRatio="none" style="position: absolute; left: 826px; top: 286px; width: 40px; height: 8px; overflow: visible; fill: none; stroke: #a3321f; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 6 6"><defs><marker id="dc-arrow-head-filled-1" orient="auto" markerWidth="5" markerHeight="5" refX="2" refY="2" overflow="visible"><path d="M0 0 L4 2 L0 4 Z" fill="#a3321f" stroke="none" style="stroke: none; fill: #a3321f; fill: context-stroke"/></marker></defs><path d="M 0 4 L 36 4" marker-end="url(#dc-arrow-head-filled-1)"></path></svg>
+<div class="title" style="position: absolute; left: 64px; top: 54px; font-family: 'Rye', Georgia, serif; font-size: 42px; line-height: 52px">How does it differ from Spec Kit?</div>
+<div class="lead" style="position: absolute; left: 64px; top: 120px; width: 1072px; font-size: 18px; line-height: 26px; color: #4e3f2f">Where the specification lives, and what holds the code to it.</div>
+<div class="head h1" style="position: absolute; left: 304px; top: 168px; width: 256px; text-align: center; font-size: 17px; line-height: 22px; font-weight: 700">spec-first</div>
+<div class="head h2" style="position: absolute; left: 580px; top: 168px; width: 256px; text-align: center; font-size: 17px; line-height: 22px; font-weight: 700">spec-anchored</div>
+<div class="head h3" style="position: absolute; left: 856px; top: 168px; width: 256px; text-align: center; font-size: 17px; line-height: 22px; font-weight: 700">spec-as-source</div>
+<div class="desc d1" style="position: absolute; left: 304px; top: 194px; width: 256px; text-align: center; font-size: 12px; line-height: 16px; color: #4e3f2f">written before a change,<br>not kept after it</div>
+<div class="desc d2" style="position: absolute; left: 580px; top: 194px; width: 256px; text-align: center; font-size: 12px; line-height: 16px; color: #4e3f2f">kept for the life of the system,<br>the code held to it</div>
+<div class="desc d3" style="position: absolute; left: 856px; top: 194px; width: 256px; text-align: center; font-size: 12px; line-height: 16px; color: #4e3f2f">maintained in place of the code,<br>which is generated from it</div>
+<div class="level gated" style="position: absolute; left: 64px; top: 266px; width: 220px; font-size: 13px; line-height: 18px"><b style="font-family: 'Rye', Georgia, serif; font-weight: 400; font-size: 18px; line-height: 24px">Gated</b><br><span style="color: #4e3f2f">every commit checked, a reviewer judges the code</span></div>
+<div class="level traced" style="position: absolute; left: 64px; top: 368px; width: 220px; font-size: 13px; line-height: 18px"><b style="font-family: 'Rye', Georgia, serif; font-weight: 400; font-size: 18px; line-height: 24px">Traced</b><br><span style="color: #4e3f2f">ids and coverage, for audit by people</span></div>
+<div class="level guided" style="position: absolute; left: 64px; top: 469px; width: 220px; font-size: 13px; line-height: 18px"><b style="font-family: 'Rye', Georgia, serif; font-weight: 400; font-size: 18px; line-height: 24px">Guided</b><br><span style="color: #4e3f2f">the specification steers an agent</span></div>
+<div class="item u1" style="position: absolute; left: 314px; top: 457px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 10px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f6efdf; border: 2px solid #2a1e14; font-size: 13px; line-height: 18px"><span>Spec Kit · Kiro · OpenSpec<br>BMAD-METHOD · Tessl</span></div>
+<div class="item t2" style="position: absolute; left: 590px; top: 356px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 10px; display: flex; align-items: center; justify-content: center; text-align: center; background: #f6efdf; border: 2px solid #2a1e14; font-size: 13px; line-height: 18px"><span>OpenFastTrace · StrictDoc<br>Doorstop · Sphinx-Needs</span></div>
+<div class="item g2 sheriff" style="position: absolute; left: 590px; top: 254px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 10px; display: flex; align-items: center; justify-content: center; gap: 10px; background: #f6efdf; border: 4px double #a3321f; font-family: 'Rye', Georgia, serif; font-size: 20px; line-height: 24px"><svg aria-hidden="true" viewBox="-32.5 -25 740 740" width="30" height="30" style="flex: none"><path d="M143.2,393.2 L49.3,308.0 A38.7,38.7 0 1 1 68.9,253.4 L243,246 L307.1,65.7 A38.7,38.7 0 1 1 365.1,65.6 L430,246 L311.5,266.9 A25.6,32 -10 0 0 322.6,329.9 L342.3,326.4 A38.4,38.4 0 0 1 355.7,402.1 L186.0,432.0 L141.0,612.4 A38.7,38.7 0 1 0 188.5,645.7 L336,546 L483.5,645.6 A38.7,38.7 0 1 0 531.1,612.4 L487,432 L625.6,307.9 A38.7,38.7 0 1 0 606.1,253.3 L487.8,248.4" fill="none" stroke="#2a1e14" stroke-width="40" stroke-linejoin="round" stroke-linecap="round"/></svg><span>SpecSheriff</span></div>
+<div class="item g3" style="position: absolute; left: 866px; top: 254px; width: 236px; height: 72px; box-sizing: border-box; padding: 8px 12px; display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed #a3321f; font-size: 13px; line-height: 17px; color: #a3321f"><span>in part: types and runtime checks generated from its records</span></div>
+<div class="caption" style="position: absolute; left: 304px; top: 556px; width: 832px; font-size: 12px; line-height: 16px; color: #6b5a46">Levels after B. Böckeler, “Understanding Spec-Driven-Development”, martinfowler.com, 2025. Placement from SpecSheriff's survey of the landscape.</div>
+</div>
 <div style="position: absolute; left: 64px; top: 592px; display: flex; align-items: center; gap: 12px; font-family: 'Rye', Georgia, serif; font-size: 18px; line-height: 22px"><svg aria-hidden="true" viewBox="-32.5 -25 740 740" width="34" height="34" style="flex: none"><path d="M143.2,393.2 L49.3,308.0 A38.7,38.7 0 1 1 68.9,253.4 L243,246 L307.1,65.7 A38.7,38.7 0 1 1 365.1,65.6 L430,246 L311.5,266.9 A25.6,32 -10 0 0 322.6,329.9 L342.3,326.4 A38.4,38.4 0 0 1 355.7,402.1 L186.0,432.0 L141.0,612.4 A38.7,38.7 0 1 0 188.5,645.7 L336,546 L483.5,645.6 A38.7,38.7 0 1 0 531.1,612.4 L487,432 L625.6,307.9 A38.7,38.7 0 1 0 606.1,253.3 L487.8,248.4" fill="none" stroke="#2a1e14" stroke-width="34" stroke-linejoin="round" stroke-linecap="round"/></svg><span>SpecSheriff</span></div>
 <div style="position: absolute; left: 836px; top: 600px; width: 300px; text-align: right; font-size: 14px; line-height: 18px; color: #4e3f2f">No code without a rule</div>
 </div>

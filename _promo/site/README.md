@@ -99,8 +99,10 @@ it holds.
   GitHub, `https://github.com/non4me/SpecSheriff/blob/main/<path>`.
 - An image's original stays in this repository unchanged. A picture or a card of `_promo/images/`,
   wherever a page shows it (an article links its PNG), is shown from its page in `html/`, its text
-  live, scaled to the width it is given: a picture without the brand and the motto at its foot, a card
-  without its double rule and the brand. Any other image is shown as optimized copies made at build
+  live, scaled to the width it is given: of each only the part its page marks as its drawing, on the
+  page itself, without the ground of its canvas and a star drawn behind it; a picture without the
+  brand and the motto at its foot, a card without its double rule and the brand. In a column narrower
+  than 700 px it takes the narrow layout its page holds instead of shrinking. Any other image is shown as optimized copies made at build
   time — resized to the widths a page needs and in modern formats, with a format every browser reads
   as the fallback — each a link to its original, copied with a digest in its name.
 
