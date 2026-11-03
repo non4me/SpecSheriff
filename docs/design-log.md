@@ -6,6 +6,12 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-04 — The links on The plugin read «Details for …»
+
+The owner's ruling: the two links under the commands on The plugin read Details for Claude Code and
+Details for Codex CLI, in place of For Claude Code and For Codex CLI. They are the names of the two pages
+in the site's table, so the links take them from there; nothing else changes.
+
 ### 2026-11-04 — The plugin holds the installation of both plugins
 
 The owner's ruling, on the site as published: the two guides' sections "Installing it" move onto The

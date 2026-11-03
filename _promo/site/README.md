@@ -47,8 +47,8 @@ leads to a page for each guide.
 | A rule | `/rules/<sid>/` | One node of those files (below). |
 | The map | `/map/` | The same nodes as a mind map (below). |
 | The plugin | `/plugin/` | The section "Installing it" of [`skills/claude-code/README.md`](../../skills/claude-code/README.md) and of [`skills/codex/README.md`](../../skills/codex/README.md): its heading once, each one's code followed by a link to the page below that shows its document, then the text of the first after its code. |
-| For Claude Code | `/plugin/claude-code/` | The guide of the plugin for Claude Code, [`skills/claude-code/README.md`](../../skills/claude-code/README.md), without its section "Installing it", which The plugin shows. |
-| For Codex CLI | `/plugin/codex/` | The guide of the plugin for Codex CLI, [`skills/codex/README.md`](../../skills/codex/README.md), without its section "Installing it", which The plugin shows. |
+| Details for Claude Code | `/plugin/claude-code/` | The guide of the plugin for Claude Code, [`skills/claude-code/README.md`](../../skills/claude-code/README.md), without its section "Installing it", which The plugin shows. |
+| Details for Codex CLI | `/plugin/codex/` | The guide of the plugin for Codex CLI, [`skills/codex/README.md`](../../skills/codex/README.md), without its section "Installing it", which The plugin shows. |
 | Articles | `/articles/` and `/articles/<slug>/` | [`_promo/articles/`](../articles/), as its README says; the list newest first. |
 | The example | `/example/` | The README of the worked example, [non4me/specsheriff-saloon](https://github.com/non4me/specsheriff-saloon), fetched at build time, with a link to its repository. |
 
