@@ -42,7 +42,7 @@ leads to a page for each guide.
 | Page | Address | Made from |
 |------|---------|-----------|
 | Home | `/` | The thesis and the opening of [`README.md`](../../README.md); the four pictures of [`_promo/images/`](../images/) (1 to 4), in one column, each shown as HTML with its own title as its heading; the principles, [`docs/principles.md`](../../docs/principles.md); links to the pages below. |
-| The method | `/method/` | [`docs/README.md`](../../docs/README.md) |
+| The method | `/method/` | [`docs/README.md`](../../docs/README.md), without its section "Where the rest is", which no page shows. |
 | The rules | `/rules/` | The guidelines, [`specs/_guidelines/`](../../specs/_guidelines/): `spec.json`, `tools.json` and `project.json`, as a contents of their sections and rules. |
 | A rule | `/rules/<sid>/` | One node of those files (below). |
 | The map | `/map/` | The same nodes as a mind map (below). |
@@ -61,7 +61,9 @@ row may instead name the section of one heading in documents, as `the section "�
 page is titled by its name and shows the heading once, each document's code followed by a link to the
 page that shows that document, then the text of the first after its code; a link to the document still
 leads to the page whose row shows it. A row may leave out a section of its document, `without its
-section "…"`, where another page shows it; a link to that section leads there. A page whose address is
+section "…"`, and says where that section is shown: `which … shows`, by the name of the page that shows it,
+where a link to one of its headings leads; or `which no page shows`, and such a link leads to the document on
+GitHub, as a link to a document no page shows does. A page whose address is
 under another page's is listed on that page, by its name and in the order of this table, and not on the
 home. A row that links no document is made from what its first link names.
 
