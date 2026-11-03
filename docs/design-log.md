@@ -6,6 +6,24 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — Try takes the place of the guides, and the principles stand on the home
+
+The owner's ruling, on the site as published: the guide's page is renamed Try and takes the
+installation the home showed as its way in, and the guide for Codex CLI after the guide for Claude
+Code; the home shows the principles in place of that installation, and their page goes; the page of the
+survey of what already exists goes, with every link to it. So Try is made of the two guides, each whole
+as a section under its own first heading, the one for Claude Code first. The installation the home
+showed was a section of that guide, so Try shows it once, where the guide has it; the guide for Codex
+CLI has an installation of its own, with its own commands. The home shows the principles whole after
+its pictures, a section under their own first heading. The documents themselves stay where they are:
+the site only stops giving the principles, the guides and the survey pages of their own. A link from a
+document to one of them leads to where it is now shown, the section for the principles and for each
+guide, and a link to the survey to its file on GitHub, as for every document that is not a page. An
+address once published keeps leading to its material, so the old addresses of the guides and of the
+principles answer a permanent redirect to where each now stands, and the survey's, whose material the
+site no longer shows, answers that no page has it; the brief, which said the addresses never change,
+now says so.
+
 ### 2026-11-03 — The coin is always the dark one
 
 The owner's ruling: the mark is shown in its dark form, whatever the theme around it. So the README
@@ -143,7 +161,8 @@ the articles and the example. The pictures and the cards have no page of their o
 promotional material, shown where a page uses them and as previews when a page is shared. The site
 is built and run by an agent of its own, from the brief in `_promo/site/README.md`, which says what each page
 is made of and what has been decided. (Changed on 2026-11-03: the design log has no page; it is
-internal to the project.)
+internal to the project. And again: the guides are shown together on Try, the principles on the home,
+and the landscape has no page.)
 
 ### 2026-11-02 — The pictures are a frontier ledger, in English first, each kept as a page
 

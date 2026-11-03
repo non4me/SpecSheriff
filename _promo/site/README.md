@@ -4,8 +4,8 @@ This is what the site of SpecSheriff shows, where each of its pages comes from, 
 decided about it. It is written for the agent that builds and runs the site; the owner of this
 repository, Vladimir Trojanenko, settles what it leaves open. The decisions behind it are in
 [the design log](../../docs/design-log.md), in the entries of 2026-11-02 on the site, the pictures and the
-order of work, and of 2026-11-03 on how the site is served and shown, on the pictures shown as HTML and
-on its two themes.
+order of work, and of 2026-11-03 on how the site is served and shown, on the pictures shown as HTML, on
+its two themes and on Try, which takes the place of the guides.
 
 ## What has been decided
 
@@ -40,20 +40,24 @@ on its two themes.
 
 | Page | Address | Made from |
 |------|---------|-----------|
-| Home | `/` | The thesis and the opening of [`README.md`](../../README.md); the four pictures of [`_promo/images/`](../images/) (1 to 4), in one column, each shown as HTML with its own title as its heading; the way in, the plugin's installation from the guide; links to the pages below. |
+| Home | `/` | The thesis and the opening of [`README.md`](../../README.md); the four pictures of [`_promo/images/`](../images/) (1 to 4), in one column, each shown as HTML with its own title as its heading; the principles, [`docs/principles.md`](../../docs/principles.md); links to the pages below. |
 | The method | `/method/` | [`docs/README.md`](../../docs/README.md) |
-| The principles | `/principles/` | [`docs/principles.md`](../../docs/principles.md) |
 | The rules | `/rules/` | The guidelines, [`specs/_guidelines/`](../../specs/_guidelines/): `spec.json`, `tools.json` and `project.json`, as a contents of their sections and rules. |
 | A rule | `/rules/<sid>/` | One node of those files (below). |
 | The map | `/map/` | The same nodes as a mind map (below). |
-| The guide | `/guide/` | [`skills/claude-code/README.md`](../../skills/claude-code/README.md) |
-| The guide for Codex | `/guide/codex/` | [`skills/codex/README.md`](../../skills/codex/README.md) |
-| The landscape | `/landscape/` | [`docs/research/landscape.md`](../../docs/research/landscape.md) |
+| Try | `/try/` | The guides of the two plugins: [`skills/claude-code/README.md`](../../skills/claude-code/README.md), then [`skills/codex/README.md`](../../skills/codex/README.md). |
 | Articles | `/articles/` and `/articles/<slug>/` | [`_promo/articles/`](../articles/), as its README says; the list newest first. |
 | The example | `/example/` | The README of the worked example, [non4me/specsheriff-saloon](https://github.com/non4me/specsheriff-saloon), fetched at build time, with a link to its repository. |
 
+A page shows the markdown documents its row links, in that order. The first opens the page, its first
+heading the page's own, and every other is a section of the page under its own first heading, its
+headings a level below; a page other than the home made of several documents, Try, is titled by its
+name, and every document of it is such a section. A link to a document shown as a section leads to
+that section. A row that links no document is made from what its first link names.
+
 Nothing else of the repository is a page: not this brief, not the design log, which is internal to
-the project, not `internal/`, not the READMEs of
+the project, not `internal/`, not the survey of what already exists,
+[`docs/research/landscape.md`](../../docs/research/landscape.md), not the READMEs of
 `_promo/images/` and `_promo/style/`. The pictures and the cards have no page of their own: they are
 promotional material, used where a page shows them and as previews when a page is shared.
 
@@ -61,8 +65,9 @@ Every promotional material — the mark, the pictures, the style guide, the arti
 is in `_promo/`, and nowhere else. Astro takes a name beginning with an underscore for a private one
 in its own folders, so the site reads `_promo/` by explicit paths, not by Astro's conventions.
 
-A page's title is its document's first heading and its description the first paragraph, cut to 160
-characters, unless the document gives its own (an article's opening block).
+A page's title is its first document's first heading, or its name where it is titled by it, and its
+description the first paragraph of that document, cut to 160 characters, unless the document gives its
+own (an article's opening block).
 
 ## A rule's page
 
@@ -133,7 +138,9 @@ it holds.
 ## For search engines
 
 A sitemap of every page, a canonical address on each, a title and a description of its own, and
-`robots.txt` allowing everything. The addresses end with a slash and never change once published.
+`robots.txt` allowing everything. The addresses end with a slash. A published address keeps leading
+to its material: where what a page showed has moved to another page, its old address answers a
+permanent redirect to where it now stands; where the site no longer shows it, that no page has it.
 
 ## When something is missing
 
