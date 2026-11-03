@@ -1092,6 +1092,12 @@
                 "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
                 "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user. The plugin for Claude Code declares the settings of the runner claude as its options, each naming its default and taking no default value; spec-init offers the defaults of any setting still lacking that was never asked for; the skills set no model and no effort.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-11-03",
+                "problem": "Whether the skills should be renamed from spec and spec-* to ss and ss-*, short for SpecSheriff, to be quicker to call and more distinctive.",
+                "ruling": "The owner: the skills keep their names. Claude Code shows a plugin's skill under the plugin's name, as specsheriff:spec-review, and loads a user's skill of the same name beside it, so the plugin's name already keeps them distinct. A call by hand keeps that name either way, so a shorter skill name would save almost nothing, and the agent mostly takes the skills up by their descriptions. The name spec-review says what the skill works on, where ss-review has to be decoded. And ss reads first as the abbreviation of the Nazi SS, besides being a standard Linux command.",
+                "type": "procedural"
               }
             ],
             "tests": [
