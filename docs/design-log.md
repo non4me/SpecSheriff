@@ -6,6 +6,18 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-04 — The plugin holds the installation of both plugins
+
+The owner's ruling, on the site as published: the two guides' sections "Installing it" move onto The
+plugin, each with a link to its own page under its code, and the text after them stands once, at the
+end. So The plugin shows the heading "Installing it" once, the commands of the plugin for Claude Code
+and the link For Claude Code, the commands of the plugin for Codex CLI and the link For Codex CLI, and
+then the text the guide for Claude Code has after its commands, the one the home showed. The two texts
+say much the same in slightly different words, and the owner keeps one of them: the guide for Codex
+CLI's is shown nowhere now. The guides' pages leave the section out, and stay otherwise as they were;
+the guides themselves are not changed, since the brief's table says which section each page leaves out
+and which page shows it. A link to that section leads to The plugin.
+
 ### 2026-11-03 — Try is renamed The plugin
 
 The owner's ruling, on the site as published: the page Try is renamed The plugin. So its name in the

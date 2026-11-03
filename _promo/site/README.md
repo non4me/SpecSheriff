@@ -46,22 +46,24 @@ leads to a page for each guide.
 | The rules | `/rules/` | The guidelines, [`specs/_guidelines/`](../../specs/_guidelines/): `spec.json`, `tools.json` and `project.json`, as a contents of their sections and rules. |
 | A rule | `/rules/<sid>/` | One node of those files (below). |
 | The map | `/map/` | The same nodes as a mind map (below). |
-| The plugin | `/plugin/` | The section "Installing it" of [`skills/claude-code/README.md`](../../skills/claude-code/README.md), then a link to each of the two pages below, whose addresses are under it. |
-| For Claude Code | `/plugin/claude-code/` | The guide of the plugin for Claude Code, [`skills/claude-code/README.md`](../../skills/claude-code/README.md). |
-| For Codex CLI | `/plugin/codex/` | The guide of the plugin for Codex CLI, [`skills/codex/README.md`](../../skills/codex/README.md). |
+| The plugin | `/plugin/` | The section "Installing it" of [`skills/claude-code/README.md`](../../skills/claude-code/README.md) and of [`skills/codex/README.md`](../../skills/codex/README.md): its heading once, each one's code followed by a link to the page below that shows its document, then the text of the first after its code. |
+| For Claude Code | `/plugin/claude-code/` | The guide of the plugin for Claude Code, [`skills/claude-code/README.md`](../../skills/claude-code/README.md), without its section "Installing it", which The plugin shows. |
+| For Codex CLI | `/plugin/codex/` | The guide of the plugin for Codex CLI, [`skills/codex/README.md`](../../skills/codex/README.md), without its section "Installing it", which The plugin shows. |
 | Articles | `/articles/` and `/articles/<slug>/` | [`_promo/articles/`](../articles/), as its README says; the list newest first. |
 | The example | `/example/` | The README of the worked example, [non4me/specsheriff-saloon](https://github.com/non4me/specsheriff-saloon), fetched at build time, with a link to its repository. |
 
 A page shows the markdown documents its row links, in that order. The first opens the page, its first
 heading the page's own, and every other is a section of the page under its own first heading, its
-headings a level below; a page other than the home made of several documents is titled by its name,
-and every document of it is such a section. A link to a document shown as a section leads to that
-section. A row may instead name one section of a document, as `the section "…" of` a link to it: the
-page is titled by its name and shows that section as the document has it, from its heading to the next
-heading of its level or above, and a link to the document still leads to the page whose row shows it
-whole. A page whose address is under another page's is listed on that page, by its name and in the
-order of this table, and not on the home. A row that links no document is made from what its first
-link names.
+headings a level below; a page other than the home made of several documents is titled by its name, and
+every document of it is such a section. A link to a document shown as a section leads to that section. A
+row may instead name the section of one heading in documents, as `the section "…" of` a link to each,
+`and of` between them, a section running from its heading to the next heading of its level or above: the
+page is titled by its name and shows the heading once, each document's code followed by a link to the
+page that shows that document, then the text of the first after its code; a link to the document still
+leads to the page whose row shows it. A row may leave out a section of its document, `without its
+section "…"`, where another page shows it; a link to that section leads there. A page whose address is
+under another page's is listed on that page, by its name and in the order of this table, and not on the
+home. A row that links no document is made from what its first link names.
 
 Nothing else of the repository is a page: not this brief, not the design log, which is internal to
 the project, not `internal/`, not the survey of what already exists,
