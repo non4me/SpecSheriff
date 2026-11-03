@@ -89,7 +89,7 @@ only the change and the text of the rules the commit names. If the code does som
 states, or leaves out what one requires, it refuses the commit and names the rule and the line
 (§s-nyh9yk22ba6g77q).
 
-![What stops bad code? The gate of every commit: the checks, then the reviewer.](../images/png/2-what-stops-bad-code.png)
+![What stops bad code? The gate of every commit: the checks, then, where the code changes, the reviewer.](../images/png/2-what-stops-bad-code.png)
 
 ### A rule is self-sufficient
 

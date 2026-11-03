@@ -23,7 +23,7 @@ interpreter other than `python3`, or `python` on Windows, named by `PYTHON`).
 | Picture | The question it answers |
 |---------|-------------------------|
 | `1-how-it-works` | How does it work? The life of a rule: confirmed by its owner, a test and the code carrying its sid, the commit through the checks and the reviewer; a changed wording returns it to unconfirmed. |
-| `2-what-stops-bad-code` | What stops bad code? The gate of every commit: the deterministic checks, then the reviewer's one judgement. |
+| `2-what-stops-bad-code` | What stops bad code? The gate of every commit: the deterministic checks, then, where the code changes, the reviewer's one judgement. |
 | `3-change-of-stack` | Will it survive a change of stack? One base specification, a technical appendix for each stack. |
 | `4-map-of-approaches` | How does it differ from Spec Kit? Spec-first, spec-anchored and spec-as-source, the tools placed on them. |
 

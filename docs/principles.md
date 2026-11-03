@@ -38,7 +38,8 @@ Checks that answer the same for the same change hold the chain together: hooks i
 harness, at each of its edits, where the order rule, test, code is also held; and git hooks at every
 commit, the final gate on each participant's machine, whoever made the change; a team that needs the
 gate to hold for everyone runs the same checks in CI. The one judgement that is not deterministic — whether
-the code does only what its rules say — is made at every commit by an independent reviewer.
+the code does only what its rules say — is made at every commit that changes code by an independent
+reviewer.
 
 ## A rule is self-sufficient
 

@@ -44,7 +44,7 @@ each edit an agent makes and at every commit; and the three parts below. SpecGat
 confirmation tied to the text and a deterministic gate, SpecDrive on permanent ids tagged into code
 and tests, Qodo on a model judging a change against its requirement.
 
-1. **An independent reviewer as a gate of every commit**, deliberately given nothing of the session
+1. **An independent reviewer as a gate of every commit that changes code**, deliberately given nothing of the session
    that wrote the code: only the change and the text of the rules the commit names. It refuses a
    commit whose code does something no named rule states, or leaves out what one requires, naming
    the rule and the line. Qodo's review is the nearest found: it reads the ticket rather than rules,
