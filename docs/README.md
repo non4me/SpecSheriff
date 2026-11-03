@@ -21,15 +21,15 @@ wording loses the confirmation until the owner confirms it again (§s-5ah25f6gy9
 
 Every change runs one way: the rule first, then its test, then the code (§s-ef93u6cnbs2sevr,
 §s-rah8b37kytb682y). Every test declares the sid of the rule it verifies, and every symbol of the code
-carries a tag naming the rule it implements (§s-kgbzk2ph9e6jfb4), so that what a change touches is
-traced exactly, and an agent is given the rules that bear on its task rather than the whole
-specification.
+carries a tag naming the rule it implements (§s-rah8b37kytb682y, §s-kgbzk2ph9e6jfb4), so that what a
+change touches is traced exactly, and an agent is given the rules that bear on its task rather than
+the whole specification.
 
 Checks that answer the same for the same change hold the chain together, at each edit an agent makes
 and at every commit (§s-83ev4wwesbwnhnp, §s-jau82aq9juv9zzh). The one judgement no such check can make
-— whether the code does only what its rules say — is made at every commit by an independent reviewer,
-which sees only the change and the text of the rules the commit names, and refuses with the rule and
-the line (§s-nyh9yk22ba6g77q).
+— whether the code does only what its rules say — is made at every commit that changes code by an
+independent reviewer, which sees only the change and the text of the rules the commit names, and
+refuses with the rule and the line (§s-nyh9yk22ba6g77q).
 
 The base specification names no technology; a technical appendix beside it says how the system is
 built, so that the same rules can be built again on another stack (§s-5x737t9nee4zgaa,
