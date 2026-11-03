@@ -4,7 +4,7 @@ This is what the site of SpecSheriff shows, where each of its pages comes from, 
 decided about it. It is written for the agent that builds and runs the site; the owner of this
 repository, Vladimir Trojanenko, settles what it leaves open. The decisions behind it are in
 [the design log](../../docs/design-log.md), in the entries of 2026-11-02 on the site, the pictures and the
-order of work, and of 2026-11-03 on how the site is served and shown.
+order of work, and of 2026-11-03 on how the site is served and shown and on the pictures shown as HTML.
 
 ## What has been decided
 
@@ -32,7 +32,7 @@ order of work, and of 2026-11-03 on how the site is served and shown.
 
 | Page | Address | Made from |
 |------|---------|-----------|
-| Home | `/` | The thesis and the opening of [`README.md`](../../README.md); the four pictures of [`_promo/images/`](../images/) (1 to 4), in one column, each with the question it answers above it as a heading; the way in, the plugin's installation from the guide; links to the pages below. |
+| Home | `/` | The thesis and the opening of [`README.md`](../../README.md); the four pictures of [`_promo/images/`](../images/) (1 to 4), in one column, each shown as HTML with its own title as its heading; the way in, the plugin's installation from the guide; links to the pages below. |
 | The method | `/method/` | [`docs/README.md`](../../docs/README.md) |
 | The principles | `/principles/` | [`docs/principles.md`](../../docs/principles.md) |
 | The rules | `/rules/` | The guidelines, [`specs/_guidelines/`](../../specs/_guidelines/): `spec.json`, `tools.json` and `project.json`, as a contents of their sections and rules. |
@@ -97,10 +97,12 @@ it holds.
 - A relative link between documents of this repository becomes a link to the page that shows the
   target; a link to anything that is not a page (code, a JSON file, a script) goes to the file on
   GitHub, `https://github.com/non4me/SpecSheriff/blob/main/<path>`.
-- An image's original stays in this repository unchanged. The site shows optimized copies of it,
-  made at build time — resized to the widths a page needs and in modern formats, with a format every
-  browser reads as the fallback — and each picture is a link to its original, copied with a digest
-  in its name.
+- An image's original stays in this repository unchanged. A picture or a card of `_promo/images/`,
+  wherever a page shows it (an article links its PNG), is shown from its page in `html/`, its text
+  live, scaled to the width it is given: a picture without the brand and the motto at its foot, a card
+  without its double rule and the brand. Any other image is shown as optimized copies made at build
+  time — resized to the widths a page needs and in modern formats, with a format every browser reads
+  as the fallback — each a link to its original, copied with a digest in its name.
 
 ## Style and marks
 

@@ -6,6 +6,20 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — The pictures are shown as HTML
+
+The owner's ruling, on the home as reviewed: it shows each of the four pictures from its page in
+`_promo/images/html/`, and of each only what the owner marked, its title, its lead and its drawing; in
+the end every picture that explains the method is shown as HTML. So the site shows every picture and
+card from its page, the source, its text live: a screen reader and a search engine read it, the
+localisation will translate it in one place, and it scales to the width of the page. A picture loses
+the brand and the motto at its foot, and its own title is the heading of its section, in place of the
+question that stood above it and would repeat it. A card on the page of its rule loses its double rule
+and the brand, and keeps the line of its reason; its title is no heading there, since the page already
+has the rule's title as its own. The picture is no longer a copy of an image, so it is no link to a
+PNG: a reader zooms the page instead. The PNG stays the preview when a page is shared, since what
+shows a preview does not render a page, and the fonts are those the site serves itself.
+
 ### 2026-11-03 — The site is served from the owner's own server, and shown as the owner reviewed it
 
 The owner's ruling, on the site as first published: it is served from the owner's own server rather
@@ -22,7 +36,8 @@ the width of the window and grows in height with what is shown, so that nothing 
 and it opens collapsed to the main branches, fitting within the visible area. The home shows the four
 pictures in one column, each with the question it answers above it as a heading rather than a caption
 below. The site shows copies of every picture made at build time, resized and in modern formats, each
-a link to its original, which stays in this repository unchanged.
+a link to its original, which stays in this repository unchanged. (Changed on 2026-11-03: the pictures
+and the cards are shown as HTML, each picture under its own title.)
 
 ### 2026-11-02 — The first article sets the method between vibe coding and writing by hand
 
