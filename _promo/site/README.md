@@ -5,7 +5,8 @@ decided about it. It is written for the agent that builds and runs the site; the
 repository, Vladimir Trojanenko, settles what it leaves open. The decisions behind it are in
 [the design log](../../docs/design-log.md), in the entries of 2026-11-02 on the site, the pictures and the
 order of work, and of 2026-11-03 on how the site is served and shown, on the pictures shown as HTML, on
-its two themes, and on Try, which opens with the installation and leads to a page for each guide.
+its two themes, and on The plugin, the page once named Try, which opens with the installation and
+leads to a page for each guide.
 
 ## What has been decided
 
@@ -45,9 +46,9 @@ its two themes, and on Try, which opens with the installation and leads to a pag
 | The rules | `/rules/` | The guidelines, [`specs/_guidelines/`](../../specs/_guidelines/): `spec.json`, `tools.json` and `project.json`, as a contents of their sections and rules. |
 | A rule | `/rules/<sid>/` | One node of those files (below). |
 | The map | `/map/` | The same nodes as a mind map (below). |
-| Try | `/try/` | The section "Installing it" of [`skills/claude-code/README.md`](../../skills/claude-code/README.md), then a link to each of the two pages below, whose addresses are under it. |
-| For Claude Code | `/try/claude-code/` | The guide of the plugin for Claude Code, [`skills/claude-code/README.md`](../../skills/claude-code/README.md). |
-| For Codex CLI | `/try/codex/` | The guide of the plugin for Codex CLI, [`skills/codex/README.md`](../../skills/codex/README.md). |
+| The plugin | `/plugin/` | The section "Installing it" of [`skills/claude-code/README.md`](../../skills/claude-code/README.md), then a link to each of the two pages below, whose addresses are under it. |
+| For Claude Code | `/plugin/claude-code/` | The guide of the plugin for Claude Code, [`skills/claude-code/README.md`](../../skills/claude-code/README.md). |
+| For Codex CLI | `/plugin/codex/` | The guide of the plugin for Codex CLI, [`skills/codex/README.md`](../../skills/codex/README.md). |
 | Articles | `/articles/` and `/articles/<slug>/` | [`_promo/articles/`](../articles/), as its README says; the list newest first. |
 | The example | `/example/` | The README of the worked example, [non4me/specsheriff-saloon](https://github.com/non4me/specsheriff-saloon), fetched at build time, with a link to its repository. |
 
@@ -147,7 +148,8 @@ it holds.
 A sitemap of every page, a canonical address on each, a title and a description of its own, and
 `robots.txt` allowing everything. The addresses end with a slash. A published address keeps leading
 to its material: where what a page showed has moved to another page, its old address answers a
-permanent redirect to where it now stands; where the site no longer shows it, that no page has it.
+permanent redirect straight to where it now stands, never through another old address; where the
+site no longer shows it, that no page has it.
 
 ## When something is missing
 

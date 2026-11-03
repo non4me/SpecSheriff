@@ -6,6 +6,16 @@ holds only what no rule carries.
 
 ## Decisions
 
+### 2026-11-03 — Try is renamed The plugin
+
+The owner's ruling, on the site as published: the page Try is renamed The plugin. So its name in the
+navigation, in the same place, its heading and its title are The plugin, and its address is
+`/plugin/`; the two guides' pages move under it, to `/plugin/claude-code/` and `/plugin/codex/`, and
+keep their names, For Claude Code and For Codex CLI, and what they show. The addresses of Try and of
+its two pages answer a permanent redirect to the new ones, and the older addresses of the guides lead
+straight to the guides' new pages, never through an address of Try, so that an old link takes one step
+to its material.
+
 ### 2026-11-03 — Try opens with the installation, and each guide has a page under it
 
 The owner's review of the entry below, on the site as published: Try did not show the block "Installing
