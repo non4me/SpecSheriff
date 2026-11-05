@@ -32,6 +32,11 @@ repository, Vladimir Trojanenko, settles what it leaves open.
   setting applies at once. Without scripts a page follows the browser and shows no switch. The
   pictures and the cards on a page take its theme; their PNG and SVG exports, and the previews when a
   page is shared, stay light.
+- **The site says that it is still being built.** Every page, the one shown for an address that has no
+  page among them, opens with a band across the whole width of the window, above the masthead: the
+  band of the style, diagonal stripes of yellow and black at 45 degrees, as on the tape round a building
+  site, and over them, on a plate that keeps them legible in either theme, the words
+  "Work in progress — SpecSheriff is still in development", as written.
 
 ## The pages
 
@@ -131,7 +136,7 @@ it holds.
 - Load the fonts the style names, then `_promo/style/tokens.css`, then `_promo/style/specsheriff.css`;
   the fonts may be served from the site itself, the same faces and weights.
 - Build the pages from the components of [`_promo/style/components/`](../style/components/): the
-  masthead with the star and the navigation, the colophon with the motto, prose for every document,
+  band above the masthead, the masthead with the star and the navigation, the colophon with the motto, prose for every document,
   the ledger for tables, a sid for every citation, a ticket or a note where a page sets something
   apart. A rule's status may be shown as a stamp (Checked).
 - The star is inlined from [`_promo/brand/icon.svg`](../brand/icon.svg), its stroke in the `ink` token;

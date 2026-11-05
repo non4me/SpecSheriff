@@ -199,6 +199,26 @@ a.ss-sid:hover { text-decoration: underline; }
 .ss-button:hover { border-color: var(--stamp-deep); color: var(--stamp-deep); }
 .ss-button--key { border-color: var(--stamp); color: var(--stamp); }
 
+/* The band: across the whole width above the masthead, stripes of hazard and hazard-ink at 45 degrees as on the
+   tape round a building site, its words on a plate of their own over them */
+
+.ss-band {
+  padding: var(--space-2) max(var(--space-4), env(safe-area-inset-right, 0px)) var(--space-2) max(var(--space-4), env(safe-area-inset-left, 0px));
+  background: repeating-linear-gradient(-45deg, var(--hazard) 0 var(--space-3), var(--hazard-ink) 0 calc(2 * var(--space-3)));
+  text-align: center;
+}
+.ss-band > p {
+  display: inline-block;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-1) var(--space-3);
+  background: var(--hazard);
+  border: var(--border-line) solid var(--hazard-ink);
+  color: var(--hazard-ink);
+  font: 700 15px/22px var(--font-type);
+  text-wrap: balance;
+}
+
 /* The masthead and the colophon: the top and the foot of every page */
 
 .ss-masthead {

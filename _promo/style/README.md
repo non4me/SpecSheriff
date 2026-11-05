@@ -42,6 +42,10 @@ Load the fonts, then `tokens.css`, then `specsheriff.css`:
   figure. Keep it rare: a page where everything is red has no verdict left. Under the pointer a link
   turns `stamp-deep`.
 - Hairlines that mean nothing — the rows of a table, a divider — are `rule`.
+- `hazard` and `hazard-ink`, a yellow and a black, belong to the band alone, the one thing of the
+  style outside the ledger: the tape round a building site. Its words are `hazard-ink` on a plate of
+  `hazard`, at 10.9:1 and, dark, 9.0:1; in the dark theme the yellow is dimmed so that it does not
+  glare on a dark ground.
 - Every text colour holds at least 4.5:1 on `paper` and on `ticket`, in both themes; the figures are
   in each token's note.
 - There are two themes. `Ledger` is the light one; `Ledger, dark` is the same ledger on a dark ground:
@@ -69,7 +73,7 @@ Load the fonts, then `tokens.css`, then `specsheriff.css`:
   stamp's corners round (`radius-stamp`), and the ring round a marked word (`radius-ring`).
 - Borders are drawn, never shaded: a ticket and a button in a `border-ticket` double line, a whole
   card in a `border-frame` double line, a slip or a figure in a `border-line`. No shadows, no
-  gradients but the ground's washes.
+  gradients but the ground's washes and the band's stripes.
 - A stamp is never set straight: `tilt-stamp` for a verdict on a step or a rule, `tilt-seal` for
   the verdict that closes a flow. It overhangs the edge of what it judges.
 - Space comes from the `space-` steps: `space-4` between paragraphs, `space-6` between the halves
