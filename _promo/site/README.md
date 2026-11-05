@@ -34,7 +34,7 @@ repository, Vladimir Trojanenko, settles what it leaves open.
   page is shared, stay light.
 - **The site says that it is still being built.** The masthead of every page, the one shown for an
   address that has no page among them, carries right of the brand the stamp of the style, the one a
-  rule's page sets as Checked, reading "In progress", as written.
+  rule's page sets as Checked, at half its size there, reading "In progress", as written.
 
 ## The pages
 
