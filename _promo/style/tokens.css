@@ -18,8 +18,6 @@
   --ticket-60: rgba(246, 239, 223, 0.6);
   --ticket-90: rgba(246, 239, 223, 0.9);
   --ink-30: rgba(42, 30, 20, 0.3);
-  --hazard: #f5c400;
-  --hazard-ink: #1c160f;
   /* type */
   --font-display: 'Rye', Georgia, serif;
   --font-text: 'Libre Caslon Text', Georgia, serif;
@@ -70,8 +68,6 @@
   --ticket-60: rgba(42, 32, 24, 0.6);
   --ticket-90: rgba(42, 32, 24, 0.9);
   --ink-30: rgba(236, 226, 204, 0.3);
-  --hazard: #d6aa12;
-  --hazard-ink: #0e0b07;
 }
 /* Ledger, dark: a browser that asks for it, unless the root of the page names the light theme */
 @media (prefers-color-scheme: dark) {
@@ -94,7 +90,5 @@
     --ticket-60: rgba(42, 32, 24, 0.6);
     --ticket-90: rgba(42, 32, 24, 0.9);
     --ink-30: rgba(236, 226, 204, 0.3);
-    --hazard: #d6aa12;
-    --hazard-ink: #0e0b07;
   }
 }

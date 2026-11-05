@@ -5,3 +5,4 @@ The masthead is the top of every page: the star and the name on the left, the na
 - Use `ss-masthead` holding a `ss-brand` link (the star, drawn in `ink`, and "SpecSheriff" in the `display` face) and a `ss-nav` list of links.
 - The star is the owner's drawing, `_promo/brand/icon.svg`, inlined so that it takes `ink`; it is never redrawn.
 - The current page's link carries `aria-current="page"`.
+- A stamp, `ss-stamp`, may follow the brand: a verdict on the whole site, in the words the place that uses the masthead gives. It stands right of the name where the line has room for both, and under it where it has not, never over it.
