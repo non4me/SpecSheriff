@@ -234,6 +234,9 @@ a.ss-sid:hover { text-decoration: underline; }
   font-size: 9px;
   line-height: 12px;
 }
+/* under 360 px the name and the stamp cannot share a line; the stamp then stands under the name, not shifted
+   over it, which would push it past the page's edge */
+@media (max-width: 359px) { .ss-masthead > .ss-stamp { top: 0; margin-left: 0; } }
 .ss-nav { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font: 400 15px/22px var(--font-type); }
 .ss-nav a { color: var(--ink); text-decoration: none; }
 .ss-nav a:hover, .ss-nav a[aria-current="page"] { color: var(--stamp); text-decoration: underline; }
