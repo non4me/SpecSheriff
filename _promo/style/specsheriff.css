@@ -219,9 +219,15 @@ a.ss-sid:hover { text-decoration: underline; }
   text-decoration: none;
 }
 .ss-brand :is(svg, img) { flex: none; width: 34px; height: 34px; }
-/* a stamp after the brand stands beside it, the navigation still on the right; at half the size of a rule's stamp */
+/* a stamp after the brand: at half the size of a rule's stamp, turned further, its lower left corner resting on
+   the name's last letter so that the two read as one; the navigation still on the right */
 .ss-masthead > .ss-stamp {
+  position: relative;
+  z-index: 1;
+  top: -4px;
+  margin-left: -18px;
   margin-right: auto;
+  transform: rotate(var(--tilt-brand-stamp));
   padding: 1px 7px;
   border-width: calc(var(--border-stamp) / 2);
   border-radius: calc(var(--radius-stamp) / 2);
