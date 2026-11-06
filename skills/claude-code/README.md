@@ -45,8 +45,8 @@ plugin names each git hook an earlier release wrote, so that you run `spec-init`
 **For everyone else.** A teammate who clones the repository and opens Claude Code in it is offered
 the marketplace and the plugin once they trust the folder. The first session on a machine copies the
 tools to where the git hooks find them and turns the hooks on. A git hook that finds the tools of no
-plugin on the machine lets the commit through, says that no check ran, and turns the hooks off in
-that clone until a session of the plugin turns them on again.
+plugin on the machine still runs the project's own tools, lets the commit through unless one of them
+fails, and says that no check of SpecSheriff ran; the hooks stay on.
 
 ## The reviewer's model and effort
 

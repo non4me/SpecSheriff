@@ -120,8 +120,9 @@ fault costs no version number:
    from the stand-in by the guide's lines with the stand-in's url, and a project set up by its
    `spec-init` in an interactive Codex session, the project and its hooks trusted: an edit the guard
    refuses is blocked with its reason, a commit of untagged code is refused, the reviewer runs on
-   Codex, and once `codex plugin remove` has run, a commit goes through with the notice and the
-   hooks turned off. On both agents the reviewer's settings are asked for once: Claude Code shows the
+   Codex, and once `codex plugin remove` has run, and no tools of the plugin for Claude Code are on
+   the machine either, a commit goes through with the notice that no check of SpecSheriff ran, the
+   hooks left on. On both agents the reviewer's settings are asked for once: Claude Code shows the
    plugin's options when it enables the plugin, by `claude plugin install` and by a project's
    declaration both, and the session start writes them into the git configuration; Codex's first
    session in the project has the agent ask; a review at a setting not confirmed says so.

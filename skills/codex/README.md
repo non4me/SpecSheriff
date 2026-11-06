@@ -84,8 +84,8 @@ codex plugin remove specsheriff@specsheriff-marketplace
 ```
 
 Removing the plugin alone leaves no hook failing: the agent's hooks do nothing without it, and a git
-hook that finds the tools of no plugin lets the commit through, turns the git hooks off in that clone
-and says how to turn them on again.
+hook that finds the tools of no plugin still runs the project's own tools, lets the commit through
+unless one of them fails, and says that no check of SpecSheriff ran; the hooks stay on.
 
 ## `sheriff` in a terminal
 
