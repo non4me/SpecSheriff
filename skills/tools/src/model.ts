@@ -7,14 +7,34 @@ export const LEVELS_RULE = "s-nkyty4dy9x2v2a4";
 export const SID = /^s-[2-9a-hjkmnp-z]{15}$/;
 /** The file of a project's own guidelines. */
 export const PROJECT = "specs/_guidelines/project.json";
-/** The sid of the base's rule putting a specification live, which the rule of a project's own guidelines doing so refines. */
-export const LIVE_RULE = "s-qzthyh7yqvfhsa2";
+/** The sid of the base's rule on the specification's status, which the rule of a project's own guidelines approving it refines. */
+export const APPROVAL_RULE = "s-qzthyh7yqvfhsa2";
 
-/** The rule of a project's own guidelines putting its specification live, where its file holds one (s-qzthyh7yqvfhsa2). */
-export function liveRule(nodes: Iterable<SpecNode>): SpecNode | undefined {
-  for (const n of nodes) if (n.refs?.some((r) => r.type === "refines" && r.to === LIVE_RULE)) return n;
+/** The rule of a project's own guidelines that approves its specification, where its file holds one (s-qzthyh7yqvfhsa2). */
+export function approvalRule(nodes: Iterable<SpecNode>): SpecNode | undefined {
+  for (const n of nodes) if (n.refs?.some((r) => r.type === "refines" && r.to === APPROVAL_RULE)) return n;
   return undefined;
 }
+
+/** The rule approving the specification as `sheriff init` writes it and the reindex adds it where it is missing, a draft (s-7unxytshhc4md54). */
+export function approvalRuleNode(): SpecNode {
+  return {
+    location: "", sid: "", kind: "rule", title: "The specification is approved", status: "draft",
+    text: "This project's specification is approved.", refs: [{ type: "refines", to: APPROVAL_RULE }],
+  } as SpecNode;
+}
+
+/** A node's status as this release writes it: an earlier release wrote "" for draft and "checked" for approved. */
+export const statusNow = (status: string | undefined) => (status === "checked" || status === "approved" ? "approved" : "draft");
+
+/** Whether the specification is approved: its rule stands in the project's own guidelines and is approved (s-qzthyh7yqvfhsa2). */
+export function specificationApproved(nodes: Iterable<SpecNode>): boolean {
+  const rule = approvalRule(nodes);
+  return rule !== undefined && statusNow(rule.status) === "approved";
+}
+
+/** Whether a node is a section or a domain's header, whose status is built from the nodes under it (s-9kfdycuq34beqvs). */
+export const isContainer = (kind: string | undefined) => kind === "section" || kind === "domain";
 
 /** The sid of the base's rule on the fixtures of tests, which the rule of a project's own guidelines listing them refines. */
 export const FIXTURES_RULE = "s-6hha5en226aj8hu";
@@ -133,35 +153,78 @@ export function incoming(spec: Specification): Map<string, Incoming[]> {
   return built;
 }
 
-/** The node's owner: named by the nearest section or header above it or by itself, else by its domain's header, else the specification's. */
-/** One node of the model `sheriff model` prints: as its file holds it, without the nodes under it, with where it stands and its owner. */
-export type ModelNode = Omit<SpecNode, "children"> & { part: string; file: string; parent: string | null; owner: string | null; children?: undefined };
+/** One node of the model `sheriff model` prints: as its file holds it, without the nodes under it, with where it stands and its owners. */
+export type ModelNode = Omit<SpecNode, "children"> & { part: string; file: string; parent: string | null; owners: string[]; children?: undefined };
 
-/** The model of the specification: every node as its file holds it, with its part, its file, the node above it and its owner (s-f5rz6b7dhxejjts). */
+/** The model of the specification: every node as its file holds it, with its part, its file, the node above it and its owners (s-f5rz6b7dhxejjts). */
 export function modelOf(spec: Specification): { nodes: ModelNode[] } {
   const nodes = [...spec.nodes].map(([sid, { node, file, parent }]) => {
     const { children: _, ...own } = node;
-    return { ...own, part: partOf(file.path).part, file: file.path, parent: parent?.sid ?? null, owner: ownerOf(spec, sid) };
+    return { ...own, part: partOf(file.path).part, file: file.path, parent: parent?.sid ?? null, owners: ownersOf(spec, sid) };
   });
   return { nodes };
 }
 
-export function ownerOf(spec: Specification, sid: string): string | null {
+/** A node's own owners: the list it names, or, as an earlier release wrote it, its one owner. */
+const named = (n: SpecNode | undefined): string[] | null => {
+  if (!n) return null;
+  if (Array.isArray(n.owners) && n.owners.length) return n.owners as string[];
+  return typeof n.owner === "string" ? [n.owner] : null;
+};
+
+/** The specification's owners, those the top node of the project's own guidelines names (s-zefk589ykh37b8u). */
+export function specificationOwners(spec: Specification): string[] {
+  return named(spec.files.find((f) => f.path === PROJECT)?.data.nodes[0]) ?? [];
+}
+
+/**
+ * A node's owners, any of whom approves it (s-67vekyup7y8smap): those named by the nearest section or header above it
+ * or by itself, else by its domain's header, else the specification's.
+ */
+export function ownersOf(spec: Specification, sid: string): string[] {
   const at = spec.nodes.get(sid);
-  if (!at) return null;
+  if (!at) return [];
   for (let n: SpecNode | null = at.node; n; n = spec.nodes.get(n.sid)!.parent) {
-    if ((n.kind === "section" || n.kind === "domain") && typeof n.owner === "string") return n.owner;
+    if (isContainer(n.kind) && named(n)) return named(n)!;
   }
   const { part } = partOf(at.file.path);
   if (!["_guidelines", "tech", "contracts"].includes(part)) {
     for (const f of spec.files) {
       if (partOf(f.path).part !== part) continue;
-      const header = f.data.nodes.find((n) => n.kind === "domain");
-      if (header && typeof header.owner === "string") return header.owner;
+      const header = named(f.data.nodes.find((n) => n.kind === "domain"));
+      if (header) return header;
     }
   }
-  const owner = spec.files.find((f) => f.path === PROJECT)?.data.nodes[0]?.owner;
-  return typeof owner === "string" ? owner : null;
+  return specificationOwners(spec);
+}
+
+/**
+ * The status each section and domain's header is built to (s-9kfdycuq34beqvs): approved where every node under it that
+ * is no section is approved, every node of the domain but its header for a header, and draft otherwise.
+ */
+export function builtStatuses(spec: Specification): Map<string, "draft" | "approved"> {
+  const out = new Map<string, "draft" | "approved">();
+  const approved = (n: SpecNode) => statusNow(n.status) === "approved";
+  const allUnder = (n: SpecNode): boolean => (n.children ?? []).every((c) => (isContainer(c.kind) ? allUnder(c) : approved(c) && allUnder(c)));
+  const byDomain = new Map<string, boolean>();
+  for (const f of spec.files) {
+    const { part } = partOf(f.path);
+    const walk = (nodes: SpecNode[]) => nodes.forEach((n) => {
+      if (n.kind === "section") out.set(n.sid, allUnder(n) ? "approved" : "draft");
+      walk(n.children ?? []);
+    });
+    walk(f.data.nodes);
+    if (isDomain(part)) {
+      const every = f.data.nodes.every((n) => n.kind === "domain" || (isContainer(n.kind) ? allUnder(n) : approved(n) && allUnder(n)));
+      byDomain.set(part, (byDomain.get(part) ?? true) && every);
+    }
+  }
+  for (const f of spec.files) {
+    const { part } = partOf(f.path);
+    if (!isDomain(part)) continue;
+    for (const n of f.data.nodes) if (n.kind === "domain") out.set(n.sid, byDomain.get(part) ? "approved" : "draft");
+  }
+  return out;
 }
 
 /** The levels the domains stand at, from the top: the list of the rule of the project's own guidelines refining the base's rule on levels. */
@@ -215,8 +278,8 @@ export function domainOrder(spec: Specification): string[] {
   return order;
 }
 
-/** What a node holds beside its wording: its place, status, links, metadata, owner, and what the reindex builds. */
-const NOT_WORDING = new Set(["location", "sid", "kind", "status", "refs", "meta", "children", "owner", "sections", "archived"]);
+/** What a node holds beside its wording: its place, status, links, metadata, owners, and what the reindex builds. */
+const NOT_WORDING = new Set(["location", "sid", "kind", "status", "refs", "meta", "children", "owner", "owners", "sections", "archived"]);
 
 function sorted(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(sorted);
@@ -227,9 +290,9 @@ function sorted(value: unknown): unknown {
 }
 
 /**
- * The SHA-256 of one canonical string of the node's wording: title, text, reason and the values its kind carries.
+ * The SHA-256 of one canonical string of the node's wording: title, text, reason and the values its kind adds.
  * The reason stands there under `rationale`, the key earlier releases wrote, so that renaming the key changed no
- * fingerprint and no confirmation given before it.
+ * fingerprint and no approval given before it.
  */
 export function fingerprint(node: SpecNode): string {
   const wording = Object.fromEntries(Object.entries(node).filter(([k]) => !NOT_WORDING.has(k)).map(([k, v]) => [k === "reason" ? "rationale" : k, v]));

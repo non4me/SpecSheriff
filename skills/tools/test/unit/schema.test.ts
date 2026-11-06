@@ -6,7 +6,7 @@ import { NONE, repo, sid } from "../fixture.ts";
 import { REPO } from "../repo.ts";
 
 const schema = loadSchema(REPO);
-const ok = { location: "x/1", sid: sid("ok"), kind: "rule", title: "t", status: "", text: "", refs: [] };
+const ok = { location: "x/1", sid: sid("ok"), kind: "rule", title: "t", status: "draft", text: "", refs: [] };
 const file = (...nodes: object[]) => ({ schemaVersion: 1, scope: "x", section: "x", nodes });
 
 test("@spec s-eferktypcj7njt5 accepts every file of the specification as it stands", () => {
@@ -15,8 +15,11 @@ test("@spec s-eferktypcj7njt5 accepts every file of the specification as it stan
 
 const refused: Record<string, object> = {
   "a field nobody declared": { ...ok, foo: 1 },
-  "an owner on a rule": { ...ok, owner: "a@b.c" },
-  "a status other than empty or checked": { ...ok, status: "done" },
+  "owners on a rule": { ...ok, owners: ["a@b.c"] },
+  "one owner where a list stands, as an earlier release wrote it": { ...ok, kind: "section", owner: "a@b.c" },
+  "an empty list of owners": { ...ok, kind: "section", owners: [] },
+  "a status other than draft or approved": { ...ok, status: "done" },
+  "the status an earlier release wrote for approved": { ...ok, status: "checked" },
   "a sid outside its alphabet": { ...ok, sid: "s-000000000000000" },
   "a ratio on a link that is not a term-relation": { ...ok, refs: [{ type: "cites", to: NONE, ratio: "1:1" }] },
   "a link naming both its ends": { ...ok, refs: [{ type: "cites", to: NONE, from: NONE }] },
@@ -43,7 +46,7 @@ for (const [what, node] of Object.entries(refused)) {
 }
 
 const accepted: Record<string, object> = {
-  "an owner on a section": { ...ok, kind: "section", owner: "a@b.c" },
+  "owners on a section": { ...ok, kind: "section", owners: ["a@b.c", "d@e.f"] },
   "a comment of type problem": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "x", type: "problem" }] } },
   "a bound on a whole number": { ...ok, kind: "recordType", unknown: "kept", fields: [{ name: "a", type: { is: "whole number", minimum: 1 }, required: true, text: "" }] },
   "bounds on how many members a list holds": { ...ok, kind: "recordType", unknown: "kept", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minItems: 1, maxItems: 3 }, required: true, text: "" }] },

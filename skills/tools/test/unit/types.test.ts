@@ -8,7 +8,7 @@ import ts from "typescript";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { loadSpecification } from "../../src/spec-files.ts";
 import { generateTypes, writeTypes } from "../../src/types.ts";
-import { confirm } from "../../src/confirmations.ts";
+import { approve } from "../../src/approvals.ts";
 import { file, node, OWNER, sid, taking } from "../fixture.ts";
 import { codeProject, editSpec, typedProject, withGenerator } from "../code-project.ts";
 
@@ -23,7 +23,7 @@ const filesRule = (members: string[], name = "generated types") =>
 
 /**
  * A project taking the SpecSheriff guidelines, with RecordTypes in contracts and in a domain, and a stack listing where
- * the types go; its RecordTypes confirmed, since the code generated from them waits for that.
+ * the types go; its RecordTypes approved, since the code generated from them waits for that.
  */
 function project(contracts: object[], bank: object[] = [], stack: object[] = [filesRule(FILES)], more: Record<string, unknown> = {}): string {
   const root = taking({
@@ -34,7 +34,7 @@ function project(contracts: object[], bank: object[] = [], stack: object[] = [fi
     ...more,
   });
   const records = [...loadSpecification(root).nodes].filter(([, { node }]) => node.kind === "recordType").map(([s]) => s);
-  if (records.length) confirm(root, records, { me: OWNER });
+  if (records.length) approve(root, records, { me: OWNER });
   return root;
 }
 
@@ -113,9 +113,9 @@ test("@spec s-f5rz6b7dhxejjts sheriff types writes only a file that is missing o
   assert.match(readFileSync(types, "utf8"), /^export type Customer = \{$/m);
 });
 
-test("@spec s-f5rz6b7dhxejjts sheriff types writes no file while a RecordType is unchecked, and names each such node", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff types writes no file while a RecordType is a draft, and names each such node", () => {
   const root = project([customer(), record("order", [field("number", { is: "text" })])]);
-  confirm(root, [sid("order")], { me: OWNER, withdraw: true });
+  approve(root, [sid("order")], { me: OWNER, withdraw: true });
   assert.deepEqual(writeTypes(root), { written: [], refusals: [], waiting: [sid("order")] });
   for (const path of FILES) assert.ok(!existsSync(join(root, path)), path);
 });
@@ -523,7 +523,7 @@ test("@spec s-kh8qcd5kxgh9z3j each generated file waits only for the nodes it is
 
   const typed = typedProject();
   withGenerator(typed, "gen/titles.txt", "customer");
-  confirm(typed, [sid("our generators")], { me: OWNER, withdraw: true });
+  approve(typed, [sid("our generators")], { me: OWNER, withdraw: true });
   rmSync(join(typed, "src", "types.ts"));
   const again = writeTypes(typed);
   assert.deepEqual(again.written, ["src/types.ts"]);

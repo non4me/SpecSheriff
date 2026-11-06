@@ -47,11 +47,11 @@ Everything that bears on a rule is in its node and seen at a glance: its text an
 links it makes and the links the rest of the specification makes to it, the decisions taken on it,
 the work deferred on it, and comments, an open problem marked as one.
 
-## Nothing unconfirmed is implemented
+## Nothing unapproved is implemented
 
-Anyone may change or add a rule. A rule is implemented only once its owner has confirmed that they
-understood it and that it is legitimate. A change to its wording leaves it unconfirmed until the
-owner confirms the new wording; a change that only states what the owner has already confirmed, or
-changes no meaning, is confirmed in the owner's name and reported to them. The specification has an
-owner by default; a domain or any section may name its own, and a rule's owner is the one named
-nearest above it.
+Anyone may change or add a rule. A rule is implemented only once one of its owners has approved it,
+having understood it and judged it legitimate. A change to its wording makes it a draft again until
+one of its owners approves the new wording; a change that only states what an owner has already
+approved, or changes no meaning, is approved in that owner's name and reported to them. The
+specification has owners by default, one or several; a domain or any section may name its own, and a
+rule's owners are those named nearest above it.

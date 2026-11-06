@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { confirm } from "../../src/confirmations.ts";
+import { approve } from "../../src/approvals.ts";
 import { reindex } from "../../src/reindex.ts";
 import { loadSpecification } from "../../src/spec-files.ts";
-import { LEVELS_RULE } from "../../src/model.ts";
+import { fingerprint, LEVELS_RULE } from "../../src/model.ts";
 import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
 import { file, node, NONE, OWNER, repo, sid, taking } from "../fixture.ts";
@@ -20,7 +20,7 @@ function good(): string {
     "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: true },
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("levels rule"), node("one rule")] })),
     "specs/_guidelines/tools.json": file("_guidelines", "tools", node("tools", { kind: "section", text: "The tools.", children: [node("tool", { refs: [{ type: "implements", to: sid("one rule") }] })] })),
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: sid("levels rule") }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
     ] })),
     "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "domain", level: "core", code: null, sections: [] })),
@@ -131,21 +131,39 @@ test(`@spec s-jau82aq9juv9zzh refuses a term node standing outside contracts`, (
   expectOne(root, new RegExp(`${sid("stray term")}.*a term node outside contracts`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a checked node no confirmation by its owner holds`, () => {
+test(`@spec s-jau82aq9juv9zzh refuses an approved node no approval stands for`, () => {
   const root = good();
-  confirm(root, [sid("close")], { me: OWNER });
+  approve(root, [sid("close")], { me: OWNER });
+  reindex(root);
   assert.deepEqual(messages(root), []);
-  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "open").status = "checked"));
-  expectOne(root, new RegExp(`${sid("open")}.*checked.*no confirmation`));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "open").status = "approved"));
+  expectOne(root, new RegExp(`${sid("open")}.*approved, but no approval stands for its wording`));
 });
 
-test(`@spec s-jau82aq9juv9zzh leaves the confirmations of the SpecSheriff guidelines a project takes to where they are written`, () => {
+test(`@spec s-95w92rnjuv3sst8 refuses an approval the commit records by someone none of the node's owners, as the commit holds them, and judges the rule approving the specification by the specification's owners`, () => {
+  const root = good();
+  const line = (name: string, by: string) => JSON.stringify({ sid: sid(name), fingerprint: fingerprint(loadSpecification(root).nodes.get(sid(name))!.node), by }) + "\n";
+  writeFileSync(join(root, "specs", "_approvals.jsonl"), line("close", "stranger@example.org"));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").status = "approved"));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("close")}.*approved by stranger@example\\.org, who is none of its owners`));
+  edit(root, "specs/_guidelines/project.json", (d) => (d.nodes[0].owners = [OWNER, "stranger@example.org"]));
+  assert.ok(!messages(root).some((m) => /stranger/.test(m)), messages(root).join("\n"));
+});
+
+test(`@spec s-9kfdycuq34beqvs refuses a section or a domain's header whose status is not the one the nodes under it produce`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => (d.nodes[0].status = "approved"));
+  expectOne(root, new RegExp(`${sid("accounts")}.*its status is approved, while the nodes under it make it draft`));
+});
+
+test(`@spec s-jau82aq9juv9zzh leaves the approvals of the SpecSheriff guidelines a project takes to where they are written`, () => {
   assert.deepEqual(messages(taking()), []);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a removed node ever confirmed that is not in the archive, and one never confirmed that is`, () => {
+test(`@spec s-jau82aq9juv9zzh refuses a removed node ever approved that is not in the archive, and one never approved that is`, () => {
   const before = good();
-  confirm(before, [sid("close")], { me: OWNER });
+  approve(before, [sid("close")], { me: OWNER });
   const root = mkdtempSync(join(tmpdir(), "sheriff-"));
   cpSync(before, root, { recursive: true });
   edit(root, "specs/bank/a.json", (d) => {
@@ -161,15 +179,32 @@ test(`@spec s-jau82aq9juv9zzh refuses a removed node ever confirmed that is not 
   writeFileSync(join(root, "specs", "_archive", "bank.json"), JSON.stringify(file("bank", "bank", { ...node("close"), location: "bank/1.2", archived: { date: "2026-10-28", reason: "Gone." } }, { ...never, location: "bank/1.3", archived: { date: "2026-10-28", reason: "x" } }), null, 2) + "\n");
   const found = messages(root, before);
   assert.ok(!found.some((m) => m.includes(`${sid("close")}`) && /archive/.test(m)), found.join("\n"));
-  assert.ok(found.some((m) => m.includes(sid("never")) && /never confirmed/.test(m)), found.join("\n"));
+  assert.ok(found.some((m) => m.includes(sid("never")) && /never approved/.test(m)), found.join("\n"));
+});
+
+test(`@spec s-j4webte36gkraju deletes a section outright, an approval given for it under an earlier release aside, and refuses one standing in the archive`, () => {
+  const before = good();
+  writeFileSync(join(before, "specs", "_approvals.jsonl"), JSON.stringify({ sid: sid("accounts"), fingerprint: "0", by: OWNER }) + "\n");
+  const root = mkdtempSync(join(tmpdir(), "sheriff-"));
+  cpSync(before, root, { recursive: true });
+  edit(root, "specs/contracts/c.json", (d) => d.nodes.push(node("gone soon", { kind: "section", text: "Soon gone.", children: [node("gone rule")] })));
+  const was = mkdtempSync(join(tmpdir(), "sheriff-"));
+  cpSync(root, was, { recursive: true });
+  reindex(was);
+  edit(root, "specs/contracts/c.json", (d) => (d.nodes = d.nodes.filter((n: any) => n.sid !== sid("gone soon"))));
+  reindex(root);
+  assert.ok(!messages(root, was).some((m) => m.includes(sid("gone soon"))), messages(root, was).join("\n"));
+  mkdirSync(join(root, "specs", "_archive"), { recursive: true });
+  writeFileSync(join(root, "specs", "_archive", "bank.json"), JSON.stringify(file("bank", "bank", { ...node("old section", { kind: "section" }), location: "bank/9", archived: { date: "2026-11-06", reason: "Gone." } }), null, 2) + "\n");
+  expectOne(root, new RegExp(`${sid("old section")}.*a section or a domain's header is deleted outright`));
 });
 
 test(`@spec s-bpdqd9v72wg7vsz refuses a node of the archive holding a link pointing at it`, () => {
   const root = good();
-  confirm(root, [sid("close")], { me: OWNER });
+  approve(root, [sid("close")], { me: OWNER });
   mkdirSync(join(root, "specs", "_archive"), { recursive: true });
   writeFileSync(join(root, "specs", "_archive", "bank.json"), JSON.stringify(file("bank", "bank", { ...node("close"), sid: sid("old close"), location: "bank/1.9", refs: [{ type: "cites", from: sid("open") }], archived: { date: "2026-10-28", reason: "Gone." } }), null, 2) + "\n");
-  writeFileSync(join(root, "specs", "_confirmations.jsonl"), readFileSync(join(root, "specs", "_confirmations.jsonl"), "utf8").replaceAll(sid("close"), sid("old close")), { flag: "w" });
+  writeFileSync(join(root, "specs", "_approvals.jsonl"), readFileSync(join(root, "specs", "_approvals.jsonl"), "utf8").replaceAll(sid("close"), sid("old close")), { flag: "w" });
   expectOne(root, new RegExp(`specs/_archive/bank\\.json: ${sid("old close")}.*a link pointing at it`));
 });
 
@@ -213,30 +248,32 @@ test(`@spec s-jau82aq9juv9zzh refuses incoming links the outgoing ones do not pr
   expectOne(root, /incoming links .* outgoing/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a checked node setting three words or more running in capitals, two words and a quoted name left out`, () => {
+test(`@spec s-jau82aq9juv9zzh refuses an approved node, and any section or header, setting three words or more running in capitals, two words and a quoted name left out`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "It MUST NOT EVER close; MUST NOT, REST API, `NOT CODE HERE` and \"QUOTED NAME TOO\" pass."));
-  confirm(root, [sid("close")], { me: OWNER });
+  assert.deepEqual(messages(root).filter((m) => /capitals/.test(m)), []);
+  approve(root, [sid("close")], { me: OWNER });
   const found = messages(root).filter((m) => /capitals/.test(m));
   assert.equal(found.length, 1, found.join("\n"));
   assert.match(found[0]!, /"MUST NOT EVER"/);
+  edit(root, "specs/bank/a.json", (d) => (d.nodes[0].text = "ACCOUNTS ARE KEPT here."));
+  assert.ok(messages(root).some((m) => m.includes(sid("accounts")) && /"ACCOUNTS ARE KEPT"/.test(m)), messages(root).join("\n"));
 });
 
 test(`@spec s-m6upmfq64kw5h4r refuses three words or more running in capitals, letters beyond ASCII included, two words left out`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "An account is never closed by DÉJÀ VU RÉSUMÉ; CAFÉ DÉCOR and NAÏVE ÉCLAT pass."));
-  confirm(root, [sid("close")], { me: OWNER });
+  approve(root, [sid("close")], { me: OWNER });
   const found = messages(root).filter((m) => /capitals/.test(m));
   assert.equal(found.length, 1, found.join("\n"));
   assert.match(found[0]!, /"DÉJÀ VU RÉSUMÉ"/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a checked section holding no rule`, () => {
+test(`@spec s-jau82aq9juv9zzh refuses every section holding no rule, whatever its status`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => d.nodes.push({ ...node("empty", { kind: "section", text: "Nothing." }) }));
   reindex(root);
-  confirm(root, [sid("empty")], { me: OWNER });
-  expectOne(root, new RegExp(`${sid("empty")}.*holds no rule`));
+  expectOne(root, new RegExp(`${sid("empty")}.*a section that holds no rule`));
 });
 
 test(`@spec s-jau82aq9juv9zzh refuses a domain without a header, and a header whose index its sections do not produce`, () => {
@@ -443,19 +480,20 @@ test(`@spec s-jau82aq9juv9zzh refuses, outside the repository the SpecSheriff gu
   }
 });
 
-test(`@spec s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their confirmations aside`, () => {
+test(`@spec s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their approvals aside`, () => {
   const found = validate(REPO).map((f) => `${f.where}: ${f.message}`);
-  assert.deepEqual(found.filter((m) => !/no confirmation/.test(m)), []);
+  assert.deepEqual(found.filter((m) => !/no approval stands/.test(m)), []);
 });
 
 test("@spec s-vsh384ybt4w25a2 counts a node of a project's own kind as a rule of its section, and lets an exempts link reach it", () => {
   const root = good();
   writeFileSync(join(root, "specs", "_schema", "project.schema.json"), JSON.stringify({ kinds: { job: { needsCode: false, schema: {} } } }));
-  edit(root, "specs/bank/a.json", (d) => d.nodes.push(node("jobs", { kind: "section", text: "Jobs.", status: "checked", children: [node("nightly", { kind: "job" })] })));
+  edit(root, "specs/bank/a.json", (d) => d.nodes.push(node("jobs", { kind: "section", text: "Jobs.", children: [node("nightly", { kind: "job" })] })));
   edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("not coded", { refs: [{ type: "exempts", to: sid("nightly") }] })));
   reindex(root);
-  confirm(root, [sid("jobs")], { me: OWNER });
-  assert.equal(loadSpecification(root).nodes.get(sid("jobs"))!.node.status, "checked");
+  approve(root, [sid("nightly")], { me: OWNER });
+  reindex(root);
+  assert.equal(loadSpecification(root).nodes.get(sid("jobs"))!.node.status, "approved");
   const found = validate(root).map((f) => `${f.where}: ${f.message}`);
   assert.ok(!found.some((m) => /holds no rule|exempts link must/.test(m)), found.join("\n"));
 });

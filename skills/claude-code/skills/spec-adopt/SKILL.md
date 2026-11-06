@@ -50,12 +50,17 @@ Do the same in the code, the tests and the other documents. `sheriff validate` a
 
 By the skill `spec-review`, one node at a time, one part at a time. This is where the wording is
 brought to the guidelines' section on how a rule is written, a rule too broad is split, a rule that
-states the obvious goes — each change shown, each node confirmed by its owner.
+states the obvious goes — each change shown, each node approved by one of its owners.
 
 ## 5. Bind the code and the tests
 
-Once a part's rules are confirmed, `sheriff binding` shows what its code and tests lack: a SpecTag
+Once a part's rules are approved, `sheriff binding` shows what its code and tests lack: a SpecTag
 on every symbol, naming the node it implements or saying it implements none and why; the SpecTag of
 the node each test is written from, opening its name or in its mark; the lists of code and tests in the nodes' metadata. Code that implements no rule at all is
 a question for the owner — a rule is missing, or the code should go — never a SpecTag chosen because
 it is near.
+
+Once every symbol of the system's code and every test carries a SpecTag, the specification's owners
+approve the rule "The specification is approved" in the project's own guidelines, by
+`sheriff approve <sid>`. Until then the specification is a draft, and the checks report rather than
+refuse what a commit leaves without a SpecTag.

@@ -7,7 +7,7 @@ import type { Finding } from "./validate.ts";
 
 /**
  * A file a project's own generator prints: its path, its content, the sids of the nodes it is written from, the
- * generator, and the nodes it waits for — those it is written from and the rule listing its generator, unchecked.
+ * generator, and the nodes it waits for — those it is written from and the rule listing its generator, drafts.
  */
 export interface ProjectFile {
   path: string;
@@ -22,7 +22,7 @@ export interface ProjectFile {
  * directory the checks read, the model on its standard input; it prints as JSON each file's path, its content and the
  * sids of the nodes it is written from. A generator its rule does not list, one ending with an exit status other than
  * zero, and a path outside the repository or under specs/ are refused. Each file waits while a node it is written
- * from, or the rule listing its generator, is unchecked (s-kh8qcd5kxgh9z3j), and `waiting` gathers them all.
+ * from, or the rule listing its generator, is a draft (s-kh8qcd5kxgh9z3j), and `waiting` gathers them all.
  */
 export function runGenerators(root: string, spec: Specification, config: Config): { files: ProjectFile[]; refusals: Finding[]; waiting: string[] } {
   const files: ProjectFile[] = [];
@@ -64,11 +64,11 @@ export function runGenerators(root: string, spec: Specification, config: Config)
         continue;
       }
       const sids = Array.isArray(f.sids) ? f.sids.map(String) : [];
-      const unchecked = [...sids, g.rule].filter((s, i, all) => all.indexOf(s) === i && spec.nodes.get(s)?.node.status !== "checked");
-      files.push({ path, text: String(f.content ?? ""), sids, generator: g.name, waiting: unchecked });
-      for (const s of unchecked) waiting.add(s);
+      const drafts = [...sids, g.rule].filter((s, i, all) => all.indexOf(s) === i && spec.nodes.get(s)?.node.status !== "approved");
+      files.push({ path, text: String(f.content ?? ""), sids, generator: g.name, waiting: drafts });
+      for (const s of drafts) waiting.add(s);
     }
-    if (rule?.status !== "checked") waiting.add(g.rule);
+    if (rule?.status !== "approved") waiting.add(g.rule);
   }
   return { files, refusals, waiting: [...waiting] };
 }

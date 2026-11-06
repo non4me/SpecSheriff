@@ -17,5 +17,5 @@ This skill holds nothing of the guidelines itself, so that it can never say less
 something else.
 
 Where a rule's text leaves you unsure what it requires, `sheriff show <sid>` prints it with every
-link it makes and receives. To work with the specification's owner on a node, use the skill
+link it makes and receives. To work with the specification's owners on a node, use the skill
 `spec-review`; to bring the project's existing documents into the specification, `spec-adopt`.

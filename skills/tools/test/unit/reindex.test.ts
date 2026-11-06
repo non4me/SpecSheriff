@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { confirm } from "../../src/confirmations.ts";
+import { approve, readApprovals } from "../../src/approvals.ts";
 import { reindex, rewriteTests } from "../../src/reindex.ts";
 import { loadSpecification, specPaths } from "../../src/spec-files.ts";
-import { LEVELS_RULE, SID } from "../../src/model.ts";
+import { APPROVAL_RULE, fingerprint, LEVELS_RULE, SID } from "../../src/model.ts";
 import { file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
 import { codeProject, editSpec, nodeIn, put } from "../code-project.ts";
 
@@ -14,7 +14,7 @@ const at = (root: string, name: string) => loadSpecification(root).nodes.get(sid
 
 function bank(extra: Record<string, unknown> = {}) {
   return repo({
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, children: [node("levels")] })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("levels")] })),
     "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
     "specs/bank/a.json": file("bank", "a", node("accounts", { kind: "section", text: "Accounts.", children: [node("open", { refs: [{ type: "cites", to: sid("close") }, { type: "cites", from: sid("lend") }] }), node("close")] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "What is shared.", children: [node("term", { kind: "term", title: "account" })] })),
@@ -66,7 +66,7 @@ test("@spec s-f5rz6b7dhxejjts gives a sid to a node that has none, its location 
   const root = bank();
   const path = join(root, "specs", "contracts", "c.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
-  data.nodes[0].children.push({ kind: "rule", title: "new", status: "", text: "New.", refs: [] });
+  data.nodes[0].children.push({ kind: "rule", title: "new", status: "draft", text: "New.", refs: [] });
   writeFileSync(path, JSON.stringify(data));
   reindex(root);
   const added = JSON.parse(readFileSync(path, "utf8")).nodes[0].children[1];
@@ -75,38 +75,91 @@ test("@spec s-f5rz6b7dhxejjts gives a sid to a node that has none, its location 
   assert.deepEqual(Object.keys(added).slice(0, 3), ["location", "sid", "kind"]);
 });
 
-test("@spec s-5ah25f6gy99panq empties the status of a checked node whose wording its owner has not confirmed", () => {
+test("@spec s-5ah25f6gy99panq makes a draft an approved node no approval stands for, sections and headers left out, and names each", () => {
   const root = bank();
-  confirm(root, [sid("levels")], { me: OWNER });
+  approve(root, [sid("levels")], { me: OWNER });
   const path = join(root, "specs", "contracts", "c.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
-  data.nodes[0].status = "checked";
+  data.nodes[0].children[0].status = "approved";
   writeFileSync(path, JSON.stringify(data));
   const report = reindex(root);
-  assert.equal(at(root, "shared").status, "");
-  assert.equal(at(root, "levels").status, "checked");
-  assert.deepEqual(report.emptied, [sid("shared")]);
+  assert.equal(at(root, "term").status, "draft");
+  assert.equal(at(root, "levels").status, "approved");
+  assert.deepEqual(report.drafted, [sid("term")]);
 });
 
-test("@spec s-5ah25f6gy99panq empties the status of a node confirmed by someone who is not its owner", () => {
+test("@spec s-5ah25f6gy99panq keeps a node approved through a change of its owners and a move into a part with other owners", () => {
   const root = bank();
-  confirm(root, [sid("levels")], { me: OWNER });
+  approve(root, [sid("levels")], { me: OWNER });
   const path = join(root, "specs", "_guidelines", "project.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
-  data.nodes[0].owner = "new@example.org";
+  data.nodes[0].owners = ["new@example.org"];
   writeFileSync(path, JSON.stringify(data));
   reindex(root);
-  assert.equal(at(root, "levels").status, "");
+  assert.equal(at(root, "levels").status, "approved");
+});
+
+test("@spec s-9kfdycuq34beqvs writes the status of each section and domain's header from the nodes under it, after every change", () => {
+  const root = bank();
+  reindex(root);
+  assert.equal(at(root, "accounts").status, "draft");
+  assert.equal(at(root, "header").status, "draft");
+  approve(root, [sid("open"), sid("close"), sid("term")], { me: OWNER });
+  reindex(root);
+  assert.equal(at(root, "accounts").status, "approved");
+  assert.equal(at(root, "header").status, "approved");
+  assert.equal(at(root, "shared").status, "approved");
+  const path = join(root, "specs", "bank", "a.json");
+  writeFileSync(path, readFileSync(path, "utf8").replace("What close requires.", "What close requires now."));
+  const report = reindex(root);
+  assert.equal(at(root, "close").status, "draft");
+  assert.equal(at(root, "accounts").status, "draft");
+  assert.equal(at(root, "header").status, "draft");
+  assert.deepEqual(report.drafted, [sid("close")]);
+});
+
+test("@spec s-f5rz6b7dhxejjts adds to the project's own guidelines the rule approving the specification, a draft, where none refines the base's rule on it", () => {
+  const root = taking();
+  const children = (at: string) => loadSpecification(at).nodes.get(sid("project"))!.node.children ?? [];
+  const rules = children(root).filter((n) => n.refs.some((r) => r.type === "refines" && r.to === APPROVAL_RULE));
+  assert.equal(rules.length, 1);
+  assert.deepEqual([rules[0]!.title, rules[0]!.text, rules[0]!.status], ["The specification is approved", "This project's specification is approved.", "draft"]);
+  reindex(root);
+  assert.equal(children(root).length, 2);
+  const live = taking({ "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("live", { title: "The specification is live", refs: [{ type: "refines", to: APPROVAL_RULE }] })] })) });
+  assert.deepEqual(children(live).map((n) => n.sid), [sid("live")]);
+});
+
+test("@spec s-f5rz6b7dhxejjts rewrites the statuses, the owners and the confirmations an earlier release wrote, keeping every approval", () => {
+  const root = bank();
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  // One owner where the list stands, as earlier releases wrote it.
+  data.nodes[0] = Object.fromEntries(Object.entries(data.nodes[0]).map(([k, v]) => (k === "owners" ? ["owner", OWNER] : [k, v])));
+  data.nodes[0].status = "";
+  data.nodes[0].children[0].status = "checked";
+  writeFileSync(path, JSON.stringify(data));
+  const print = fingerprint(data.nodes[0].children[0]);
+  writeFileSync(join(root, "specs", "_confirmations.jsonl"), JSON.stringify({ sid: sid("levels"), fingerprint: print, owner: OWNER }) + "\n");
+  writeFileSync(join(root, "specs", "_approvals.jsonl"), JSON.stringify({ sid: sid("open"), fingerprint: "0", by: OWNER }) + "\n");
+  reindex(root);
+  const top = JSON.parse(readFileSync(path, "utf8")).nodes[0];
+  assert.deepEqual(top.owners, [OWNER]);
+  assert.equal(top.owner, undefined);
+  assert.equal(Object.keys(top).indexOf("owners"), Object.keys(data.nodes[0]).indexOf("owner"));
+  assert.equal(at(root, "levels").status, "approved");
+  assert.ok(!existsSync(join(root, "specs", "_confirmations.jsonl")));
+  assert.deepEqual(readApprovals(root), [{ sid: sid("levels"), fingerprint: print, by: OWNER }, { sid: sid("open"), fingerprint: "0", by: OWNER }]);
 });
 
 test("@spec s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written", () => {
   const project = taking();
   reindex(project);
-  assert.equal(loadSpecification(project).nodes.get(LEVELS_RULE)!.node.status, "checked");
-  const core = file("_guidelines", "spec", node("core", { kind: "section", status: "checked", children: [node("core rule", { status: "checked" })] }));
+  assert.equal(loadSpecification(project).nodes.get(LEVELS_RULE)!.node.status, "approved");
+  const core = file("_guidelines", "spec", node("core", { kind: "section", status: "approved", children: [node("core rule", { status: "approved" })] }));
   const writing = bank({ "specs/_guidelines/spec.json": core });
   reindex(writing);
-  assert.equal(at(writing, "core rule").status, "");
+  assert.equal(at(writing, "core rule").status, "draft");
 });
 
 test("@spec s-f5rz6b7dhxejjts renames what an earlier release wrote under another name, each key keeping its place", () => {

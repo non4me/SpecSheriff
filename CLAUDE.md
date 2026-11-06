@@ -13,9 +13,9 @@ guidelines and the SpecSheriff tools. The worked example, the saloon, is a repos
 plugin for Claude Code (ignored here, committed only on the branch `release`); `npm test` builds
 them again and runs their unit and end-to-end tests and those of `skills/pytest-specsheriff/`
 (Python 3.10 or later with pytest). The repository is held by its own tools: `sheriff.config.json` says the SpecSheriff
-guidelines are written here, so their nodes are confirmed in `specs/_confirmations.jsonl` by the
-owner `specs/_guidelines/project.json` names. `.githooks/` and `.claude/settings.json` hold what
-`sheriff init` writes, as in any project, and a test fails where they differ. How this repository
+guidelines are written here, so their nodes are approved in `specs/_approvals.jsonl` by the
+owners `specs/_guidelines/project.json` names. `.githooks/`, `.claude/settings.json` and `.gitattributes`
+hold what `sheriff init` writes, as in any project, and a test fails where they differ. How this repository
 runs its own plugin from the working tree — a change to `skills/tools/src/` reaching the
 agent's hooks once `npm run build -w specsheriff-tools` has run, and the git hooks at the next session
 start — and how a release is made, is in `internal/release.md`. Never report a check as having run
@@ -36,7 +36,7 @@ all work here:
   technology.
 - `tools.json` — the appendix of the tools: how the SpecSheriff tools carry the base out — file
   layout, commands, hooks, the table of how each check is made, the syntax of the SpecTag, the reviewer's
-  runner, how a confirmation is recorded. It is the specification the tools are built from.
+  runner, how an approval is recorded. It is the specification the tools are built from.
 
 What a project installs (tools, skills, guidelines, example) is Apache 2.0; `docs/` and `_promo/`
 are CC BY 4.0, except the mark in `_promo/brand/`, which is under no open licence. `_promo/` holds
@@ -53,9 +53,9 @@ is `specs/_schema/` (§s-eferktypcj7njt5). A node holds:
 - `location` — where the node is in the specification, computed from its place. Nothing cites it, and
   nobody writes it: `sheriff reindex` does.
 - `kind` (`section`, which holds rules and requires nothing; `rule`; `term`; `recordType`; `domain`, a
-  domain's header), `title`, `status` (`""` or `"checked"`), `text` (what must hold), `reason` (why,
-  kept apart from the requirement), `list` (`of`, `members`, `declaredIn`), `owner` on a section or a
-  header, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
+  domain's header), `title`, `status` (`"draft"` or `"approved"`; a section's and a header's built from
+  the nodes under it), `text` (what must hold), `reason` (why, kept apart from the requirement), `list`
+  (`of`, `members`, `declaredIn`), `owners` on a section or a header, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
   and the lists of the `code` and the `tests` bound to the node, which must agree with the SpecTags on
   the code and on the tests (§s-rwqzepmrt77rv35).
 - `refs` — typed outgoing links `{type, to}`, written by hand, and incoming ones `{type, from}`,
@@ -73,13 +73,14 @@ the plugin when a session starts) check the staged commit, its message and, wher
 review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by hand, and
 `npm test` runs the tools' tests.
 
-- **Status.** Any change to a node's wording — title, text, reason, or the values its kind carries
-  such as `list` — needs its status written `""`: `sheriff guard` refuses an edit that leaves it
-  checked. A node becomes checked only on the owner's agreement after reading it, never on your own
-  judgement, by `npx sheriff confirm <sid>` (git names the owner). The one exception the owner allows:
-  a purely technical replacement that changes no meaning, such as a renamed term or path, is
-  confirmed by you and reported in one line. A change to links or metadata leaves the status as it
-  is; a move that gives the node another owner empties it (§s-5ah25f6gy99panq).
+- **Status.** Any change to a node's wording — title, text, reason, or the values its kind adds
+  such as `list` — needs its status written `draft`: `sheriff guard` refuses an edit that leaves it
+  approved. A node becomes approved only on an owner's agreement after reading it, never on your own
+  judgement, by `npx sheriff approve <sid>` (git names who approves). The one exception the owner
+  allows: a purely technical replacement that changes no meaning, such as a renamed term or path, is
+  approved by you and reported in one line. A change to links, metadata or owners, and a move, leave
+  the status as it is (§s-5ah25f6gy99panq). A section's and a domain's header's status nobody approves:
+  the reindex builds it from the nodes under them (§s-9kfdycuq34beqvs).
 - **Citations.** A node cites another as `§<sid>`, in any field but its links and children. Every
   citation needs an outgoing link to that node (`cites` unless another type says how the two bear on
   each other), and a `cites` link stands only where the node cites its target (§s-bpdqd9v72wg7vsz);
@@ -87,9 +88,10 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
 - **Decisions** are recorded in the `meta.decisions` of the rule they settled, never as a document
   (§s-gqbj8849rf224qa), retold without anything of the private origin project the method was
   extracted from: nothing here names it or relies on it.
-- **Removal.** A node a confirmation was ever given for goes to the archive,
+- **Removal.** A node an approval was ever given for goes to the archive,
   `specs/_archive/<name>.json`, with `archived` holding the date, the reason and the sid of the node
-  that replaces it; a node never confirmed is deleted (§s-f2b5zvc565s242f).
+  that replaces it; a section, a domain's header and a node never approved are deleted
+  (§s-f2b5zvc565s242f).
 - **Where a rule goes.** The base names no technology, no look of a user interface and no figure
   measured on one instance; those go to the appendix of the tools, each of whose rules implements a
   node of the base. Examples in the SpecSheriff guidelines name what any system has — a user, an
@@ -100,10 +102,10 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
 
 ## Working with the owner
 
-- The owner reviews one node at a time, shown whole, never fragments of it. Their confirmation is
-  the only thing that makes a node checked.
-- A node changed only to carry out what the owner already confirmed elsewhere is not shown again:
-  the owner's agreement to that node covers it, so confirm it and report it in one line, naming the
+- The owner reviews one node at a time, shown whole, never fragments of it. Their approval is the
+  only thing that makes a node approved.
+- A node changed only to carry out what the owner already approved elsewhere is not shown again:
+  the owner's agreement to that node covers it, so approve it and report it in one line, naming the
   node it follows from.
 - Files outside `specs/` — the docs, this file, later the code — cite a node by its sid, never by its
   location; the tools refuse a location outside the specification.
@@ -118,7 +120,7 @@ plugin for pytest). In the worked example and any project taking the SpecSheriff
 symbol of the system's code carries the SpecTag `@spec <sid>` (or `@spec none <reason>`) in the
 comment directly above it, a test carries the SpecTag of the node it is written from, opening its
 name or in its pytest mark, and is written first, and a commit
-changing code names every checked node its changed symbols implement; the exact syntax is in
+changing code names every approved node its changed symbols implement; the exact syntax is in
 `tools.json`. The repository's configuration, its own tools and their tests are not the system's code
 and carry no SpecTags, by where they live (§s-hheus6f395ynqvc). The tools' own tests are not exempt from SpecTags, by the owner's
 choice (2026-10-28): each carries the SpecTag of the node of `spec.json` or `tools.json` it is written from and is

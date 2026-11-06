@@ -5,7 +5,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { loc, sid } from "../fixture.ts";
-import { codeProject, OPEN, put, putLive, typedProject, withGenerator } from "../code-project.ts";
+import { approveSpecification, codeProject, OPEN, put, typedProject, withGenerator } from "../code-project.ts";
 import { PLUGIN, pluginHook, plugins } from "../plugin.ts";
 
 const machine = plugins();
@@ -34,12 +34,12 @@ function typedHooked(): string {
   assert.equal(run.status, 0, run.stdout + run.stderr);
   return root;
 }
-/** Changes the RecordType of the typed project, its wording confirmed again by its owner. */
+/** Changes the RecordType of the typed project, its wording approved again by its owner. */
 function editRecord(root: string, from: string, to: string): void {
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace(from, to));
   sheriff(root, "reindex");
-  sheriff(root, "confirm", sid("customer"));
+  sheriff(root, "approve", sid("customer"));
 }
 
 test("@spec s-477gtdrkw34dzxw the pre-commit hook writes the types the staged nodes generate into the working tree, stages none of them, and the commit waits for its author to stage them", () => {
@@ -53,7 +53,7 @@ test("@spec s-477gtdrkw34dzxw the pre-commit hook writes the types the staged no
   assert.ok(!git(root, "diff", "--cached", "--name-only").stdout.includes("src/types.ts"), "nothing staged by the hook");
 });
 
-test("@spec s-477gtdrkw34dzxw a changed RecordType is committed before its confirmation, its types left as they were and their wait reported", () => {
+test("@spec s-477gtdrkw34dzxw a changed RecordType is committed before its approval, its types left as they were and their wait reported", () => {
   const root = typedHooked();
   const before = readFileSync(join(root, "src", "types.ts"), "utf8");
   const path = join(root, "specs", "contracts", "c.json");
@@ -62,7 +62,7 @@ test("@spec s-477gtdrkw34dzxw a changed RecordType is committed before its confi
   git(root, "add", "specs");
   const run = commit(root, "Ledger: a customer known by its reference, proposed");
   assert.equal(run.status, 0, run.stdout + run.stderr);
-  assert.match(run.stdout + run.stderr, /wait for its confirmation/);
+  assert.match(run.stdout + run.stderr, /wait for its approval/);
   assert.equal(readFileSync(join(root, "src", "types.ts"), "utf8"), before);
 });
 
@@ -163,7 +163,8 @@ function pushing(live = true): string {
   const config = join(root, "sheriff.config.json");
   writeFileSync(config, JSON.stringify({ ...JSON.parse(readFileSync(config, "utf8")), writesSpecSheriffGuidelines: false }, null, 2) + "\n");
   rmSync(join(root, "specs", "_schema"), { recursive: true, force: true });
-  if (live) putLive(root);
+  rmSync(join(root, "specs", "_guidelines", "spec.json"), { force: true });
+  if (live) approveSpecification(root);
   writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_viewer/\nbuild/\n");
   git(root, "add", "-A");
   const setUp = commit(root, "Hooks in");
@@ -256,7 +257,7 @@ test("@spec s-b6qdtghnyha3fhk the pre-push hook runs the tests where a commit th
   testCommand(root, 'node -e "process.exit(1)"');
   const drafted = git(root, "push", "-q", "origin", "HEAD:refs/heads/other");
   assert.equal(drafted.status, 0, drafted.stderr);
-  putLive(root);
+  approveSpecification(root);
   git(root, "add", "-A");
   const live = commit(root, "Live");
   assert.equal(live.status, 0, live.stdout + live.stderr);
@@ -310,7 +311,7 @@ test("@spec s-477gtdrkw34dzxw the agent's hook after an edit tells the agent eac
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace("What open requires.", "What open requires now."));
   const run = pluginHook("after-edit.sh", machine, root);
-  assert.match(run.stdout + run.stderr, new RegExp(`status emptied: ${sid("open")}`));
+  assert.match(run.stdout + run.stderr, new RegExp(`made a draft: ${sid("open")}`));
 });
 
 test("@spec s-477gtdrkw34dzxw after an agent's edit, a file changed while the checks run is checked at the next edit, not taken as checked", () => {

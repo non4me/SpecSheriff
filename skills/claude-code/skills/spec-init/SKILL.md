@@ -31,6 +31,10 @@ description: Setting a repository up for SpecSheriff — its git hooks, the plug
    and then set the mark with `git config --global` to `true`. Until a setting is written, each
    review runs at its default and says so. A setting the user gave as an option of this plugin is
    changed in `/config`, since the session start writes the option over the git configuration.
-6. Commit what init wrote, so that every clone takes the git hooks and the plugin with it.
+6. `specs/_guidelines/project.json` holds the rule "The specification is approved" as a draft. Where
+   the repository holds no code yet, offer the owner to approve it now, by `sheriff approve <sid>`;
+   where it holds code, it waits until every symbol and test carries a SpecTag (the skill
+   `spec-adopt`).
+7. Commit what init wrote, so that every clone takes the git hooks and the plugin with it.
 
 To bring the project's existing documents into the specification, use the skill `spec-adopt`.

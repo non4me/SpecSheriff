@@ -1,7 +1,7 @@
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { LEVELS_RULE } from "../src/model.ts";
+import { APPROVAL_RULE, LEVELS_RULE } from "../src/model.ts";
 import { reindex } from "../src/reindex.ts";
 import type { SpecNode } from "../src/spec-files.ts";
 import { REPO } from "./repo.ts";
@@ -31,7 +31,7 @@ export const loc = (...parts: string[]) => parts.join("/");
 export const BY_NUMBER = "§" + "4.1";
 
 export function node(name: string, fields: Record<string, unknown> = {}): SpecNode {
-  return { location: "", sid: sid(name), kind: "rule", title: name, status: "", text: `What ${name} requires.`, refs: [], ...fields };
+  return { location: "", sid: sid(name), kind: "rule", title: name, status: "draft", text: `What ${name} requires.`, refs: [], ...fields };
 }
 
 export function file(scope: string, section: string, ...nodes: object[]) {
@@ -54,7 +54,7 @@ export function repo(files: Record<string, unknown>): string {
 export function taking(files: Record<string, unknown> = {}): string {
   const root = repo({
     "sheriff.config.json": { code: [], tests: [] },
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core"] } }),
     ] })),
     ...files,
@@ -63,3 +63,9 @@ export function taking(files: Record<string, unknown> = {}): string {
   reindex(root);
   return root;
 }
+
+/**
+ * The base of the guidelines a repository writing them holds, reduced to the rule on the specification's status, so
+ * that the reindex adds to its project's own guidelines the rule approving the specification (s-f5rz6b7dhxejjts).
+ */
+export const BASE = file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("the specification's status", { sid: APPROVAL_RULE })] }));

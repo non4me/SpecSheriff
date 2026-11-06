@@ -15,8 +15,8 @@ not help for long: nothing holds the code to it, and it decays without anyone no
 
 The specification is a set of small rules, each a node with a permanent identifier, its sid, and with
 its reason kept apart from what it requires (§s-kh8qcd5kxgh9z3j, §s-kag2m9tzdnduxdx,
-§s-dpe5kcz4eamv39g). A rule is implemented only once its owner has confirmed its wording, and a changed
-wording loses the confirmation until the owner confirms it again (§s-5ah25f6gy99panq,
+§s-dpe5kcz4eamv39g). A rule is implemented only once one of its owners has approved its wording, and a
+changed wording is a draft again until one of them approves it (§s-5ah25f6gy99panq,
 §s-67vekyup7y8smap, §s-utvqbypzhmgndug).
 
 Every change runs one way: the rule first, then its test, then the code (§s-ef93u6cnbs2sevr,
@@ -52,8 +52,8 @@ Each in full in [the principles](principles.md):
   at each edit an agent makes and at every commit, with one reviewer for what no check can judge.
 - [A rule is self-sufficient](principles.md#a-rule-is-self-sufficient): everything that bears on a
   rule is in its node.
-- [Nothing unconfirmed is implemented](principles.md#nothing-unconfirmed-is-implemented): a rule
-  waits for its owner.
+- [Nothing unapproved is implemented](principles.md#nothing-unapproved-is-implemented): a rule
+  waits for its owners.
 
 ## How it differs from what exists
 
@@ -72,7 +72,7 @@ hold this repository to it. The base, [`spec.json`](../specs/_guidelines/spec.js
 held, what is checked, when, and what a failure costs, and names no technology. The appendix of the
 tools, [`tools.json`](../specs/_guidelines/tools.json), says how the SpecSheriff tools carry the base
 out: where the files are, the commands, the agent's hooks and git's, how each check is made,
-how the code and a test carry their SpecTag, who runs the reviewer and how a confirmation is recorded
+how the code and a test carry their SpecTag, who runs the reviewer and how an approval is recorded
 (§s-a4rbry4hsu34hy8). A project takes both whole, with the skills that apply them and updated with
 them, and keeps beside them guidelines of its own that refine them (§s-bsya3febm6u64ab). `sheriff guide` prints them all, and
 `sheriff show <sid>` one node.
@@ -85,8 +85,8 @@ way every time.
 
 - **spec** — the guidelines as they stand, printed by the tools rather than copied, for an agent about
   to write a node, a test or code: it works from the rules in force, not from memory.
-- **spec-review** — working on the specification with its owner, one node at a time, shown whole: a
-  confirmation then means the owner read the whole wording.
+- **spec-review** — working on the specification with its owners, one node at a time, shown whole: an
+  approval then means the owner read the whole wording.
 - **spec-adopt** — bringing a project's existing documents into nodes, walked whole, the owner agreeing
   where each goes: a project rarely starts from nothing.
 - **spec-init** — laying out what the checks depend on: the git hooks, the plugin declared for every

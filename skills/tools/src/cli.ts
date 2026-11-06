@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { confirm } from "./confirmations.ts";
+import { approve } from "./approvals.ts";
 import { binding, citationsOutside } from "./binding.ts";
 import { exportMarkdown, guide, render } from "./generated.ts";
 import { guard } from "./guard.ts";
@@ -19,10 +19,11 @@ const USAGE = `Usage: sheriff <command>
 
 Commands:
   reindex                     give sids, compute locations, rebuild incoming links and headers' indexes,
-                              empty every status no confirmation by its owner holds, and write the
-                              SpecTag of each test an earlier release read by its bare sid
+                              make a draft each node no approval stands for, build the status of
+                              sections and headers, and write the SpecTag of each test an earlier
+                              release read by its bare sid
   validate                    check the specification on its own
-  confirm [--withdraw] <sid>  record the owner's confirmation of a node's wording, or withdraw it
+  approve [--withdraw] <sid>  record an owner's approval of a node's wording, or withdraw it
   show <sid|location>         print a node with its links
   todos                       print the work put off on the nodes, the newest first, each with its node
   model                       print the model of the specification as JSON, which a project's own check or generator reads
@@ -70,7 +71,7 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       for (const f of await rewriteTests(root)) process.stdout.write(`rewritten: ${f}\n`);
       const report = reindex(root);
       for (const m of report.merged) process.stdout.write(`merged: ${m.file}: "${m.key}" at ${m.path || "/"}, lines ${m.lines.join(", ")}\n`);
-      for (const s of report.emptied) process.stdout.write(`status emptied: ${s}\n`);
+      for (const s of report.drafted) process.stdout.write(`made a draft: ${s}\n`);
       for (const f of report.written) process.stdout.write(`written: ${f}\n`);
       return 0;
     }
@@ -79,13 +80,15 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       for (const f of findings) process.stdout.write(`${f.where}: ${f.reported ? "reported: " : ""}${f.message}\n`);
       return findings.some((f) => !f.reported) ? 1 : 0;
     }
-    case "confirm": {
+    case "approve": {
       const withdraw = args[0] === "--withdraw";
       const sids = withdraw ? args.slice(1) : args;
       const me = git("config", "user.email").stdout.trim();
-      if (!me) throw new Error("git names no email for whoever confirms: set it with git config user.email");
-      if (!sids.length) throw new Error("name the sid of every node to confirm");
-      confirm(root, sids, { me, withdraw });
+      if (!me) throw new Error("git names no email for whoever approves: set it with git config user.email");
+      if (!sids.length) throw new Error("name the sid of every node to approve");
+      approve(root, sids, { me, withdraw });
+      // A status changed is a change to the specification, after which the status of each section and header is built anew.
+      reindex(root);
       return 0;
     }
     case "export":
@@ -103,7 +106,7 @@ async function run(command: string | undefined, args: string[]): Promise<number>
     case "types": {
       const report = writeTypes(root);
       for (const f of report.refusals) process.stdout.write(`${f.where}: ${f.message}\n`);
-      for (const sid of report.waiting) process.stdout.write(`${sid}: a node not yet checked; the files generated from it wait for its confirmation\n`);
+      for (const sid of report.waiting) process.stdout.write(`${sid}: a draft node; the files generated from it wait for its approval\n`);
       for (const path of report.written) process.stdout.write(`written: ${path}\n`);
       return report.refusals.length ? 1 : 0;
     }

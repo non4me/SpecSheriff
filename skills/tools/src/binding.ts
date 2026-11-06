@@ -3,7 +3,8 @@ import { join, posix } from "node:path";
 import { onlySpecTagged, readCode, type CodeFile, type CodeSymbol } from "./code.ts";
 import { loadConfig, readsAs, type Config } from "./config.ts";
 import { before, changes, codeChanges, commitTexts, git, trackedFiles, type FileChange } from "./diff.ts";
-import { fixtureGlobs, isFixture, isProjectKind, liveRule, locations, partOf, PROJECT } from "./model.ts";
+import { addedApprovals, readApprovals } from "./approvals.ts";
+import { approvalRule, fixtureGlobs, isFixture, isProjectKind, locations, partOf, PROJECT, specificationOwners, statusNow } from "./model.ts";
 import { needsCode, schemaRefusals } from "./schema.ts";
 import { runGenerators } from "./generators.ts";
 import { judgedHere } from "./reindex.ts";
@@ -125,30 +126,36 @@ export async function binding(root: string): Promise<BindingFinding[]> {
   const config = loadConfig(root);
   const spec = loadSpecification(root);
   const exists = (sid: string) => spec.nodes.has(sid);
-  const checked = (sid: string) => spec.nodes.get(sid)?.node.status === "checked";
+  const approved = (sid: string) => spec.nodes.get(sid)?.node.status === "approved";
   // A rule, and a node of a project's own kind that needs code, is implemented and tested (s-vsh384ybt4w25a2).
   const needs = needsCode(root);
   const coded = (kind?: string) => kind === "rule" || Boolean(kind && isProjectKind(kind) && needs(kind));
   const { codeFiles, testFiles, changedSymbols, changedTests } = await readCommit(root, config, spec);
-  // The specification is live once the project's own guidelines hold the rule putting it live; a commit adding that
-  // rule holds it checked, and no commit takes it out (s-j9r8z4xdrfkfs47).
+  // The specification is approved while the rule of the project's own guidelines approving it is; before the commit it
+  // is as the last commit holds it, read as the reindex would rewrite it, and a commit putting it back to draft records
+  // a withdrawal of that rule's approval by one of the specification's owners (s-j9r8z4xdrfkfs47).
   const projectNodes = (file: SpecFile | undefined) => {
     const out: SpecNode[] = [];
     const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (out.push(n), walk(n.children)));
     walk(file?.data.nodes);
     return out;
   };
-  const nowLive = liveRule(projectNodes(spec.files.find((f) => f.path === PROJECT)));
+  const nowRule = approvalRule(projectNodes(spec.files.find((f) => f.path === PROJECT)));
   const lastProject = before(root, PROJECT);
-  let wasLive: SpecNode | undefined;
+  let wasRule: SpecNode | undefined;
   try {
-    wasLive = lastProject ? liveRule(projectNodes({ path: PROJECT, data: JSON.parse(lastProject) })) : undefined;
+    wasRule = lastProject ? approvalRule(projectNodes({ path: PROJECT, data: JSON.parse(lastProject) })) : undefined;
   } catch {
-    wasLive = undefined;
+    wasRule = undefined;
   }
-  const live = Boolean(nowLive);
-  if (nowLive && !wasLive && nowLive.status !== "checked") findings.push({ where: nodeWhere(spec, nowLive.sid), message: "puts the specification live, and is not checked" });
-  if (wasLive && !nowLive) findings.push({ where: PROJECT, message: "takes out the rule that puts the specification live" });
+  const live = nowRule?.status === "approved";
+  if (wasRule && statusNow(wasRule.status) === "approved" && !live) {
+    const owners = specificationOwners(spec);
+    const withdrawn = addedApprovals(root, readApprovals(root)).some((a) => a.withdrawn && a.sid === wasRule!.sid && owners.includes(a.by));
+    if (!withdrawn) {
+      findings.push({ where: nowRule ? nodeWhere(spec, nowRule.sid) : PROJECT, message: `puts the specification back to draft without a withdrawal of the approval of ${wasRule.sid} by one of the specification's owners (${owners.join(", ") || "none named"})` });
+    }
+  }
   const at = (path: string, line: number) => `${path}:${line}`;
 
   // SpecTags on the code.
@@ -166,7 +173,7 @@ export async function binding(root: string): Promise<BindingFinding[]> {
       for (const t of s.tags) {
         if (!t.sid) continue;
         if (!exists(t.sid)) findings.push({ where: at(file.path, t.line), message: `the SpecTag on ${s.name} ${t.sid} names no node` });
-        else if (changed && !checked(t.sid)) findings.push({ where: at(file.path, t.line), message: `${s.name}, whose code the commit changes, carries the SpecTag ${t.sid}, a node not checked` });
+        else if (changed && !approved(t.sid)) findings.push({ where: at(file.path, t.line), message: `${s.name}, whose code the commit changes, carries the SpecTag ${t.sid}, a draft node` });
         if (changed && coded(spec.nodes.get(t.sid)?.node.kind)) rulesChanged.add(t.sid);
       }
     }
@@ -191,8 +198,8 @@ export async function binding(root: string): Promise<BindingFinding[]> {
       else if (kind !== "rule" && kind !== "term" && !(kind && isProjectKind(kind))) {
         const named = kind === "recordType" ? "a RecordType" : kind === "domain" ? "a domain's header" : `a ${kind}`;
         findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, ${named}, where a test carries the SpecTag of a rule or a term` });
-      } else if (changedTests.get(file.path)?.has(t.name) && !checked(t.sid)) {
-        findings.push({ where: at(file.path, t.start), message: `the test "${t.name}", which the commit changes, carries ${t.sid}, a node not checked` });
+      } else if (changedTests.get(file.path)?.has(t.name) && !approved(t.sid)) {
+        findings.push({ where: at(file.path, t.start), message: `the test "${t.name}", which the commit changes, carries ${t.sid}, a draft node` });
       }
     }
   }
@@ -261,7 +268,7 @@ export async function binding(root: string): Promise<BindingFinding[]> {
 }
 
 /**
- * Each checked rule outside the SpecSheriff guidelines, a project's own guidelines and the technical debt that no tagged
+ * Each approved rule outside the SpecSheriff guidelines, a project's own guidelines and the technical debt that no tagged
  * symbol or no test that runs carries out — its own, or one of a rule implementing it, followed down the implements
  * links — unless an exempts link reaches it or a section it stands under. Reported only.
  */
@@ -283,7 +290,7 @@ function implementation(spec: Specification, tagged: Set<string>, tested: Set<st
   const exempting = pointing("exempts");
   const found: BindingFinding[] = [];
   for (const [sid, { node, file }] of spec.nodes) {
-    if (!coded(node.kind) || node.status !== "checked") continue;
+    if (!coded(node.kind) || node.status !== "approved") continue;
     if (file.path.startsWith("specs/_guidelines/") || file.path === "specs/tech/debt.json") continue;
     let exempt = false;
     for (let at: string | undefined = sid; at && !exempt; at = parent.get(at)) exempt = exempting.has(at);
@@ -305,15 +312,15 @@ function implementation(spec: Specification, tagged: Set<string>, tested: Set<st
 function generatedCopies(root: string, spec: Specification, config: Config): BindingFinding[] {
   const { files, refusals } = generateTypes(spec);
   const found: BindingFinding[] = [...refusals, ...projectCopies(root, spec, config)];
-  // Code generated from the nodes waits for every node it comes from to be checked, and no commit changes it meanwhile.
+  // Code generated from the nodes waits for every node it comes from to be approved, and no commit changes it meanwhile.
   const waiting = waitingRecords(spec);
   if (waiting.length) {
-    for (const sid of waiting) found.push({ where: nodeWhere(spec, sid), message: "the types and runtime checks generated from the RecordTypes wait for its confirmation", reported: true });
+    for (const sid of waiting) found.push({ where: nodeWhere(spec, sid), message: "the types and runtime checks generated from the RecordTypes wait for its approval", reported: true });
     for (const f of files) {
       const path = join(root, f.path);
       const kept = existsSync(path) ? readFileSync(path, "utf8").replace(/\r\n/g, "\n") : null;
       const last = before(root, f.path)?.replace(/\r\n/g, "\n") ?? null;
-      if (kept !== last) found.push({ where: f.path, message: `changed while the RecordTypes it is generated from wait for their confirmation: ${waiting.join(", ")}` });
+      if (kept !== last) found.push({ where: f.path, message: `changed while the RecordTypes it is generated from wait for their approval: ${waiting.join(", ")}` });
     }
     return found;
   }
@@ -332,12 +339,12 @@ function projectCopies(root: string, spec: Specification, config: Config): Bindi
   const own = runGenerators(root, spec, config);
   const found: BindingFinding[] = [...own.refusals];
   const read = (text: string | null | undefined) => (text ?? null)?.replace(/\r\n/g, "\n") ?? null;
-  for (const sid of own.waiting) found.push({ where: nodeWhere(spec, sid), message: "the files a project's generator writes from it wait for its confirmation", reported: true });
+  for (const sid of own.waiting) found.push({ where: nodeWhere(spec, sid), message: "the files a project's generator writes from it wait for its approval", reported: true });
   for (const f of own.files) {
     const path = join(root, f.path);
     const kept = read(existsSync(path) ? readFileSync(path, "utf8") : null);
     if (f.waiting.length) {
-      if (kept !== read(before(root, f.path))) found.push({ where: f.path, message: `changed while the nodes it is generated from wait for their confirmation: ${f.waiting.join(", ")}` });
+      if (kept !== read(before(root, f.path))) found.push({ where: f.path, message: `changed while the nodes it is generated from wait for their approval: ${f.waiting.join(", ")}` });
     } else if (kept === null) found.push({ where: f.path, message: `missing: a file the generator "${f.generator}" writes, which sheriff types writes` });
     else if (kept !== f.text) found.push({ where: f.path, message: `not what the generator "${f.generator}" generates now; sheriff types writes it anew` });
   }

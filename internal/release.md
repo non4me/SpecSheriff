@@ -76,8 +76,8 @@ hooks only in a project its `config.toml` trusts, `[projects.'<path>'] trust_lev
 
 `npm run release -- <major>.<minor>.<patch>` on a clean `main`:
 
-1. builds the tools and runs `sheriff binding`, and stops where it refuses anything or reports a
-   checked rule not implemented (s-6fw72j65jkqrfpf): a release carries out every rule it states;
+1. builds the tools and runs `sheriff binding`, and stops where it refuses anything or reports an
+   approved rule not implemented (s-6fw72j65jkqrfpf): a release carries out every rule it states;
 2. writes the version into `skills/tools/package.json` and the lockfile,
    `skills/claude-code/.claude-plugin/plugin.json`, `skills/codex/.codex-plugin/plugin.json` and
    `skills/pytest-specsheriff/pyproject.toml`,

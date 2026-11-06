@@ -8,7 +8,7 @@
       "$ref": "#/$defs/base"
     },
     {
-      "$comment": "The header of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owner where it names one, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
+      "$comment": "The header of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owners where it names them, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
       "if": {
         "properties": {
           "kind": {
@@ -18,8 +18,8 @@
       },
       "then": {
         "properties": {
-          "owner": {
-            "$ref": "#/$defs/owner"
+          "owners": {
+            "$ref": "#/$defs/owners"
           },
           "level": {
             "$comment": "The name of the level the domain stands at, one of those the project's own guidelines list; validate checks it against that list, which the schema cannot see.",
@@ -79,7 +79,7 @@
       }
     },
     {
-      "$comment": "A section: a container of rules, whose text states what it is responsible for and requires nothing. It may name an owner of its own, who confirms every node within it.",
+      "$comment": "A section: a container of rules, whose text states what it is responsible for and requires nothing. It may name owners of its own, any of whom approves every node within it. Its status is built from the nodes under it and approved by nobody.",
       "if": {
         "properties": {
           "kind": {
@@ -89,8 +89,8 @@
       },
       "then": {
         "properties": {
-          "owner": {
-            "$ref": "#/$defs/owner"
+          "owners": {
+            "$ref": "#/$defs/owners"
           }
         }
       }
@@ -307,16 +307,21 @@
       "pattern": "^s-[a-hjkmnp-z2-9]{15}$"
     },
     "status": {
-      "$comment": "checked: the node's owner confirmed its present wording; empty otherwise.",
+      "$comment": "approved: one of the node's owners approved its present wording; draft otherwise. A section's and a domain's header's status is built by the reindex from the nodes under it.",
       "enum": [
-        "",
-        "checked"
+        "draft",
+        "approved"
       ]
     },
-    "owner": {
-      "$comment": "The owner of a domain or a section, named by an email; absent where the owner above holds.",
-      "type": "string",
-      "pattern": "^[^@\\s]+@[^@\\s]+$"
+    "owners": {
+      "$comment": "The owners of a domain or a section, each named by an email, with equal rights; absent where the owners above hold.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[^@\\s]+@[^@\\s]+$"
+      }
     },
     "date": {
       "$comment": "A day as ISO 8601 writes it, the year first, so that dates read the same in every language and sort as text.",

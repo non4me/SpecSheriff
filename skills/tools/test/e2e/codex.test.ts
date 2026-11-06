@@ -95,7 +95,7 @@ test("@spec s-n76wt2bkqdmh78x each of the agent's hooks for Codex holds only the
     assert.doesNotMatch(hook.command, /sheriff (guard|reindex|validate)/, event);
   }
   const none = codexHome(false);
-  const refused = patch("*** Add File: specs/_confirmations.jsonl", "+forged");
+  const refused = patch("*** Add File: specs/_approvals.jsonl", "+forged");
   for (const [event, input] of [["SessionStart", "{}"], ["PreToolUse", refused], ["PostToolUse", refused]] as const) {
     const run = codexHook(event, none, root, input);
     assert.equal(run.status, 0, `${event}: ${run.stderr}`);
@@ -107,7 +107,7 @@ test("@spec s-n76wt2bkqdmh78x each of the agent's hooks for Codex holds only the
 test("@spec s-n76wt2bkqdmh78x the scripts the agent's hooks for Codex call do nothing in a repository holding no sheriff.config.json", () => {
   const root = setUpForCodex(false);
   const codex = codexHome();
-  const refused = patch("*** Add File: specs/_confirmations.jsonl", "+forged");
+  const refused = patch("*** Add File: specs/_approvals.jsonl", "+forged");
   for (const [event, input] of [["SessionStart", "{}"], ["PreToolUse", refused], ["PostToolUse", refused]] as const) {
     const run = codexHook(event, codex, root, input);
     assert.equal(run.status, 0, `${event}: ${run.stderr}`);
@@ -122,13 +122,13 @@ test("@spec s-n76wt2bkqdmh78x before an edit made with apply_patch, the hook ref
   const allowed = patch("*** Add File: notes.txt", "+one");
   assert.equal(codexHook("PreToolUse", codex, root, allowed).status, 0);
   assert.equal(codexHook("PreToolUse", codex, root, allowed).stdout, "");
-  const refused = codexHook("PreToolUse", codex, root, patch("*** Add File: notes.txt", "+one", "*** Add File: specs/_confirmations.jsonl", "+forged"));
+  const refused = codexHook("PreToolUse", codex, root, patch("*** Add File: notes.txt", "+one", "*** Add File: specs/_approvals.jsonl", "+forged"));
   // Codex blocks a tool call on the denial a hook writes as JSON; exit code 2 it reports as a failed hook and lets the call go on.
   assert.equal(refused.status, 0, refused.stderr);
   const { hookSpecificOutput } = JSON.parse(refused.stdout);
   assert.equal(hookSpecificOutput.hookEventName, "PreToolUse");
   assert.equal(hookSpecificOutput.permissionDecision, "deny");
-  assert.match(hookSpecificOutput.permissionDecisionReason, /_confirmations\.jsonl.*sheriff confirm/);
+  assert.match(hookSpecificOutput.permissionDecisionReason, /_approvals\.jsonl is written by sheriff approve alone/);
 });
 
 test("@spec s-n76wt2bkqdmh78x after an edit, the hook runs the checks over the working tree and reports to the agent what they refuse", () => {

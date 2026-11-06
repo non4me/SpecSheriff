@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createContext, runInContext } from "node:vm";
-import { confirm } from "../../src/confirmations.ts";
+import { approve } from "../../src/approvals.ts";
 import { exportMarkdown, guide, render } from "../../src/generated.ts";
 import { domainOrder } from "../../src/model.ts";
 import { reindex } from "../../src/reindex.ts";
@@ -16,7 +16,7 @@ import { LEVELS_RULE } from "../../src/model.ts";
 function project(): string {
   const root = repo({
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule", { reason: "Because." })] })),
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [node("shared rule")] })),
@@ -28,7 +28,8 @@ function project(): string {
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [node("runtime")] })),
   });
   reindex(root);
-  confirm(root, [sid("base")], { me: OWNER });
+  approve(root, [sid("base rule")], { me: OWNER });
+  reindex(root);
   return root;
 }
 
@@ -88,14 +89,14 @@ function everything(): string {
         children: [node("nested rule")],
       }),
     ] })),
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core"] } }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [
       node("Invoice", { kind: "recordType", text: "A bill sent to a customer.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
       node("customer", { kind: "term", text: "Whoever is billed.", refs: [{ type: "term-relation", to: sid("Invoice"), ratio: "1:0..N" }] }),
     ] })),
-    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "domain", owner: OWNER, level: "core", code: "src/alpha", sections: [] })),
+    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "domain", owners: [OWNER], level: "core", code: "src/alpha", sections: [] })),
     "specs/alpha/a.json": file("alpha", "a", node("alpha section", { kind: "section", text: "A.", children: [node("alpha rule")] })),
   });
   reindex(root);
@@ -218,11 +219,30 @@ test("@spec s-rpv4fkdqqguptqd the map's page reads a title as text, so that no t
   const drawn: { tree?: any } = {};
   const context = createContext({ markmap: { Markmap: { create: (_svg: unknown, _options: unknown, tree: unknown) => (drawn.tree = tree) } } });
   for (const script of [scripts[0]!, scripts.at(-1)!]) runInContext(script.replace(/^const OUTLINE/, "var OUTLINE"), context);
-  const titles = (n: any): string[] => [n.content, ...n.children.flatMap(titles)];
+  const plain = (content: string) => content.replace(/^<span class="node (?:draft|approved)">(.*)<\/span>$/, "$1");
+  const titles = (n: any): string[] => [plain(n.content), ...n.children.flatMap(titles)];
   assert.equal(drawn.tree.content, "Specification");
   assert.ok(titles(drawn.tree).includes("Costs $x$ and &lt;b&gt;more&lt;/b&gt;"), titles(drawn.tree).join(" | "));
-  const zeta = drawn.tree.children.find((c: any) => c.content === "1 core").children.find((c: any) => c.content === "zeta");
+  const zeta = drawn.tree.children.find((c: any) => c.content === "1 core").children.find((c: any) => plain(c.content) === "zeta");
   assert.deepEqual(titles(zeta), ["zeta", "zeta section", "Costs $x$ and &lt;b&gt;more&lt;/b&gt;"]);
+});
+
+test("@spec s-rpv4fkdqqguptqd draws each node's title in a frame, dotted for a draft and solid for an approved node, a branch standing for no node without one", () => {
+  const root = project();
+  render(root);
+  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  const scripts = [...page.matchAll(/<script>([^]*?)<\/script>/g)].map((m) => m[1]!);
+  const drawn: { tree?: any } = {};
+  const context = createContext({ markmap: { Markmap: { create: (_svg: unknown, _options: unknown, tree: unknown) => (drawn.tree = tree) } } });
+  for (const script of [scripts[0]!, scripts.at(-1)!]) runInContext(script.replace(/^const OUTLINE/, "var OUTLINE"), context);
+  const all = (n: any): any[] => [n, ...n.children.flatMap(all)];
+  const contents = all(drawn.tree).map((n) => n.content);
+  assert.ok(contents.includes('<span class="node approved">base rule</span>'), contents.join(" | "));
+  assert.ok(contents.includes('<span class="node approved">base</span>'), contents.join(" | "));
+  assert.ok(contents.includes('<span class="node draft">zeta rule</span>'), contents.join(" | "));
+  for (const branch of ["Guidelines", "Contracts", "1 core", "Technical appendix"]) assert.ok(contents.includes(branch), branch);
+  assert.match(page, /\.node \{[^}]*border: 1\.5px solid/);
+  assert.match(page, /\.node\.draft \{ border-style: dotted; \}/);
 });
 
 test("@spec s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last", () => {
@@ -239,7 +259,7 @@ test("@spec s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per 
   assert.ok(page.includes("zeta rule") && page.includes("runtime"));
 });
 
-test("@spec s-zu8ne3wq84zchc4 the map shows titles and nesting only, nothing of a rule's text", () => {
+test("@spec s-zu8ne3wq84zchc4 the map shows the structure and each node's status only, nothing of a rule's text", () => {
   const root = project();
   render(root);
   assert.ok(!readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8").includes("What zeta rule requires."));
@@ -250,8 +270,9 @@ test("@spec s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines 
   const out = guide(loadSpecification(root));
   for (const name of ["base", "base rule", "project", "our levels"]) assert.ok(out.includes(sid(name)), name);
   assert.ok(!out.includes(sid("shared rule")));
-  assert.match(out, /_guidelines: 4 nodes, 1 checked/);
-  assert.match(out, /alpha: 3 nodes, 0 checked/);
+  assert.match(out, /_guidelines: 4 nodes, 2 approved/);
+  assert.match(out, /alpha: 3 nodes, 0 approved/);
+  assert.match(out, /The specification is a draft\./);
 });
 
 test("@spec s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole", () => {

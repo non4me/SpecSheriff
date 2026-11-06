@@ -38,7 +38,7 @@ export interface Config {
   code: string[];
   /** Globs naming where its tests live: read for the sids they declare. */
   tests: string[];
-  /** Whether the SpecSheriff guidelines are written in this repository, so that their nodes are confirmed here rather than compared with a version. */
+  /** Whether the SpecSheriff guidelines are written in this repository, so that their nodes are approved here rather than compared with a version. */
   writesSpecSheriffGuidelines: boolean;
   /** The command that runs the tests of the system's code, before a commit is shared. */
   testCommand: string | null;

@@ -32,7 +32,7 @@ test("@spec s-7unxytshhc4md54 sheriff init writes the git hooks and turns them o
     assert.ok(!existsSync(join(root, path)), path);
   }
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
-  assert.equal(JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].owner, "owner@example.org");
+  assert.deepEqual(JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].owners, ["owner@example.org"]);
   assert.deepEqual(settingsOf(root), {
     extraKnownMarketplaces: { "specsheriff-marketplace": MARKETPLACE },
     enabledPlugins: { "specsheriff@specsheriff-marketplace": true },
@@ -166,10 +166,10 @@ test("@spec s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes 
   git(root, "-c", "core.hooksPath=/dev/null", "commit", "-qm", "Set up");
   const run = sheriff(root, "remove");
   assert.equal(run.status, 0, run.stderr);
-  for (const path of [".githooks", ".claude", ".codex", "sheriff.config.json"]) assert.ok(!existsSync(join(root, path)), path);
+  for (const path of [".githooks", ".claude", ".codex", ".gitattributes", "sheriff.config.json"]) assert.ok(!existsSync(join(root, path)), path);
   assert.ok(existsSync(join(root, "specs", "_guidelines", "project.json")));
   assert.match(run.stdout, /left as it is: specs\//);
-  for (const path of [".githooks/pre-commit", ".githooks/commit-msg", ".githooks/pre-push", ".claude/settings.json", ".codex/hooks.json", "sheriff.config.json"]) {
+  for (const path of [".githooks/pre-commit", ".githooks/commit-msg", ".githooks/pre-push", ".claude/settings.json", ".codex/hooks.json", ".gitattributes", "sheriff.config.json"]) {
     assert.match(run.stdout, new RegExp(`removed: ${path.replaceAll(".", "\\.")}`), path);
   }
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), "");
@@ -245,18 +245,83 @@ test("@spec s-7unxytshhc4md54 this repository holds what sheriff init writes, so
   assert.doesNotMatch(run.stdout, /written|replaced|left as it is/, run.stdout);
 });
 
-test("@spec s-7unxytshhc4md54 sheriff init writes, unchecked, the rule that puts the specification live where the repository keeps no code the tools read, and not where it keeps some", () => {
-  const live = (root: string) => JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].children?.find((n: { text: string }) => n.text === "This project's specification is live.");
+test("@spec s-7unxytshhc4md54 sheriff init writes, as a draft, the rule that approves the specification, whatever code the repository keeps", () => {
+  const approving = (root: string) => JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].children?.find((n: { text: string }) => n.text === "This project's specification is approved.");
   const empty = fresh();
   sheriff(empty, "init");
-  const rule = live(empty);
-  assert.ok(rule, "the live rule");
-  assert.equal(rule.status, "");
-  assert.deepEqual(rule.refs, [{ type: "refines", to: "s-qzthyh7yqvfhsa2" }]);
   const coded = fresh();
   writeFileSync(join(coded, "app.ts"), "export const a = 1;\n");
   sheriff(coded, "init");
-  assert.equal(live(coded), undefined);
+  for (const root of [empty, coded]) {
+    const rule = approving(root);
+    assert.ok(rule, "the rule approving the specification");
+    assert.deepEqual([rule.title, rule.status], ["The specification is approved", "draft"]);
+    assert.deepEqual(rule.refs, [{ type: "refines", to: "s-qzthyh7yqvfhsa2" }]);
+  }
+});
+
+const UNION = "specs/_approvals.jsonl merge=union";
+const attributesOf = (root: string) => readFileSync(join(root, ".gitattributes"), "utf8");
+const mergeOf = (root: string) => git(root, "check-attr", "merge", "--", "specs/_approvals.jsonl").stdout.trim();
+
+test("@spec s-7unxytshhc4md54 sheriff init has git merge the approvals by union, appending its line to .gitattributes, writing the file where it is missing", () => {
+  const root = fresh();
+  const run = sheriff(root, "init");
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(attributesOf(root), `${UNION}\n`);
+  assert.equal(mergeOf(root), "specs/_approvals.jsonl: merge: union");
+  assert.match(run.stdout, /written: \.gitattributes/);
+});
+
+test("@spec s-7unxytshhc4md54 sheriff init appends its line on a line of its own, ending as the file's lines end, keeping every other line", () => {
+  const root = fresh();
+  writeFileSync(join(root, ".gitattributes"), "*.png binary\r\n*.txt text");
+  sheriff(root, "init");
+  assert.equal(attributesOf(root), `*.png binary\r\n*.txt text\r\n${UNION}\r\n`);
+  assert.equal(mergeOf(root), "specs/_approvals.jsonl: merge: union");
+});
+
+test("@spec s-7unxytshhc4md54 sheriff init appends nothing where git already merges the approvals by union, however the line is written", () => {
+  const root = fresh();
+  writeFileSync(join(root, ".gitattributes"), "specs/_approvals.jsonl   merge=union text\r\n");
+  const run = sheriff(root, "init");
+  assert.equal(attributesOf(root), "specs/_approvals.jsonl   merge=union text\r\n");
+  assert.doesNotMatch(run.stdout, /\.gitattributes/);
+});
+
+test("@spec s-7unxytshhc4md54 sheriff init appends nothing where git gives the approvals' merge attribute any other state, and names that state", () => {
+  for (const [file, text, state] of [[".gitattributes", "*.jsonl binary\n", "unset"], ["specs/.gitattributes", "_approvals.jsonl merge=binary\n", "binary"]] as const) {
+    const root = fresh();
+    mkdirSync(join(root, "specs"));
+    writeFileSync(join(root, file), text);
+    const run = sheriff(root, "init");
+    assert.equal(run.status, 0, run.stderr);
+    assert.equal(readFileSync(join(root, file), "utf8"), text);
+    if (file !== ".gitattributes") assert.ok(!existsSync(join(root, ".gitattributes")));
+    assert.match(run.stdout, new RegExp(`specs/_approvals\\.jsonl.*merge.*${state}`), run.stdout);
+  }
+});
+
+test("@spec s-7unxytshhc4md54 sheriff init, outside a git repository, appends its line unless the file holds it already, spacing and line endings aside", () => {
+  const root = mkdtempSync(join(tmpdir(), "sheriff-init-plain-"));
+  sheriff(root, "init");
+  assert.equal(attributesOf(root), `${UNION}\n`);
+  writeFileSync(join(root, ".gitattributes"), "specs/_approvals.jsonl \t merge=union\r\n");
+  sheriff(root, "init");
+  assert.equal(attributesOf(root), "specs/_approvals.jsonl \t merge=union\r\n");
+});
+
+test("@spec s-7unxytshhc4md54 sheriff remove takes out each line of .gitattributes that is the line sheriff init appends, keeping every other line, and the file left holding nothing but blank lines", () => {
+  const kept = fresh();
+  writeFileSync(join(kept, ".gitattributes"), `*.png binary\r\n specs/_approvals.jsonl  merge=union \r\n`);
+  const run = sheriff(kept, "remove");
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(attributesOf(kept), "*.png binary\r\n");
+  assert.match(run.stdout, /removed: from \.gitattributes/);
+  const emptied = fresh();
+  writeFileSync(join(emptied, ".gitattributes"), `\n${UNION}\n\n`);
+  assert.match(sheriff(emptied, "remove").stdout, /removed: \.gitattributes/);
+  assert.ok(!existsSync(join(emptied, ".gitattributes")));
 });
 
 test("@spec s-7unxytshhc4md54 sheriff init names each hook the repository ran from elsewhere before, and sheriff remove each folder of the project's own tools it leaves", () => {

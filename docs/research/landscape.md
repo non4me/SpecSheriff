@@ -23,25 +23,25 @@ specification.
 | Family | Examples | What they share with SpecSheriff | What they lack |
 |---|---|---|---|
 | Spec-driven toolkits for coding agents | GitHub Spec Kit, Kiro (AWS), OpenSpec, BMAD-METHOD, Tessl | a specification written before the code, guiding an agent | the specification is markdown scoped to one feature or one change; no binding of each declaration or test to a rule; no mechanical gate at the commit. In practice mostly spec-first |
-| Requirements traceability from regulated industries | OpenFastTrace, StrictDoc, Doorstop, Sphinx-Needs, BMW Lobster, mantra | permanent identifiers, links, tags in code and tests, coverage reports; Doorstop's review stamp, which is cleared when an item's text changes, is the same idea as an owner's confirmation | built for human audit rather than for agents; no reviewer judging what the code does against the rules; no doctrine of how a rule is written; no split between a technology-free base and a replaceable technical appendix |
+| Requirements traceability from regulated industries | OpenFastTrace, StrictDoc, Doorstop, Sphinx-Needs, BMW Lobster, mantra | permanent identifiers, links, tags in code and tests, coverage reports; Doorstop's review stamp, which is cleared when an item's text changes, is the same idea as an owner's approval | built for human audit rather than for agents; no reviewer judging what the code does against the rules; no doctrine of how a rule is written; no split between a technology-free base and a replaceable technical appendix |
 | Recent research and small projects | Spec Growth Engine (H. Grabowski, arXiv 2606.27045 and 2610.11725, 2026); LiveSpec; KeelSpec | a machine-readable spec graph; contract kept apart from design; the agent's context scoped to an ownership path; a deterministic drift gate as a git hook (Spec Growth Engine). `@spec` anchors in code and an LLM review of plans (LiveSpec). Typed artefacts, cross-references and a CI gate on drift (KeelSpec) | code is held to the graph through its import graph, not through per-declaration tags (Spec Growth Engine); specifications are markdown per feature, and the LLM reviews the plan rather than the code against the rules (LiveSpec); no binding of code or tests to rules (KeelSpec) |
 
 Added on 2026-10-29, each read at its own source that day:
 
 | Tool | What it shares with SpecSheriff | What it lacks |
 |---|---|---|
-| Qodo Merge (PR-Agent), its ticket compliance | a model judges a pull request against the ticket it names | the result is a label or findings on the pull request, advisory: no source describes it blocking a merge; no ids, no confirmation of the ticket's text, no tags, no deterministic check |
+| Qodo Merge (PR-Agent), its ticket compliance | a model judges a pull request against the ticket it names | the result is a label or findings on the pull request, advisory: no source describes it blocking a merge; no ids, no approval of the ticket's text, no tags, no deterministic check |
 | SpecGate | a sign-off holding a SHA-256 hash of the specification's text, which goes stale when the text is edited; tests carrying the id of the requirement they verify; a deterministic check in CI that fails on a requirement with no test or a dangling tag | the sign-off covers a change, not each rule; ids come from headings, so they are not permanent; code is mapped by path globs, not tagged; no hook at an edit or a commit; no reviewer |
 | SpecDrive | ids never reused or renumbered; `@spec` tags in tests and in the main modules of the code; a deterministic check of coverage and of orphan tags | not every symbol is tagged, and the code's tags are not checked; the check runs only when the agent's skill runs it, with no hook; approval is given in conversation and recorded nowhere; no reviewer |
-| Spec Trace, a community extension of Spec Kit | requirement ids in the specification, tests citing them, orphan tests found | tests only, not code; its matrix is produced by the agent following prompts, and nothing shipped checks it; no confirmation, no hook, no reviewer |
+| Spec Trace, a community extension of Spec Kit | requirement ids in the specification, tests citing them, orphan tests found | tests only, not code; its matrix is produced by the agent following prompts, and nothing shipped checks it; no approval, no hook, no reviewer |
 
 ## Where SpecSheriff differs
 
 The parts exist separately, some of them for decades, and no source found holds them together:
-rule nodes with permanent ids, each confirmed by its owner and unconfirmed again by a change to its
-wording; every symbol of the code and every test bound to a rule by its id; deterministic checks at
-each edit an agent makes and at every commit; and the three parts below. SpecGate comes nearest on a
-confirmation tied to the text and a deterministic gate, SpecDrive on permanent ids tagged into code
+rule nodes with permanent ids, each approved by one of its owners and a draft again after a change to
+its wording; every symbol of the code and every test bound to a rule by its id; deterministic checks at
+each edit an agent makes and at every commit; and the three parts below. SpecGate comes nearest on an
+approval tied to the text and a deterministic gate, SpecDrive on permanent ids tagged into code
 and tests, Qodo on a model judging a change against its requirement.
 
 1. **An independent reviewer as a gate of every commit that changes code**, deliberately given nothing of the session

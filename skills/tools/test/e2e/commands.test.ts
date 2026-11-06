@@ -4,8 +4,8 @@ import { spawnSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
-import { confirm } from "../../src/confirmations.ts";
-import { file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
+import { approve } from "../../src/approvals.ts";
+import { BASE, file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
 const CLI = fileURLToPath(new URL("../../src/cli.ts", import.meta.url));
 const sheriff = (root: string, ...args: string[]) => spawnSync(process.execPath, [CLI, ...args], { cwd: root, encoding: "utf8" });
@@ -13,7 +13,8 @@ const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: r
 
 function project(): string {
   const root = repo({
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours." })),
+    "specs/_guidelines/spec.json": BASE,
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours." })),
     "specs/contracts/c.json": file("contracts", "c",
       node("shared", { kind: "section", text: "Shared.", children: [node("term", { kind: "term", title: "user" })] }),
       node("more", { kind: "section", text: "More.", children: [node("ours", { text: "See §" + sid("shared") + ".", refs: [{ type: "cites", to: sid("shared") }] })] }),
@@ -47,10 +48,10 @@ test("@spec s-f5rz6b7dhxejjts sheriff validate passes what holds together and re
   assert.match(refused.stdout, /specs\/contracts\/c\.json: .*contracts\/9 is not the one its place gives/);
 });
 
-test("@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node a confirmation was given for, read against the last commit", () => {
+test("@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node an approval was given for, read against the last commit", () => {
   const root = project();
   sheriff(root, "reindex");
-  assert.equal(sheriff(root, "confirm", sid("term")).status, 0);
+  assert.equal(sheriff(root, "approve", sid("term")).status, 0);
   git(root, "add", "-A");
   git(root, "commit", "-qm", "first");
   const path = join(root, "specs", "contracts", "c.json");
@@ -63,16 +64,22 @@ test("@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node a confirma
   assert.match(run.stdout, new RegExp(`${sid("term")}.*not in the archive`));
 });
 
-test("@spec s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured with, and refuses where that is not the owner", () => {
+test("@spec s-v4qus7raqnwzneb sheriff approve approves as the email git is configured with, and refuses where that is none of the node's owners", () => {
   const root = project();
   sheriff(root, "reindex");
-  const ok = sheriff(root, "confirm", sid("ours"));
+  const ok = sheriff(root, "approve", sid("ours"));
   assert.equal(ok.status, 0, ok.stderr);
-  assert.match(readFileSync(join(root, "specs", "_confirmations.jsonl"), "utf8"), new RegExp(OWNER));
+  assert.match(readFileSync(join(root, "specs", "_approvals.jsonl"), "utf8"), new RegExp(`"by":"${OWNER}"`));
+  // The section holding the node is built approved at once, so the next commit finds its status current (s-9kfdycuq34beqvs).
+  assert.equal(JSON.parse(readFileSync(join(root, "specs", "contracts", "c.json"), "utf8")).nodes[1].status, "approved");
   git(root, "config", "user.email", "someone@example.org");
-  const refused = sheriff(root, "confirm", sid("term"));
+  const refused = sheriff(root, "approve", sid("term"));
   assert.equal(refused.status, 1);
-  assert.match(refused.stderr, new RegExp(`its owner is ${OWNER}`));
+  assert.match(refused.stderr, new RegExp(`its owners are ${OWNER}, not someone@example\\.org`));
+  const withdrawn = sheriff(root, "approve", "--withdraw", sid("ours"));
+  assert.equal(withdrawn.status, 0, withdrawn.stderr);
+  assert.match(readFileSync(join(root, "specs", "_approvals.jsonl"), "utf8"), /"withdrawn":true,"by":"someone@example\.org"/);
+  assert.notEqual(sheriff(root, "confirm", sid("ours")).status, 0);
 });
 
 test("@spec s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines", () => {
@@ -86,7 +93,8 @@ test("@spec s-f5rz6b7dhxejjts sheriff export, render and guide write the export 
   assert.match(readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8"), /markmap/);
   const guided = sheriff(root, "guide");
   assert.equal(guided.status, 0, guided.stderr);
-  assert.match(guided.stdout, /contracts: 4 nodes, 0 checked/);
+  assert.match(guided.stdout, /contracts: 4 nodes, 0 approved/);
+  assert.match(guided.stdout, /The specification is a draft\./);
   assert.ok(guided.stdout.includes(sid("project")));
 });
 
@@ -101,9 +109,9 @@ test("@spec s-f5rz6b7dhxejjts sheriff types writes the types where the technical
   const root = taking(files("customer"));
   const waits = sheriff(root, "types");
   assert.equal(waits.status, 0, waits.stdout + waits.stderr);
-  assert.match(waits.stdout, new RegExp(`${sid("customer")}: a node not yet checked; the files generated from it wait for its confirmation`));
+  assert.match(waits.stdout, new RegExp(`${sid("customer")}: a draft node; the files generated from it wait for its approval`));
   assert.doesNotMatch(waits.stdout, /written:/);
-  confirm(root, [sid("customer")], { me: OWNER });
+  approve(root, [sid("customer")], { me: OWNER });
   const run = sheriff(root, "types");
   assert.equal(run.status, 0, run.stdout + run.stderr);
   assert.match(run.stdout, /written: src\/types\.ts/);

@@ -4,11 +4,11 @@ import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { binding, citationsOutside } from "../../src/binding.ts";
 import { FIXTURES_RULE } from "../../src/model.ts";
-import { confirm } from "../../src/confirmations.ts";
+import { approve } from "../../src/approvals.ts";
 import { reindex } from "../../src/reindex.ts";
 import { DATA_STRUCTURES } from "../../src/types.ts";
 import { BY_NUMBER, loc, node, NONE, OWNER, sid } from "../fixture.ts";
-import { codeProject as project, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, putLive, typedProject, withGenerator } from "../code-project.ts";
+import { approvalRuleSid, approveSpecification, codeProject as project, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, typedProject, withGenerator } from "../code-project.ts";
 
 const messages = async (root: string) => (await binding(root)).filter((f) => !f.reported).map((f) => `${f.where}: ${f.message}`);
 async function expectOne(root: string, pattern: RegExp): Promise<void> {
@@ -26,31 +26,31 @@ test("@spec s-jau82aq9juv9zzh refuses a symbol of the system's code carrying no 
   await expectOne(root, /src\/open\.ts:5: close carries no SpecTag/);
 });
 
-test("@spec s-jau82aq9juv9zzh refuses a tag naming no node, and a tag naming an unchecked node on a symbol a commit changes", async () => {
+test("@spec s-jau82aq9juv9zzh refuses a tag naming no node, and a tag naming a draft node on a symbol a commit changes", async () => {
   const root = project();
   put(root, "src/other.ts", `/** @spec ${NONE} */\nexport const a = 1;\n/** @spec ${sid("draft")} */\nexport const b = 2;\n`);
   await expectOne(root, new RegExp(`src/other\\.ts:1: .*${NONE} names no node`));
-  await expectOne(root, new RegExp(`src/other\\.ts:3: .*${sid("draft")}.*not checked`));
+  await expectOne(root, new RegExp(`src/other\\.ts:3: .*${sid("draft")}.*a draft node`));
 });
 
-test("@spec s-kgbzk2ph9e6jfb4 lets a symbol the commit leaves unchanged keep a tag naming an unchecked node", async () => {
+test("@spec s-kgbzk2ph9e6jfb4 lets a symbol the commit leaves unchanged keep a tag naming a draft node", async () => {
   const root = project();
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
-  assert.ok(!(await messages(root)).some((m) => /not checked/.test(m)));
+  assert.ok(!(await messages(root)).some((m) => /a draft node/.test(m)));
 });
 
 test("@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose lines differ only in a comment, a citation's sid or a name renamed throughout", async () => {
   const root = project();
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
   put(root, "src/open.ts", `/** @spec ${sid("open")} */\nexport function open(sum: number) {\n  return sum; // as §${sid("states")} says\n}\n`);
-  assert.ok(!(await messages(root)).some((m) => /not checked/.test(m)), (await messages(root)).join("\n"));
+  assert.ok(!(await messages(root)).some((m) => /a draft node/.test(m)), (await messages(root)).join("\n"));
 });
 
 test("@spec s-kgbzk2ph9e6jfb4 counts as changed a symbol where a name is replaced but the old one is still spelled", async () => {
   const root = project();
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
   put(root, "src/open.ts", OPEN.replace("return amount;", "return other;"));
-  await expectOne(root, new RegExp(`src/open\\.ts:1: .*${sid("open")}.*not checked`));
+  await expectOne(root, new RegExp(`src/open\\.ts:1: .*${sid("open")}.*a draft node`));
 });
 
 test("@spec s-kgbzk2ph9e6jfb4 counts as changed a line whose text after // or # stands inside a string", async () => {
@@ -62,8 +62,8 @@ test("@spec s-kgbzk2ph9e6jfb4 counts as changed a line whose text after // or # 
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
   put(root, "src/open.ts", OPEN.replace("return amount;", `return "http://b" + amount;`));
   put(root, "src/paint.py", `# @spec ${sid("open")}\ndef paint():\n    return "#000"\n`);
-  await expectOne(root, new RegExp(`src/open\\.ts:1: .*${sid("open")}.*not checked`));
-  await expectOne(root, new RegExp(`src/paint\\.py:1: .*${sid("open")}.*not checked`));
+  await expectOne(root, new RegExp(`src/open\\.ts:1: .*${sid("open")}.*a draft node`));
+  await expectOne(root, new RegExp(`src/paint\\.py:1: .*${sid("open")}.*a draft node`));
 });
 
 test("@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose only change is a line inside a comment of several lines", async () => {
@@ -73,13 +73,13 @@ test("@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose only change is 
   git(root, "commit", "-qm", "a comment");
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
   put(root, "src/open.ts", OPEN.replace("  return amount;", "  /*\n   * Returns the amount as given.\n   */\n  return amount;"));
-  assert.ok(!(await messages(root)).some((m) => /not checked/.test(m)), (await messages(root)).join("\n"));
+  assert.ok(!(await messages(root)).some((m) => /a draft node/.test(m)), (await messages(root)).join("\n"));
 });
 
 test("@spec s-kgbzk2ph9e6jfb4 counts a change to a tag as a change to the symbol's code", async () => {
   const root = project();
   put(root, "src/open.ts", OPEN.replace(`@spec ${sid("open")}`, `@spec ${sid("draft")}`));
-  await expectOne(root, new RegExp(`src/open\\.ts:1: .*${sid("draft")}.*not checked`));
+  await expectOne(root, new RegExp(`src/open\\.ts:1: .*${sid("draft")}.*a draft node`));
 });
 
 test("@spec s-jau82aq9juv9zzh refuses a tag that stands on no symbol", async () => {
@@ -88,26 +88,26 @@ test("@spec s-jau82aq9juv9zzh refuses a tag that stands on no symbol", async () 
   await expectOne(root, /src\/open\.ts:6: a SpecTag that stands on no symbol/);
 });
 
-test("@spec s-jau82aq9juv9zzh refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying an unchecked node's sid", async () => {
+test("@spec s-jau82aq9juv9zzh refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying a draft node's sid", async () => {
   const root = project();
   put(root, "test/more.test.ts", `test("no sid here", () => {});\ntest("@spec ${NONE} gone", () => {});\ntest("@spec ${sid("draft")} drafted", () => {});\n`);
   await expectOne(root, /test\/more\.test\.ts:1: the test "no sid here" carries no SpecTag/);
   await expectOne(root, new RegExp(`test/more\\.test\\.ts:2: .*${NONE}.*no node`));
-  await expectOne(root, new RegExp(`test/more\\.test\\.ts:3: .*${sid("draft")}.*not checked`));
+  await expectOne(root, new RegExp(`test/more\\.test\\.ts:3: .*${sid("draft")}.*a draft node`));
 });
 
 test("@spec s-jau82aq9juv9zzh counts a test whose only change is its sid as a test the commit changes", async () => {
   const root = project();
   editSpec(root, (d) => (nodeIn(d, "open").meta.tests = [`test/open.test.ts::@spec ${sid("draft")} opens an account`]));
   put(root, "test/open.test.ts", OPEN_TEST.replace(sid("open"), sid("draft")));
-  await expectOne(root, new RegExp(`test/open\\.test\\.ts:1: .*${sid("draft")}.*not checked`));
+  await expectOne(root, new RegExp(`test/open\\.test\\.ts:1: .*${sid("draft")}.*a draft node`));
 });
 
 test("@spec s-rah8b37kytb682y refuses a rule whose code a commit adds or changes with no test carrying its sid", async () => {
   const root = project();
-  confirm(root, [sid("draft")], { me: OWNER });
+  approve(root, [sid("draft")], { me: OWNER });
   git(root, "add", "-A");
-  git(root, "commit", "-qm", "draft confirmed");
+  git(root, "commit", "-qm", "draft approved");
   put(root, "src/draft.ts", `/** @spec ${sid("draft")} */\nexport const drafted = 1;\n`);
   await expectOne(root, new RegExp(`${sid("draft")}.*no test`));
 });
@@ -150,7 +150,7 @@ test("@spec s-jau82aq9juv9zzh refuses a node's location in any file the reposito
   const root = project();
   put(root, "config/routes.yaml", `# as ${loc("contracts", "1.1")} says\n`);
   put(root, "notes.txt", "Read contracts/c and contracts/Account.\nThe file specs/contracts/c.json and contracts/c.json are paths.\n");
-  editSpec(root, (d) => d.nodes[0].children.push({ location: "", sid: sid("account term"), kind: "term", title: "account", status: "", text: "An account.", refs: [] }));
+  editSpec(root, (d) => d.nodes[0].children.push({ location: "", sid: sid("account term"), kind: "term", title: "account", status: "draft", text: "An account.", refs: [] }));
   await expectOne(root, /config\/routes\.yaml:1: .*contracts\/1\.1.*location/);
   await expectOne(root, /notes\.txt:1: contracts\/c is a node's location/);
   await expectOne(root, /notes\.txt:1: contracts\/Account is a node's location/);
@@ -189,7 +189,7 @@ test("@spec s-m8nmfsxkcfu7cjp leaves out of the citations the files the project'
 
 const notImplemented = async (root: string) => (await binding(root)).filter((f) => f.reported && f.message.startsWith("not implemented")).map((f) => `${f.where}: ${f.message}`);
 
-test("@spec s-6fw72j65jkqrfpf reports a checked rule no tagged symbol or no test that runs carries out, and refuses nothing for it", async () => {
+test("@spec s-6fw72j65jkqrfpf reports an approved rule no tagged symbol or no test that runs carries out, and refuses nothing for it", async () => {
   const root = project();
   assert.deepEqual(await messages(root), []);
   const found = await notImplemented(root);
@@ -212,7 +212,7 @@ test("@spec s-6fw72j65jkqrfpf counts a tag and a test of a rule implementing it,
     node("closing", { text: "Closing, carried out.", refs: [{ type: "implements", to: sid("close") }] }),
     node("closing detail", { text: "Closing, in detail.", refs: [{ type: "implements", to: sid("closing") }] }),
   ));
-  confirm(root, [sid("close"), sid("closing"), sid("closing detail")], { me: OWNER });
+  approve(root, [sid("close"), sid("closing"), sid("closing detail")], { me: OWNER });
   assert.equal((await notImplemented(root)).length, 3);
   put(root, "src/close.ts", `/** @spec ${sid("closing detail")} */\nexport function close() {}\n`);
   put(root, "test/close.test.ts", `test("@spec ${sid("closing detail")} closes", () => {});\n`);
@@ -227,7 +227,7 @@ test("@spec s-6fw72j65jkqrfpf leaves out a rule a node of the project's own guid
     data.nodes[0].children = [node("by people", { text: "Carried out by people.", refs: [{ type: "exempts", to }] })];
     writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
     reindex(root);
-    confirm(root, [sid("by people")], { me: OWNER });
+    approve(root, [sid("by people")], { me: OWNER });
   };
   exempting(sid("states"));
   assert.deepEqual(await notImplemented(root), []);
@@ -235,7 +235,8 @@ test("@spec s-6fw72j65jkqrfpf leaves out a rule a node of the project's own guid
   assert.deepEqual(await notImplemented(root), []);
   put(root, "specs/tech/debt.json", JSON.stringify({ schemaVersion: 1, scope: "tech", section: "debt", nodes: [node("debt", { kind: "section", text: "Set aside.", children: [node("slow export", { text: "The export is slow." })] })] }, null, 2) + "\n");
   reindex(root);
-  confirm(root, [sid("debt"), sid("slow export")], { me: OWNER });
+  approve(root, [sid("slow export")], { me: OWNER });
+  reindex(root);
   assert.deepEqual(await notImplemented(root), []);
 });
 
@@ -261,7 +262,7 @@ test("@spec s-m8nmfsxkcfu7cjp reads the tests and the documents of the tools for
 test("@spec s-jau82aq9juv9zzh reports a rule whose text changed after its code, and refuses nothing for it", async () => {
   const root = project();
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
-  confirm(root, [sid("open")], { me: OWNER });
+  approve(root, [sid("open")], { me: OWNER });
   git(root, "add", "-A");
   git(root, "commit", "-qm", "reworded");
   const found = await binding(root);
@@ -274,7 +275,7 @@ const lagging = async (root: string) => (await binding(root)).filter((f) => f.re
 test("@spec s-txbwsthdqhvyzd2 reports a node whose tests and code lag behind its text, naming each, and refuses nothing", async () => {
   const root = project();
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
-  confirm(root, [sid("open")], { me: OWNER });
+  approve(root, [sid("open")], { me: OWNER });
   git(root, "add", "-A");
   git(root, "commit", "-qm", "reworded");
   const found = await lagging(root);
@@ -297,7 +298,7 @@ test("@spec s-txbwsthdqhvyzd2 reports a node whose code has not caught up with i
 test("@spec s-txbwsthdqhvyzd2 counts the changes one commit makes as made at once", async () => {
   const root = project();
   editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
-  confirm(root, [sid("open")], { me: OWNER });
+  approve(root, [sid("open")], { me: OWNER });
   put(root, "test/open.test.ts", `test("@spec ${sid("open")} opens an account", () => { /* reworded */ });\n`);
   put(root, "src/open.ts", readFileSync(join(root, "src", "open.ts"), "utf8") + "// reworded\n");
   git(root, "add", "-A");
@@ -338,7 +339,7 @@ test("@spec s-dbk2vyeg8z5jxna passes the generated copies the RecordTypes produc
   await expectOne(missing, /^schemas\/checks\.json: missing/);
 });
 
-test("@spec s-dbk2vyeg8z5jxna holds a generated copy to what the last commit holds while a RecordType is unchecked, reporting the node", async () => {
+test("@spec s-dbk2vyeg8z5jxna holds a generated copy to what the last commit holds while a RecordType is a draft, reporting the node", async () => {
   const typed = typedProject();
   const path = join(typed, "specs/contracts/c.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
@@ -349,9 +350,9 @@ test("@spec s-dbk2vyeg8z5jxna holds a generated copy to what the last commit hol
   reindex(typed);
   assert.deepEqual(await messages(typed), []);
   const reported = (await binding(typed)).filter((f) => f.reported).map((f) => `${f.where}: ${f.message}`);
-  assert.ok(reported.some((m) => m.includes(sid("customer")) && /wait for its confirmation/.test(m)), reported.join("\n"));
+  assert.ok(reported.some((m) => m.includes(sid("customer")) && /wait for its approval/.test(m)), reported.join("\n"));
   put(typed, "src/types.ts", readFileSync(join(typed, "src/types.ts"), "utf8").replace("number: string;", "reference: string;"));
-  await expectOne(typed, new RegExp(`^src/types\\.ts: changed while the RecordTypes it is generated from wait for their confirmation: ${sid("customer")}`));
+  await expectOne(typed, new RegExp(`^src/types\\.ts: changed while the RecordTypes it is generated from wait for their approval: ${sid("customer")}`));
 });
 
 test("@spec s-dbk2vyeg8z5jxna refuses a name that cannot be generated, and a second list of the files of the types", async () => {
@@ -374,13 +375,14 @@ test("@spec s-pvzms7d8kxb8dk2 reads a file of types as the system's code where t
   await expectOne(root, new RegExp(`${sid("customer")}.*its list of code, none, is not what the SpecTags produce: src/types\\.ts`));
 });
 
-test("@spec s-vsh384ybt4w25a2 reports a checked node of a project's own kind that needs code and has none, but not one that needs no code, and lets a test carry its sid", async () => {
+test("@spec s-vsh384ybt4w25a2 reports an approved node of a project's own kind that needs code and has none, but not one that needs no code, and lets a test carry its sid", async () => {
   const withKind = (needsCode: boolean) => {
     const root = project();
     writeFileSync(join(root, "specs", "_schema", "project.schema.json"), JSON.stringify({ kinds: { job: { needsCode, schema: {} } } }));
     editSpec(root, (d) => d.nodes[0].children.push(node("nightly", { kind: "job" })));
     reindex(root);
-    confirm(root, [sid("nightly"), sid("accounts")], { me: OWNER });
+    approve(root, [sid("nightly")], { me: OWNER });
+    reindex(root);
     return root;
   };
   const coded = withKind(true);
@@ -414,7 +416,7 @@ test("@spec s-dbk2vyeg8z5jxna compares the files a project's own generator print
 test("@spec s-utf4mbt7ref8g9c holds the code of a project's own check to a test carrying the sid of the rule listing it, and each of its tests to that sid", async () => {
   const root = project();
   editSpec(root, (d) => d.nodes[0].children.push(node("our checks", { list: { of: "the project's own checks", property: "name", members: [{ name: "scan", onFailure: "refused" }] } })));
-  confirm(root, [sid("our checks")], { me: OWNER });
+  approve(root, [sid("our checks")], { me: OWNER });
   const config = JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8"));
   config.checks = [{ rule: sid("our checks"), name: "scan", command: "node tools/scan.mjs", code: ["tools/scan.mjs"], tests: ["tools/scan.test.mjs"] }];
   writeFileSync(join(root, "sheriff.config.json"), JSON.stringify(config));
@@ -429,7 +431,7 @@ test("@spec s-utf4mbt7ref8g9c holds the code of a project's own check to a test 
   assert.ok(!(await messages(root)).some((m) => /scan/.test(m)), (await messages(root)).join("\n"));
 });
 
-test("@spec s-j9r8z4xdrfkfs47 in draft mode reports an untagged symbol a commit leaves alone and refuses one it changes; in live mode refuses both", async () => {
+test("@spec s-j9r8z4xdrfkfs47 while the commit leaves the specification a draft reports an untagged symbol a commit leaves alone and refuses one it changes; while it leaves it approved refuses both", async () => {
   const draft = project();
   put(draft, "src/old.ts", "export const legacy = 1;\n");
   git(draft, "add", "-A");
@@ -440,35 +442,72 @@ test("@spec s-j9r8z4xdrfkfs47 in draft mode reports an untagged symbol a commit 
   put(draft, "src/old.ts", "export const legacy = 2;\n");
   await expectOne(draft, /legacy carries no SpecTag/);
   const live = project();
-  putLive(live);
+  approveSpecification(live);
   git(live, "add", "-A");
-  git(live, "commit", "-qm", "live");
+  git(live, "commit", "-qm", "approved");
   put(live, "src/old.ts", "export const legacy = 1;\n");
   git(live, "add", "-A");
   git(live, "commit", "-qm", "old code");
   await expectOne(live, /legacy carries no SpecTag/);
 });
 
-test("@spec s-j9r8z4xdrfkfs47 refuses a commit putting the specification live with the rule unchecked or a symbol untagged, and one taking it back", async () => {
-  const unchecked = project();
-  putLive(unchecked, false);
-  await expectOne(unchecked, /puts the specification live.*not checked/);
+test("@spec s-j9r8z4xdrfkfs47 refuses a commit approving the specification while a symbol carries no SpecTag", async () => {
   const untagged = project();
   put(untagged, "src/old.ts", "export const legacy = 1;\n");
   git(untagged, "add", "-A");
   git(untagged, "commit", "-qm", "old code");
-  putLive(untagged);
+  approveSpecification(untagged);
   await expectOne(untagged, /legacy carries no SpecTag/);
-  const back = project();
-  putLive(back);
-  git(back, "add", "-A");
-  git(back, "commit", "-qm", "live");
-  const path = join(back, "specs", "_guidelines", "project.json");
-  const data = JSON.parse(readFileSync(path, "utf8"));
-  data.nodes[0].children = data.nodes[0].children.filter((n: { sid: string }) => n.sid !== sid("live"));
-  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
-  reindex(back);
-  await expectOne(back, /takes out the rule that puts the specification live/);
+});
+
+/** A project whose specification is approved, committed. */
+function approvedProject(): string {
+  const root = project();
+  approveSpecification(root);
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "approved");
+  return root;
+}
+
+test("@spec s-qzthyh7yqvfhsa2 refuses a commit putting the specification back to draft by an edit of its rule's wording or by its removal, and passes one recording an owner's withdrawal", async () => {
+  const path = (root: string) => join(root, "specs", "_guidelines", "project.json");
+  const edited = approvedProject();
+  writeFileSync(path(edited), readFileSync(path(edited), "utf8").replace("This project's specification is approved.", "This project's specification is approved, for now."));
+  reindex(edited);
+  await expectOne(edited, /puts the specification back to draft without a withdrawal/);
+  const removed = approvedProject();
+  const rule = approvalRuleSid(removed);
+  const data = JSON.parse(readFileSync(path(removed), "utf8"));
+  data.nodes[0].children = data.nodes[0].children.filter((n: { sid: string }) => n.sid !== rule);
+  writeFileSync(path(removed), JSON.stringify(data, null, 2) + "\n");
+  reindex(removed);
+  await expectOne(removed, /puts the specification back to draft without a withdrawal/);
+  const withdrawn = approvedProject();
+  approveSpecification(withdrawn, { withdraw: true });
+  assert.deepEqual(await messages(withdrawn), []);
+});
+
+test("@spec s-j9r8z4xdrfkfs47 counts a withdrawal of the rule's approval of whichever wording, by one of the specification's owners as the commit holds them", async () => {
+  const path = (root: string) => join(root, "specs", "_guidelines", "project.json");
+  const reworded = approvedProject();
+  writeFileSync(path(reworded), readFileSync(path(reworded), "utf8").replace("This project's specification is approved.", "This project's specification is approved, for now."));
+  reindex(reworded);
+  approve(reworded, [approvalRuleSid(reworded)], { me: OWNER, withdraw: true });
+  assert.deepEqual(await messages(reworded), []);
+  const stranger = approvedProject();
+  writeFileSync(join(stranger, "specs", "_approvals.jsonl"), readFileSync(join(stranger, "specs", "_approvals.jsonl"), "utf8") + JSON.stringify({ sid: approvalRuleSid(stranger), fingerprint: "0", withdrawn: true, by: "stranger@example.org" }) + "\n");
+  writeFileSync(path(stranger), readFileSync(path(stranger), "utf8").replace('"status": "approved",\n          "text": "This project', '"status": "draft",\n          "text": "This project'));
+  await expectOne(stranger, /puts the specification back to draft without a withdrawal/);
+});
+
+test("@spec s-j9r8z4xdrfkfs47 reads the specification before the commit as an earlier release wrote it, checked standing for approved", async () => {
+  const root = approvedProject();
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const was = readFileSync(path, "utf8");
+  writeFileSync(path, was.replace('"status": "approved",\n          "text": "This project', '"status": "checked",\n          "text": "This project'));
+  git(root, "commit", "-qam", "as an earlier release wrote it");
+  writeFileSync(path, was);
+  assert.deepEqual(await messages(root), []);
 });
 
 test("@spec s-xzcw3hv4hmxz7h7 sheriff binding refuses a file the schema refuses before it checks anything, naming the file and every refusal in it", async () => {
@@ -516,10 +555,10 @@ test("@spec s-rah8b37kytb682y counts as unchanged a test whose only change puts 
     nodeIn(d, "open").meta.tests = [`test/open.test.ts::@spec ${sid("open")} opens an account`];
   });
   put(root, "test/open.test.ts", OPEN_TEST);
-  assert.ok(!(await messages(root)).some((m) => /test\/open\.test\.ts.*not checked/.test(m)), (await messages(root)).join("\n"));
+  assert.ok(!(await messages(root)).some((m) => /test\/open\.test\.ts.*a draft node/.test(m)), (await messages(root)).join("\n"));
   put(root, "test/open.test.ts", OPEN_TEST.replace("opens an account", "opens an account at once"));
   editSpec(root, (d) => (nodeIn(d, "open").meta.tests = [`test/open.test.ts::@spec ${sid("open")} opens an account at once`]));
-  await expectOne(root, new RegExp(`test/open\\.test\\.ts:1: .*${sid("open")}.*not checked`));
+  await expectOne(root, new RegExp(`test/open\\.test\\.ts:1: .*${sid("open")}.*a draft node`));
 });
 
 test("@spec s-utf4mbt7ref8g9c in draft mode reports a test carrying no SpecTag that a commit leaves alone and refuses one it adds or changes; in live mode refuses both", async () => {
@@ -535,21 +574,21 @@ test("@spec s-utf4mbt7ref8g9c in draft mode reports a test carrying no SpecTag t
   put(draft, "test/new.test.ts", `test("checks anew", () => {});\n`);
   await expectOne(draft, /"checks anew" carries no SpecTag/);
   const live = project();
-  putLive(live);
+  approveSpecification(live);
   git(live, "add", "-A");
-  git(live, "commit", "-qm", "live");
+  git(live, "commit", "-qm", "approved");
   put(live, "test/old.test.ts", `test("checks the old way", () => {});\n`);
   git(live, "add", "-A");
   git(live, "commit", "-qm", "old tests");
   await expectOne(live, /"checks the old way" carries no SpecTag/);
 });
 
-test("@spec s-j9r8z4xdrfkfs47 refuses a commit putting the specification live while a test carries no SpecTag", async () => {
+test("@spec s-j9r8z4xdrfkfs47 refuses a commit approving the specification while a test carries no SpecTag", async () => {
   const root = project();
   put(root, "test/old.test.ts", `test("checks the old way", () => {});\n`);
   git(root, "add", "-A");
   git(root, "commit", "-qm", "old tests");
-  putLive(root);
+  approveSpecification(root);
   await expectOne(root, /"checks the old way" carries no SpecTag/);
 });
 

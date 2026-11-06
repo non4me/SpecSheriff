@@ -73,30 +73,32 @@ test("@spec s-st6td4mua9uqt9z names sheriff reindex where only a test carrying a
   assert.match(refused ?? "", new RegExp(`no test carries the SpecTag of ${sid("open")}.*bare sid.*sheriff reindex`));
 });
 
-test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node checked over a wording its owner never confirmed", async () => {
+test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node approved over a wording for which no approval stands", async () => {
   const root = codeProject();
   const path = join(root, "specs", "contracts", "c.json");
   const text = readFileSync(path, "utf8");
   const refused = await guard(root, edit(path, "What open requires.", "What open requires, reworded."));
-  assert.match(refused ?? "", new RegExp(`${sid("open")}.*checked`));
-  const emptied = text.replace("What open requires.", "What open requires, reworded.").replace(/("sid": "[^"]+",\n\s+"kind": "rule",\n\s+"title": "open",\n\s+"status": )"checked"/, '$1""');
-  assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: emptied } }), null);
+  assert.match(refused ?? "", new RegExp(`${sid("open")}.*would stand approved over a wording for which no approval stands`));
+  const drafted = text.replace("What open requires.", "What open requires, reworded.").replace(/("sid": "[^"]+",\n\s+"kind": "rule",\n\s+"title": "open",\n\s+"status": )"approved"/, '$1"draft"');
+  assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: drafted } }), null);
 });
 
-test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit giving a checked node an owner who never confirmed it", async () => {
+test("@spec s-83ev4wwesbwnhnp lets an edit change a node's owners, an approved node keeping its approval, and leaves a section's status to the reindex", async () => {
   const root = codeProject();
   const path = join(root, "specs", "_guidelines", "project.json");
-  const refused = await guard(root, edit(path, `"owner": "${OWNER}"`, `"owner": "other@example.com"`));
-  assert.match(refused ?? "", new RegExp(`${sid("open")}.*other@example\\.com`));
+  assert.equal(await guard(root, edit(path, `"${OWNER}"`, `"other@example.com"`)), null);
+  const contracts = join(root, "specs", "contracts", "c.json");
+  const section = readFileSync(contracts, "utf8").replace(/("title": "accounts",\n\s+"status": )"[a-z]+"/, '$1"approved"');
+  assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: contracts, content: section } }), null);
 });
 
-test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit of the confirmations made with the agent's file tools", async () => {
+test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit of the approvals made with the agent's file tools", async () => {
   const root = codeProject();
-  const path = join(root, "specs", "_confirmations.jsonl");
-  const forged = `{"sid":"${sid("draft")}","fingerprint":"0","owner":"${OWNER}","confirmed":true}\n`;
-  assert.match((await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: readFileSync(path, "utf8") + forged } })) ?? "", /confirmations.*sheriff confirm/);
+  const path = join(root, "specs", "_approvals.jsonl");
+  const forged = `{"sid":"${sid("draft")}","fingerprint":"0","by":"${OWNER}"}\n`;
+  assert.match((await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: readFileSync(path, "utf8") + forged } })) ?? "", /_approvals\.jsonl is written by sheriff approve alone/);
   const [first] = readFileSync(path, "utf8").split("\n");
-  assert.match((await guard(root, edit(path, first!, first!.replace(OWNER, "other@example.com")))) ?? "", /confirmations.*sheriff confirm/);
+  assert.match((await guard(root, edit(path, first!, first!.replace(OWNER, "other@example.com")))) ?? "", /_approvals\.jsonl is written by sheriff approve alone/);
 });
 
 test("@spec s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside the repository's code, tests and specification", async () => {
@@ -111,12 +113,12 @@ test("@spec s-n76wt2bkqdmh78x judges each file a patch adds, updates, deletes or
   const root = codeProject();
   const line = readFileSync(join(root, "specs", "contracts", "c.json"), "utf8").split("\n").find((l) => l.includes("What open requires."))!;
   const reworded = await guard(root, patch("*** Update File: specs/contracts/c.json", "@@", `-${line}`, `+${line.replace("requires.", "requires, reworded.")}`));
-  assert.match(reworded ?? "", new RegExp(`${sid("open")}.*checked`));
+  assert.match(reworded ?? "", new RegExp(`${sid("open")}.*would stand approved`));
   const added = await guard(root, patch("*** Add File: src/draft.ts", `+/** @spec ${sid("draft")} */`, "+export const drafted = 1;"));
   assert.match(added ?? "", new RegExp(`no test carries the SpecTag of ${sid("draft")}`));
-  assert.match((await guard(root, patch("*** Delete File: specs/_confirmations.jsonl"))) ?? "", /confirmations.*sheriff confirm/);
-  const moved = await guard(root, patch("*** Update File: README.md", "*** Move to: specs/_confirmations.jsonl", "@@", `-See §${sid("open")}.`, "+forged"));
-  assert.match(moved ?? "", /confirmations.*sheriff confirm/);
+  assert.match((await guard(root, patch("*** Delete File: specs/_approvals.jsonl"))) ?? "", /_approvals\.jsonl is written by sheriff approve alone/);
+  const moved = await guard(root, patch("*** Update File: README.md", "*** Move to: specs/_approvals.jsonl", "@@", `-See §${sid("open")}.`, "+forged"));
+  assert.match(moved ?? "", /_approvals\.jsonl is written by sheriff approve alone/);
   assert.equal(await guard(root, patch("*** Update File: src/open.ts", "@@", " export function open(amount: number) {", "-  return amount;", "+  return amount * 2;")), null);
   const declared = OPEN_TEST.trimEnd();
   assert.equal(await guard(root, patch("*** Update File: test/open.test.ts", "*** Move to: test/opened.test.ts", "@@", `-${declared}`, `+${declared.replace("an account", "an account at once")}`)), null);

@@ -2,9 +2,9 @@ import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { loadConfig, type Config } from "./config.ts";
-import { everConfirmed, holds, readConfirmations } from "./confirmations.ts";
+import { addedApprovals, everApproved, readApprovals, stands } from "./approvals.ts";
 import { keysTwice } from "./json-text.ts";
-import { BASE_KINDS, citations, isProjectKind, locations, modelOf, incoming, isDomain, LEVELS_RULE, levelsOf, ownerOf, partOf, PROJECT } from "./model.ts";
+import { APPROVAL_RULE, BASE_KINDS, builtStatuses, citations, fingerprint, isContainer, isProjectKind, locations, modelOf, incoming, isDomain, LEVELS_RULE, levelsOf, ownersOf, partOf, PROJECT, specificationOwners } from "./model.ts";
 import { headerIndex, judgedHere } from "./reindex.ts";
 import { EXTENSION, loadSchema, readExtension, SCHEMA_FILES } from "./schema.ts";
 import { fieldKey, gather } from "./values.ts";
@@ -90,13 +90,26 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     if (ids.has(sid) && ids.get(sid) !== node.location) refuse(sid, `location ${node.location} is not the one its place gives, ${ids.get(sid)}`);
   }
 
-  // Confirmations and the archive.
-  const lines = readConfirmations(root);
+  // Approvals, the statuses of sections and headers, and the archive.
+  const lines = readApprovals(root);
+  const statuses = builtStatuses(spec);
   for (const [sid, { node, file }] of spec.nodes) {
-    if (node.status === "checked" && judgedHere(file.path, config.writesSpecSheriffGuidelines) && !holds(spec, lines, sid)) {
-      refuse(sid, `checked, but no confirmation by its owner ${ownerOf(spec, sid) ?? "(none named)"} holds its wording`);
+    if (judgedHere(file.path, config.writesSpecSheriffGuidelines)) {
+      if (isContainer(node.kind)) {
+        if (statuses.get(sid) !== node.status) refuse(sid, `its status is ${node.status}, while the nodes under it make it ${statuses.get(sid)} (s-9kfdycuq34beqvs)`);
+      } else if (node.status === "approved" && !stands(lines, sid, fingerprint(node))) {
+        refuse(sid, "approved, but no approval stands for its wording");
+      }
     }
     if (node.archived) refuse(sid, "carries the reason of its removal, but is not in the archive");
+  }
+  // Who an approval names is judged at the commit recording it, against the owners as that commit holds them.
+  for (const line of addedApprovals(root, lines)) {
+    const at = spec.nodes.get(line.sid);
+    if (!at || line.withdrawn || !judgedHere(at.file.path, config.writesSpecSheriffGuidelines)) continue;
+    const approving = at.node.refs?.some((r) => r.type === "refines" && r.to === APPROVAL_RULE);
+    const owners = approving ? specificationOwners(spec) : ownersOf(spec, line.sid);
+    if (!owners.includes(line.by)) refuse(line.sid, `approved by ${line.by}, who is none of its ${approving ? "specification's " : ""}owners (${owners.join(", ") || "none named"})`);
   }
   const archived = new Map<string, { node: SpecNode; path: string }>();
   for (const f of spec.archive) {
@@ -104,13 +117,14 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
       archived.set(node.sid, { node, path: f.path });
       if (!node.archived) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive without the reason for its removal" });
       if (node.refs?.some((r) => r.from)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive holding a link pointing at it" });
-      if (!everConfirmed(lines, node.sid)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive, but was never confirmed" });
+      if (isContainer(node.kind)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive, but a section or a domain's header is deleted outright" });
+      else if (!everApproved(lines, node.sid)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive, but was never approved" });
     });
   }
   for (const [sid, was] of before?.nodes ?? []) {
     if (spec.nodes.has(sid) || !judgedHere(was.file.path, config.writesSpecSheriffGuidelines)) continue;
-    if (everConfirmed(lines, sid) && !archived.has(sid)) {
-      findings.push({ where: `${was.file.path}: ${sid} (${was.node.location})`, message: "removed after a confirmation was given for it, but not in the archive with the reason for its removal" });
+    if (!isContainer(was.node.kind) && everApproved(lines, sid) && !archived.has(sid)) {
+      findings.push({ where: `${was.file.path}: ${sid} (${was.node.location})`, message: "removed after an approval was given for it, but not in the archive with the reason for its removal" });
     }
   }
 
@@ -141,9 +155,10 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     if (stored.join("|") !== want.join("|")) refuse(sid, "its incoming links are not what the outgoing ones produce");
   }
 
-  // Wording of checked nodes, and sections.
+  // Words in capitals in approved nodes and in every section and header, and every section holding a rule.
   for (const [sid, { node }] of spec.nodes) {
-    if (node.status !== "checked") continue;
+    if (node.kind === "section" && !holdsRule(node)) refuse(sid, "a section that holds no rule");
+    if (node.status !== "approved" && !isContainer(node.kind)) continue;
     for (const field of ["title", "text", "reason"] as const) {
       const value = node[field];
       if (typeof value !== "string") continue;
@@ -151,10 +166,9 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
       // A word in capitals of any script, two characters or more; three or more of them running.
       const word = String.raw`(?<![\p{L}\p{N}_])\p{Lu}[\p{Lu}\p{N}-]*[\p{Lu}\p{N}](?![\p{L}\p{N}_])`;
       for (const m of bare.matchAll(new RegExp(`${word}(?:[ \\t]+${word}){2,}`, "gu"))) {
-        refuse(sid, `checked, but its ${field} sets "${m[0]}" in capitals`);
+        refuse(sid, `${isContainer(node.kind) ? "a section or a header" : "approved"}, but its ${field} sets "${m[0]}" in capitals`);
       }
     }
-    if (node.kind === "section" && !holdsRule(node)) refuse(sid, "a checked section that holds no rule");
   }
 
   domains(spec, built, refuse, findings);

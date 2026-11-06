@@ -4,8 +4,8 @@
 # map written and the generated files written, where a file under specs/, sheriff.config.json or a project
 # generator's code differs; then the checks run over the working tree, its difference from the last commit read as
 # the commit. What the generators and the checks refuse is handed to the agent: Claude Code reads exit code 2 and
-# passes standard error on, Codex reads a reason written as JSON to standard output. Each node whose status the
-# reindex emptied is told to the agent too. The plugin is the directory Claude Code names, or for Codex the one
+# passes standard error on, Codex reads a reason written as JSON to standard output. Each node the reindex made a
+# draft is told to the agent too. The plugin is the directory Claude Code names, or for Codex the one
 # above this script, and its tools name its agent.
 plugin="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
@@ -31,7 +31,7 @@ if [ "$changed" = regen ]; then
   if ! reindexed=$(sheriff reindex 2>&1) || ! found=$(sheriff export 2>&1 >/dev/null) || ! found=$(sheriff render 2>&1 >/dev/null); then
     refuse "$reindexed$found"
   fi
-  emptied=$(printf '%s\n' "$reindexed" | grep '^status emptied: ')
+  emptied=$(printf '%s\n' "$reindexed" | grep '^made a draft: ')
   found=$(sheriff types 2>&1) || refused="$found
 "
 fi

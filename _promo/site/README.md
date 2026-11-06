@@ -34,7 +34,7 @@ repository, Vladimir Trojanenko, settles what it leaves open.
   page is shared, stay light.
 - **The site says that it is still being built.** The masthead of every page, the one shown for an
   address that has no page among them, carries right of the brand the stamp of the style, the one a
-  rule's page sets as Checked, at half its size there, turned a little further, set lower, its corner overlapping the foot of the last letter of the name, reading "In progress", as written.
+  rule's page sets as Approved, at half its size there, turned a little further, set lower, its corner overlapping the foot of the last letter of the name, reading "In progress", as written.
 
 ## The pages
 
@@ -88,11 +88,11 @@ The node's structure is [`specs/_schema/node.schema.json`](../../specs/_schema/n
 `npx sheriff show <sid>` prints in this repository is everything the page shows. In particular:
 
 - the title, the kind, the text and, apart from it, the reason;
-- the status: a node is checked when its owner has confirmed its present wording, recorded in
-  [`specs/_confirmations.jsonl`](../../specs/_confirmations.jsonl); the page says "confirmed by its
-  owner" or "awaiting its owner's confirmation", and never shows the email address that file
-  records;
-- a list's members, a section's or a header's owner;
+- the status: a node is approved when one of its owners has approved its present wording, recorded
+  in [`specs/_approvals.jsonl`](../../specs/_approvals.jsonl), and a draft otherwise; a section's and
+  a domain header's status is built from the nodes under it. The page says "approved" or "a draft,
+  awaiting its owners' approval", and never shows the email address that file records;
+- a list's members, a section's or a header's owners;
 - the links it makes and the links made to it, each with its type (what each type means is the rule
   §s-sn6au3vcr9uy5pm) and the other node's title;
 - the decisions taken on it, the work deferred on it and its comments;
@@ -136,7 +136,7 @@ it holds.
 - Build the pages from the components of [`_promo/style/components/`](../style/components/): the
   masthead with the star, the stamp right of it and the navigation, the colophon with the motto, prose for every document,
   the ledger for tables, a sid for every citation, a ticket or a note where a page sets something
-  apart. A rule's status may be shown as a stamp (Checked).
+  apart. A rule's status may be shown as a stamp (Approved).
 - The star is inlined from [`_promo/brand/icon.svg`](../brand/icon.svg), its stroke in the `ink` token;
   the browser's icons and the default preview for sharing are in
   [`_promo/brand/exports/`](../brand/exports/) (`favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`,

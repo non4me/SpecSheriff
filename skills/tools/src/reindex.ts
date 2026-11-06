@@ -4,9 +4,9 @@ import { join, posix } from "node:path";
 import { readCode } from "./code.ts";
 import { loadConfig, readsAs } from "./config.ts";
 import { trackedFiles } from "./diff.ts";
-import { holds, readConfirmations } from "./confirmations.ts";
+import { migrateApprovals, readApprovals, stands } from "./approvals.ts";
 import { mergeKeys, type KeyTwice } from "./json-text.ts";
-import { incoming, locations, partOf, SID } from "./model.ts";
+import { APPROVAL_RULE, approvalRule, approvalRuleNode, builtStatuses, fingerprint, incoming, isContainer, locations, partOf, PROJECT, SID } from "./model.ts";
 import { schemaRefusals } from "./schema.ts";
 import { fieldKey, fieldsOf, gather } from "./values.ts";
 import { canonical, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
@@ -14,8 +14,8 @@ import { canonical, specPaths, withTaken, type SpecFile, type SpecNode, type Spe
 export interface ReindexReport {
   /** Every key whose values were merged, with the file it is in. */
   merged: Array<KeyTwice & { file: string }>;
-  /** The sids of the nodes whose status was emptied. */
-  emptied: string[];
+  /** The sids of the nodes, sections and domains' headers left out, the reindex made a draft. */
+  drafted: string[];
   /** The files written, because something in them changed. */
   written: string[];
 }
@@ -50,6 +50,14 @@ function renameEarlier(files: SpecFile[]): void {
     });
     const node = Object.fromEntries(entries) as SpecNode;
     if (RENAMED_KINDS[node.kind]) node.kind = RENAMED_KINDS[node.kind]!;
+    // Earlier releases wrote a draft as "" and an approval as "checked", and one owner where a list stands now.
+    if (node.status === "") node.status = "draft";
+    if (node.status === "checked") node.status = "approved";
+    if (typeof node.owner === "string") {
+      const renamed = Object.entries(node).map(([k, v]): [string, unknown] => (k === "owner" ? ["owners", [v]] : [k, v]));
+      for (const k of Object.keys(node)) delete (node as Record<string, unknown>)[k];
+      Object.assign(node, Object.fromEntries(renamed));
+    }
     // An empty own list was how earlier releases said a field takes the values the domains add.
     if (node.kind === "recordType") for (const f of fieldsOf(node)) {
       if (f.type.is === "one of" && Array.isArray(f.type.values) && !f.type.values.length && !f.type.from) {
@@ -68,7 +76,8 @@ const A_SID = "s-222222222222222";
 /**
  * A copy of a file in which what the reindex writes itself holds a value the schema takes, so that the validation
  * leaves it out (s-xzcw3hv4hmxz7h7): the links pointing at a node everywhere; outside the archive, a sid a node lacks,
- * every location, a header's index of its sections and the values gathered beside a field.
+ * every location, a header's index of its sections, the values gathered beside a field and the status of a section and
+ * of a domain's header.
  */
 function asValidated(f: SpecFile): unknown {
   const archived = partOf(f.path).part.startsWith("_archive");
@@ -88,6 +97,7 @@ function asValidated(f: SpecFile): unknown {
       if (!("sid" in n)) n.sid = A_SID;
       n.location = "x";
       if (n.kind === "domain") n.sections = [];
+      if (isContainer(n.kind as string)) n.status = "draft";
       ungathered(n.fields);
     }
     if (Array.isArray(n.children)) n.children.forEach(visit);
@@ -140,14 +150,14 @@ export function headerIndex(spec: Specification, sections: SpecNode[], built: Re
   });
 }
 
-/** Whether a node's status is judged by the confirmations here, rather than taken with the SpecSheriff guidelines at their version. */
+/** Whether a node's status is judged by the approvals here, rather than taken with the SpecSheriff guidelines at their version. */
 export function judgedHere(path: string, writesSpecSheriffGuidelines: boolean): boolean {
   return writesSpecSheriffGuidelines || !partOf(path).specSheriffGuidelines;
 }
 
 export function reindex(root: string): ReindexReport {
   const { writesSpecSheriffGuidelines } = loadConfig(root);
-  const report: ReindexReport = { merged: [], emptied: [], written: [] };
+  const report: ReindexReport = { merged: [], drafted: [], written: [] };
   const texts = new Map<string, string>();
   const files: SpecFile[] = specPaths(root).map((path) => {
     const text = readFileSync(join(root, path), "utf8");
@@ -164,6 +174,17 @@ export function reindex(root: string): ReindexReport {
   // Validated once what an earlier release wrote is changed, and before anything is computed (s-xzcw3hv4hmxz7h7).
   const refused = schemaRefusals(root, files.map((f) => ({ path: f.path, data: asValidated(f) })));
   if (refused.length) throw new Error(`the schema refuses what the reindex reads, so it writes no file:\n${refused.map((r) => `${r.where}: ${r.message}`).join("\n")}`);
+  // A specification without the rule approving it gets the rule as `sheriff init` writes it, a draft (s-f5rz6b7dhxejjts).
+  const project = files.find((f) => f.path === PROJECT);
+  const top = project?.data.nodes?.[0];
+  // The base's rule it refines is the SpecSheriff guidelines', which a project takes and their repository holds.
+  const holdsBase = (ns: SpecNode[] = []): boolean => ns.some((n) => n.sid === APPROVAL_RULE || holdsBase(n.children));
+  if (top && (!writesSpecSheriffGuidelines || files.some((f) => holdsBase(f.data.nodes)))) {
+    const all: SpecNode[] = [];
+    const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (all.push(n), walk(n.children)));
+    walk(project!.data.nodes);
+    if (!approvalRule(all)) top.children = [...(top.children ?? []), approvalRuleNode()];
+  }
   giveSids(files);
   const spec = withTaken(root, files);
 
@@ -187,13 +208,22 @@ export function reindex(root: string): ReindexReport {
     }
   }
 
-  const lines = readConfirmations(root);
+  // An approved node whose wording no approval stands for is a draft (s-5ah25f6gy99panq); a section's and a domain's
+  // header's status is then built from the nodes under it (s-9kfdycuq34beqvs).
+  const lines = readApprovals(root);
   for (const [sid, { node, file }] of spec.nodes) {
-    if (node.status === "checked" && judgedHere(file.path, writesSpecSheriffGuidelines) && !holds(spec, lines, sid)) {
-      node.status = "";
-      report.emptied.push(sid);
+    if (isContainer(node.kind) || !judgedHere(file.path, writesSpecSheriffGuidelines)) continue;
+    if (node.status === "approved" && !stands(lines, sid, fingerprint(node))) {
+      node.status = "draft";
+      report.drafted.push(sid);
     }
   }
+  for (const [sid, status] of builtStatuses(spec)) {
+    const at = spec.nodes.get(sid)!;
+    if (judgedHere(at.file.path, writesSpecSheriffGuidelines)) at.node.status = status;
+  }
+  // The confirmations an earlier release kept move into the approvals, read above from either file.
+  if (migrateApprovals(root)) report.written.push("specs/_approvals.jsonl");
 
   // Only the repository's own files are written, never the SpecSheriff guidelines it takes from the tools.
   for (const f of [...spec.files, ...spec.archive]) {

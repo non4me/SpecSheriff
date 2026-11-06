@@ -51,7 +51,7 @@ function fieldsWithGathered(spec: Specification, fields: Array<Record<string, un
  * heading level deeper, only where asked for.
  */
 export function nodeMarkdown(spec: Specification, n: SpecNode, depth: number, { metadata = true, children = true } = {}): string {
-  const parts = [`${"#".repeat(Math.min(depth, 6))} ${n.location} ${n.title}`, `\`${n.sid}\` · ${n.kind} · ${n.status || "unchecked"}`];
+  const parts = [`${"#".repeat(Math.min(depth, 6))} ${n.location} ${n.title}`, `\`${n.sid}\` · ${n.kind} · ${n.status}`];
   if (n.text) parts.push(n.text);
   if (n.reason) parts.push(`*Why:* ${n.reason}`);
   for (const [key, value] of Object.entries(n)) {

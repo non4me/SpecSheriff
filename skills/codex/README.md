@@ -33,8 +33,11 @@ specification. Ask the agent to set the repository up for SpecSheriff.
 
 **What it changes.** `sheriff init --agent codex` writes the git hooks into `.githooks/` and turns
 them on; writes the agent's hooks for Codex into `.codex/hooks.json`, beside any hook already there;
-writes `sheriff.config.json`; and writes `specs/_guidelines/project.json`, naming the owner. It
-replaces no file that differs from what it would write, naming each one. The agent then commits what
+has git merge `specs/_approvals.jsonl` by union, by a line of `.gitattributes`, so that the approvals
+two branches record merge without a conflict; writes `sheriff.config.json`; and writes `specs/_guidelines/project.json`, naming you as the
+specification's owner. The specification is a draft until its owners approve the rule "The specification is
+approved" that `project.json` holds, by `sheriff approve <sid>`: at once where the repository holds no
+code yet, and otherwise once every symbol and every test carries its SpecTag. It replaces no file that differs from what it would write, naming each one. The agent then commits what
 init wrote. Codex's sandbox lets nothing write into `.codex/` or git's index, so the agent asks you
 to let `sheriff init` and the commit run outside it.
 
@@ -100,3 +103,9 @@ node ~/.codex/plugins/cache/specsheriff-marketplace/specsheriff/<version>/tools/
 
 `codex plugin marketplace upgrade specsheriff-marketplace` takes a new release; Codex keeps only the
 version installed last.
+
+From 0.6.0 a node's status is `draft` or `approved`, a part may name several `owners`, and
+`sheriff approve` replaces `sheriff confirm`. The first `sheriff reindex` of 0.6.0 rewrites what an
+earlier release wrote — `""` and `checked`, `owner`, `specs/_confirmations.jsonl` — and keeps every
+approval; it names each file it writes, for you to commit. A project's own check that reads `owner`
+from `sheriff model` reads `owners`, a list, from then on.

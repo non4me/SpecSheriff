@@ -377,9 +377,9 @@ export function generateTypes(spec: Specification): { files: GeneratedFile[]; re
  * Writes each generated file that is missing or holds, line endings aside, anything else than what the
  * nodes generate, and names it; writes nothing where anything is refused.
  */
-/** The RecordTypes not yet checked, which the code generated from the nodes waits for (s-kh8qcd5kxgh9z3j). */
+/** The RecordTypes not yet approved, which the code generated from the nodes waits for (s-kh8qcd5kxgh9z3j). */
 export function waitingRecords(spec: Specification): string[] {
-  return [...spec.nodes].filter(([, { node }]) => node.kind === "recordType" && node.status !== "checked").map(([sid]) => sid);
+  return [...spec.nodes].filter(([, { node }]) => node.kind === "recordType" && node.status !== "approved").map(([sid]) => sid);
 }
 
 export function writeTypes(root: string): { written: string[]; refusals: Finding[]; waiting: string[] } {

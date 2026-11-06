@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { reindex } from "../../src/reindex.ts";
 import { loadSpecification } from "../../src/spec-files.ts";
-import { citations, fingerprint, incoming, locations, modelOf, LEVELS_RULE, ownerOf, partOf } from "../../src/model.ts";
+import { APPROVAL_RULE, builtStatuses, citations, fingerprint, incoming, locations, modelOf, LEVELS_RULE, ownersOf, partOf, specificationApproved } from "../../src/model.ts";
 import { REPO } from "../repo.ts";
 import { BY_NUMBER, file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
@@ -70,7 +70,7 @@ test("@spec s-bpdqd9v72wg7vsz builds into a node of the SpecSheriff guidelines o
   const root = repo({
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", children: [node("base rule")] })),
     "specs/_guidelines/tools.json": file("_guidelines", "tools", node("tools", { kind: "section", children: [node("tool", { refs: [{ type: "implements", to: sid("base rule") }] })] })),
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, children: [node("ours", { refs: [{ type: "refines", to: sid("base rule") }] })] })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("ours", { refs: [{ type: "refines", to: sid("base rule") }] })] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", children: [node("cited", { refs: [{ type: "cites", to: sid("base rule") }] })] })),
   });
   assert.deepEqual(incoming(loadSpecification(root)).get(sid("base rule")), [{ type: "implements", from: sid("tool") }]);
@@ -83,31 +83,56 @@ test("@spec s-bpdqd9v72wg7vsz builds no link of a project into the SpecSheriff g
   assert.ok(spec.nodes.get(sid("our levels"))!.node.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE));
 });
 
-test("@spec s-67vekyup7y8smap takes a node's owner from the nearest section or header naming one, else the specification's", () => {
+test("@spec s-67vekyup7y8smap takes a node's owners from the nearest section or header naming them, else the specification's", () => {
   const root = repo({
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", owner: "bank@example.org", level: "core", code: null, sections: [] })),
-    "specs/bank/a.json": file("bank", "a", node("a", { kind: "section", children: [node("r1"), node("inner", { kind: "section", owner: "inner@example.org", children: [node("r2")] })] })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("levels")] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", owners: ["bank@example.org"], level: "core", code: null, sections: [] })),
+    "specs/bank/a.json": file("bank", "a", node("a", { kind: "section", children: [node("r1"), node("inner", { kind: "section", owners: ["inner@example.org", "second@example.org"], children: [node("r2")] })] })),
     "specs/contracts/c.json": file("contracts", "c", node("c", { kind: "section", children: [node("r3")] })),
   });
   const spec = loadSpecification(root);
-  assert.equal(ownerOf(spec, sid("r1")), "bank@example.org");
-  assert.equal(ownerOf(spec, sid("r2")), "inner@example.org");
-  assert.equal(ownerOf(spec, sid("inner")), "inner@example.org");
-  assert.equal(ownerOf(spec, sid("r3")), OWNER);
-  assert.equal(ownerOf(spec, sid("levels")), OWNER);
+  assert.deepEqual(ownersOf(spec, sid("r1")), ["bank@example.org"]);
+  assert.deepEqual(ownersOf(spec, sid("r2")), ["inner@example.org", "second@example.org"]);
+  assert.deepEqual(ownersOf(spec, sid("inner")), ["inner@example.org", "second@example.org"]);
+  assert.deepEqual(ownersOf(spec, sid("r3")), [OWNER]);
+  assert.deepEqual(ownersOf(spec, sid("levels")), [OWNER]);
 });
 
 test("@spec s-67vekyup7y8smap names no owner where the specification names none", () => {
   const spec = loadSpecification(repo({ "specs/contracts/c.json": file("contracts", "c", node("lone")) }));
-  assert.equal(ownerOf(spec, sid("lone")), null);
+  assert.deepEqual(ownersOf(spec, sid("lone")), []);
 });
 
-test("@spec s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind carries, not its owner or what the reindex builds", () => {
+test("@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it that are no section, and a domain's header's from every node of the domain", () => {
+  const approved = { status: "approved" };
+  const root = repo({
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/bank/a.json": file("bank", "a", node("all approved", { kind: "section", children: [node("a1", approved), node("inner", { kind: "section", children: [node("a2", approved)] })] })),
+    "specs/bank/b.json": file("bank", "b", node("one draft", { kind: "section", children: [node("b1", approved), node("deep", { kind: "section", children: [node("b2")] })] })),
+    "specs/contracts/c.json": file("contracts", "c", node("terms", { kind: "section", children: [node("t1", { kind: "term", ...approved })] })),
+  });
+  const built = builtStatuses(loadSpecification(root));
+  assert.equal(built.get(sid("all approved")), "approved");
+  assert.equal(built.get(sid("inner")), "approved");
+  assert.equal(built.get(sid("one draft")), "draft");
+  assert.equal(built.get(sid("deep")), "draft");
+  assert.equal(built.get(sid("terms")), "approved");
+  assert.equal(built.get(sid("bank")), "draft");
+});
+
+test("@spec s-qzthyh7yqvfhsa2 holds the specification approved while the rule refining the base's rule on its status is approved, whatever its wording, and a draft otherwise", () => {
+  const rule = (status: string) => node("whatever it says", { title: "The specification is live", status, refs: [{ type: "refines", to: APPROVAL_RULE }] });
+  assert.equal(specificationApproved([rule("approved")]), true);
+  assert.equal(specificationApproved([rule("checked")]), true);
+  assert.equal(specificationApproved([rule("draft")]), false);
+  assert.equal(specificationApproved([node("other", { status: "approved" })]), false);
+});
+
+test("@spec s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind adds, not its owners or what the reindex builds", () => {
   const base = node("f", { kind: "section", reason: "why" });
   const same = fingerprint(base);
   assert.match(same, /^[0-9a-f]{64}$/);
-  assert.equal(fingerprint({ ...base, status: "checked", location: "x/9", refs: [{ type: "cites", to: sid("cited") }], meta: { todos: [] }, owner: "x@y.z" }), same);
+  assert.equal(fingerprint({ ...base, status: "approved", location: "x/9", refs: [{ type: "cites", to: sid("cited") }], meta: { todos: [] }, owners: ["x@y.z"], owner: "x@y.z" }), same);
   assert.notEqual(fingerprint({ ...base, title: "other" }), same);
   assert.notEqual(fingerprint({ ...base, reason: "other" }), same);
   const header = node("h", { kind: "domain", level: "core", code: null, sections: [] });
@@ -118,8 +143,8 @@ test("@spec s-v4qus7raqnwzneb fingerprints a node's wording and the values its k
   assert.equal(fingerprint({ ...listed, list: { members: ["a", "b"], of: "x" } }), fingerprint(listed));
 });
 
-test("@spec s-v4qus7raqnwzneb keeps the reason under its earlier name in the fingerprint, so a confirmation given before the rename stands", () => {
-  const renamed = { location: "x/1", sid: sid("pinned"), kind: "rule", title: "t", status: "", text: "x", reason: "y", refs: [] };
+test("@spec s-v4qus7raqnwzneb keeps the reason under its earlier name in the fingerprint, so an approval given before the rename stands", () => {
+  const renamed = { location: "x/1", sid: sid("pinned"), kind: "rule", title: "t", status: "draft", text: "x", reason: "y", refs: [] };
   // The fingerprint the release before the rename gave this wording, with the reason under the key `rationale`.
   assert.equal(fingerprint(renamed as never), "d97a5bc9b8d7cd0b5e1a2e191f26f46d87b8c62e3b8a020269a747dc3b5562ff");
 });
@@ -147,9 +172,9 @@ test("@spec s-v4qus7raqnwzneb leaves the values gathered beside a field out of t
   assert.equal(fingerprint(record([{ value: "paid", sid: sid("bank events") }])), fingerprint(record()));
 });
 
-test("@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds it, with its part, its file, the node above it and the owner named nearest above it", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds it, with its part, its file, the node above it and the owners named nearest above it", () => {
   const root = repo({
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours." })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours." })),
     "specs/contracts/c.json": file("contracts", "c", node("accounts", { kind: "section", text: "Accounts.", children: [node("open", { reason: "Why." })] })),
   });
   reindex(root);
@@ -157,11 +182,11 @@ test("@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds i
   const open = model.nodes.find((n) => n.sid === sid("open"))!;
   assert.equal(open.location, loc("contracts", "1"));
   assert.equal(open.reason, "Why.");
-  assert.deepEqual([open.part, open.file, open.parent, open.owner], ["contracts", "specs/contracts/c.json", sid("accounts"), OWNER]);
+  assert.deepEqual([open.part, open.file, open.parent, open.owners], ["contracts", "specs/contracts/c.json", sid("accounts"), [OWNER]]);
   assert.equal(open.children, undefined);
 });
 
-test("@spec s-v4qus7raqnwzneb fingerprints a field taking the values the domains add as earlier releases wrote it, so a confirmation given before the reindex rewrote it stands", () => {
+test("@spec s-v4qus7raqnwzneb fingerprints a field taking the values the domains add as earlier releases wrote it, so an approval given before the reindex rewrote it stands", () => {
   const field = (type: object) => ({ name: "kind", type, required: true, text: "" });
   const record = (type: object) => node("event", { kind: "recordType", unknown: "refused", fields: [field({ is: "list of", of: type })] });
   assert.equal(fingerprint(record({ is: "one of", from: "domains" })), fingerprint(record({ is: "one of", values: [] })));

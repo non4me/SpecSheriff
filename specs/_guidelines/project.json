@@ -8,19 +8,21 @@
       "sid": "s-4r66g6swm8up52b",
       "kind": "section",
       "title": "SpecSheriff's own guidelines",
-      "status": "",
+      "status": "approved",
       "text": "What only the specification of this repository needs beyond the SpecSheriff guidelines.",
-      "owner": "vladimir.troyanenko@gmail.com",
+      "owners": [
+        "vladimir.troyanenko@gmail.com"
+      ],
       "refs": [],
       "children": [
         {
           "location": "_guidelines/project/1",
           "sid": "s-p92k6vfe3ju27at",
           "kind": "rule",
-          "title": "The specification is live",
-          "status": "checked",
-          "text": "This project's specification is live.",
-          "reason": "This repository holds no symbol of the system's code, and every test of its tools carries the SpecTag of the node it is written from, so a draft would only stop the tests from running at a push (§s-xhcmchcngykvn2k).",
+          "title": "The specification is approved",
+          "status": "approved",
+          "text": "This project's specification is approved.",
+          "reason": "This repository holds no symbol of the system's code, and every test of its tools carries the SpecTag of the node it is written from, so as a draft the specification would only stop the tests from running at a push (§s-xhcmchcngykvn2k).",
           "refs": [
             {
               "type": "refines",
@@ -30,7 +32,17 @@
               "type": "cites",
               "to": "s-xhcmchcngykvn2k"
             }
-          ]
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-06",
+                "problem": "The rule said the specification is live, a word of its own beside a node's statuses.",
+                "ruling": "Carrying out the owner's decision on §s-qzthyh7yqvfhsa2 of that day: the specification is approved or a draft.",
+                "type": "textual"
+              }
+            ]
+          }
         }
       ]
     }

@@ -48,7 +48,7 @@ the test pass. Never the reverse. Wanting the code to behave differently is a re
 rule, not to change the code and update the documents later (§s-ef93u6cnbs2sevr,
 §s-rah8b37kytb682y).
 
-![How does it work? The life of a rule, from its owner's confirmation to a merged commit.](../images/png/1-how-it-works.png)
+![How does it work? The life of a rule, from its owner's approval to a merged commit.](../images/png/1-how-it-works.png)
 
 ### Rule, test and code bound by an identifier
 
@@ -60,23 +60,25 @@ tag naming the rule it implements (§s-kgbzk2ph9e6jfb4). From any line of code y
 and from any rule the code and the tests that carry it out. It also means an agent can be given the
 rules that bear on its task rather than the whole specification.
 
-### Nothing unconfirmed is implemented
+### Nothing unapproved is implemented
 
-Anyone may write or change a rule, an agent included. But a rule is implemented only once its owner
-has read it and confirmed it. The confirmation is tied to the wording: change what the rule says,
-and it waits for its owner again (§s-5ah25f6gy99panq, §s-67vekyup7y8smap, §s-utvqbypzhmgndug). A
-change that only states what the owner has already confirmed, or changes no meaning, such as a
-renamed term, is confirmed in the owner's name and reported to them. Anyone who finds a confirmed
-rule wrong can withdraw its confirmation, and no further change to its code is committed until the
-owner looks again. A large specification can name an owner for each domain or section, so that the
-people who answer for a part of the system are the ones who confirm its rules.
+Anyone may write or change a rule, an agent included. But a rule is implemented only once one of its
+owners has read it and approved it. A rule is a draft until then. The approval is tied to the
+wording: change what the rule says, and it is a draft again until an owner approves it
+(§s-5ah25f6gy99panq, §s-67vekyup7y8smap, §s-utvqbypzhmgndug). A change that only states what an owner
+has already approved, or changes no meaning, such as a renamed term, is approved in that owner's name
+and reported to them. Anyone who finds an approved rule wrong can withdraw its approval, and no
+further change to its code is committed until an owner looks again. A large specification can name
+owners for each domain or section, so that the people who answer for a part of the system are the
+ones who approve its rules. A section's status is not approved by anyone: it is built from the rules
+under it, so the map shows at a glance which parts wait for their owners (§s-9kfdycuq34beqvs).
 
 ### Checks that answer the same way every time
 
 Deterministic checks hold the chain together. They run in the agent's harness, at every edit it
 makes, where the order of rule, test and code is held too; and in git, at every commit, on the
 machine of whoever makes it (§s-83ev4wwesbwnhnp, §s-jau82aq9juv9zzh). A symbol with no tag, code
-whose rule has no test yet, code tagged with a rule nobody has confirmed, a commit that does not name
+whose rule has no test yet, code tagged with a rule nobody has approved, a commit that does not name
 the rules it serves: each is refused, with the reason. The tests of the system run before a commit
 is shared. The git hooks hold every machine where the plugin is installed; a team that needs the
 gate to hold whatever machine a change came from runs the same checks in CI.
@@ -111,11 +113,11 @@ you write a new appendix and new code, not one rule of the base (§s-5x737t9nee4
 ## What it gives
 
 The logic of the application stays in front of you, readable, and yours. You decide it by writing
-and confirming rules, and you see exactly what the agent made of them. The agent does the typing,
+and approving rules, and you see exactly what the agent made of them. The agent does the typing,
 fast, and is kept from wandering off: what it writes must carry a rule, pass that rule's test, and
 get past a reviewer who reads the change against nothing but its rules.
 
-A team gets requirements traced both ways, decisions that stay decided, owners who confirm what is
+A team gets requirements traced both ways, decisions that stay decided, owners who approve what is
 theirs, and a review of every commit that changes code, one that does not depend on how much time a
 person has that day.
 
@@ -140,7 +142,7 @@ types and the runtime checks of data are generated from it.
 
 ## What it costs
 
-It is not free. The owner reads and confirms every rule whose meaning changes. Every symbol carries
+It is not free. An owner reads and approves every rule whose meaning changes. Every symbol carries
 a tag. The reviewer is a model called at every commit that changes code, paid by whoever commits, at
 the model and effort they have chosen. The
 tools do the remembering, so that nobody has to keep the rules of the method in their head, but the

@@ -1,8 +1,8 @@
 import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, rmdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join } from "node:path";
-import { readsForTags } from "./code.ts";
-import { git, trackedFiles } from "./diff.ts";
-import { LIVE_RULE } from "./model.ts";
+import { APPROVALS } from "./approvals.ts";
+import { git } from "./diff.ts";
+import { approvalRuleNode } from "./model.ts";
 import { newSid } from "./reindex.ts";
 import { canonical } from "./spec-files.ts";
 
@@ -93,6 +93,32 @@ const writeSettings = (root: string, path: string, settings: object) => {
   writeFileSync(join(root, path), JSON.stringify(settings, null, 2) + "\n");
 };
 
+/** The line of `.gitattributes` that has git merge the approvals by union (s-7unxytshhc4md54). */
+const UNION = `${APPROVALS} merge=union`;
+const ATTRIBUTES = ".gitattributes";
+/** Whether a line of `.gitattributes` is the line init appends, spacing and line endings aside. */
+const isUnion = (line: string) => line.trim().split(/\s+/).join(" ") === UNION;
+
+/**
+ * Has git merge the approvals by union: appends the line where git leaves their merge attribute unspecified, and names
+ * any other state of it, appending nothing; outside a git repository, appends it unless the file holds it already.
+ */
+function mergeByUnion(root: string, report: InitReport): void {
+  const full = join(root, ATTRIBUTES);
+  const held = existsSync(full) ? readFileSync(full, "utf8") : null;
+  const asked = git(root, "check-attr", "merge", "--", APPROVALS);
+  const state = asked.ok ? asked.out.trim().split(": ").at(-1)! : held?.split("\n").some(isUnion) ? "union" : "unspecified";
+  if (state === "union") return;
+  if (state !== "unspecified") {
+    report.notes.push(`git merges ${APPROVALS} by the setting merge: ${state}, which sheriff init leaves as the project's; its approvals conflict where two branches are merged`);
+    return;
+  }
+  const eol = held?.includes("\r\n") ? "\r\n" : "\n";
+  const lead = held && !held.endsWith("\n") ? eol : "";
+  writeFileSync(full, `${held ?? ""}${lead}${UNION}${eol}`);
+  report.written.push(ATTRIBUTES);
+}
+
 /**
  * Sets a repository up for the SpecSheriff tools and the agent named: replaces a hook or a declaration an
  * earlier release of it wrote, and no other file that differs from what it would write.
@@ -126,6 +152,7 @@ export function init(root: string, agent: string = "claude"): InitReport {
 
   if (agent === "claude") declareToClaude(root, report);
   else writeCodexHooks(root, report);
+  mergeByUnion(root, report);
 
   // Taking up the method moves where git looks for hooks, so a hook the repository ran before stops running: each is
   // named, with where to move it to keep it running (s-n4m5zvh96yb299p).
@@ -155,13 +182,10 @@ export function init(root: string, agent: string = "claude"): InitReport {
     if (!owner) report.notes.push("git names no email: specs/_guidelines/project.json was not written; set git config user.email and run sheriff init again");
     else {
       const project = { schemaVersion: 1, scope: "_guidelines", section: "project", nodes: [{
-        location: ["_guidelines", "project"].join("/"), sid: newSid(new Set()), kind: "section", title: "The project's own guidelines", status: "",
-        text: "What only this project's specification needs beyond the SpecSheriff guidelines.", owner, refs: [],
-        // A project starting without code has nothing to tag, so it starts live, the rule unchecked (s-qzthyh7yqvfhsa2).
-        ...(keepsCode(root) ? {} : { children: [{
-          location: ["_guidelines", "project", "1"].join("/"), sid: newSid(new Set()), kind: "rule", title: "The specification is live", status: "",
-          text: "This project's specification is live.", refs: [{ type: "refines", to: LIVE_RULE }],
-        }] }),
+        location: ["_guidelines", "project"].join("/"), sid: newSid(new Set()), kind: "section", title: "The project's own guidelines", status: "draft",
+        text: "What only this project's specification needs beyond the SpecSheriff guidelines.", owners: [owner], refs: [],
+        // Every project holds the rule approving its specification, a draft until its owners approve it (s-7unxytshhc4md54).
+        children: [{ ...approvalRuleNode(), location: ["_guidelines", "project", "1"].join("/"), sid: newSid(new Set()) }],
       }] };
       write("specs/_guidelines/project.json", canonical(project));
     }
@@ -275,6 +299,18 @@ export function remove(root: string): RemoveReport {
     if (took) settle(root, codexPath, codex, report);
   }
 
+  // The line that has git merge the approvals by union, whoever wrote it, and the file it leaves holding only blank lines.
+  if (existsSync(join(root, ATTRIBUTES))) {
+    const lines = readFileSync(join(root, ATTRIBUTES), "utf8").split(/(?<=\n)/);
+    const kept = lines.filter((l) => !isUnion(l));
+    if (kept.length !== lines.length) {
+      if (kept.join("").trim()) {
+        writeFileSync(join(root, ATTRIBUTES), kept.join(""));
+        report.removed.push(`from ${ATTRIBUTES}, what sheriff init writes there`);
+      } else drop(ATTRIBUTES);
+    }
+  }
+
   if (git(root, "config", "--local", "core.hooksPath").out.trim() === ".githooks" && git(root, "config", "--local", "--unset", "core.hooksPath").ok) {
     report.notes.push("unset: core.hooksPath, which named .githooks");
   }
@@ -301,10 +337,4 @@ function settle(root: string, path: string, settings: object, report: RemoveRepo
     rmSync(join(root, path));
     report.removed.push(path);
   }
-}
-
-/** Whether the repository keeps a file in a language the SpecSheriff tools read for tags. */
-function keepsCode(root: string): boolean {
-  const ignored = (p: string) => p.startsWith("node_modules/") || p.startsWith(".git/");
-  return trackedFiles(root).some((p) => !ignored(p) && readsForTags(p));
 }

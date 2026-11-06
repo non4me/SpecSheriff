@@ -8,8 +8,8 @@
 
 SpecSheriff is a method of spec-anchored development, the tools that hold a project to it, and a
 worked example of it. The specification is a set of small rule nodes, each with a permanent
-identifier, a reason held apart from the requirement, and a status that says whether the
-specification's owner has read the wording. Every symbol in the code names the rule it implements,
+identifier, a reason held apart from the requirement, and a status, draft or approved, that says
+whether one of its owners has approved the wording. Every symbol in the code names the rule it implements,
 every test declares the rule it verifies, and every commit is checked against the rules it claims to
 serve — by deterministic checks, and by an independent reviewer that sees only the change and the
 text of those rules.
@@ -30,7 +30,7 @@ text of those rules.
   pytest in [`skills/pytest-specsheriff`](skills/pytest-specsheriff).
 - **The worked example** — [the saloon](https://github.com/non4me/specsheriff-saloon) of a frontier
   town, in a repository of its own, set up the way any project is: its history shows every rule
-  confirmed by its owner, every test written before its code, and a recorded run in which the
+  approved by its owner, every test written before its code, and a recorded run in which the
   reviewer refuses a commit that every test and every other check let through.
 
 ## Using it
@@ -46,8 +46,8 @@ what each refusal of the checks means.
 
 ## Status
 
-The release 0.2.0 carries the plugin for Claude Code: the guidelines are confirmed by their owner,
-and the tools hold this repository to them. The worked example, the saloon, is built and published.
+The release 0.6.0 carries the plugins for Claude Code and for Codex CLI: the guidelines are approved
+by their owner, and the tools hold this repository to them. The worked example, the saloon, is built and published.
 
 ## License
 

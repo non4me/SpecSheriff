@@ -2,9 +2,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, join, relative, sep } from "node:path";
 import { readCode, type CodeSymbol } from "./code.ts";
 import { loadConfig, readsAs } from "./config.ts";
-import { holds, readConfirmations } from "./confirmations.ts";
+import { APPROVALS, readApprovals, stands } from "./approvals.ts";
 import { codeChanges, spelledIn, trackedFiles, type Line } from "./diff.ts";
-import { fingerprint, ownerOf } from "./model.ts";
+import { fingerprint, isContainer } from "./model.ts";
 import { patchedFiles, PatchError, type EditedFile } from "./patch.ts";
 import { judgedHere } from "./reindex.ts";
 import { loadSpecification, specificationOf, type SpecFile, type SpecNode } from "./spec-files.ts";
@@ -55,12 +55,10 @@ function changedLines(before: string, after: string): { removed: Line[]; added: 
   return { removed: lines(a), added: lines(b) };
 }
 
-const CONFIRMATIONS = "specs/_confirmations.jsonl";
-
 /**
  * Judges an edit an agent is about to make, made with the file tools or as a patch in Codex's format:
  * the reason it is refused, or null where it may be made. It refuses an edit that would leave a node
- * checked over a wording its owner never confirmed, or change the code of a rule no test carries the SpecTag
+ * approved over a wording for which no approval stands, or change the code of a rule no test carries the SpecTag
  * of, and a patch whole where it refuses one of its files or cannot read or apply the patch.
  */
 export async function guard(root: string, input: HookInput): Promise<string | null> {
@@ -78,7 +76,7 @@ export async function guard(root: string, input: HookInput): Promise<string | nu
     if (!given?.file_path || !["Write", "Edit", "MultiEdit"].includes(tool)) return null;
     const path = relative(root, isAbsolute(given.file_path) ? given.file_path : join(root, given.file_path)).split(sep).join("/");
     if (path.startsWith("..")) return null;
-    if (path === CONFIRMATIONS) return judge(root, [{ path, before: "", after: "" }]);
+    if (path === APPROVALS) return judge(root, [{ path, before: "", after: "" }]);
     const current = existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : "";
     const next = afterEdit(tool, given, current);
     if (next === null) return null;
@@ -89,9 +87,9 @@ export async function guard(root: string, input: HookInput): Promise<string | nu
 
 /** Judges the files an edit touches, each as it is and as the edit leaves it, together. */
 async function judge(root: string, files: EditedFile[]): Promise<string | null> {
-  // Only the procedure that records a confirmation or withdraws one writes the confirmations.
-  if (files.some((f) => f.path === CONFIRMATIONS)) {
-    return `${CONFIRMATIONS} is written by sheriff confirm alone, which records a confirmation or its withdrawal on its owner's word: leave the node's status empty for its owner to confirm`;
+  // Only the procedure that records an approval or withdraws one writes the approvals.
+  if (files.some((f) => f.path === APPROVALS)) {
+    return `${APPROVALS} is written by sheriff approve alone, which records an approval or its withdrawal: leave the node a draft for one of its owners to approve`;
   }
   const config = loadConfig(root);
   const reasons: string[] = [];
@@ -114,15 +112,14 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
     for (const [sid, at] of spec.nodes) if (edited.has(at.file.path)) was.set(sid, at.node);
     const written = [...edited].flatMap(([path, data]) => (data ? [{ path, data }] : []));
     const after = specificationOf([...spec.files.filter((f) => !edited.has(f.path)), ...spec.archive, ...written]);
-    const lines = readConfirmations(root);
+    const lines = readApprovals(root);
     for (const [sid, { node, file }] of after.nodes) {
-      if (node.status !== "checked" || !judgedHere(file.path, config.writesSpecSheriffGuidelines) || holds(after, lines, sid)) continue;
+      if (node.status !== "approved" || isContainer(node.kind) || !judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
+      if (stands(lines, sid, fingerprint(node))) continue;
       const old = was.get(sid);
-      const touched = edited.has(file.path) && (!old || old.status !== "checked" || fingerprint(old) !== fingerprint(node));
-      // A node the edit leaves as it was still turns unconfirmed where the edit gives it another owner.
-      if (touched || holds(spec, lines, sid)) {
-        reasons.push(`${sid} (${node.location}) would stand checked over a wording its owner ${ownerOf(after, sid) ?? "(none named)"} has not confirmed: leave its status empty for its owner to confirm`);
-      }
+      // A node the edit leaves as it was is the reindex's to make a draft, not this edit's fault.
+      const touched = edited.has(file.path) && (!old || old.status !== "approved" || fingerprint(old) !== fingerprint(node));
+      if (touched) reasons.push(`${sid} (${node.location}) would stand approved over a wording for which no approval stands: leave it a draft for one of its owners to approve`);
     }
   }
 

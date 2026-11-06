@@ -26,7 +26,7 @@ test("@spec s-k4nqjr96ux7a5m7 shows a node found by its sid with every value its
   for (const name of ["Bill", "payer", "billed rule"]) {
     const { location, sid: s, kind, title, status, text, reason, refs, children, ...rest } = spec.nodes.get(sid(name))!.node as SpecNode;
     const out = show(spec, s);
-    assert.ok(out.startsWith(`# ${location} ${title}\n\n\`${s}\` · ${kind} · unchecked\n\n${text}\n`), name);
+    assert.ok(out.startsWith(`# ${location} ${title}\n\n\`${s}\` · ${kind} · draft\n\n${text}\n`), name);
     if (reason) assert.ok(out.includes(reason), name);
     for (const [k, v] of Object.entries(rest)) assert.ok(out.includes(`**${k}:**`) && out.includes(typeof v === "string" ? v : JSON.stringify(v, null, 2)), `${name}: ${k}`);
   }
@@ -92,7 +92,7 @@ test("@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field after it
 test("@spec s-f5rz6b7dhxejjts lists every item of the todos, the newest first, those of one day in the order the specification reads, each with its date, author, text and node, the archive left out", () => {
   const item = (date: string, text: string) => ({ date, by: OWNER, text });
   const root = repo({
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", meta: { todos: [item("2026-11-01", "Name the levels.")] } })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", meta: { todos: [item("2026-11-01", "Name the levels.")] } })),
     "specs/zeta/z.json": file("zeta", "z", node("zeta section", { kind: "section", text: "Z.", children: [node("zeta rule", { meta: { todos: [item("2026-11-03", "Split it."), item("2026-11-01", "Word it.")] } })] })),
     "specs/alpha/a.json": file("alpha", "a", node("alpha section", { kind: "section", text: "A.", children: [node("alpha rule", { meta: { todos: [item("2026-11-03", "Test it.")] } })] })),
     "specs/_archive/alpha.json": file("alpha", "a", { ...node("gone rule", { meta: { todos: [item("2026-11-05", "Never listed.")] } }), location: "alpha/1.2", archived: { date: "2026-11-04", reason: "Gone." } }),
