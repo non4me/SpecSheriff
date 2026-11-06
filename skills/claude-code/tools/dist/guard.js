@@ -1,0 +1,176 @@
+import { existsSync, readFileSync } from "node:fs";
+import { isAbsolute, join, relative, sep } from "node:path";
+import { readCode } from "./code.js";
+import { loadConfig, readsAs } from "./config.js";
+import { holds, readConfirmations } from "./confirmations.js";
+import { codeChanges, spelledIn, trackedFiles } from "./diff.js";
+import { fingerprint, ownerOf } from "./model.js";
+import { patchedFiles, PatchError } from "./patch.js";
+import { judgedHere } from "./reindex.js";
+import { loadSpecification, specificationOf } from "./spec-files.js";
+function apply(text, edit) {
+    if (!text.includes(edit.old_string))
+        return null;
+    return edit.replace_all ? text.split(edit.old_string).join(edit.new_string) : text.replace(edit.old_string, () => edit.new_string);
+}
+/** The file as the edit would leave it, or null where the edit would not apply and the tool refuses it itself. */
+function afterEdit(tool, input, current) {
+    if (tool === "Write")
+        return input.content ?? "";
+    if (tool === "Edit")
+        return apply(current, input);
+    if (tool === "MultiEdit") {
+        let text = current;
+        for (const e of input.edits ?? [])
+            text = text === null ? null : apply(text, e);
+        return text;
+    }
+    return null;
+}
+/** The lines an edit changes, both sides: what lies between the lines the two texts share at their start and at their end. */
+function changedLines(before, after) {
+    const a = before.split("\n");
+    const b = after.split("\n");
+    let start = 0;
+    while (start < a.length && start < b.length && a[start] === b[start])
+        start++;
+    let end = 0;
+    while (end < a.length - start && end < b.length - start && a[a.length - 1 - end] === b[b.length - 1 - end])
+        end++;
+    const lines = (all) => all.slice(start, all.length - end).map((text, i) => ({ line: start + i + 1, text }));
+    return { removed: lines(a), added: lines(b) };
+}
+const CONFIRMATIONS = "specs/_confirmations.jsonl";
+/**
+ * Judges an edit an agent is about to make, made with the file tools or as a patch in Codex's format:
+ * the reason it is refused, or null where it may be made. It refuses an edit that would leave a node
+ * checked over a wording its owner never confirmed, or change the code of a rule no test carries the SpecTag
+ * of, and a patch whole where it refuses one of its files or cannot read or apply the patch.
+ */
+export async function guard(root, input) {
+    const tool = input.tool_name ?? "";
+    const given = input.tool_input;
+    let files;
+    if (tool === "apply_patch") {
+        try {
+            files = patchedFiles(root, input.cwd ?? root, given?.command ?? "");
+        }
+        catch (error) {
+            if (error instanceof PatchError)
+                return error.message;
+            throw error;
+        }
+    }
+    else {
+        if (!given?.file_path || !["Write", "Edit", "MultiEdit"].includes(tool))
+            return null;
+        const path = relative(root, isAbsolute(given.file_path) ? given.file_path : join(root, given.file_path)).split(sep).join("/");
+        if (path.startsWith(".."))
+            return null;
+        if (path === CONFIRMATIONS)
+            return judge(root, [{ path, before: "", after: "" }]);
+        const current = existsSync(join(root, path)) ? readFileSync(join(root, path), "utf8") : "";
+        const next = afterEdit(tool, given, current);
+        if (next === null)
+            return null;
+        files = [{ path, before: current, after: next }];
+    }
+    return judge(root, files.filter((f) => !f.path.startsWith("..")));
+}
+/** Judges the files an edit touches, each as it is and as the edit leaves it, together. */
+async function judge(root, files) {
+    // Only the procedure that records a confirmation or withdraws one writes the confirmations.
+    if (files.some((f) => f.path === CONFIRMATIONS)) {
+        return `${CONFIRMATIONS} is written by sheriff confirm alone, which records a confirmation or its withdrawal on its owner's word: leave the node's status empty for its owner to confirm`;
+    }
+    const config = loadConfig(root);
+    const reasons = [];
+    // The specification as the edit leaves it: each edited file of it read, a deleted one gone, one that is not JSON left to the checks after the edit.
+    const edited = new Map();
+    for (const f of files.filter((f) => f.path.startsWith("specs/") && f.path.endsWith(".json") && !f.path.startsWith("specs/_schema/"))) {
+        if (f.after === null)
+            edited.set(f.path, null);
+        else {
+            try {
+                edited.set(f.path, JSON.parse(f.after));
+            }
+            catch {
+                // judged by the checks after the edit
+            }
+        }
+    }
+    if (edited.size) {
+        const spec = loadSpecification(root);
+        const was = new Map();
+        for (const [sid, at] of spec.nodes)
+            if (edited.has(at.file.path))
+                was.set(sid, at.node);
+        const written = [...edited].flatMap(([path, data]) => (data ? [{ path, data }] : []));
+        const after = specificationOf([...spec.files.filter((f) => !edited.has(f.path)), ...spec.archive, ...written]);
+        const lines = readConfirmations(root);
+        for (const [sid, { node, file }] of after.nodes) {
+            if (node.status !== "checked" || !judgedHere(file.path, config.writesSpecSheriffGuidelines) || holds(after, lines, sid))
+                continue;
+            const old = was.get(sid);
+            const touched = edited.has(file.path) && (!old || old.status !== "checked" || fingerprint(old) !== fingerprint(node));
+            // A node the edit leaves as it was still turns unconfirmed where the edit gives it another owner.
+            if (touched || holds(spec, lines, sid)) {
+                reasons.push(`${sid} (${node.location}) would stand checked over a wording its owner ${ownerOf(after, sid) ?? "(none named)"} has not confirmed: leave its status empty for its owner to confirm`);
+            }
+        }
+    }
+    const code = files.filter((f) => readsAs(config, f.path) === "code");
+    if (code.length) {
+        const instead = new Map(files.map((f) => [f.path, f.after]));
+        const spelled = await spelledIn(root, (p) => readsAs(config, p) !== null, instead);
+        const touched = new Set();
+        for (const { path, before, after } of code) {
+            const next = after ?? "";
+            const now = await readCode(path, next);
+            const old = await readCode(path, before);
+            if (!now)
+                continue;
+            const real = (await codeChanges([{ path, ...changedLines(before, next) }], { before: () => before, after: () => next, spelled })).get(path);
+            const all = (symbols) => symbols.flatMap((s) => [s, ...all(s.inner)]);
+            const at = (symbols, line) => all(symbols).filter((s) => (s.start <= line && line <= s.end) || s.tags.some((t) => t.line === line));
+            for (const line of real.added)
+                at(now.symbols, line).forEach((s) => touched.add(s));
+            for (const line of real.removed) {
+                for (const s of at(old?.symbols ?? [], line))
+                    all(now.symbols).filter((n) => n.name === s.name).forEach((n) => touched.add(n));
+            }
+        }
+        const spec = loadSpecification(root);
+        const rules = new Set();
+        for (const s of touched)
+            for (const t of s.tags)
+                if (t.sid && spec.nodes.get(t.sid)?.node.kind === "rule")
+                    rules.add(t.sid);
+        if (rules.size) {
+            // The tests as the edit leaves them: those the working tree holds, and those the edit writes.
+            const tested = new Set();
+            const bare = new Set();
+            const tests = new Set([...trackedFiles(root), ...instead.keys()].filter((p) => readsAs(config, p) === "tests"));
+            for (const p of tests) {
+                const text = instead.has(p) ? instead.get(p) : existsSync(join(root, p)) ? readFileSync(join(root, p), "utf8") : null;
+                if (text === null)
+                    continue;
+                const read = await readCode(p, text);
+                for (const t of read?.tests ?? []) {
+                    if (t.sid)
+                        tested.add(t.sid);
+                    else if (t.bare)
+                        bare.add(t.bare);
+                }
+            }
+            for (const sid of rules) {
+                if (tested.has(sid))
+                    continue;
+                const reason = `no test carries the SpecTag of ${sid} (${spec.nodes.get(sid).node.location}), a rule whose code this edit changes`;
+                // A test naming it by a bare sid, as an earlier release read it, is named with the command writing its SpecTag (s-utf4mbt7ref8g9c).
+                reasons.push(bare.has(sid) ? `${reason}: a test names it by the bare sid, the form an earlier release read, and sheriff reindex writes its SpecTag` : `${reason}: write its test first`);
+            }
+        }
+    }
+    return reasons.length ? reasons.join("\n") : null;
+}

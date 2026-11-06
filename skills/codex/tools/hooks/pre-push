@@ -1,0 +1,42 @@
+#!/bin/sh
+# The tests of the system's code pass before a commit is pushed, by the command sheriff.config.json names.
+# They run in the working tree, so the push is refused, naming each file, while the working tree differs
+# from the commit any ref the push creates or updates names, the files the working tree ignores left aside.
+# Where the push creates or updates a ref and no commit those refs name holds the specification live, no
+# test runs and nothing is compared (s-b6qdtghnyha3fhk).
+. "$(dirname "$0")/sheriff.sh"
+root=$(git rev-parse --show-toplevel) || exit 1
+cd "$root" || exit 1
+work=$(mktemp -d) || exit 1
+trap 'rm -rf "$work"' EXIT
+: > "$work/commits"
+# git hands the hook one line per ref: local ref, local object, remote ref, remote object.
+while read -r _ object _; do
+  case "$object" in *[!0]*) ;; *) continue ;; esac
+  commit=$(git rev-parse --verify --quiet "$object^{commit}") || continue
+  echo "$commit" >> "$work/commits"
+done
+if [ -s "$work/commits" ] && ! node "$tools/dist/push-mode.js" $(cat "$work/commits"); then
+  echo "sheriff: the specification is a draft, so no test ran before the push and nothing was compared" >&2
+  exit 0
+fi
+command=$(node -e "process.stdout.write(require('./sheriff.config.json').testCommand ?? '')") || exit 1
+if [ -z "$command" ]; then
+  echo "sheriff: sheriff.config.json names no testCommand, so the tests cannot run before the push" >&2
+  exit 1
+fi
+git ls-files --others --exclude-standard -z > "$work/paths" || exit 1
+while read -r commit; do
+  git diff --name-only --no-renames -z "$commit" -- >> "$work/paths" || exit 1
+done < "$work/commits"
+git check-ignore --stdin -z < "$work/paths" > "$work/ignored"
+[ $? -le 1 ] || exit 1
+tr '\0' '\n' < "$work/paths" | LC_ALL=C sort -u > "$work/all"
+tr '\0' '\n' < "$work/ignored" | LC_ALL=C sort -u > "$work/left"
+LC_ALL=C comm -23 "$work/all" "$work/left" > "$work/differ"
+if [ -s "$work/differ" ]; then
+  echo "sheriff: the push is refused, since the tests run in the working tree and it differs from what the push sends in these files; commit, remove or ignore each:" >&2
+  sed 's/^/  /' "$work/differ" >&2
+  exit 1
+fi
+sh -c "$command"
