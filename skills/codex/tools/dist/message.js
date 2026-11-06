@@ -1,0 +1,26 @@
+import { changedTags, readCommit } from "./binding.js";
+import { loadConfig } from "./config.js";
+import { loadSpecification } from "./spec-files.js";
+const SIDS = /\bs-[2-9a-hjkmnp-z]{15}\b/g;
+/** The message's own text: git's comment lines left out. */
+export const messageText = (text) => text.split("\n").filter((l) => !l.startsWith("#")).join("\n");
+/** A commit's message names every node the tags on the symbols it changes name, and no header or section. */
+export async function message(root, text) {
+    const spec = loadSpecification(root);
+    const named = new Set(messageText(text).match(SIDS) ?? []);
+    const findings = [];
+    const where = "the message";
+    for (const sid of named) {
+        const node = spec.nodes.get(sid)?.node;
+        if (!node)
+            findings.push({ where, message: `names ${sid}, which names no node` });
+        else if (node.kind === "domain" || node.kind === "section") {
+            findings.push({ where, message: `names ${sid} (${node.location}), a ${node.kind === "domain" ? "domain's header" : "section"}, which requires nothing a change could serve` });
+        }
+    }
+    for (const sid of changedTags(await readCommit(root, loadConfig(root)))) {
+        if (!named.has(sid))
+            findings.push({ where, message: `the commit changes code tagged ${sid} (${spec.nodes.get(sid)?.node.location ?? "no node"}), and it does not name it` });
+    }
+    return findings;
+}
