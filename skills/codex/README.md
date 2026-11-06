@@ -108,4 +108,6 @@ From 0.6.0 a node's status is `draft` or `approved`, a part may name several `ow
 `sheriff approve` replaces `sheriff confirm`. The first `sheriff reindex` of 0.6.0 rewrites what an
 earlier release wrote — `""` and `checked`, `owner`, `specs/_confirmations.jsonl` — and keeps every
 approval; it names each file it writes, for you to commit. A project's own check that reads `owner`
-from `sheriff model` reads `owners`, a list, from then on.
+from `sheriff model` reads `owners`, a list, from then on. Ask the agent to set the repository up once more, through
+`spec-init`: `sheriff init --agent codex` then has git merge `specs/_approvals.jsonl` by union, so
+that the approvals two branches record merge without a conflict.
