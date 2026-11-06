@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "extension.schema.json",
+  "title": "A project's extension of the schema of the SpecSheriff guidelines",
+  "$comment": "What a project's own guidelines add to the structure of the specification, kept in specs/_schema/project.schema.json and composed with the schema by the tools. It may only add: kinds of node of its own, fields of a kind the SpecSheriff guidelines have, and properties of a file and of a link. Each addition is a condition beside those the schema sets, so nothing it holds loosens a condition of the schema, and a name the schema already defines is refused, so nothing redefines one.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$comment": {
+      "type": "string"
+    },
+    "kinds": {
+      "$comment": "The project's own kinds of node, each by its name: whether its nodes need code, and the JSON Schema of the fields its nodes hold beside those every node holds. A kind of the SpecSheriff guidelines cannot be declared again, nor record, the name earlier releases gave recordType, which the reindex renames.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][A-Za-z0-9]*$",
+        "not": {
+          "enum": [
+            "domain",
+            "section",
+            "rule",
+            "term",
+            "recordType",
+            "record"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "needsCode": {
+            "$comment": "false where the nodes of the kind are carried out by tools or people rather than code, which exempts them from being implemented.",
+            "type": "boolean"
+          },
+          "schema": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "needsCode",
+          "schema"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fields": {
+      "$comment": "The fields added to a kind of the SpecSheriff guidelines, as a JSON Schema of their properties, by the kind's name. The nodes of the SpecSheriff guidelines need not hold them.",
+      "type": "object",
+      "propertyNames": {
+        "enum": [
+          "domain",
+          "section",
+          "rule",
+          "term",
+          "recordType"
+        ]
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "file": {
+      "$comment": "The properties added to a file of the specification, as a JSON Schema of them.",
+      "type": "object"
+    },
+    "link": {
+      "$comment": "The properties added to a link, as a JSON Schema of them.",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}
