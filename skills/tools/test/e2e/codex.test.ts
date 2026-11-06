@@ -26,7 +26,7 @@ function setUpForCodex(taking = true): string {
 
 const patch = (...lines: string[]) => JSON.stringify({ tool_name: "apply_patch", tool_input: { command: ["*** Begin Patch", ...lines, "*** End Patch"].join("\n") } });
 
-test("s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares no hooks", () => {
+test("@spec s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares no hooks", () => {
   const manifest = json(`${CODEX_PLUGIN}/.codex-plugin/plugin.json`);
   assert.equal(manifest.name, "specsheriff");
   assert.equal(manifest.version, json(`${PLUGIN}/.claude-plugin/plugin.json`).version);
@@ -44,20 +44,20 @@ test("s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, the Sp
   assert.equal(version.stdout.trim(), json(join(REPO, "skills", "tools", "package.json")).version, version.stderr);
 });
 
-test("s-2pdy9gw2jrjvfb4 the marketplace lists the plugin for Codex CLI by the relative path of its directory, beside the file listing the plugin for Claude Code", () => {
+test("@spec s-2pdy9gw2jrjvfb4 the marketplace lists the plugin for Codex CLI by the relative path of its directory, beside the file listing the plugin for Claude Code", () => {
   const marketplace = json(join(REPO, ".agents", "plugins", "marketplace.json"));
   assert.equal(marketplace.name, "specsheriff-marketplace");
   assert.deepEqual(marketplace.plugins.map((p: any) => [p.name, p.source]), [["specsheriff", { source: "local", path: "./skills/codex" }]]);
   assert.ok(existsSync(join(REPO, ".claude-plugin", "marketplace.json")));
 });
 
-test("s-2pdy9gw2jrjvfb4 the guide of the plugin for Codex CLI gives the commands that install it on a machine", () => {
+test("@spec s-2pdy9gw2jrjvfb4 the guide of the plugin for Codex CLI gives the commands that install it on a machine", () => {
   const guide = read(`${CODEX_PLUGIN}/README.md`);
   assert.ok(guide.includes("codex plugin marketplace add non4me/SpecSheriff@release"));
   assert.ok(guide.includes("codex plugin add specsheriff@specsheriff-marketplace"));
 });
 
-test("s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, by the path of their SKILL.md; spec-init runs sheriff init for Codex, and spec-remove sheriff remove, offering to remove the plugin", () => {
+test("@spec s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, by the path of their SKILL.md; spec-init runs sheriff init for Codex, and spec-remove sheriff remove, offering to remove the plugin", () => {
   for (const skill of readdirSync(`${CODEX_PLUGIN}/skills`)) {
     const text = read(`${CODEX_PLUGIN}/skills/${skill}/SKILL.md`);
     assert.match(text, /node "<plugin>\/tools\/dist\/cli\.js"/, skill);
@@ -70,7 +70,7 @@ test("s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, by th
   assert.match(remove, /codex plugin remove specsheriff@specsheriff-marketplace/);
 });
 
-test("s-xr5xxa9cxf2mq5u the build writes beside each plugin's release the agent whose runner its tools take", () => {
+test("@spec s-xr5xxa9cxf2mq5u the build writes beside each plugin's release the agent whose runner its tools take", () => {
   assert.equal(read(`${PLUGIN}/tools/agent`), "claude\n");
   assert.equal(read(`${CODEX_PLUGIN}/tools/agent`), "codex\n");
   const agent = (tools: string) =>
@@ -79,7 +79,7 @@ test("s-xr5xxa9cxf2mq5u the build writes beside each plugin's release the agent 
   assert.equal(agent(`${CODEX_PLUGIN}/tools`), "codex");
 });
 
-test("s-n76wt2bkqdmh78x each of the agent's hooks for Codex holds only the lookup of the plugin in Codex's cache and a call to its script, and does nothing where it finds no plugin", () => {
+test("@spec s-n76wt2bkqdmh78x each of the agent's hooks for Codex holds only the lookup of the plugin in Codex's cache and a call to its script, and does nothing where it finds no plugin", () => {
   const root = setUpForCodex();
   const { hooks } = json(join(root, ".codex", "hooks.json"));
   const entry = (event: string) => hooks[event].find((e: any) => e.hooks.some((h: any) => h.command.includes("specsheriff")));
@@ -104,7 +104,7 @@ test("s-n76wt2bkqdmh78x each of the agent's hooks for Codex holds only the looku
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), "");
 });
 
-test("s-n76wt2bkqdmh78x the scripts the agent's hooks for Codex call do nothing in a repository holding no sheriff.config.json", () => {
+test("@spec s-n76wt2bkqdmh78x the scripts the agent's hooks for Codex call do nothing in a repository holding no sheriff.config.json", () => {
   const root = setUpForCodex(false);
   const codex = codexHome();
   const refused = patch("*** Add File: specs/_confirmations.jsonl", "+forged");
@@ -116,7 +116,7 @@ test("s-n76wt2bkqdmh78x the scripts the agent's hooks for Codex call do nothing 
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), "");
 });
 
-test("s-n76wt2bkqdmh78x before an edit made with apply_patch, the hook refuses the whole patch where sheriff guard refuses one of its files", () => {
+test("@spec s-n76wt2bkqdmh78x before an edit made with apply_patch, the hook refuses the whole patch where sheriff guard refuses one of its files", () => {
   const root = setUpForCodex();
   const codex = codexHome();
   const allowed = patch("*** Add File: notes.txt", "+one");
@@ -131,7 +131,7 @@ test("s-n76wt2bkqdmh78x before an edit made with apply_patch, the hook refuses t
   assert.match(hookSpecificOutput.permissionDecisionReason, /_confirmations\.jsonl.*sheriff confirm/);
 });
 
-test("s-n76wt2bkqdmh78x after an edit, the hook runs the checks over the working tree and reports to the agent what they refuse", () => {
+test("@spec s-n76wt2bkqdmh78x after an edit, the hook runs the checks over the working tree and reports to the agent what they refuse", () => {
   const root = setUpForCodex();
   const codex = codexHome();
   writeFileSync(join(root, "specs", "_guidelines", "project.json"), "{ not json\n");
@@ -142,7 +142,7 @@ test("s-n76wt2bkqdmh78x after an edit, the hook runs the checks over the working
   assert.match(answer.reason, /project\.json/);
 });
 
-test("s-477gtdrkw34dzxw the session start of the agent's hooks for Codex turns the git hooks on where core.hooksPath is unset, saying so", () => {
+test("@spec s-477gtdrkw34dzxw the session start of the agent's hooks for Codex turns the git hooks on where core.hooksPath is unset, saying so", () => {
   const root = setUpForCodex();
   const run = codexHook("SessionStart", codexHome(), root, "{}");
   assert.equal(run.status, 0, run.stderr);
@@ -150,7 +150,7 @@ test("s-477gtdrkw34dzxw the session start of the agent's hooks for Codex turns t
   assert.match(run.stdout, /core\.hooksPath/);
 });
 
-test("s-4mej6ccn7xu3d3p the session start of the agent's hooks for Codex names each git hook an earlier release of sheriff init wrote", () => {
+test("@spec s-4mej6ccn7xu3d3p the session start of the agent's hooks for Codex names each git hook an earlier release of sheriff init wrote", () => {
   const root = setUpForCodex();
   writeFileSync(join(root, ".githooks", "pre-push"), git(REPO, "show", "v0.2.2:skills/tools/assets/githook").stdout);
   const run = codexHook("SessionStart", codexHome(), root, "{}");
@@ -158,7 +158,7 @@ test("s-4mej6ccn7xu3d3p the session start of the agent's hooks for Codex names e
   assert.match(run.stdout, /\.githooks\/pre-push.*earlier release.*sheriff init replaces it/);
 });
 
-test("s-477gtdrkw34dzxw the session start of the agent's hooks for Codex names each setting of the runner codex the user's configuration lacks, with its default, and has the agent ask for them once on each machine", () => {
+test("@spec s-477gtdrkw34dzxw the session start of the agent's hooks for Codex names each setting of the runner codex the user's configuration lacks, with its default, and has the agent ask for them once on each machine", () => {
   const root = setUpForCodex();
   const codex = codexHome();
   const file = gitConfig();
@@ -177,7 +177,7 @@ test("s-477gtdrkw34dzxw the session start of the agent's hooks for Codex names e
   assert.doesNotMatch(second.stdout, /specsheriff\.review/);
 });
 
-test("s-2pdy9gw2jrjvfb4 spec-init offers each setting of the runner codex the configuration lacks and was not asked for, writing what the user answers and marking it asked", () => {
+test("@spec s-2pdy9gw2jrjvfb4 spec-init offers each setting of the runner codex the configuration lacks and was not asked for, writing what the user answers and marking it asked", () => {
   const init = read(`${CODEX_PLUGIN}/skills/spec-init/SKILL.md`);
   for (const key of ["codexModel", "codexEffort", "codexAsked"]) assert.match(init, new RegExp(`specsheriff\\.review\\.${key}`), key);
   assert.doesNotMatch(init, /specsheriff\.review\.claude/);

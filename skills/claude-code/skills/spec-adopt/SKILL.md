@@ -54,8 +54,8 @@ states the obvious goes — each change shown, each node confirmed by its owner.
 
 ## 5. Bind the code and the tests
 
-Once a part's rules are confirmed, `sheriff binding` shows what its code and tests lack: a tag on
-every symbol, naming the node it implements or saying it implements none and why; the sid each test
-verifies; the lists of code and tests in the nodes' metadata. Code that implements no rule at all is
-a question for the owner — a rule is missing, or the code should go — never a tag chosen because it
-is near.
+Once a part's rules are confirmed, `sheriff binding` shows what its code and tests lack: a SpecTag
+on every symbol, naming the node it implements or saying it implements none and why; the SpecTag of
+the node each test is written from, opening its name or in its mark; the lists of code and tests in the nodes' metadata. Code that implements no rule at all is
+a question for the owner — a rule is missing, or the code should go — never a SpecTag chosen because
+it is near.

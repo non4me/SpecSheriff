@@ -3,6 +3,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { confirm } from "../src/confirmations.ts";
 import { reindex } from "../src/reindex.ts";
+import { LIVE_RULE } from "../src/model.ts";
 import { DATA_STRUCTURES, writeTypes } from "../src/types.ts";
 import { file, node, OWNER, repo, sid, taking } from "./fixture.ts";
 
@@ -25,7 +26,17 @@ export const editSpec = (root: string, change: (data: any) => void) => {
 export const nodeIn = (data: any, name: string): any => data.nodes[0].children.find((n: any) => n.sid === sid(name));
 
 export const OPEN = `/** @spec ${sid("open")} */\nexport function open(amount: number) {\n  return amount;\n}\n`;
-export const OPEN_TEST = `test("${sid("open")} opens an account", () => {});\n`;
+export const OPEN_TEST = `test("@spec ${sid("open")} opens an account", () => {});\n`;
+
+/** The rule of the project's own guidelines putting the specification live (s-qzthyh7yqvfhsa2), confirmed where asked. */
+export function putLive(root: string, confirmed = true): void {
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  data.nodes[0].children = [...(data.nodes[0].children ?? []), node("live", { title: "The specification is live", text: "This project's specification is live.", refs: [{ type: "refines", to: LIVE_RULE }] })];
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  reindex(root);
+  if (confirmed) confirm(root, [sid("live")], { me: OWNER });
+}
 
 /** A project whose code and tests agree with its specification, committed. */
 export function codeProject(): string {
@@ -33,7 +44,7 @@ export function codeProject(): string {
     "sheriff.config.json": { code: ["src/**"], tests: ["test/**"], writesSpecSheriffGuidelines: true },
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours." })),
     "specs/contracts/c.json": file("contracts", "c", node("accounts", { kind: "section", text: "Accounts.", children: [
-      node("open", { meta: { code: [{ file: "src/open.ts" }], tests: [`test/open.test.ts::${sid("open")} opens an account`] } }),
+      node("open", { meta: { code: [{ file: "src/open.ts" }], tests: [`test/open.test.ts::@spec ${sid("open")} opens an account`] } }),
       node("draft"),
       node("states", { list: { of: "the states of an account", members: ["open", "closed"], declaredIn: { file: "src/states.ts", declaration: "State" } }, meta: { code: [{ file: "src/states.ts", symbols: ["State"] }] } }),
     ] })),

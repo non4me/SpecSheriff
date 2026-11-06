@@ -8,7 +8,7 @@ import { guard } from "./guard.ts";
 import { init, remove } from "./init.ts";
 import { message } from "./message.ts";
 import { review } from "./review.ts";
-import { reindex } from "./reindex.ts";
+import { reindex, rewriteTests } from "./reindex.ts";
 import { show, todos } from "./show.ts";
 import { modelOf } from "./model.ts";
 import { loadSpecification, specificationOf, type SpecFile, type Specification } from "./spec-files.ts";
@@ -19,7 +19,8 @@ const USAGE = `Usage: sheriff <command>
 
 Commands:
   reindex                     give sids, compute locations, rebuild incoming links and headers' indexes,
-                              empty every status no confirmation by its owner holds
+                              empty every status no confirmation by its owner holds, and write the
+                              SpecTag of each test an earlier release read by its bare sid
   validate                    check the specification on its own
   confirm [--withdraw] <sid>  record the owner's confirmation of a node's wording, or withdraw it
   show <sid|location>         print a node with its links
@@ -66,6 +67,7 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       process.stdout.write(JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).version + "\n");
       return 0;
     case "reindex": {
+      for (const f of await rewriteTests(root)) process.stdout.write(`rewritten: ${f}\n`);
       const report = reindex(root);
       for (const m of report.merged) process.stdout.write(`merged: ${m.file}: "${m.key}" at ${m.path || "/"}, lines ${m.lines.join(", ")}\n`);
       for (const s of report.emptied) process.stdout.write(`status emptied: ${s}\n`);

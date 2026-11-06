@@ -49,14 +49,14 @@ function defaultsNotice(runner: ReviewSettings["runner"], defaulted: string[]): 
 
 const SIDS = /\bs-[2-9a-hjkmnp-z]{15}\b/g;
 
-export const SYSTEM_PROMPT = `You are the independent reviewer of one commit. You are given the commit's message, the text and the reason of the nodes of the specification it names, each symbol of the code the commit changes, whole, with the tags that bind it, and the commit's change, and nothing else: judge the code against those nodes, not against what its author may have meant.
+export const SYSTEM_PROMPT = `You are the independent reviewer of one commit. You are given the commit's message, the text and the reason of the nodes of the specification it names, each symbol of the code the commit changes, whole, with the SpecTags that bind it, and the commit's change, and nothing else: judge the code against those nodes, not against what its author may have meant.
 
 Refuse the commit where the code does something no named node states in its text, or leaves out something a named node requires. A node's reason says what its rule protects: read a case its text leaves open by it.
 
-Judge each changed symbol whole, not only its changed lines, against the nodes its tags name. Refuse the commit where a changed symbol:
-- does something no node its tags name states in its text;
-- carries a tag naming a node the symbol does not implement;
-- carries the tag that names no node while it implements the system's logic. Such a finding names s-kgbzk2ph9e6jfb4, the rule that every symbol carries a tag, as its node.
+Judge each changed symbol whole, not only its changed lines, against the nodes its SpecTags name. Refuse the commit where a changed symbol:
+- does something no node its SpecTags name states in its text;
+- carries a SpecTag naming a node the symbol does not implement;
+- carries the SpecTag that names no node while it implements the system's logic. Such a finding names s-kgbzk2ph9e6jfb4, the rule that every symbol carries a SpecTag, as its node.
 
 The files generated from the specification are left out of the change, and the input names them: they hold the types and runtime checks generated from the RecordTypes, or what a project's generator wrote, which another check compares with what the nodes produce. Count what a RecordType requires as carried out by the types and runtime checks generated from it, and never refuse a commit because those files are not in the change.
 
@@ -72,20 +72,20 @@ async function changesCode(root: string): Promise<boolean> {
   return [...lines.values()].some((l) => l.added.size + l.removed.size > 0);
 }
 
-/** What the reviewer is given: the commit's message, the text of the nodes its message and tags name, and its change. */
+/** What the reviewer is given: the commit's message, the text of the nodes its message and SpecTags name, and its change. */
 export async function reviewInput(root: string, text: string): Promise<string> {
   const spec = loadSpecification(root);
   const config = loadConfig(root);
   const commit = await readCommit(root, config);
   const named = new Set([...(messageText(text).match(SIDS) ?? []), ...changedTags(commit)]);
   // Each symbol of the system's code outside its tests the commit changes, whole as the commit leaves it, with its
-  // file, its lines and its tags (s-vp24dqydygztqbt).
+  // file, its lines and its SpecTags (s-vp24dqydygztqbt).
   const symbols = [...commit.changedSymbols].filter(([path]) => readsAs(config, path) === "code").flatMap(([path, changed]) => {
     const lines = readFileSync(join(root, path), "utf8").split("\n");
     return [...changed].map((sym) => {
-      // A tag naming no node is told from no tag at all, since the reviewer judges the reason the one gives.
-      const tags = sym.tags.map((t) => t.sid ?? `none: ${t.none ?? ""}`).join(", ") || "no tag";
-      return `## ${path}:${sym.start}-${sym.end} ${sym.name} (tags: ${tags})\n\n\`\`\`\n${lines.slice(sym.start - 1, sym.end).join("\n")}\n\`\`\``;
+      // A SpecTag naming no node is told from no SpecTag at all, since the reviewer judges the reason the one gives.
+      const tags = sym.tags.map((t) => t.sid ?? `none: ${t.none ?? ""}`).join(", ") || "no SpecTag";
+      return `## ${path}:${sym.start}-${sym.end} ${sym.name} (SpecTags: ${tags})\n\n\`\`\`\n${lines.slice(sym.start - 1, sym.end).join("\n")}\n\`\`\``;
     });
   });
   const nodes = [...named].flatMap((sid) => {

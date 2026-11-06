@@ -60,7 +60,7 @@ const CONFIRMATIONS = "specs/_confirmations.jsonl";
 /**
  * Judges an edit an agent is about to make, made with the file tools or as a patch in Codex's format:
  * the reason it is refused, or null where it may be made. It refuses an edit that would leave a node
- * checked over a wording its owner never confirmed, or change the code of a rule no test carries the sid
+ * checked over a wording its owner never confirmed, or change the code of a rule no test carries the SpecTag
  * of, and a patch whole where it refuses one of its files or cannot read or apply the patch.
  */
 export async function guard(root: string, input: HookInput): Promise<string | null> {
@@ -150,15 +150,22 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
     if (rules.size) {
       // The tests as the edit leaves them: those the working tree holds, and those the edit writes.
       const tested = new Set<string>();
+      const bare = new Set<string>();
       const tests = new Set([...trackedFiles(root), ...instead.keys()].filter((p) => readsAs(config, p) === "tests"));
       for (const p of tests) {
         const text = instead.has(p) ? instead.get(p)! : existsSync(join(root, p)) ? readFileSync(join(root, p), "utf8") : null;
         if (text === null) continue;
         const read = await readCode(p, text);
-        for (const t of read?.tests ?? []) if (t.sid) tested.add(t.sid);
+        for (const t of read?.tests ?? []) {
+          if (t.sid) tested.add(t.sid);
+          else if (t.bare) bare.add(t.bare);
+        }
       }
       for (const sid of rules) {
-        if (!tested.has(sid)) reasons.push(`no test carries ${sid} (${spec.nodes.get(sid)!.node.location}), a rule whose code this edit changes: write its test first`);
+        if (tested.has(sid)) continue;
+        const reason = `no test carries the SpecTag of ${sid} (${spec.nodes.get(sid)!.node.location}), a rule whose code this edit changes`;
+        // A test naming it by a bare sid, as an earlier release read it, is named with the command writing its SpecTag (s-utf4mbt7ref8g9c).
+        reasons.push(bare.has(sid) ? `${reason}: a test names it by the bare sid, the form an earlier release read, and sheriff reindex writes its SpecTag` : `${reason}: write its test first`);
       }
     }
   }

@@ -19,7 +19,7 @@ function gitRepo(config: boolean): string {
   return root;
 }
 
-test("s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools", () => {
+test("@spec s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools", () => {
   assert.equal(json(`${PLUGIN}/.claude-plugin/plugin.json`).name, "specsheriff");
   assert.deepEqual(readdirSync(`${PLUGIN}/skills`).sort(), ["spec", "spec-adopt", "spec-init", "spec-remove", "spec-review"]);
   for (const skill of readdirSync(`${PLUGIN}/skills`)) assert.ok(existsSync(`${PLUGIN}/skills/${skill}/SKILL.md`), skill);
@@ -29,7 +29,7 @@ test("s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guideline
   assert.equal(version.stdout.trim(), json(join(REPO, "skills", "tools", "package.json")).version, version.stderr);
 });
 
-test("s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts", () => {
+test("@spec s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts", () => {
   const { hooks } = json(`${PLUGIN}/hooks/hooks.json`);
   const command = (event: string, tool?: string) =>
     hooks[event].filter((e: any) => !tool || new RegExp(`^(${e.matcher})$`).test(tool)).flatMap((e: any) => e.hooks.map((h: any) => h.command)).join("\n");
@@ -39,7 +39,7 @@ test("s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run wh
   assert.match(command("SessionStart"), /\$\{CLAUDE_PLUGIN_ROOT\}\/hooks\/session-start\.sh/);
 });
 
-test("s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools", () => {
+test("@spec s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools", () => {
   const root = gitRepo(false);
   const p = plugins();
   const edit = JSON.stringify({ tool_name: "Write", tool_input: { file_path: join(root, "a.ts"), content: "export const a = 1;\n" } });
@@ -54,13 +54,13 @@ test("s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugi
   assert.deepEqual(readdirSync(root), [".git"]);
 });
 
-test("s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory", () => {
+test("@spec s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory", () => {
   const marketplace = json(join(REPO, ".claude-plugin", "marketplace.json"));
   assert.equal(marketplace.name, "specsheriff-marketplace");
   assert.deepEqual(marketplace.plugins.map((p: any) => [p.name, p.source]), [["specsheriff", "./skills/claude-code"]]);
 });
 
-test("s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, spec-init runs sheriff init, and spec-remove sheriff remove, offering to remove the plugin", () => {
+test("@spec s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, spec-init runs sheriff init, and spec-remove sheriff remove, offering to remove the plugin", () => {
   for (const skill of readdirSync(`${PLUGIN}/skills`)) assert.match(read(`${PLUGIN}/skills/${skill}/SKILL.md`), /node "\$\{CLAUDE_PLUGIN_ROOT\}\/tools\/dist\/cli\.js"/, skill);
   for (const hook of ["guard.sh", "after-edit.sh"]) {
     assert.match(read(`${PLUGIN}/hooks/${hook}`), /plugin="\$\{CLAUDE_PLUGIN_ROOT:-/, hook);
@@ -72,7 +72,7 @@ test("s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff fr
   assert.match(remove, /claude plugin uninstall specsheriff@specsheriff-marketplace/);
 });
 
-test("s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing", () => {
+test("@spec s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing", () => {
   const root = gitRepo(false);
   const p = plugins();
   pluginHook("session-start.sh", p, root);
@@ -95,7 +95,7 @@ function initialised(): string {
   return root;
 }
 
-test("s-4mej6ccn7xu3d3p each git hook sheriff init writes holds the lookup of the tools of both plugins and a call to the script for that hook, and nothing else", () => {
+test("@spec s-4mej6ccn7xu3d3p each git hook sheriff init writes holds the lookup of the tools of both plugins and a call to the script for that hook, and nothing else", () => {
   const root = initialised();
   const hooks = ["pre-commit", "commit-msg", "pre-push"].map((h) => read(join(root, ".githooks", h)));
   assert.equal(new Set(hooks).size, 1, "one call, naming its script by the hook's own name");
@@ -112,7 +112,7 @@ function toolsAt(dir: string, version: string, whose: string): void {
   for (const hook of ["pre-commit", "commit-msg", "pre-push"]) writeFileSync(join(dir, "hooks", hook), `echo "${whose} $(basename "$0")"\n`);
 }
 
-test("s-4mej6ccn7xu3d3p a git hook runs the tools of the higher release where it finds both plugins', those of the plugin for Claude Code where the two are equal, and either where it finds one", () => {
+test("@spec s-4mej6ccn7xu3d3p a git hook runs the tools of the higher release where it finds both plugins', those of the plugin for Claude Code where the two are equal, and either where it finds one", () => {
   const root = initialised();
   const p = plugins();
   const codex = codexHome(false);
@@ -130,7 +130,7 @@ test("s-4mej6ccn7xu3d3p a git hook runs the tools of the higher release where it
   assert.equal(ran(), "codex pre-push");
 });
 
-test("s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets the commit through, keeps the git hooks on, and says at every commit that no check of SpecSheriff ran", () => {
+test("@spec s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets the commit through, keeps the git hooks on, and says at every commit that no check of SpecSheriff ran", () => {
   const root = initialised();
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
   git(root, "add", "-A");
@@ -145,7 +145,7 @@ test("s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets t
   assert.equal(git(root, "log", "--oneline").stdout.trim().split("\n").length, 2);
 });
 
-test("s-4mej6ccn7xu3d3p the session start names each git hook an earlier release of sheriff init wrote, saying that sheriff init replaces it", () => {
+test("@spec s-4mej6ccn7xu3d3p the session start names each git hook an earlier release of sheriff init wrote, saying that sheriff init replaces it", () => {
   const root = initialised();
   writeFileSync(join(root, ".githooks", "pre-commit"), git(REPO, "show", "v0.2.2:skills/tools/assets/githook").stdout.replaceAll("\n", "\r\n"));
   const start = pluginHook("session-start.sh", plugins(), root);
@@ -154,7 +154,7 @@ test("s-4mej6ccn7xu3d3p the session start names each git hook an earlier release
   assert.doesNotMatch(start.stdout, /\.githooks\/(commit-msg|pre-push).*earlier/);
 });
 
-test("s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need", () => {
+test("@spec s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need", () => {
   const root = gitRepo(true);
   const p = plugins();
   pluginHook("session-start.sh", p, root);
@@ -169,7 +169,7 @@ test("s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older t
   }
 });
 
-test("s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index", () => {
+test("@spec s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index", () => {
   const root = gitRepo(true);
   mkdirSync(join(root, ".githooks"));
   for (const hook of ["pre-commit", "commit-msg"]) writeFileSync(join(root, ".githooks", hook), "#!/bin/sh\nexit 0\n");
@@ -190,7 +190,7 @@ test("s-477gtdrkw34dzxw the plugin's session start names each git hook not execu
   }
 });
 
-test("s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory", () => {
+test("@spec s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory", () => {
   const root = gitRepo(true);
   const p = plugins();
   const first = pluginHook("session-start.sh", p, root);
@@ -216,7 +216,7 @@ function userMachine(settings: Record<string, string> = {}): ReturnType<typeof p
   return { ...p, setting };
 }
 
-test("s-zh2vcr3xjumppg5 the plugin declares each setting of the runner claude as an option naming its default and taking no default value", () => {
+test("@spec s-zh2vcr3xjumppg5 the plugin declares each setting of the runner claude as an option naming its default and taking no default value", () => {
   const { userConfig } = json(`${PLUGIN}/.claude-plugin/plugin.json`);
   assert.deepEqual(Object.keys(userConfig).sort(), ["claudeEffort", "claudeFallbackModel", "claudeModel"]);
   for (const [key, named] of [["claudeModel", "opus"], ["claudeFallbackModel", "sonnet"], ["claudeEffort", "high"]] as const) {
@@ -230,7 +230,7 @@ test("s-zh2vcr3xjumppg5 the plugin declares each setting of the runner claude as
   assert.deepEqual(userConfig.claudeEffort.options, ["low", "medium", "high", "xhigh", "max"]);
 });
 
-test("s-477gtdrkw34dzxw the session start of the plugin for Claude Code writes each setting the user gave as an option, in any repository, wherever the configuration lacks it or holds another value", () => {
+test("@spec s-477gtdrkw34dzxw the session start of the plugin for Claude Code writes each setting the user gave as an option, in any repository, wherever the configuration lacks it or holds another value", () => {
   const root = gitRepo(false);
   const m = userMachine({ claudeModel: "sonnet" });
   m.env.CLAUDE_PLUGIN_OPTION_CLAUDEMODEL = "opus";
@@ -243,7 +243,7 @@ test("s-477gtdrkw34dzxw the session start of the plugin for Claude Code writes e
   assert.equal(start.stdout, "");
 });
 
-test("s-477gtdrkw34dzxw in a repository taking the method the session start names each setting the user's configuration lacks, with its default, and has the agent ask for them once on each machine", () => {
+test("@spec s-477gtdrkw34dzxw in a repository taking the method the session start names each setting the user's configuration lacks, with its default, and has the agent ask for them once on each machine", () => {
   const root = gitRepo(true);
   const m = userMachine({ claudeModel: "opus" });
   const first = pluginHook("session-start.sh", m, root);
@@ -258,7 +258,7 @@ test("s-477gtdrkw34dzxw in a repository taking the method the session start name
   assert.doesNotMatch(second.stdout, /specsheriff\.review/);
 });
 
-test("s-zh2vcr3xjumppg5 spec-init offers each setting of the runner the configuration lacks and was not asked for, writing what the user answers and marking it asked; the skills set no model and no effort", () => {
+test("@spec s-zh2vcr3xjumppg5 spec-init offers each setting of the runner the configuration lacks and was not asked for, writing what the user answers and marking it asked; the skills set no model and no effort", () => {
   const init = read(`${PLUGIN}/skills/spec-init/SKILL.md`);
   for (const key of ["claudeModel", "claudeFallbackModel", "claudeEffort", "claudeAsked"]) assert.match(init, new RegExp(`specsheriff\\.review\\.${key}`), key);
   assert.match(init, /git config --global/);
@@ -269,7 +269,7 @@ test("s-zh2vcr3xjumppg5 spec-init offers each setting of the runner the configur
   }
 });
 
-test("s-477gtdrkw34dzxw the plugin's session start names no file of the project's own tools, which run by the interpreter their first line names", () => {
+test("@spec s-477gtdrkw34dzxw the plugin's session start names no file of the project's own tools, which run by the interpreter their first line names", () => {
   const root = gitRepo(true);
   mkdirSync(join(root, ".githooks", "pre-commit.d"), { recursive: true });
   writeFileSync(join(root, ".githooks", "pre-commit"), "#!/bin/sh\nexit 0\n");

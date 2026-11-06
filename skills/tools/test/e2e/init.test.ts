@@ -21,7 +21,7 @@ function fresh(): string {
   return root;
 }
 
-test("s-7unxytshhc4md54 sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines", () => {
+test("@spec s-7unxytshhc4md54 sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines", () => {
   const root = fresh();
   const run = sheriff(root, "init");
   assert.equal(run.status, 0, run.stderr);
@@ -43,7 +43,7 @@ test("s-7unxytshhc4md54 sheriff init writes the git hooks and turns them on, dec
 
 const modes = (root: string) => git(root, "ls-files", "-s", "--", ".githooks").stdout.trim().split("\n").map((l) => `${l.split(/\s+/)[0]} ${l.split("\t")[1]}`);
 
-test("s-7unxytshhc4md54 sheriff init stages each hook it holds with the executable mode, naming each, where files keep no such bit, and stages nothing else", () => {
+test("@spec s-7unxytshhc4md54 sheriff init stages each hook it holds with the executable mode, naming each, where files keep no such bit, and stages nothing else", () => {
   const root = fresh();
   git(root, "config", "core.fileMode", "false");
   const run = sheriff(root, "init");
@@ -53,7 +53,7 @@ test("s-7unxytshhc4md54 sheriff init stages each hook it holds with the executab
   for (const hook of ["pre-commit", "commit-msg", "pre-push"]) assert.match(run.stdout, new RegExp(`staged executable: \\.githooks/${hook}`));
 });
 
-test("s-7unxytshhc4md54 sheriff init stages again with the executable mode a hook git's index holds without it", () => {
+test("@spec s-7unxytshhc4md54 sheriff init stages again with the executable mode a hook git's index holds without it", () => {
   const root = fresh();
   git(root, "config", "core.fileMode", "false");
   sheriff(root, "init");
@@ -64,7 +64,7 @@ test("s-7unxytshhc4md54 sheriff init stages again with the executable mode a hoo
   assert.ok(modes(root).includes("100755 .githooks/pre-push"), modes(root).join("\n"));
 });
 
-test("s-7unxytshhc4md54 sheriff init, where it cannot stage a hook, names it and says how to stage it executable", () => {
+test("@spec s-7unxytshhc4md54 sheriff init, where it cannot stage a hook, names it and says how to stage it executable", () => {
   const root = mkdtempSync(join(tmpdir(), "sheriff-init-plain-"));
   const run = sheriff(root, "init");
   assert.equal(run.status, 0, run.stderr);
@@ -73,7 +73,7 @@ test("s-7unxytshhc4md54 sheriff init, where it cannot stage a hook, names it and
   }
 });
 
-test("s-jsqxdx47wkkj7gp run again, sheriff init changes nothing", () => {
+test("@spec s-jsqxdx47wkkj7gp run again, sheriff init changes nothing", () => {
   const root = fresh();
   sheriff(root, "init");
   const again = sheriff(root, "init");
@@ -88,7 +88,7 @@ test("s-jsqxdx47wkkj7gp run again, sheriff init changes nothing", () => {
 const codexHooksOf = (root: string) => JSON.parse(readFileSync(join(root, ".codex", "hooks.json"), "utf8"));
 const commandsOf = (entries: Array<{ hooks: Array<{ command: string }> }>) => entries.flatMap((e) => e.hooks.map((h) => h.command));
 
-test("s-7unxytshhc4md54 sheriff init --agent codex writes the agent's hooks for Codex beside every other hook there, and declares nothing to Claude Code", () => {
+test("@spec s-7unxytshhc4md54 sheriff init --agent codex writes the agent's hooks for Codex beside every other hook there, and declares nothing to Claude Code", () => {
   const root = fresh();
   mkdirSync(join(root, ".codex"));
   const theirs = { hooks: { PreToolUse: [{ matcher: "Bash", hooks: [{ type: "command", command: "echo theirs" }] }] } };
@@ -109,7 +109,7 @@ test("s-7unxytshhc4md54 sheriff init --agent codex writes the agent's hooks for 
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
 });
 
-test("s-7unxytshhc4md54 sheriff init refuses an agent it does not know, naming the two it takes", () => {
+test("@spec s-7unxytshhc4md54 sheriff init refuses an agent it does not know, naming the two it takes", () => {
   const root = fresh();
   const run = sheriff(root, "init", "--agent", "gemini");
   assert.notEqual(run.status, 0);
@@ -122,7 +122,7 @@ test("s-7unxytshhc4md54 sheriff init refuses an agent it does not know, naming t
 /** The git hook the releases before Codex was taken up wrote, 0.1.0 to 0.2.2, as git holds it. */
 const EARLIER_HOOK = git(REPO, "show", "v0.2.2:skills/tools/assets/githook").stdout;
 
-test("s-7unxytshhc4md54 sheriff init replaces a hook an earlier release of it wrote, line endings aside, naming each", () => {
+test("@spec s-7unxytshhc4md54 sheriff init replaces a hook an earlier release of it wrote, line endings aside, naming each", () => {
   assert.match(EARLIER_HOOK, /^#!\/bin\/sh\n/);
   const root = fresh();
   mkdirSync(join(root, ".githooks"));
@@ -156,7 +156,7 @@ function setUpForBoth(): { root: string; claude: object; codex: object } {
   return { root, claude, codex };
 }
 
-test("s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes for both agents, keeps specs/ naming it, stages nothing, and run again changes nothing", () => {
+test("@spec s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes for both agents, keeps specs/ naming it, stages nothing, and run again changes nothing", () => {
   const root = fresh();
   sheriff(root, "init");
   sheriff(root, "init", "--agent", "codex");
@@ -179,7 +179,7 @@ test("s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes for bo
   assert.doesNotMatch(again.stdout, /removed|unset/);
 });
 
-test("s-7unxytshhc4md54 sheriff remove keeps every other key and hook, and each hook and declaration that differs, naming it", () => {
+test("@spec s-7unxytshhc4md54 sheriff remove keeps every other key and hook, and each hook and declaration that differs, naming it", () => {
   const { root, claude, codex } = setUpForBoth();
   writeFileSync(join(root, ".githooks", "pre-push"), "ours\n");
   const settings = JSON.parse(readFileSync(join(root, ".claude", "settings.json"), "utf8"));
@@ -200,7 +200,7 @@ test("s-7unxytshhc4md54 sheriff remove keeps every other key and hook, and each 
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), "elsewhere");
 });
 
-test("s-7unxytshhc4md54 sheriff remove takes out a hook an earlier release of sheriff init wrote", () => {
+test("@spec s-7unxytshhc4md54 sheriff remove takes out a hook an earlier release of sheriff init wrote", () => {
   const root = fresh();
   mkdirSync(join(root, ".githooks"));
   writeFileSync(join(root, ".githooks", "pre-commit"), EARLIER_HOOK.replaceAll("\n", "\r\n"));
@@ -211,7 +211,7 @@ test("s-7unxytshhc4md54 sheriff remove takes out a hook an earlier release of sh
   assert.match(run.stdout, /removed: \.githooks\/pre-commit/);
 });
 
-test("s-7unxytshhc4md54 sheriff init replaces no file that differs from what it would write, and names it", () => {
+test("@spec s-7unxytshhc4md54 sheriff init replaces no file that differs from what it would write, and names it", () => {
   const root = fresh();
   mkdirSync(join(root, ".githooks"));
   writeFileSync(join(root, ".githooks", "pre-commit"), "ours\n");
@@ -220,7 +220,7 @@ test("s-7unxytshhc4md54 sheriff init replaces no file that differs from what it 
   assert.match(run.stdout, /left as it is: \.githooks\/pre-commit/);
 });
 
-test("s-7unxytshhc4md54 sheriff init declares the marketplace and the plugin beside every other key of the agent's settings", () => {
+test("@spec s-7unxytshhc4md54 sheriff init declares the marketplace and the plugin beside every other key of the agent's settings", () => {
   const root = fresh();
   mkdirSync(join(root, ".claude"));
   const theirs = {
@@ -239,13 +239,13 @@ test("s-7unxytshhc4md54 sheriff init declares the marketplace and the plugin bes
   });
 });
 
-test("s-7unxytshhc4md54 this repository holds what sheriff init writes, so that running it here writes nothing", () => {
+test("@spec s-7unxytshhc4md54 this repository holds what sheriff init writes, so that running it here writes nothing", () => {
   const run = sheriff(REPO, "init");
   assert.equal(run.status, 0, run.stderr);
   assert.doesNotMatch(run.stdout, /written|replaced|left as it is/, run.stdout);
 });
 
-test("s-7unxytshhc4md54 sheriff init writes, unchecked, the rule that puts the specification live where the repository keeps no code the tools read, and not where it keeps some", () => {
+test("@spec s-7unxytshhc4md54 sheriff init writes, unchecked, the rule that puts the specification live where the repository keeps no code the tools read, and not where it keeps some", () => {
   const live = (root: string) => JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].children?.find((n: { text: string }) => n.text === "This project's specification is live.");
   const empty = fresh();
   sheriff(empty, "init");
@@ -259,7 +259,7 @@ test("s-7unxytshhc4md54 sheriff init writes, unchecked, the rule that puts the s
   assert.equal(live(coded), undefined);
 });
 
-test("s-7unxytshhc4md54 sheriff init names each hook the repository ran from elsewhere before, and sheriff remove each folder of the project's own tools it leaves", () => {
+test("@spec s-7unxytshhc4md54 sheriff init names each hook the repository ran from elsewhere before, and sheriff remove each folder of the project's own tools it leaves", () => {
   const root = fresh();
   mkdirSync(join(root, ".git", "hooks"), { recursive: true });
   writeFileSync(join(root, ".git", "hooks", "pre-push"), "#!/bin/sh\nexit 0\n");
@@ -273,7 +273,7 @@ test("s-7unxytshhc4md54 sheriff init names each hook the repository ran from els
   assert.match(removed.stdout, /\.githooks\/pre-push\.d.*no longer run/);
 });
 
-test("s-7unxytshhc4md54 sheriff init names each hook of a hooks folder core.hooksPath names by an absolute path, and of a linked worktree's repository", () => {
+test("@spec s-7unxytshhc4md54 sheriff init names each hook of a hooks folder core.hooksPath names by an absolute path, and of a linked worktree's repository", () => {
   const root = fresh();
   const elsewhere = mkdtempSync(join(tmpdir(), "sheriff-hooks-"));
   writeFileSync(join(elsewhere, "pre-commit"), "#!/bin/sh\nexit 0\n");

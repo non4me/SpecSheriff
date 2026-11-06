@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, posix } from "node:path";
-import { readCode, type CodeFile, type CodeSymbol } from "./code.ts";
+import { onlySpecTagged, readCode, type CodeFile, type CodeSymbol } from "./code.ts";
 import { loadConfig, readsAs, type Config } from "./config.ts";
-import { before, changes, codeChanges, commitTexts, git, trackedFiles } from "./diff.ts";
+import { before, changes, codeChanges, commitTexts, git, trackedFiles, type FileChange } from "./diff.ts";
 import { fixtureGlobs, isFixture, isProjectKind, liveRule, locations, partOf, PROJECT } from "./model.ts";
 import { needsCode, schemaRefusals } from "./schema.ts";
 import { runGenerators } from "./generators.ts";
@@ -34,6 +34,21 @@ async function readAll(root: string, paths: string[]): Promise<CodeFile[]> {
 
 const allSymbols = (symbols: CodeSymbol[]): CodeSymbol[] => symbols.flatMap((s) => [s, ...allSymbols(s.inner)]);
 
+/**
+ * The lines by which a file of tests changes, a test changing with any line of its text: those that only put `@spec `
+ * before a bare sid, as the reindex writes a test's SpecTag, left out with the lines they replace (s-rah8b37kytb682y).
+ */
+function testLines(change: FileChange): { added: Set<number>; removed: Set<number> } {
+  const removed = [...change.removed];
+  const added = change.added.filter((a) => {
+    const i = removed.findIndex((r) => onlySpecTagged(r.text, a.text));
+    if (i < 0) return true;
+    removed.splice(i, 1);
+    return false;
+  });
+  return { added: new Set(added.map((l) => l.line)), removed: new Set(removed.map((l) => l.line)) };
+}
+
 export interface Commit {
   codeFiles: CodeFile[];
   testFiles: CodeFile[];
@@ -64,10 +79,8 @@ export async function readCommit(root: string, config: Config, spec = loadSpecif
     if (!now) continue;
     const was = before(root, change.before ?? change.path);
     const old = was === null ? null : await readCode(change.path, was);
-    // Code changes as the rule on tags counts them; a test changes with any line of its text.
-    const real = reads(change.path) === "tests"
-      ? { added: new Set(change.added.map((l) => l.line)), removed: new Set(change.removed.map((l) => l.line)) }
-      : lines.get(change.path)!;
+    // Code changes as the rule on SpecTags counts them; a test changes with any line of its text.
+    const real = reads(change.path) === "tests" ? testLines(change) : lines.get(change.path)!;
     const symbols = new Set<CodeSymbol>();
     const tests = new Set<string>();
     const inSymbol = (file: CodeFile, line: number) =>
@@ -87,7 +100,7 @@ export async function readCommit(root: string, config: Config, spec = loadSpecif
   return { codeFiles, testFiles, changedSymbols, changedTests };
 }
 
-/** The sids the tags on the symbols a commit changes name, inner symbols' own included. */
+/** The sids the SpecTags on the symbols a commit changes name, inner symbols' own included. */
 export function changedTags(commit: Commit): Set<string> {
   const sids = new Set<string>();
   for (const symbols of commit.changedSymbols.values()) for (const s of symbols) for (const t of s.tags) if (t.sid) sids.add(t.sid);
@@ -138,33 +151,38 @@ export async function binding(root: string): Promise<BindingFinding[]> {
   if (wasLive && !nowLive) findings.push({ where: PROJECT, message: "takes out the rule that puts the specification live" });
   const at = (path: string, line: number) => `${path}:${line}`;
 
-  // Tags.
+  // SpecTags on the code.
   const rulesChanged = new Set<string>();
   for (const file of codeFiles) {
     for (const p of file.problems) findings.push({ where: at(file.path, p.line), message: p.message });
     for (const s of file.symbols) {
       if (s.tags.length) continue;
-      // In draft mode an untagged symbol a commit leaves alone is reported, not refused (s-kkbqcb9xrpaepwn).
+      // In draft mode a symbol without a SpecTag that a commit leaves alone is reported, not refused (s-kkbqcb9xrpaepwn).
       const left = !live && !(changedSymbols.get(file.path)?.has(s) ?? false);
-      findings.push({ where: at(file.path, s.start), message: `${s.name} carries no tag`, ...(left ? { reported: true as const } : {}) });
+      findings.push({ where: at(file.path, s.start), message: `${s.name} carries no SpecTag`, ...(left ? { reported: true as const } : {}) });
     }
     for (const s of allSymbols(file.symbols)) {
       const changed = changedSymbols.get(file.path)?.has(s) ?? false;
       for (const t of s.tags) {
         if (!t.sid) continue;
-        if (!exists(t.sid)) findings.push({ where: at(file.path, t.line), message: `the tag on ${s.name} ${t.sid} names no node` });
-        else if (changed && !checked(t.sid)) findings.push({ where: at(file.path, t.line), message: `${s.name}, whose code the commit changes, is tagged ${t.sid}, a node not checked` });
+        if (!exists(t.sid)) findings.push({ where: at(file.path, t.line), message: `the SpecTag on ${s.name} ${t.sid} names no node` });
+        else if (changed && !checked(t.sid)) findings.push({ where: at(file.path, t.line), message: `${s.name}, whose code the commit changes, carries the SpecTag ${t.sid}, a node not checked` });
         if (changed && coded(spec.nodes.get(t.sid)?.node.kind)) rulesChanged.add(t.sid);
       }
     }
   }
 
-  // Tests.
+  // The SpecTags on the tests.
   const testSids = new Set<string>();
   for (const file of testFiles) {
     for (const t of file.tests) {
       if (!t.sid) {
-        findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries no sid` });
+        // In draft mode a test without a SpecTag that a commit leaves alone is reported, not refused (s-kkbqcb9xrpaepwn).
+        const left = !live && !(changedTests.get(file.path)?.has(t.name) ?? false);
+        const message = t.bare
+          ? `the test "${t.name}" carries the bare sid ${t.bare}, the form an earlier release read, and so no SpecTag: sheriff reindex writes it`
+          : `the test "${t.name}" carries no SpecTag`;
+        findings.push({ where: at(file.path, t.start), message, ...(left ? { reported: true as const } : {}) });
         continue;
       }
       testSids.add(t.sid);
@@ -172,14 +190,14 @@ export async function binding(root: string): Promise<BindingFinding[]> {
       if (!exists(t.sid)) findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, which names no node` });
       else if (kind !== "rule" && kind !== "term" && !(kind && isProjectKind(kind))) {
         const named = kind === "recordType" ? "a RecordType" : kind === "domain" ? "a domain's header" : `a ${kind}`;
-        findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, ${named}, where a test carries the sid of a rule or a term` });
+        findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, ${named}, where a test carries the SpecTag of a rule or a term` });
       } else if (changedTests.get(file.path)?.has(t.name) && !checked(t.sid)) {
         findings.push({ where: at(file.path, t.start), message: `the test "${t.name}", which the commit changes, carries ${t.sid}, a node not checked` });
       }
     }
   }
   for (const sid of rulesChanged) {
-    if (!testSids.has(sid)) findings.push({ where: nodeWhere(spec, sid), message: "a rule whose code the commit adds or changes, and no test carries its sid" });
+    if (!testSids.has(sid)) findings.push({ where: nodeWhere(spec, sid), message: "a rule whose code the commit adds or changes, and no test carries its SpecTag" });
   }
 
   // The lists in the nodes' metadata, and the lists against their declarations.
@@ -206,22 +224,22 @@ export async function binding(root: string): Promise<BindingFinding[]> {
     const listed = (meta.code ?? []).map((c) => c.file).sort();
     const want = [...produced.keys()].sort();
     if (listed.join("|") !== want.join("|")) {
-      findings.push({ where: nodeWhere(spec, sid), message: `its list of code, ${listed.join(", ") || "none"}, is not what the tags produce: ${want.join(", ") || "none"}` });
+      findings.push({ where: nodeWhere(spec, sid), message: `its list of code, ${listed.join(", ") || "none"}, is not what the SpecTags produce: ${want.join(", ") || "none"}` });
     }
-    // A node naming the symbols in a file names exactly those that carry its tag.
+    // A node naming the symbols in a file names exactly those that carry its SpecTag.
     for (const c of meta.code ?? []) {
       if (!c.symbols) continue;
       for (const name of c.symbols) {
-        if (!produced.get(c.file)?.has(name)) findings.push({ where: nodeWhere(spec, sid), message: `names the symbol ${name} in ${c.file}, which carries no tag naming it` });
+        if (!produced.get(c.file)?.has(name)) findings.push({ where: nodeWhere(spec, sid), message: `names the symbol ${name} in ${c.file}, which carries no SpecTag naming it` });
       }
       for (const name of produced.get(c.file) ?? []) {
-        if (!c.symbols.includes(name)) findings.push({ where: nodeWhere(spec, sid), message: `leaves out the symbol ${name} in ${c.file}, which carries its tag` });
+        if (!c.symbols.includes(name)) findings.push({ where: nodeWhere(spec, sid), message: `leaves out the symbol ${name} in ${c.file}, which carries its SpecTag` });
       }
     }
     const listedTests = [...(meta.tests ?? [])].sort();
     const wantTests = [...(producedTests.get(sid) ?? [])].sort();
     if (listedTests.join("|") !== wantTests.join("|")) {
-      findings.push({ where: nodeWhere(spec, sid), message: `its list of tests is not what the tests' sids produce: ${wantTests.join(", ") || "none"}` });
+      findings.push({ where: nodeWhere(spec, sid), message: `its list of tests is not what the tests' SpecTags produce: ${wantTests.join(", ") || "none"}` });
     }
     const list = node.list as { of: string; members: unknown[]; property?: string; declaredIn?: { file: string; declaration: string } } | undefined;
     if (list?.declaredIn) {
@@ -275,9 +293,9 @@ function implementation(spec: Specification, tagged: Set<string>, tested: Set<st
     const hasTag = [...chain].some((s) => tagged.has(s));
     const hasTest = [...chain].some((s) => tested.has(s));
     if (hasTag && hasTest) continue;
-    const lacks = hasTag ? "no test that runs carries its sid"
-      : hasTest ? "no symbol of the system's code carries its tag"
-      : "neither a symbol of the system's code carries its tag nor a test that runs its sid";
+    const lacks = hasTag ? "no test that runs carries its SpecTag"
+      : hasTest ? "no symbol of the system's code carries its SpecTag"
+      : "neither a symbol of the system's code nor a test that runs carries its SpecTag";
     found.push({ where: nodeWhere(spec, sid), message: `not implemented: ${lacks}`, reported: true });
   }
   return found;
@@ -344,11 +362,11 @@ async function projectToolTests(root: string, config: Config): Promise<BindingFi
       const read = await readCode(path, readFileSync(join(root, path), "utf8"));
       for (const t of read?.tests ?? []) {
         if (t.sid) carried.add(t.sid);
-        if (t.sid !== tool.rule) found.push({ where: `${path}:${t.start}`, message: `the test "${t.name}" of the ${tool.kind} "${tool.name}" carries ${t.sid ?? "no sid"}, not ${tool.rule}, the rule listing it` });
+        if (t.sid !== tool.rule) found.push({ where: `${path}:${t.start}`, message: `the test "${t.name}" of the ${tool.kind} "${tool.name}" carries ${t.sid ?? "no SpecTag"}, not ${tool.rule}, the rule listing it` });
       }
     }
     if (changed.some((p) => matches(tool.code, p)) && !carried.has(tool.rule)) {
-      found.push({ where: `${tool.kind} "${tool.name}"`, message: `the code of the ${tool.kind} "${tool.name}" changes, and no test carries the sid of the rule listing it, ${tool.rule}` });
+      found.push({ where: `${tool.kind} "${tool.name}"`, message: `the code of the ${tool.kind} "${tool.name}" changes, and no test carries the SpecTag of the rule listing it, ${tool.rule}` });
     }
   }
   return found;
@@ -431,9 +449,35 @@ function drift(root: string, spec: Specification, config: Config): BindingFindin
     }
     return versions.get(path)!;
   };
-  // The latest commit that changed any of the files, changes one commit makes counting as made at once.
-  const newest = (files: string[]) =>
-    files.map((f) => git(root, "log", "-1", "--format=%H", "--follow", "--", f).out.trim()).filter(Boolean).sort((a, b) => position(a) - position(b))[0];
+  // The latest commit that changed any of the files, changes one commit makes counting as made at once; a commit whose
+  // only change to a file of tests puts `@spec ` before bare sids does not change it (s-txbwsthdqhvyzd2).
+  const lastChanges = new Map<string, string>();
+  const lastChange = (f: string, tests: boolean): string => {
+    const key = `${tests}:${f}`;
+    if (!lastChanges.has(key)) lastChanges.set(key, findLastChange(f, tests));
+    return lastChanges.get(key)!;
+  };
+  const findLastChange = (f: string, tests: boolean): string => {
+    if (!tests) return git(root, "log", "-1", "--format=%H", "--follow", "--", f).out.trim();
+    let sha = "", was: string[] = [], now: string[] = [];
+    const rewriteOnly = () => now.length > 0 && now.length === was.length && now.every((n) => {
+      const i = was.findIndex((w) => onlySpecTagged(w, n));
+      return i >= 0 && Boolean(was.splice(i, 1));
+    });
+    for (const line of git(root, "log", "--format=commit %H", "-p", "-U0", "--no-color", "--follow", "--", f).out.split("\n")) {
+      const m = /^commit ([0-9a-f]{40,64})$/.exec(line);
+      if (m) {
+        if (sha && !rewriteOnly()) return sha;
+        sha = m[1]!;
+        was = [];
+        now = [];
+      } else if (line.startsWith("-") && !line.startsWith("---")) was.push(line.slice(1));
+      else if (line.startsWith("+") && !line.startsWith("+++")) now.push(line.slice(1));
+    }
+    return sha && !rewriteOnly() ? sha : "";
+  };
+  const newest = (files: string[], tests = false) =>
+    files.map((f) => lastChange(f, tests)).filter(Boolean).sort((a, b) => position(a) - position(b))[0];
   const later = (a: string | null | undefined, b: string | null | undefined) => Boolean(a && b && position(a) < position(b));
   for (const [sid, { node, file }] of spec.nodes) {
     const meta = (node.meta ?? {}) as { code?: Array<{ file: string }>; tests?: string[] };
@@ -451,7 +495,7 @@ function drift(root: string, spec: Specification, config: Config): BindingFindin
       }
     }
     const codeChanged = newest(code);
-    const testsChanged = newest(tests);
+    const testsChanged = newest(tests, true);
     const where = nodeWhere(spec, sid);
     if (later(textChanged, testsChanged)) found.push({ where, message: "its tests lag behind its text", reported: true });
     if (later(textChanged, codeChanged)) found.push({ where, message: "its code lags behind its text", reported: true });

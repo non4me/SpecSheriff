@@ -35,7 +35,7 @@ all work here:
 - `spec.json` — the base: what is held, what is checked, when, and what a failure costs. It names no
   technology.
 - `tools.json` — the appendix of the tools: how the SpecSheriff tools carry the base out — file
-  layout, commands, hooks, the table of how each check is made, tag and test syntax, the reviewer's
+  layout, commands, hooks, the table of how each check is made, the syntax of the SpecTag, the reviewer's
   runner, how a confirmation is recorded. It is the specification the tools are built from.
 
 What a project installs (tools, skills, guidelines, example) is Apache 2.0; `docs/` and `_promo/`
@@ -56,8 +56,8 @@ is `specs/_schema/` (§s-eferktypcj7njt5). A node holds:
   domain's header), `title`, `status` (`""` or `"checked"`), `text` (what must hold), `reason` (why,
   kept apart from the requirement), `list` (`of`, `members`, `declaredIn`), `owner` on a section or a
   header, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
-  and the lists of the `code` and the `tests` bound to the node, which must agree with the tags and
-  the tests' sids (§s-rwqzepmrt77rv35).
+  and the lists of the `code` and the `tests` bound to the node, which must agree with the SpecTags on
+  the code and on the tests (§s-rwqzepmrt77rv35).
 - `refs` — typed outgoing links `{type, to}`, written by hand, and incoming ones `{type, from}`,
   built by `sheriff reindex`. The types and their meanings: §s-sn6au3vcr9uy5pm.
 
@@ -115,10 +115,11 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
 The tools are written in TypeScript on Node and read code with tree-sitter. Their source is kept in
 `skills/tools/` (the npm package providing `sheriff`) and `skills/pytest-specsheriff/` (the
 plugin for pytest). In the worked example and any project taking the SpecSheriff guidelines, every
-symbol of the system's code carries `@spec <sid>` (or `@spec none <reason>`) in the comment directly
-above it, a test declares the sid of the node it is written from and is written first, and a commit
+symbol of the system's code carries the SpecTag `@spec <sid>` (or `@spec none <reason>`) in the
+comment directly above it, a test carries the SpecTag of the node it is written from, opening its
+name or in its pytest mark, and is written first, and a commit
 changing code names every checked node its changed symbols implement; the exact syntax is in
 `tools.json`. The repository's configuration, its own tools and their tests are not the system's code
-and carry no tags, by where they live (§s-hheus6f395ynqvc). The tools' own tests are not exempt from sids, by the owner's choice
-(2026-10-28): each declares the sid of the node of `spec.json` or `tools.json` it verifies and is
+and carry no SpecTags, by where they live (§s-hheus6f395ynqvc). The tools' own tests are not exempt from SpecTags, by the owner's
+choice (2026-10-28): each carries the SpecTag of the node of `spec.json` or `tools.json` it is written from and is
 written before the code it tests, so that this repository works by the method it offers.

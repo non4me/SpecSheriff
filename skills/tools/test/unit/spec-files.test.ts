@@ -10,7 +10,7 @@ import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
 import { taking } from "../fixture.ts";
 
-test("s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools", () => {
+test("@spec s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools", () => {
   const root = taking();
   const at = loadSpecification(root).nodes.get(LEVELS_RULE)!;
   assert.equal(at.file.path, "specs/_guidelines/spec.json");
@@ -25,7 +25,7 @@ function copyOfSpecs(): string {
   return root;
 }
 
-test("s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part", () => {
+test("@spec s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part", () => {
   const root = copyOfSpecs();
   mkdirSync(join(root, "specs", "_archive"));
   writeFileSync(join(root, "specs", "_archive", "x.json"), JSON.stringify({ schemaVersion: 1, scope: "x", section: "x", nodes: [] }));
@@ -36,7 +36,7 @@ test("s-zefk589ykh37b8u reads every file of the specification under specs/, and 
   for (const [sid, at] of spec.nodes) assert.equal(at.node.sid, sid);
 });
 
-test("s-zefk589ykh37b8u finds each node with the file it stands in and its parent", () => {
+test("@spec s-zefk589ykh37b8u finds each node with the file it stands in and its parent", () => {
   const spec = loadSpecification(REPO);
   const part = spec.files.find((f) => f.path === "specs/_guidelines/spec.json")!;
   const top = part.data.nodes[0]!;
@@ -46,7 +46,7 @@ test("s-zefk589ykh37b8u finds each node with the file it stands in and its paren
   assert.equal(spec.nodes.get(first.sid)!.file, part);
 });
 
-test("s-jsqxdx47wkkj7gp writes a file in the canonical formatting, so that writing what was read changes nothing", () => {
+test("@spec s-jsqxdx47wkkj7gp writes a file in the canonical formatting, so that writing what was read changes nothing", () => {
   const root = copyOfSpecs();
   const spec = loadSpecification(root);
   for (const file of spec.files) {
@@ -58,12 +58,12 @@ test("s-jsqxdx47wkkj7gp writes a file in the canonical formatting, so that writi
   }
 });
 
-test("s-jsqxdx47wkkj7gp keeps the order of keys, non-ASCII text as it is, and LF line endings", () => {
+test("@spec s-jsqxdx47wkkj7gp keeps the order of keys, non-ASCII text as it is, and LF line endings", () => {
   const text = canonical({ b: 1, a: "§ — «x»", list: [] });
   assert.equal(text, '{\n  "b": 1,\n  "a": "§ — «x»",\n  "list": []\n}\n');
 });
 
-test("s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file", () => {
+test("@spec s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file", () => {
   const root = copyOfSpecs();
   writeFileSync(join(root, "specs", "_guidelines", "broken.json"), "{ nope");
   assert.throws(() => loadSpecification(root), /specs\/_guidelines\/broken\.json/);

@@ -27,10 +27,10 @@ them pass. Never the reverse: wanting the code to behave differently is a reason
 
 ## Rule, test and code bound by the sid
 
-A rule knows the code and the tests that implement and verify it, a test carries the sid of the rule
-it verifies, and every symbol of the code carries a tag naming the node it implements. The sid also
-links rules to one another, so that what a change touches is traced exactly, and the context given to
-a person or an agent is the rules that bear on the task rather than the whole specification.
+A rule knows the code that implements it and the tests written from it, and every symbol of the code
+and every test carries a SpecTag naming that rule by its sid. The sid also links rules to one another,
+so that what a change touches is traced exactly, and the context given to a person or an agent is the
+rules that bear on the task rather than the whole specification.
 
 ## Deterministic checks hold every participant to the contract
 

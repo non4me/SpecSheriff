@@ -5,7 +5,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { loc, sid } from "../fixture.ts";
-import { codeProject, OPEN, put, typedProject, withGenerator } from "../code-project.ts";
+import { codeProject, OPEN, put, putLive, typedProject, withGenerator } from "../code-project.ts";
 import { PLUGIN, pluginHook, plugins } from "../plugin.ts";
 
 const machine = plugins();
@@ -42,7 +42,7 @@ function editRecord(root: string, from: string, to: string): void {
   sheriff(root, "confirm", sid("customer"));
 }
 
-test("s-477gtdrkw34dzxw the pre-commit hook writes the types the staged nodes generate into the working tree, stages none of them, and the commit waits for its author to stage them", () => {
+test("@spec s-477gtdrkw34dzxw the pre-commit hook writes the types the staged nodes generate into the working tree, stages none of them, and the commit waits for its author to stage them", () => {
   const root = typedHooked();
   editRecord(root, '"name": "number"', '"name": "reference"');
   git(root, "add", "specs");
@@ -53,7 +53,7 @@ test("s-477gtdrkw34dzxw the pre-commit hook writes the types the staged nodes ge
   assert.ok(!git(root, "diff", "--cached", "--name-only").stdout.includes("src/types.ts"), "nothing staged by the hook");
 });
 
-test("s-477gtdrkw34dzxw a changed RecordType is committed before its confirmation, its types left as they were and their wait reported", () => {
+test("@spec s-477gtdrkw34dzxw a changed RecordType is committed before its confirmation, its types left as they were and their wait reported", () => {
   const root = typedHooked();
   const before = readFileSync(join(root, "src", "types.ts"), "utf8");
   const path = join(root, "specs", "contracts", "c.json");
@@ -66,7 +66,7 @@ test("s-477gtdrkw34dzxw a changed RecordType is committed before its confirmatio
   assert.equal(readFileSync(join(root, "src", "types.ts"), "utf8"), before);
 });
 
-test("s-477gtdrkw34dzxw the pre-commit hook stops a commit whose staged RecordTypes cannot be generated", () => {
+test("@spec s-477gtdrkw34dzxw the pre-commit hook stops a commit whose staged RecordTypes cannot be generated", () => {
   const root = typedHooked();
   editRecord(root, '"title": "customer"', '"title": "3d customer"');
   git(root, "add", "specs");
@@ -75,14 +75,14 @@ test("s-477gtdrkw34dzxw the pre-commit hook stops a commit whose staged RecordTy
   assert.match(run.stdout + run.stderr, /3dCustomer cannot be generated in src\/types\.ts/);
 });
 
-test("s-477gtdrkw34dzxw after an agent's edit the types are written before the checks run", () => {
+test("@spec s-477gtdrkw34dzxw after an agent's edit the types are written before the checks run", () => {
   const root = typedHooked();
   editRecord(root, '"name": "number"', '"name": "reference"');
   pluginHook("after-edit.sh", machine, root);
   assert.match(readFileSync(join(root, "src", "types.ts"), "utf8"), /^ {2}reference: string;$/m);
 });
 
-test("s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written", () => {
+test("@spec s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written", () => {
   const root = hooked();
   put(root, "README.md", `Reworded; see §${sid("open")}.\n`);
   git(root, "add", "-A");
@@ -91,7 +91,7 @@ test("s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the expo
   assert.ok(readFileSync(join(root, "md-version", "contracts", "c.md"), "utf8").includes(sid("open")));
 });
 
-test("s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together", () => {
+test("@spec s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together", () => {
   const root = hooked();
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace(`"location": "${loc("contracts", "1")}"`, `"location": "${loc("contracts", "9")}"`));
@@ -101,7 +101,7 @@ test("s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification
   assert.match(run.stdout + run.stderr, /contracts\/9 is not the one its place gives/);
 });
 
-test("s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it", () => {
+test("@spec s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it", () => {
   const root = hooked();
   put(root, "README.md", "Staged.\n");
   git(root, "add", "README.md");
@@ -111,7 +111,7 @@ test("s-477gtdrkw34dzxw the checks read what is staged, not what the working tre
   assert.equal(run.status, 0, run.stdout + run.stderr);
 });
 
-test("s-477gtdrkw34dzxw a commit goes on where the export and the map cannot be written from the working tree, which reports it", () => {
+test("@spec s-477gtdrkw34dzxw a commit goes on where the export and the map cannot be written from the working tree, which reports it", () => {
   const root = hooked();
   commit(root, "Hooks in");
   put(root, "README.md", "Staged.\n");
@@ -122,7 +122,7 @@ test("s-477gtdrkw34dzxw a commit goes on where the export and the map cannot be 
   assert.match(run.stderr, /the export and the map were not written from the working tree/);
 });
 
-test("s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves", () => {
+test("@spec s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves", () => {
   const root = hooked();
   put(root, "src/open.ts", OPEN.replace("return amount;", "return amount * 2;"));
   git(root, "add", "-A");
@@ -131,7 +131,7 @@ test("s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a 
   assert.match(run.stdout + run.stderr, new RegExp(`tagged ${sid("open")}.*does not name it`));
 });
 
-test("s-83ev4wwesbwnhnp after an agent's edit the checks run over the working tree, and what they refuse is handed to the agent", () => {
+test("@spec s-83ev4wwesbwnhnp after an agent's edit the checks run over the working tree, and what they refuse is handed to the agent", () => {
   const root = hooked();
   const afterEdit = () => pluginHook("after-edit.sh", machine, root);
   const clean = afterEdit();
@@ -139,7 +139,7 @@ test("s-83ev4wwesbwnhnp after an agent's edit the checks run over the working tr
   put(root, "src/open.ts", OPEN + "export function close() {}\n");
   const refused = afterEdit();
   assert.equal(refused.status, 2);
-  assert.match(refused.stderr, /close carries no tag/);
+  assert.match(refused.stderr, /close carries no SpecTag/);
 });
 
 /** Names the command the tests run by, committed through the hooks. */
@@ -154,12 +154,20 @@ function testCommand(root: string, command?: string): void {
   assert.equal(run.status, 0, run.stdout + run.stderr);
 }
 
-/** A hooked project with a bare repository on disk as its origin, ignoring build/, its tests passing. */
-function pushing(): string {
+/**
+ * A hooked project with a bare repository on disk as its origin, ignoring build/, its tests passing, live unless asked;
+ * it takes the SpecSheriff guidelines from the plugin, whose rule on putting a specification live its own rule refines.
+ */
+function pushing(live = true): string {
   const root = hooked();
+  const config = join(root, "sheriff.config.json");
+  writeFileSync(config, JSON.stringify({ ...JSON.parse(readFileSync(config, "utf8")), writesSpecSheriffGuidelines: false }, null, 2) + "\n");
+  rmSync(join(root, "specs", "_schema"), { recursive: true, force: true });
+  if (live) putLive(root);
   writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_viewer/\nbuild/\n");
   git(root, "add", "-A");
-  assert.equal(commit(root, "Hooks in").status, 0);
+  const setUp = commit(root, "Hooks in");
+  assert.equal(setUp.status, 0, setUp.stdout + setUp.stderr);
   const remote = mkdtempSync(join(tmpdir(), "sheriff-remote-"));
   git(remote, "init", "-q", "--bare");
   git(root, "remote", "add", "origin", remote);
@@ -167,7 +175,7 @@ function pushing(): string {
   return root;
 }
 
-test("s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one", () => {
+test("@spec s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one", () => {
   const root = pushing();
   testCommand(root);
   assert.notEqual(git(root, "push", "-q", "origin", "HEAD").status, 0);
@@ -178,7 +186,7 @@ test("s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the sett
   assert.equal(pushed.status, 0, pushed.stderr);
 });
 
-test("s-477gtdrkw34dzxw the pre-push hook refuses a push while the working tree differs from the commit it sends, naming each such file", () => {
+test("@spec s-477gtdrkw34dzxw the pre-push hook refuses a push while the working tree differs from the commit it sends, naming each such file", () => {
   const root = pushing();
   const push = () => git(root, "push", "-q", "origin", "HEAD");
   put(root, "notes.txt", "a draft\n");
@@ -207,7 +215,7 @@ test("s-477gtdrkw34dzxw the pre-push hook refuses a push while the working tree 
   assert.equal(pushed.status, 0, pushed.stderr);
 });
 
-test("s-477gtdrkw34dzxw the pre-push hook compares every ref the push sends, tags and other branches included, leaving aside the files the working tree ignores", () => {
+test("@spec s-477gtdrkw34dzxw the pre-push hook compares every ref the push sends, tags and other branches included, leaving aside the files the working tree ignores", () => {
   const root = pushing();
   const main = git(root, "rev-parse", "--abbrev-ref", "HEAD").stdout.trim();
   // A commit of a build's output, as a release makes one: the built file is ignored where the work goes on.
@@ -234,7 +242,29 @@ test("s-477gtdrkw34dzxw the pre-push hook compares every ref the push sends, tag
   assert.equal(deleted.status, 0, deleted.stderr);
 });
 
-test("s-n4m5zvh96yb299p runs the project's own tools of a hook after the checks, names a file it does not run, and fails where one fails or changes the staged files", () => {
+test("@spec s-b6qdtghnyha3fhk in draft mode the pre-push hook runs no test and compares nothing, and says so", () => {
+  const root = pushing(false);
+  testCommand(root, 'node -e "process.exit(1)"');
+  put(root, "notes.txt", "a draft\n");
+  const pushed = git(root, "push", "-q", "origin", "HEAD");
+  assert.equal(pushed.status, 0, pushed.stderr);
+  assert.match(pushed.stderr, /specification is a draft.*no test ran/);
+});
+
+test("@spec s-b6qdtghnyha3fhk the pre-push hook runs the tests where a commit the push sends puts the specification live, and where the push only deletes a ref", () => {
+  const root = pushing(false);
+  testCommand(root, 'node -e "process.exit(1)"');
+  const drafted = git(root, "push", "-q", "origin", "HEAD:refs/heads/other");
+  assert.equal(drafted.status, 0, drafted.stderr);
+  putLive(root);
+  git(root, "add", "-A");
+  const live = commit(root, "Live");
+  assert.equal(live.status, 0, live.stdout + live.stderr);
+  assert.notEqual(git(root, "push", "-q", "origin", "HEAD").status, 0, "the commit putting it live is tested");
+  assert.notEqual(git(root, "push", "-q", "origin", ":other").status, 0, "a push only deleting a ref runs the tests as before");
+});
+
+test("@spec s-n4m5zvh96yb299p runs the project's own tools of a hook after the checks, names a file it does not run, and fails where one fails or changes the staged files", () => {
   const root = hooked();
   const setUp = commit(root, "Set up");
   assert.equal(setUp.status, 0, setUp.stdout + setUp.stderr);
@@ -262,7 +292,7 @@ test("s-n4m5zvh96yb299p runs the project's own tools of a hook after the checks,
   assert.match(staged.stdout + staged.stderr, /30-stage\.sh.*changed the staged files/);
 });
 
-test("s-477gtdrkw34dzxw the agent's hook after an edit runs the checks only where something changed since they last ran", () => {
+test("@spec s-477gtdrkw34dzxw the agent's hook after an edit runs the checks only where something changed since they last ran", () => {
   const root = hooked();
   const afterEdit = () => pluginHook("after-edit.sh", machine, root);
   assert.equal(afterEdit().status, 0);
@@ -275,7 +305,7 @@ test("s-477gtdrkw34dzxw the agent's hook after an edit runs the checks only wher
   assert.equal(afterEdit().status, 2);
 });
 
-test("s-477gtdrkw34dzxw the agent's hook after an edit tells the agent each node whose status the reindex emptied", () => {
+test("@spec s-477gtdrkw34dzxw the agent's hook after an edit tells the agent each node whose status the reindex emptied", () => {
   const root = hooked();
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace("What open requires.", "What open requires now."));
@@ -283,7 +313,7 @@ test("s-477gtdrkw34dzxw the agent's hook after an edit tells the agent each node
   assert.match(run.stdout + run.stderr, new RegExp(`status emptied: ${sid("open")}`));
 });
 
-test("s-477gtdrkw34dzxw after an agent's edit, a file changed while the checks run is checked at the next edit, not taken as checked", () => {
+test("@spec s-477gtdrkw34dzxw after an agent's edit, a file changed while the checks run is checked at the next edit, not taken as checked", () => {
   const root = hooked();
   withGenerator(root);
   // The generator runs once in the regeneration and again in the checks, counting each run in a file of its own.
@@ -296,7 +326,7 @@ test("s-477gtdrkw34dzxw after an agent's edit, a file changed while the checks r
   assert.ok(runs() > first, `the second edit ran no check: ${runs()} runs`);
 });
 
-test("s-n4m5zvh96yb299p runs the project's own tools in git's own environment, the locale they are listed in held to the listing", () => {
+test("@spec s-n4m5zvh96yb299p runs the project's own tools in git's own environment, the locale they are listed in held to the listing", () => {
   const root = hooked();
   assert.equal(commit(root, "Set up").status, 0);
   const steps = join(root, ".githooks", "pre-commit.d");

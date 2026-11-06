@@ -119,7 +119,7 @@ fault costs no version number:
    first message, and the git hooks at the session after. The plugin for Codex CLI is installed there
    from the stand-in by the guide's lines with the stand-in's url, and a project set up by its
    `spec-init` in an interactive Codex session, the project and its hooks trusted: an edit the guard
-   refuses is blocked with its reason, a commit of untagged code is refused, the reviewer runs on
+   refuses is blocked with its reason, a commit of code without a SpecTag is refused, the reviewer runs on
    Codex, and once `codex plugin remove` has run, and no tools of the plugin for Claude Code are on
    the machine either, a commit goes through with the notice that no check of SpecSheriff ran, the
    hooks left on. On both agents the reviewer's settings are asked for once: Claude Code shows the
@@ -128,7 +128,7 @@ fault costs no version number:
    session in the project has the agent ask; a review at a setting not confirmed says so.
 4. A project is also set up on Windows, by the `sheriff init` of the release in the stand-in, as
    `spec-init` runs it, and its setup committed there; cloned on the clean machine, with the plugin
-   installed, a session started and a commit of untagged code made, the commit must be refused —
+   installed, a session started and a commit of code without a SpecTag made, the commit must be refused —
    git on Windows records no executable bit of its own, so only this shows that the hooks reach a
    clone able to run.
 5. All passing, the rehearsed commits are fetched here and pushed to GitHub as they are — `main` at

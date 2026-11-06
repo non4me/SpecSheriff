@@ -20,8 +20,8 @@ wording loses the confirmation until the owner confirms it again (§s-5ah25f6gy9
 §s-67vekyup7y8smap, §s-utvqbypzhmgndug).
 
 Every change runs one way: the rule first, then its test, then the code (§s-ef93u6cnbs2sevr,
-§s-rah8b37kytb682y). Every test declares the sid of the rule it verifies, and every symbol of the code
-carries a tag naming the rule it implements (§s-rah8b37kytb682y, §s-kgbzk2ph9e6jfb4), so that what a
+§s-rah8b37kytb682y). Every test carries the SpecTag `@spec <sid>` of the rule it is written from, and every symbol
+of the code carries the SpecTag of the rule it implements (§s-rah8b37kytb682y, §s-kgbzk2ph9e6jfb4), so that what a
 change touches is traced exactly, and an agent is given the rules that bear on its task rather than
 the whole specification.
 
@@ -72,7 +72,7 @@ hold this repository to it. The base, [`spec.json`](../specs/_guidelines/spec.js
 held, what is checked, when, and what a failure costs, and names no technology. The appendix of the
 tools, [`tools.json`](../specs/_guidelines/tools.json), says how the SpecSheriff tools carry the base
 out: where the files are, the commands, the agent's hooks and git's, how each check is made,
-how a tag and a test name their rule, who runs the reviewer and how a confirmation is recorded
+how the code and a test carry their SpecTag, who runs the reviewer and how a confirmation is recorded
 (§s-a4rbry4hsu34hy8). A project takes both whole, with the skills that apply them and updated with
 them, and keeps beside them guidelines of its own that refine them (§s-bsya3febm6u64ab). `sheriff guide` prints them all, and
 `sheriff show <sid>` one node.

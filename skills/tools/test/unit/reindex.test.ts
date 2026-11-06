@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { confirm } from "../../src/confirmations.ts";
-import { reindex } from "../../src/reindex.ts";
+import { reindex, rewriteTests } from "../../src/reindex.ts";
 import { loadSpecification, specPaths } from "../../src/spec-files.ts";
 import { LEVELS_RULE, SID } from "../../src/model.ts";
 import { file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
+import { codeProject, editSpec, nodeIn, put } from "../code-project.ts";
 
 const read = (root: string) => Object.fromEntries(specPaths(root).map((p) => [p, readFileSync(join(root, p), "utf8")]));
 const at = (root: string, name: string) => loadSpecification(root).nodes.get(sid(name))!.node;
@@ -21,7 +22,7 @@ function bank(extra: Record<string, unknown> = {}) {
   });
 }
 
-test("s-kag2m9tzdnduxdx computes every node's location from where it is", () => {
+test("@spec s-kag2m9tzdnduxdx computes every node's location from where it is", () => {
   const root = bank();
   reindex(root);
   assert.equal(at(root, "header").location, "bank");
@@ -29,7 +30,7 @@ test("s-kag2m9tzdnduxdx computes every node's location from where it is", () => 
   assert.equal(at(root, "term").location, "contracts/account");
 });
 
-test("s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from the outgoing links", () => {
+test("@spec s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from the outgoing links", () => {
   const root = bank();
   reindex(root);
   assert.deepEqual(at(root, "open").refs, [{ type: "cites", to: sid("close") }]);
@@ -37,7 +38,7 @@ test("s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from the out
   assert.deepEqual(at(root, "shared").refs, [{ type: "consumes", from: sid("header") }]);
 });
 
-test("s-bpdqd9v72wg7vsz empties the incoming lists of the nodes of the archive, and builds none of their links into another node", () => {
+test("@spec s-bpdqd9v72wg7vsz empties the incoming lists of the nodes of the archive, and builds none of their links into another node", () => {
   const root = bank({
     "specs/_archive/bank.json": file("bank", "bank", { ...node("gone", { refs: [{ type: "cites", from: sid("open") }, { type: "cites", to: sid("close") }] }), location: "bank/1.3", archived: { date: "2026-10-28", reason: "Gone." } }),
   });
@@ -47,13 +48,13 @@ test("s-bpdqd9v72wg7vsz empties the incoming lists of the nodes of the archive, 
   assert.deepEqual(at(root, "close").refs, [{ type: "cites", from: sid("open") }]);
 });
 
-test("s-yggv9myedprnaa7 rebuilds the index in a domain's header from the domain's sections", () => {
+test("@spec s-yggv9myedprnaa7 rebuilds the index in a domain's header from the domain's sections", () => {
   const root = bank();
   reindex(root);
   assert.deepEqual(at(root, "header").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts." }]);
 });
 
-test("s-yggv9myedprnaa7 names in a header's index the headers of the domains using a section", () => {
+test("@spec s-yggv9myedprnaa7 names in a header's index the headers of the domains using a section", () => {
   const root = bank({
     "specs/loans/00-loans.json": file("loans", "00-loans", node("loans", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] })),
   });
@@ -61,7 +62,7 @@ test("s-yggv9myedprnaa7 names in a header's index the headers of the domains usi
   assert.deepEqual(at(root, "header").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts.", usedBy: [sid("loans")] }]);
 });
 
-test("s-f5rz6b7dhxejjts gives a sid to a node that has none, its location and sid first", () => {
+test("@spec s-f5rz6b7dhxejjts gives a sid to a node that has none, its location and sid first", () => {
   const root = bank();
   const path = join(root, "specs", "contracts", "c.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
@@ -74,7 +75,7 @@ test("s-f5rz6b7dhxejjts gives a sid to a node that has none, its location and si
   assert.deepEqual(Object.keys(added).slice(0, 3), ["location", "sid", "kind"]);
 });
 
-test("s-5ah25f6gy99panq empties the status of a checked node whose wording its owner has not confirmed", () => {
+test("@spec s-5ah25f6gy99panq empties the status of a checked node whose wording its owner has not confirmed", () => {
   const root = bank();
   confirm(root, [sid("levels")], { me: OWNER });
   const path = join(root, "specs", "contracts", "c.json");
@@ -87,7 +88,7 @@ test("s-5ah25f6gy99panq empties the status of a checked node whose wording its o
   assert.deepEqual(report.emptied, [sid("shared")]);
 });
 
-test("s-5ah25f6gy99panq empties the status of a node confirmed by someone who is not its owner", () => {
+test("@spec s-5ah25f6gy99panq empties the status of a node confirmed by someone who is not its owner", () => {
   const root = bank();
   confirm(root, [sid("levels")], { me: OWNER });
   const path = join(root, "specs", "_guidelines", "project.json");
@@ -98,7 +99,7 @@ test("s-5ah25f6gy99panq empties the status of a node confirmed by someone who is
   assert.equal(at(root, "levels").status, "");
 });
 
-test("s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written", () => {
+test("@spec s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written", () => {
   const project = taking();
   reindex(project);
   assert.equal(loadSpecification(project).nodes.get(LEVELS_RULE)!.node.status, "checked");
@@ -108,7 +109,7 @@ test("s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a projec
   assert.equal(at(writing, "core rule").status, "");
 });
 
-test("s-f5rz6b7dhxejjts renames what an earlier release wrote under another name, each key keeping its place", () => {
+test("@spec s-f5rz6b7dhxejjts renames what an earlier release wrote under another name, each key keeping its place", () => {
   const old = (name: string, fields: Record<string, unknown>) => {
     const { location: _, ...rest } = node(name, fields);
     return { id: "bank/9", ...rest };
@@ -130,7 +131,7 @@ test("s-f5rz6b7dhxejjts renames what an earlier release wrote under another name
   assert.equal(gone.location, "bank/9");
 });
 
-test("s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge", () => {
+test("@spec s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge", () => {
   const root = bank();
   const path = join(root, "specs", "bank", "a.json");
   const text = readFileSync(path, "utf8").replace('"text": "Accounts.",', '"text": "Accounts.",\n      "refs": [{"type": "cites", "to": "' + sid("term") + '"}],');
@@ -140,7 +141,7 @@ test("s-f5rz6b7dhxejjts merges the values an object holds under one key and name
   assert.deepEqual(at(root, "accounts").refs, [{ type: "cites", to: sid("term") }]);
 });
 
-test("s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file", () => {
+test("@spec s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file", () => {
   const root = bank();
   const path = join(root, "specs", "bank", "a.json");
   writeFileSync(path, readFileSync(path, "utf8").replace('"text": "Accounts.",', '"text": "Accounts.",\n      "text": "Other.",'));
@@ -149,7 +150,7 @@ test("s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no fi
   assert.deepEqual(read(root), before);
 });
 
-test("s-jsqxdx47wkkj7gp run again on what it left, the reindex changes nothing", () => {
+test("@spec s-jsqxdx47wkkj7gp run again on what it left, the reindex changes nothing", () => {
   const root = bank();
   reindex(root);
   const once = read(root);
@@ -158,7 +159,7 @@ test("s-jsqxdx47wkkj7gp run again on what it left, the reindex changes nothing",
   assert.deepEqual(again.written, []);
 });
 
-test("s-ju5vcanbjph7mgh writes beside a field the values gathered from its source, each with the node it comes from, and none beside a field holding its own list", () => {
+test("@spec s-ju5vcanbjph7mgh writes beside a field the values gathered from its source, each with the node it comes from, and none beside a field holding its own list", () => {
   const root = bank({
     "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
       node("event", { kind: "recordType", title: "event", unknown: "refused", fields: [
@@ -181,7 +182,7 @@ test("s-ju5vcanbjph7mgh writes beside a field the values gathered from its sourc
   assert.equal(of("colour"), undefined);
 });
 
-test("s-f5rz6b7dhxejjts gives a field of type one of whose own list an earlier release wrote empty the values the domains add", () => {
+test("@spec s-f5rz6b7dhxejjts gives a field of type one of whose own list an earlier release wrote empty the values the domains add", () => {
   const root = bank({
     "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
       node("event", { kind: "recordType", title: "event", unknown: "refused", fields: [{ name: "kind", type: { is: "one of", values: [] }, required: true, text: "" }] }),
@@ -198,7 +199,7 @@ const rewrite = (root: string, path: string, change: (d: any) => void) => {
   writeFileSync(join(root, path), JSON.stringify(data, null, 2) + "\n");
 };
 
-test("s-xzcw3hv4hmxz7h7 the reindex refuses a file the schema refuses, naming the file and every refusal in it, and then writes no file", () => {
+test("@spec s-xzcw3hv4hmxz7h7 the reindex refuses a file the schema refuses, naming the file and every refusal in it, and then writes no file", () => {
   const root = bank();
   rewrite(root, "specs/bank/a.json", (d) => {
     delete d.nodes[0].children[0].refs;
@@ -215,7 +216,7 @@ test("s-xzcw3hv4hmxz7h7 the reindex refuses a file the schema refuses, naming th
   assert.deepEqual(read(root), before);
 });
 
-test("s-xzcw3hv4hmxz7h7 the reindex refuses a sid that is not one, since only a sid a node lacks is left out of the validation", () => {
+test("@spec s-xzcw3hv4hmxz7h7 the reindex refuses a sid that is not one, since only a sid a node lacks is left out of the validation", () => {
   const root = bank();
   rewrite(root, "specs/bank/a.json", (d) => (d.nodes[0].children[1].sid = "s-not-a-sid"));
   const before = read(root);
@@ -223,7 +224,7 @@ test("s-xzcw3hv4hmxz7h7 the reindex refuses a sid that is not one, since only a 
   assert.deepEqual(read(root), before);
 });
 
-test("s-xzcw3hv4hmxz7h7 the reindex validates once it has changed what an earlier release wrote, and leaves out what it writes itself", () => {
+test("@spec s-xzcw3hv4hmxz7h7 the reindex validates once it has changed what an earlier release wrote, and leaves out what it writes itself", () => {
   const root = bank();
   rewrite(root, "specs/bank/a.json", (d) => {
     const close = d.nodes[0].children[1];
@@ -242,9 +243,24 @@ test("s-xzcw3hv4hmxz7h7 the reindex validates once it has changed what an earlie
   assert.ok(SID.test(loadSpecification(root).nodes.get(sid("accounts"))!.node.children![1]!.sid));
 });
 
-test("s-xzcw3hv4hmxz7h7 the reindex refuses where the schema of an extension refuses the project's extension, naming it, and then writes no file", () => {
+test("@spec s-xzcw3hv4hmxz7h7 the reindex refuses where the schema of an extension refuses the project's extension, naming it, and then writes no file", () => {
   const root = bank({ "specs/_schema/project.schema.json": { nodes: {} } });
   const before = read(root);
   assert.throws(() => reindex(root), /specs\/_schema\/project\.schema\.json: .*"nodes"/);
   assert.deepEqual(read(root), before);
+});
+
+test("@spec s-f5rz6b7dhxejjts rewrites each test naming its node by a bare sid, opening its name or as its mark, and the lists naming it, naming each file", async () => {
+  const root = codeProject();
+  const open = sid("open");
+  const ts = `test("${open} opens an account", () => {});\ntest("${open}", () => {});\nconst fixture = 'test("${open} is no test")';\ntest("@spec ${open} already", () => {});\ntest("${open}x is no sid", () => {});\n`;
+  put(root, "test/open.test.ts", ts);
+  put(root, "test/test_open.py", `import pytest\n\n@pytest.mark.spec("${open}")\ndef test_open():\n    pass\n`);
+  editSpec(root, (d) => (nodeIn(d, "open").meta.tests = [`test/open.test.ts::${open} opens an account`, `test/open.test.ts::${open}`, "test/test_open.py::test_open"]));
+  assert.deepEqual(await rewriteTests(root), ["test/open.test.ts", "test/test_open.py"]);
+  const want = ts.replace(`test("${open} opens`, `test("@spec ${open} opens`).replace(`test("${open}", `, `test("@spec ${open}", `);
+  assert.equal(readFileSync(join(root, "test", "open.test.ts"), "utf8"), want);
+  assert.equal(readFileSync(join(root, "test", "test_open.py"), "utf8"), `import pytest\n\n@pytest.mark.spec("@spec ${open}")\ndef test_open():\n    pass\n`);
+  assert.deepEqual((at(root, "open").meta as { tests: string[] }).tests, [`test/open.test.ts::@spec ${open} opens an account`, `test/open.test.ts::@spec ${open}`, "test/test_open.py::test_open"]);
+  assert.deepEqual(await rewriteTests(root), [], "run again, it rewrites nothing");
 });

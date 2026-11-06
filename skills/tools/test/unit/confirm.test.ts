@@ -7,7 +7,7 @@ import { loadSpecification } from "../../src/spec-files.ts";
 import { fingerprint, LEVELS_RULE } from "../../src/model.ts";
 import { file, node, NONE, OWNER, repo, sid, taking } from "../fixture.ts";
 
-test("s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing", () => {
+test("@spec s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, and writes nothing", () => {
   const root = taking();
   assert.throws(() => confirm(root, [LEVELS_RULE], { me: OWNER }), /SpecSheriff guidelines/);
   assert.ok(!existsSync(join(root, "specs", "_confirmations.jsonl")));
@@ -23,7 +23,7 @@ function project() {
 }
 const statusOf = (root: string, name: string) => loadSpecification(root).nodes.get(sid(name))!.node.status;
 
-test("s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and the owner confirming it, and sets it checked", () => {
+test("@spec s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and the owner confirming it, and sets it checked", () => {
   const root = project();
   confirm(root, [sid("levels"), sid("project")], { me: OWNER });
   const at = loadSpecification(root).nodes.get(sid("levels"))!;
@@ -34,27 +34,27 @@ test("s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerpri
   ]);
 });
 
-test("s-v4qus7raqnwzneb appends nothing where the latest line for that wording is already its owner's confirmation", () => {
+test("@spec s-v4qus7raqnwzneb appends nothing where the latest line for that wording is already its owner's confirmation", () => {
   const root = project();
   confirm(root, [sid("levels")], { me: OWNER });
   confirm(root, [sid("levels")], { me: OWNER });
   assert.equal(readConfirmations(root).length, 1);
 });
 
-test("s-67vekyup7y8smap refuses a node whose owner is someone else, naming that owner, and confirms none of those named", () => {
+test("@spec s-67vekyup7y8smap refuses a node whose owner is someone else, naming that owner, and confirms none of those named", () => {
   const root = project();
   assert.throws(() => confirm(root, [sid("levels"), sid("open")], { me: OWNER }), /bank@example\.org/);
   assert.equal(statusOf(root, "levels"), "");
   assert.deepEqual(readConfirmations(root), []);
 });
 
-test("s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for", () => {
+test("@spec s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for", () => {
   assert.throws(() => confirm(project(), [NONE], { me: OWNER }), new RegExp(NONE));
   const lone = repo({ "specs/contracts/c.json": file("contracts", "c", node("lone")) });
   assert.throws(() => confirm(lone, [sid("lone")], { me: OWNER }), /no owner/);
 });
 
-test("s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides", () => {
+test("@spec s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and empties the status, and the latest line decides", () => {
   const root = project();
   confirm(root, [sid("levels")], { me: OWNER });
   confirm(root, [sid("levels")], { me: OWNER, withdraw: true });
@@ -65,7 +65,7 @@ test("s-v4qus7raqnwzneb withdraws a confirmation by a line of its own and emptie
   assert.equal(statusOf(root, "levels"), "checked");
 });
 
-test("s-v4qus7raqnwzneb lets anyone withdraw a confirmation, its line naming whoever withdrew it as by", () => {
+test("@spec s-v4qus7raqnwzneb lets anyone withdraw a confirmation, its line naming whoever withdrew it as by", () => {
   const root = project();
   confirm(root, [sid("levels")], { me: OWNER });
   confirm(root, [sid("levels")], { me: "someone@example.org", withdraw: true });
@@ -74,7 +74,7 @@ test("s-v4qus7raqnwzneb lets anyone withdraw a confirmation, its line naming who
   assert.deepEqual({ by: line.by, owner: line.owner, withdrawn: line.withdrawn }, { by: "someone@example.org", owner: undefined, withdrawn: true });
 });
 
-test("s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended", () => {
+test("@spec s-v4qus7raqnwzneb keeps the confirmations one JSON object to a line, appended", () => {
   const root = project();
   confirm(root, [sid("levels")], { me: OWNER });
   confirm(root, [sid("project")], { me: OWNER });

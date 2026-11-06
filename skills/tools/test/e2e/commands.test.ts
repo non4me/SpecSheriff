@@ -25,7 +25,7 @@ function project(): string {
   return root;
 }
 
-test("s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it", () => {
   const root = project();
   const run = sheriff(root, "reindex");
   assert.equal(run.status, 0, run.stderr);
@@ -35,7 +35,7 @@ test("s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and report
   assert.match(run.stdout, /written: specs\/contracts\/c\.json/);
 });
 
-test("s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where", () => {
   const root = project();
   sheriff(root, "reindex");
   const ok = sheriff(root, "validate");
@@ -47,7 +47,7 @@ test("s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses 
   assert.match(refused.stdout, /specs\/contracts\/c\.json: .*contracts\/9 is not the one its place gives/);
 });
 
-test("s-jau82aq9juv9zzh sheriff validate refuses a removed node a confirmation was given for, read against the last commit", () => {
+test("@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node a confirmation was given for, read against the last commit", () => {
   const root = project();
   sheriff(root, "reindex");
   assert.equal(sheriff(root, "confirm", sid("term")).status, 0);
@@ -63,7 +63,7 @@ test("s-jau82aq9juv9zzh sheriff validate refuses a removed node a confirmation w
   assert.match(run.stdout, new RegExp(`${sid("term")}.*not in the archive`));
 });
 
-test("s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured with, and refuses where that is not the owner", () => {
+test("@spec s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured with, and refuses where that is not the owner", () => {
   const root = project();
   sheriff(root, "reindex");
   const ok = sheriff(root, "confirm", sid("ours"));
@@ -75,7 +75,7 @@ test("s-v4qus7raqnwzneb sheriff confirm confirms as the email git is configured 
   assert.match(refused.stderr, new RegExp(`its owner is ${OWNER}`));
 });
 
-test("s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines", () => {
   const root = project();
   sheriff(root, "reindex");
   const exported = sheriff(root, "export");
@@ -90,7 +90,7 @@ test("s-f5rz6b7dhxejjts sheriff export, render and guide write the export and th
   assert.ok(guided.stdout.includes(sid("project")));
 });
 
-test("s-f5rz6b7dhxejjts sheriff types writes the types where the technical appendix lists them, and refuses what cannot be generated", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff types writes the types where the technical appendix lists them, and refuses what cannot be generated", () => {
   const customer = (title: string) => node("customer", { kind: "recordType", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" });
   const files = (title: string) => ({
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [customer(title)] })),
@@ -113,7 +113,7 @@ test("s-f5rz6b7dhxejjts sheriff types writes the types where the technical appen
   assert.match(refused.stdout, /3dCustomer cannot be generated in src\/types\.ts: not an identifier in TypeScript/);
 });
 
-test("s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its location", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its location", () => {
   const root = project();
   sheriff(root, "reindex");
   const run = sheriff(root, "show", "contracts/c");
@@ -122,7 +122,7 @@ test("s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its location", 
   assert.match(run.stdout, /cites ← s-\w{15} contracts\/1\.1 ours/);
 });
 
-test("s-f5rz6b7dhxejjts sheriff todos prints every item of the todos with its node", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff todos prints every item of the todos with its node", () => {
   const root = project();
   const path = join(root, "specs", "contracts", "c.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
@@ -134,7 +134,7 @@ test("s-f5rz6b7dhxejjts sheriff todos prints every item of the todos with its no
   assert.equal(run.stdout, `2026-11-02 · ${OWNER}\nDefine the user.\n${sid("shared")} · contracts/c · shared\n`);
 });
 
-test("s-xzcw3hv4hmxz7h7 sheriff reindex and sheriff binding refuse a file the schema refuses, naming it, rather than fail on it", () => {
+test("@spec s-xzcw3hv4hmxz7h7 sheriff reindex and sheriff binding refuse a file the schema refuses, naming it, rather than fail on it", () => {
   const root = project();
   sheriff(root, "reindex");
   const path = join(root, "specs", "contracts", "c.json");

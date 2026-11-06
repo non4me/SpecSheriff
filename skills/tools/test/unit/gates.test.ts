@@ -16,20 +16,20 @@ import { codeProject, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, typedProject 
 const CHANGED_OPEN = OPEN.replace("return amount;", "return amount * 2;");
 const texts = (findings: Array<{ where: string; message: string }>) => findings.map((f) => `${f.where}: ${f.message}`);
 
-test("s-ef93u6cnbs2sevr passes a message naming every node the tags on the changed symbols name", async () => {
+test("@spec s-ef93u6cnbs2sevr passes a message naming every node the tags on the changed symbols name", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   assert.deepEqual(texts(await message(root, `Accounts: opening doubles the amount (${sid("open")})\n`)), []);
 });
 
-test("s-ef93u6cnbs2sevr refuses a message leaving out a node a changed symbol's tag names", async () => {
+test("@spec s-ef93u6cnbs2sevr refuses a message leaving out a node a changed symbol's tag names", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   const found = texts(await message(root, "Accounts: opening doubles the amount\n"));
   assert.ok(found.some((m) => m.includes(sid("open")) && /does not name/.test(m)), found.join("\n"));
 });
 
-test("s-ef93u6cnbs2sevr refuses a message naming a section or a node that does not exist, its comment lines left out", async () => {
+test("@spec s-ef93u6cnbs2sevr refuses a message naming a section or a node that does not exist, its comment lines left out", async () => {
   const root = codeProject();
   const found = texts(await message(root, `Accounts (${sid("accounts")}, ${NONE})\n# ${sid("draft")} in a comment\n`));
   assert.ok(found.some((m) => m.includes(sid("accounts")) && /section/.test(m)), found.join("\n"));
@@ -37,7 +37,7 @@ test("s-ef93u6cnbs2sevr refuses a message naming a section or a node that does n
   assert.ok(!found.some((m) => m.includes(sid("draft"))), found.join("\n"));
 });
 
-test("s-jau82aq9juv9zzh passes a message of a commit that changes no code", async () => {
+test("@spec s-jau82aq9juv9zzh passes a message of a commit that changes no code", async () => {
   const root = codeProject();
   put(root, "README.md", "Reworded.\n");
   assert.deepEqual(texts(await message(root, "Docs: the readme reworded\n")), []);
@@ -45,28 +45,35 @@ test("s-jau82aq9juv9zzh passes a message of a commit that changes no code", asyn
 
 const edit = (file_path: string, old_string: string, new_string: string) => ({ tool_name: "Edit", tool_input: { file_path, old_string, new_string } });
 
-test("s-83ev4wwesbwnhnp refuses before it is made an edit changing the code of a rule no test carries the sid of", async () => {
+test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit changing the code of a rule no test carries the sid of", async () => {
   const root = codeProject();
   const refused = await guard(root, { tool_name: "Write", tool_input: { file_path: join(root, "src", "draft.ts"), content: `/** @spec ${sid("draft")} */\nexport const drafted = 1;\n` } });
-  assert.match(refused ?? "", new RegExp(`no test carries ${sid("draft")}`));
+  assert.match(refused ?? "", new RegExp(`no test carries the SpecTag of ${sid("draft")}`));
 });
 
-test("s-83ev4wwesbwnhnp lets an edit through where a test carries the sid of every rule whose code it changes, and an edit to a test", async () => {
+test("@spec s-83ev4wwesbwnhnp lets an edit through where a test carries the sid of every rule whose code it changes, and an edit to a test", async () => {
   const root = codeProject();
   assert.equal(await guard(root, edit(join(root, "src", "open.ts"), "return amount;", "return amount * 2;")), null);
-  assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: join(root, "test", "draft.test.ts"), content: `test("${sid("draft")} drafts", () => {});\n` } }), null);
+  assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: join(root, "test", "draft.test.ts"), content: `test("@spec ${sid("draft")} drafts", () => {});\n` } }), null);
 });
 
-test("s-st6td4mua9uqt9z reads the tests as the edit would leave the working tree", async () => {
+test("@spec s-st6td4mua9uqt9z reads the tests as the edit would leave the working tree", async () => {
   const root = codeProject();
   const path = join(root, "test", "open.test.ts");
   const refused = await guard(root, { tool_name: "MultiEdit", tool_input: { file_path: path, edits: [{ old_string: sid("open"), new_string: sid("draft") }] } });
   assert.equal(refused, null);
-  put(root, "test/open.test.ts", `test("${sid("draft")} drafts", () => {});\n`);
+  put(root, "test/open.test.ts", `test("@spec ${sid("draft")} drafts", () => {});\n`);
   assert.match((await guard(root, edit(join(root, "src", "open.ts"), "return amount;", "return amount * 2;"))) ?? "", /no test carries/);
 });
 
-test("s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node checked over a wording its owner never confirmed", async () => {
+test("@spec s-st6td4mua9uqt9z names sheriff reindex where only a test carrying a bare sid names the rule whose code an edit changes", async () => {
+  const root = codeProject();
+  put(root, "test/open.test.ts", `test("${sid("open")} opens an account", () => {});\n`);
+  const refused = await guard(root, edit(join(root, "src", "open.ts"), "return amount;", "return amount * 2;"));
+  assert.match(refused ?? "", new RegExp(`no test carries the SpecTag of ${sid("open")}.*bare sid.*sheriff reindex`));
+});
+
+test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node checked over a wording its owner never confirmed", async () => {
   const root = codeProject();
   const path = join(root, "specs", "contracts", "c.json");
   const text = readFileSync(path, "utf8");
@@ -76,14 +83,14 @@ test("s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node checked
   assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: emptied } }), null);
 });
 
-test("s-83ev4wwesbwnhnp refuses before it is made an edit giving a checked node an owner who never confirmed it", async () => {
+test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit giving a checked node an owner who never confirmed it", async () => {
   const root = codeProject();
   const path = join(root, "specs", "_guidelines", "project.json");
   const refused = await guard(root, edit(path, `"owner": "${OWNER}"`, `"owner": "other@example.com"`));
   assert.match(refused ?? "", new RegExp(`${sid("open")}.*other@example\\.com`));
 });
 
-test("s-83ev4wwesbwnhnp refuses before it is made an edit of the confirmations made with the agent's file tools", async () => {
+test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit of the confirmations made with the agent's file tools", async () => {
   const root = codeProject();
   const path = join(root, "specs", "_confirmations.jsonl");
   const forged = `{"sid":"${sid("draft")}","fingerprint":"0","owner":"${OWNER}","confirmed":true}\n`;
@@ -92,7 +99,7 @@ test("s-83ev4wwesbwnhnp refuses before it is made an edit of the confirmations m
   assert.match((await guard(root, edit(path, first!, first!.replace(OWNER, "other@example.com")))) ?? "", /confirmations.*sheriff confirm/);
 });
 
-test("s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside the repository's code, tests and specification", async () => {
+test("@spec s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside the repository's code, tests and specification", async () => {
   const root = codeProject();
   assert.equal(await guard(root, { tool_name: "Read", tool_input: { file_path: join(root, "src", "open.ts") } }), null);
   assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: join(root, "notes.txt"), content: "x" } }), null);
@@ -100,13 +107,13 @@ test("s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside t
 
 const patch = (...lines: string[]) => ({ tool_name: "apply_patch", tool_input: { command: ["*** Begin Patch", ...lines, "*** End Patch"].join("\n") } });
 
-test("s-n76wt2bkqdmh78x judges each file a patch adds, updates, deletes or moves as an edit made with the file tools", async () => {
+test("@spec s-n76wt2bkqdmh78x judges each file a patch adds, updates, deletes or moves as an edit made with the file tools", async () => {
   const root = codeProject();
   const line = readFileSync(join(root, "specs", "contracts", "c.json"), "utf8").split("\n").find((l) => l.includes("What open requires."))!;
   const reworded = await guard(root, patch("*** Update File: specs/contracts/c.json", "@@", `-${line}`, `+${line.replace("requires.", "requires, reworded.")}`));
   assert.match(reworded ?? "", new RegExp(`${sid("open")}.*checked`));
   const added = await guard(root, patch("*** Add File: src/draft.ts", `+/** @spec ${sid("draft")} */`, "+export const drafted = 1;"));
-  assert.match(added ?? "", new RegExp(`no test carries ${sid("draft")}`));
+  assert.match(added ?? "", new RegExp(`no test carries the SpecTag of ${sid("draft")}`));
   assert.match((await guard(root, patch("*** Delete File: specs/_confirmations.jsonl"))) ?? "", /confirmations.*sheriff confirm/);
   const moved = await guard(root, patch("*** Update File: README.md", "*** Move to: specs/_confirmations.jsonl", "@@", `-See §${sid("open")}.`, "+forged"));
   assert.match(moved ?? "", /confirmations.*sheriff confirm/);
@@ -115,13 +122,13 @@ test("s-n76wt2bkqdmh78x judges each file a patch adds, updates, deletes or moves
   assert.equal(await guard(root, patch("*** Update File: test/open.test.ts", "*** Move to: test/opened.test.ts", "@@", `-${declared}`, `+${declared.replace("an account", "an account at once")}`)), null);
 });
 
-test("s-n76wt2bkqdmh78x refuses the whole patch where it refuses one of its files", async () => {
+test("@spec s-n76wt2bkqdmh78x refuses the whole patch where it refuses one of its files", async () => {
   const root = codeProject();
   const refused = await guard(root, patch("*** Add File: notes.txt", "+one", "*** Add File: src/draft.ts", `+/** @spec ${sid("draft")} */`, "+export const drafted = 1;"));
-  assert.match(refused ?? "", new RegExp(`no test carries ${sid("draft")}`));
+  assert.match(refused ?? "", new RegExp(`no test carries the SpecTag of ${sid("draft")}`));
 });
 
-test("s-n76wt2bkqdmh78x refuses a patch it cannot read or apply", async () => {
+test("@spec s-n76wt2bkqdmh78x refuses a patch it cannot read or apply", async () => {
   const root = codeProject();
   assert.match((await guard(root, { tool_name: "apply_patch", tool_input: { command: "not a patch" } })) ?? "", /cannot read the patch/);
   assert.match((await guard(root, patch("*** Frobnicate File: src/open.ts"))) ?? "", /cannot read the patch/);
@@ -130,10 +137,10 @@ test("s-n76wt2bkqdmh78x refuses a patch it cannot read or apply", async () => {
   assert.match((await guard(root, patch("*** Add File: notes.txt", "one"))) ?? "", /cannot read the patch/);
 });
 
-test("s-n76wt2bkqdmh78x reads the paths of a patch from the directory the session works in", async () => {
+test("@spec s-n76wt2bkqdmh78x reads the paths of a patch from the directory the session works in", async () => {
   const root = codeProject();
   const input = { ...patch("*** Add File: draft.ts", `+/** @spec ${sid("draft")} */`, "+export const drafted = 1;"), cwd: join(root, "src") };
-  assert.match((await guard(root, input)) ?? "", new RegExp(`no test carries ${sid("draft")}`));
+  assert.match((await guard(root, input)) ?? "", new RegExp(`no test carries the SpecTag of ${sid("draft")}`));
 });
 
 const answer = (verdict: string, findings: object[] = []): Runner => () => ({ status: "ok", out: JSON.stringify({ verdict, findings }) });
@@ -151,7 +158,7 @@ async function withUserConfig<T>(settings: Record<string, string>, body: (file: 
   }
 }
 
-test("s-xr5xxa9cxf2mq5u reads each runner's settings from the user's git configuration, an empty one confirmed, and takes the default of each it lacks", async () => {
+test("@spec s-xr5xxa9cxf2mq5u reads each runner's settings from the user's git configuration, an empty one confirmed, and takes the default of each it lacks", async () => {
   const root = codeProject();
   await withUserConfig({ claudeModel: "sonnet", codexModel: "" }, () => {
     assert.deepEqual(runnerSettings(root, "claude"), {
@@ -168,7 +175,7 @@ test("s-xr5xxa9cxf2mq5u reads each runner's settings from the user's git configu
   });
 });
 
-test("s-xr5xxa9cxf2mq5u runs the reviewer at the settings read, and with every review held at a default names each setting it took and how the user confirms it", async () => {
+test("@spec s-xr5xxa9cxf2mq5u runs the reviewer at the settings read, and with every review held at a default names each setting it took and how the user confirms it", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   const msg = `Accounts (${sid("open")})\n`;
@@ -187,7 +194,7 @@ test("s-xr5xxa9cxf2mq5u runs the reviewer at the settings read, and with every r
   assert.deepEqual(notices, []);
 });
 
-test("s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes its message and tags name, and nothing else", async () => {
+test("@spec s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes its message and tags name, and nothing else", async () => {
   const root = codeProject();
   editSpec(root, (d) => (nodeIn(d, "draft").text = "Drafting is described here."));
   put(root, "src/open.ts", CHANGED_OPEN);
@@ -198,7 +205,7 @@ test("s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes 
   assert.ok(!nodes!.includes("Drafting is described here."), nodes);
 });
 
-test("s-nyh9yk22ba6g77q gives the reviewer the whole change of the commit, its specification, documents and settings included", async () => {
+test("@spec s-nyh9yk22ba6g77q gives the reviewer the whole change of the commit, its specification, documents and settings included", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   put(root, "README.md", "Opening doubles the amount.\n");
@@ -209,7 +216,7 @@ test("s-nyh9yk22ba6g77q gives the reviewer the whole change of the commit, its s
   assert.ok(input.includes("draft renamed"), input);
 });
 
-test("s-nyh9yk22ba6g77q leaves the files generated from the specification out of the change the reviewer is given", async () => {
+test("@spec s-nyh9yk22ba6g77q leaves the files generated from the specification out of the change the reviewer is given", async () => {
   const root = typedProject("customer", ["src/**"]);
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace('"name": "number"', '"name": "reference"'));
@@ -222,7 +229,7 @@ test("s-nyh9yk22ba6g77q leaves the files generated from the specification out of
   assert.ok(!/src\/types\.ts|schemas\/checks\.json|reference: string/.test(change!), input);
 });
 
-test("s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a RecordType requires as carried out by the types and runtime checks generated from it", async () => {
+test("@spec s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a RecordType requires as carried out by the types and runtime checks generated from it", async () => {
   const root = typedProject("customer", ["src/**"]);
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace('"name": "number"', '"name": "reference"'));
@@ -238,7 +245,7 @@ test("s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts wha
   assert.match(SYSTEM_PROMPT, /what a RecordType requires .*carried out by the types and runtime checks generated from it/i);
 });
 
-test("s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding", async () => {
+test("@spec s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   assert.deepEqual(await review(root, `Accounts (${sid("open")})\n`, { run: answer("pass") }), []);
@@ -246,7 +253,7 @@ test("s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the
   assert.deepEqual(refused, [`src/open.ts:3: ${sid("open")}: doubles what the rule does not ask to double`]);
 });
 
-test("s-nyh9yk22ba6g77q refuses a review that cannot be held, and says why", async () => {
+test("@spec s-nyh9yk22ba6g77q refuses a review that cannot be held, and says why", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   const msg = `Accounts (${sid("open")})\n`;
@@ -255,7 +262,7 @@ test("s-nyh9yk22ba6g77q refuses a review that cannot be held, and says why", asy
   assert.match(texts(await review(root, msg, { run: () => ({ status: "ok", out: "I think it is fine." }) }))[0]!, /cannot be read/);
 });
 
-test("s-jau82aq9juv9zzh asks no review of a commit that changes no code", async () => {
+test("@spec s-jau82aq9juv9zzh asks no review of a commit that changes no code", async () => {
   const root = codeProject();
   put(root, "README.md", "Reworded.\n");
   let asked = false;
@@ -263,7 +270,7 @@ test("s-jau82aq9juv9zzh asks no review of a commit that changes no code", async 
   assert.equal(asked, false);
 });
 
-test("s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, at the model, the effort and the fallback model given", () => {
+test("@spec s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, at the model, the effort and the fallback model given", () => {
   const args = claudeArgs({ claudeModel: "opus", claudeFallbackModel: "sonnet", claudeEffort: "high" }, "/prompt.md");
   for (const flag of ["-p", "--strict-mcp-config", "--no-session-persistence", "--disable-slash-commands"]) assert.ok(args.includes(flag), flag);
   const value = (flag: string) => args[args.indexOf(flag) + 1];
@@ -275,7 +282,7 @@ test("s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, 
   assert.equal(value("--system-prompt-file"), "/prompt.md");
 });
 
-test("s-xr5xxa9cxf2mq5u starts the Codex CLI in codex exec, read-only and unkept, with no skill and every tool a setting reaches turned off, its answer held to the verdict's schema", () => {
+test("@spec s-xr5xxa9cxf2mq5u starts the Codex CLI in codex exec, read-only and unkept, with no skill and every tool a setting reaches turned off, its answer held to the verdict's schema", () => {
   const args = codexArgs({ codexModel: "", codexEffort: "high" }, { prompt: "/prompt.md", schema: "/schema.json", out: "/out.json" });
   const value = (flag: string) => args[args.indexOf(flag) + 1];
   const values = (flag: string) => args.flatMap((a, i) => (a === flag ? [args[i + 1]] : []));
@@ -299,7 +306,7 @@ test("s-xr5xxa9cxf2mq5u starts the Codex CLI in codex exec, read-only and unkept
   assert.deepEqual(schema.properties.findings.items.required, ["rule", "file", "line", "problem"]);
 });
 
-test("s-xr5xxa9cxf2mq5u runs the Codex CLI in an empty directory with a Codex home of its own holding a copy of the user's sign-in and nothing else, deleted after the run", () => {
+test("@spec s-xr5xxa9cxf2mq5u runs the Codex CLI in an empty directory with a Codex home of its own holding a copy of the user's sign-in and nothing else, deleted after the run", () => {
   const user = mkdtempSync(join(tmpdir(), "sheriff-user-codex-"));
   const held: Array<[string, string]> = [["auth.json", '{"token":"t"}'], ["config.toml", 'model = "x"\n'], ["AGENTS.md", "Be someone.\n"], ["hooks.json", "{}"]];
   for (const [name, text] of held) writeFileSync(join(user, name), text);
@@ -339,12 +346,12 @@ test("s-xr5xxa9cxf2mq5u runs the Codex CLI in an empty directory with a Codex ho
   }
 });
 
-test("s-xr5xxa9cxf2mq5u holds the Claude Code CLI's answer to the schema of the verdict", () => {
+test("@spec s-xr5xxa9cxf2mq5u holds the Claude Code CLI's answer to the schema of the verdict", () => {
   const args = claudeArgs({ claudeModel: "opus", claudeFallbackModel: "sonnet", claudeEffort: "high" }, "/prompt.md");
   assert.equal(args[args.indexOf("--json-schema") + 1], VERDICT_SCHEMA);
 });
 
-test("s-xr5xxa9cxf2mq5u reads an answer that passes with a finding, or refuses with none, as one that cannot be read", async () => {
+test("@spec s-xr5xxa9cxf2mq5u reads an answer that passes with a finding, or refuses with none, as one that cannot be read", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   const msg = `Accounts (${sid("open")})\n`;
@@ -353,20 +360,20 @@ test("s-xr5xxa9cxf2mq5u reads an answer that passes with a finding, or refuses w
   assert.match(texts(await review(root, msg, { run: answer("refuse", []) }))[0]!, /cannot be read/);
 });
 
-test("s-xr5xxa9cxf2mq5u hands a runner only the variables of the environment it needs, none an agent or git sets", () => {
+test("@spec s-xr5xxa9cxf2mq5u hands a runner only the variables of the environment it needs, none an agent or git sets", () => {
   const env = runnerEnv({ PATH: "/bin", HOME: "/home/u", LANG: "C.UTF-8", HTTPS_PROXY: "http://p", ANTHROPIC_API_KEY: "k", CLAUDE_CONFIG_DIR: "/c",
     CLAUDECODE: "1", CLAUDE_EFFORT: "low", CLAUDE_CODE_SESSION_ID: "s", GIT_DIR: "/r/.git", GIT_WORK_TREE: "/tmp/x", OPENAI_API_KEY: "o", SECRET_TOKEN: "x" });
   assert.deepEqual(Object.keys(env).sort(), ["ANTHROPIC_API_KEY", "CLAUDE_CONFIG_DIR", "HOME", "HTTPS_PROXY", "LANG", "OPENAI_API_KEY", "PATH"]);
 });
 
-test("s-xr5xxa9cxf2mq5u starts the program an npm command script starts, with the arguments it gives, rather than the script through a shell", () => {
+test("@spec s-xr5xxa9cxf2mq5u starts the program an npm command script starts, with the arguments it gives, rather than the script through a shell", () => {
   const exe = '@ECHO off\r\nGOTO start\r\n:find_dp0\r\nSET dp0=%~dp0\r\nEXIT /b\r\n:start\r\nSETLOCAL\r\nCALL :find_dp0\r\n"%dp0%\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe"   %*\r\n';
   assert.deepEqual(programOfShim(exe, "C:\\npm"), { program: "C:\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe", args: [] });
   const js = '@ECHO off\r\nSETLOCAL\r\nCALL :find_dp0\r\nIF EXIST "%dp0%\\node.exe" (\r\n  SET "_prog=%dp0%\\node.exe"\r\n) ELSE (\r\n  SET "_prog=node"\r\n)\r\nendLocal & goto #_undefined_# 2>NUL || title %COMSPEC% & "%_prog%"  "%dp0%\\node_modules\\@openai\\codex\\bin\\codex.js" %*\r\n';
   assert.deepEqual(programOfShim(js, "C:\\npm"), { program: process.execPath, args: ["C:\\npm\\node_modules\\@openai\\codex\\bin\\codex.js"] });
 });
 
-test("s-vp24dqydygztqbt gives the runner the nodes with their reasons and each changed symbol whole with the tags that bind it, and asks it to judge each symbol", async () => {
+test("@spec s-vp24dqydygztqbt gives the runner the nodes with their reasons and each changed symbol whole with the tags that bind it, and asks it to judge each symbol", async () => {
   const root = codeProject();
   editSpec(root, (d) => (nodeIn(d, "open").reason = "An account holds what is put in."));
   put(root, "src/open.ts", CHANGED_OPEN);
@@ -375,11 +382,11 @@ test("s-vp24dqydygztqbt gives the runner the nodes with their reasons and each c
   const [, symbols] = input.split(/^# The symbols the commit changes$/m);
   assert.ok(symbols && symbols.includes("src/open.ts") && symbols.includes(sid("open")) && symbols.includes("return amount * 2;"), input);
   assert.match(SYSTEM_PROMPT, /each changed symbol/i);
-  assert.match(SYSTEM_PROMPT, /a tag naming a node the symbol does not implement/i);
+  assert.match(SYSTEM_PROMPT, /a SpecTag naming a node the symbol does not implement/i);
   assert.match(SYSTEM_PROMPT, new RegExp(`names no node.*s-kgbzk2ph9e6jfb4`, "s"));
 });
 
-test("s-vp24dqydygztqbt gives the runner only the symbols of the system's code, telling a symbol with no tag from one whose tag names no node", async () => {
+test("@spec s-vp24dqydygztqbt gives the runner only the symbols of the system's code, telling a symbol with no tag from one whose tag names no node", async () => {
   const root = codeProject();
   put(root, "src/open.ts", CHANGED_OPEN);
   put(root, "src/pad.ts", "/** @spec none formatting only, no rule of the system */\nexport function pad(s: string) {\n  return s.padStart(4);\n}\n\nexport function raw(s: string) {\n  return s;\n}\n");
@@ -388,6 +395,6 @@ test("s-vp24dqydygztqbt gives the runner only the symbols of the system's code, 
   const [, symbols] = input.split(/^# The symbols the commit changes$/m);
   const section = symbols!.split(/^# The change$/m)[0]!;
   assert.ok(!section.includes("test/helper.test.ts"), section);
-  assert.match(section, /src\/pad\.ts:\d+-\d+ pad \(tags: none: formatting only, no rule of the system\)/);
-  assert.match(section, /src\/pad\.ts:\d+-\d+ raw \(tags: no tag\)/);
+  assert.match(section, /src\/pad\.ts:\d+-\d+ pad \(SpecTags: none: formatting only, no rule of the system\)/);
+  assert.match(section, /src\/pad\.ts:\d+-\d+ raw \(SpecTags: no SpecTag\)/);
 });

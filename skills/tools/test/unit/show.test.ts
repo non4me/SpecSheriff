@@ -21,7 +21,7 @@ function fixture() {
   return loadSpecification(root);
 }
 
-test("s-k4nqjr96ux7a5m7 shows a node found by its sid with every value its file holds, each that is not text under its key as JSON", () => {
+test("@spec s-k4nqjr96ux7a5m7 shows a node found by its sid with every value its file holds, each that is not text under its key as JSON", () => {
   const spec = fixture();
   for (const name of ["Bill", "payer", "billed rule"]) {
     const { location, sid: s, kind, title, status, text, reason, refs, children, ...rest } = spec.nodes.get(sid(name))!.node as SpecNode;
@@ -32,18 +32,18 @@ test("s-k4nqjr96ux7a5m7 shows a node found by its sid with every value its file 
   }
 });
 
-test("s-k4nqjr96ux7a5m7 shows a node alone, without the nodes under it", () => {
+test("@spec s-k4nqjr96ux7a5m7 shows a node alone, without the nodes under it", () => {
   const spec = fixture();
   const out = show(spec, sid("billing"));
   assert.ok(out.includes("Billing.") && !out.includes("A bill.") && !out.includes("# "+ spec.nodes.get(sid("Bill"))!.node.location));
 });
 
-test("s-f5rz6b7dhxejjts shows a node found by its location the same as by its sid", () => {
+test("@spec s-f5rz6b7dhxejjts shows a node found by its location the same as by its sid", () => {
   const node = spec.nodes.get("s-kag2m9tzdnduxdx")!.node;
   assert.equal(show(spec, node.location), show(spec, "s-kag2m9tzdnduxdx"));
 });
 
-test("s-k4nqjr96ux7a5m7 names every link a node makes or receives by its type, its direction, its ratio and the sid, location and title of the node at the other end", () => {
+test("@spec s-k4nqjr96ux7a5m7 names every link a node makes or receives by its type, its direction, its ratio and the sid, location and title of the node at the other end", () => {
   const node = spec.nodes.get("s-kag2m9tzdnduxdx")!.node;
   const out = show(spec, "s-kag2m9tzdnduxdx");
   for (const r of node.refs) {
@@ -54,11 +54,11 @@ test("s-k4nqjr96ux7a5m7 names every link a node makes or receives by its type, i
   assert.ok(show(terms, sid("Bill")).includes(`- term-relation 0..N:1 ← ${sid("payer")} ${terms.nodes.get(sid("payer"))!.node.location} payer\n`));
 });
 
-test("s-f5rz6b7dhxejjts refuses a key no node holds", () => {
+test("@spec s-f5rz6b7dhxejjts refuses a key no node holds", () => {
   assert.throws(() => show(spec, NONE), /no node/);
 });
 
-test("s-k4nqjr96ux7a5m7 writes a list whose members are objects as a table, the property it names first", () => {
+test("@spec s-k4nqjr96ux7a5m7 writes a list whose members are objects as a table, the property it names first", () => {
   const root = repo({
     "specs/contracts/c.json": file("contracts", "c", node("levels", { kind: "section", text: "Levels.", children: [
       node("ranked", { list: { of: "the levels", property: "name", members: [{ name: "core", rank: 1 }, { rank: 2, name: "auxiliary", tags: ["a|b"] }, "edge"] } }),
@@ -72,7 +72,7 @@ test("s-k4nqjr96ux7a5m7 writes a list whose members are objects as a table, the 
   assert.ok(out.includes("| edge |  |  |"), out);
 });
 
-test("s-k4nqjr96ux7a5m7 writes the values gathered beside a field after its JSON, each with the sid, location and title of the node it comes from", () => {
+test("@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field after its JSON, each with the sid, location and title of the node it comes from", () => {
   const root = repo({
     "specs/contracts/c.json": file("contracts", "c", node("kinds", { kind: "section", text: "Kinds.", children: [
       node("event", { kind: "recordType", text: "An event.", unknown: "refused", fields: [{ name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "" }] }),
@@ -89,7 +89,7 @@ test("s-k4nqjr96ux7a5m7 writes the values gathered beside a field after its JSON
   assert.ok(out.includes(`**kind:**\n\n- paid — ${sid("bank events")} ${spec.nodes.get(sid("bank events"))!.node.location} bank events`), out);
 });
 
-test("s-f5rz6b7dhxejjts lists every item of the todos, the newest first, those of one day in the order the specification reads, each with its date, author, text and node, the archive left out", () => {
+test("@spec s-f5rz6b7dhxejjts lists every item of the todos, the newest first, those of one day in the order the specification reads, each with its date, author, text and node, the archive left out", () => {
   const item = (date: string, text: string) => ({ date, by: OWNER, text });
   const root = repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", meta: { todos: [item("2026-11-01", "Name the levels.")] } })),

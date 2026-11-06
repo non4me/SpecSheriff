@@ -830,7 +830,7 @@
           }
         },
         "tests": {
-          "$comment": "The tests declaring the node's sid, each as its file and name; compared with the tests by binding.",
+          "$comment": "The tests carrying the node's SpecTag, each as its file and name; compared with the tests by binding.",
           "type": "array",
           "items": {
             "type": "string",

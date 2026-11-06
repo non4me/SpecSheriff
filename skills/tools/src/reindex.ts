@@ -1,7 +1,9 @@
 import { randomInt } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { loadConfig } from "./config.ts";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join, posix } from "node:path";
+import { readCode } from "./code.ts";
+import { loadConfig, readsAs } from "./config.ts";
+import { trackedFiles } from "./diff.ts";
 import { holds, readConfirmations } from "./confirmations.ts";
 import { mergeKeys, type KeyTwice } from "./json-text.ts";
 import { incoming, locations, partOf, SID } from "./model.ts";
@@ -203,4 +205,58 @@ export function reindex(root: string): ReindexReport {
     }
   }
   return report;
+}
+
+const escaped = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/**
+ * Rewrites each test naming its node by a bare sid, as an earlier release of the SpecSheriff tools read it, opening its
+ * name or standing alone as the argument of its mark: `@spec ` is put before that sid, in the files the settings name as
+ * the tests of the system's code or of a project's own check or generator, and each node's list of tests names the test
+ * by its new name. Returns each file it rewrote (s-f5rz6b7dhxejjts).
+ */
+export async function rewriteTests(root: string): Promise<string[]> {
+  const config = loadConfig(root);
+  const own = [...config.checks, ...config.generators].flatMap((t) => t.tests);
+  const isTests = (p: string) => readsAs(config, p) === "tests" || own.some((g) => posix.matchesGlob(p, g));
+  const renamed = new Map<string, string>();
+  const rewritten: string[] = [];
+  for (const path of trackedFiles(root).filter((p) => isTests(p) && existsSync(join(root, p)))) {
+    const text = readFileSync(join(root, path), "utf8");
+    const file = await readCode(path, text);
+    const bare = (file?.tests ?? []).filter((t) => t.bare);
+    if (!bare.length) continue;
+    const lines = text.split("\n");
+    for (const t of bare) {
+      const at = t.at - 1;
+      const sid = new RegExp(`(["'\`])${escaped(t.bare!)}(?=[\\s"'\`])`);
+      if (!sid.test(lines[at] ?? "")) continue;
+      lines[at] = lines[at]!.replace(sid, `$1@spec ${t.bare}`);
+      if (t.name.startsWith(t.bare!)) renamed.set(`${path}::${t.name}`, `${path}::@spec ${t.name}`);
+    }
+    const now = lines.join("\n");
+    if (now === text) continue;
+    writeFileSync(join(root, path), now);
+    rewritten.push(path);
+  }
+  if (renamed.size) {
+    for (const path of specPaths(root)) {
+      const data = JSON.parse(readFileSync(join(root, path), "utf8")) as SpecFile["data"];
+      let changed = false;
+      const walk = (nodes: SpecNode[] = []) => nodes.forEach((n) => {
+        const meta = n.meta as { tests?: string[] } | undefined;
+        if (Array.isArray(meta?.tests)) {
+          meta.tests = meta.tests.map((t) => {
+            const to = renamed.get(t);
+            if (to) changed = true;
+            return to ?? t;
+          });
+        }
+        walk(n.children);
+      });
+      walk(data.nodes);
+      if (changed) writeFileSync(join(root, path), canonical(data));
+    }
+  }
+  return rewritten.sort();
 }

@@ -32,7 +32,7 @@ specification. Ask the agent to set the repository up for SpecSheriff.
 **What it asks.** Where the system's code lives, where its tests live, and which command runs the
 tests. The code and the tests are named by glob patterns of files, such as `src/**/*.ts` and
 `test/**/*.test.ts`: a folder's name alone matches no file inside it. A file neither pattern names is
-read for nothing, which is how the repository's own scripts and configuration stay exempt from tags.
+read for nothing, which is how the repository's own scripts and configuration stay exempt from SpecTags.
 
 **What it changes.** `sheriff init` writes the git hooks into `.githooks/` and turns them on;
 declares the marketplace and the plugin in `.claude/settings.json`, with automatic updates on;
@@ -137,7 +137,7 @@ guidelines.
 **What it changes.** It writes each document into nodes exactly as it reads, word for word, and
 deletes the originals in the same commit, so that no second version of the rules remains. It moves
 every citation onto a sid. Then it goes over the nodes with you by `spec-review`, and once a part is
-confirmed, binds its code and tests: a tag on every symbol, a sid on every test.
+confirmed, binds its code and tests: a SpecTag on every symbol and on every test.
 
 ## What the checks refuse
 
@@ -152,21 +152,24 @@ is handed what they refuse and fixes it.
 - `pre-commit` checks the commit being made: the specification on its own (`sheriff validate`), the
   specification against the code (`sheriff binding`), and the citations outside it
   (`sheriff citations`); last, `sheriff types` writes the types generated from the RecordTypes.
-- `commit-msg` checks that a commit changing code names every checked rule its changed symbols' tags
-  name (`sheriff message`), and then an independent reviewer — Claude Code run with no tools and no
+- `commit-msg` checks that a commit changing code names every checked rule the SpecTags on its changed
+  symbols name (`sheriff message`), and then an independent reviewer — Claude Code run with no tools and no
   settings, given only the change and the text of those rules — judges whether the code does what
   they say and nothing they do not (`sheriff review`). With the plugin for Codex CLI, Codex runs it
   the same way.
 - `pre-push` runs the tests by the command `sheriff.config.json` names, after refusing a working tree
-  that differs from what the push sends.
+  that differs from what the push sends. While the specification is a draft, it runs no test and
+  compares nothing, and says so.
 
 **What a refusal means**, for the ones met most:
 
 | The refusal | What it means |
 |---|---|
-| `src/greet.js:1: greet carries no tag` | Every symbol names the rule it implements by `@spec <sid>` in the comment above it, or says `@spec none` and why it implements none. |
-| a tag names a node that is not checked | Nothing unconfirmed is implemented: have the rule confirmed first. |
-| a rule whose code changes has no test | Write the test first; it carries the rule's sid. |
+| `src/greet.js:1: greet carries no SpecTag` | Every symbol names the rule it implements by its SpecTag, `@spec <sid>`, in the comment above it, or says `@spec none` and why it implements none. |
+| a test carries no SpecTag | A test opens its name with the SpecTag of the rule it is written from, `test("@spec <sid> …")`; in Python it carries the mark `@pytest.mark.spec("@spec <sid>")`. |
+| a test carries the bare sid | The form 0.4.0 read: `sheriff reindex` writes the SpecTag of every such test. |
+| a SpecTag names a node that is not checked | Nothing unconfirmed is implemented: have the rule confirmed first. |
+| a rule whose code changes has no test | Write the test first; it carries the rule's SpecTag. |
 | the message names no node | Name in the commit message the sid of every checked rule the changed code serves. |
 | the reviewer names a node and a line | The code does something its rules do not say. Change the code, or change the rule first, with its owner. `@spec none` on code that behaves is refused here. |
 | a checked node holds no confirmation | Its wording changed after it was confirmed; it needs its owner's confirmation again. |
@@ -176,8 +179,8 @@ node with its links.
 
 ## A checked rule is implemented
 
-Every checked rule of the project's specification is implemented: a symbol carries its tag, and a
-test carries its sid and passes. A tag or a test on a rule of the technical appendix implementing
+Every checked rule of the project's specification is implemented: a symbol carries its SpecTag, and
+a test carries it too and passes. A SpecTag or a test on a rule of the technical appendix implementing
 it counts for it. `sheriff binding` reports each rule that lacks one, naming what it lacks; the report
 stops no commit, and a release of the SpecSheriff tools is made only when it is empty for their own
 guidelines.
@@ -208,8 +211,8 @@ specsheriff@specsheriff-marketplace` takes it at once.
 
 ## The plugin for pytest
 
-A Python project's tests declare their sid by `@pytest.mark.spec("s-…")`, which the plugin for pytest
-registers. It is installed in the project's test environment from the same releases:
+A Python project's tests declare their SpecTag by `@pytest.mark.spec("@spec s-…")`, which the plugin for
+pytest registers, opening the name a run reports with it. It is installed in the project's test environment from the same releases:
 
 ```sh
 pip install "pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff"

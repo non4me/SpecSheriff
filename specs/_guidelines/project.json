@@ -11,7 +11,28 @@
       "status": "",
       "text": "What only the specification of this repository needs beyond the SpecSheriff guidelines.",
       "owner": "vladimir.troyanenko@gmail.com",
-      "refs": []
+      "refs": [],
+      "children": [
+        {
+          "location": "_guidelines/project/1",
+          "sid": "s-p92k6vfe3ju27at",
+          "kind": "rule",
+          "title": "The specification is live",
+          "status": "checked",
+          "text": "This project's specification is live.",
+          "reason": "This repository holds no symbol of the system's code, and every test of its tools carries the SpecTag of the node it is written from, so a draft would only stop the tests from running at a push (§s-xhcmchcngykvn2k).",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-qzthyh7yqvfhsa2"
+            },
+            {
+              "type": "cites",
+              "to": "s-xhcmchcngykvn2k"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

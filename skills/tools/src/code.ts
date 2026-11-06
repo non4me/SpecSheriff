@@ -38,7 +38,12 @@ export interface CodeSymbol {
 
 export interface CodeTest {
   name: string;
+  /** The sid its SpecTag names, `@spec <sid>` opening its name or standing in its mark. */
   sid: string | null;
+  /** A sid it carries bare where its SpecTag stands, as an earlier release read it: no SpecTag. */
+  bare: string | null;
+  /** The line of the name or the mark where the SpecTag or the bare sid stands. */
+  at: number;
   start: number;
   end: number;
   /** Its framework is told to skip it, or to expect it to fail, so it does not run as a passing test. */
@@ -54,6 +59,7 @@ export interface CodeFile {
 
 const SID = /^s-[2-9a-hjkmnp-z]{15}$/;
 const LEADING_SID = /^(s-[2-9a-hjkmnp-z]{15})(?=\s|$)/;
+const LEADING_TAG = /^@spec (s-[2-9a-hjkmnp-z]{15})(?=\s|$)/;
 const TAG = /^@spec (?:(s-[2-9a-hjkmnp-z]{15})|none (\S.*))$/;
 
 const descriptions: Description[] = readdirSync(new URL("../languages/", import.meta.url))
@@ -147,7 +153,7 @@ export async function readCode(path: string, text: string): Promise<CodeFile | n
         if (!content.includes("@spec")) return;
         attached.add(at);
         const m = TAG.exec(content);
-        if (!m) file.problems.push({ line: at, message: "a tag shares its line with something other than the comment's delimiters" });
+        if (!m) file.problems.push({ line: at, message: "a SpecTag shares its line with something other than the comment's delimiters" });
         else tags.push(m[1] ? { line: at, sid: m[1] } : { line: at, none: m[2]! });
       });
     }
@@ -208,7 +214,7 @@ export async function readCode(path: string, text: string): Promise<CodeFile | n
     if (node.type === description.comment) {
       node.text.split("\n").forEach((raw, i) => {
         const at = line(node) + i;
-        if (bare(raw).includes("@spec") && !attached.has(at)) file.problems.push({ line: at, message: "a tag that stands on no symbol: it must be in the comment directly above the symbol it binds" });
+        if (bare(raw).includes("@spec") && !attached.has(at)) file.problems.push({ line: at, message: "a SpecTag that stands on no symbol: it must be in the comment directly above the symbol it binds" });
       });
     }
     const t = testOf(node, description);
@@ -233,17 +239,25 @@ function testOf(node: Node, d: Description): CodeTest | null {
     const byOption = options?.type === "object" && options.namedChildren.some((p) =>
       p?.type === "pair" && skips.includes(p.childForFieldName("key")?.text ?? "") && p.childForFieldName("value")?.text !== "false");
     const skipped = (member !== undefined && skips.includes(member)) || byOption;
-    return { name, sid: LEADING_SID.exec(leading)?.[1] ?? null, start: line(node), end: lastLine(node), skipped };
+    const sid = LEADING_TAG.exec(leading)?.[1] ?? null;
+    const bare = sid ? null : LEADING_SID.exec(leading)?.[1] ?? null;
+    return { name, sid, bare, at: line(first), start: line(node), end: lastLine(node), skipped };
   }
   if (d.tests.functions && node.type === "function_definition") {
     const name = node.childForFieldName("name")?.text ?? "";
     if (!name.startsWith(d.tests.functions)) return null;
     const holder = node.parent?.type === d.decorated ? node.parent : node;
     let sid: string | null = null;
+    let bare: string | null = null;
+    let at = line(holder);
     let skipped = false;
     for (const decorator of holder.namedChildren.filter((c) => c?.type === "decorator")) {
-      const m = new RegExp(`^@${d.tests.mark!.replace(/\./g, "\\.")}\\(\\s*["'](s-[^"']*)["']`).exec(decorator!.text);
-      if (m && SID.test(m[1]!)) sid = m[1]!;
+      const m = new RegExp(`^@${d.tests.mark!.replace(/\./g, "\\.")}\\(\\s*["'](@spec )?(s-[^"']*)["']`).exec(decorator!.text);
+      if (m && SID.test(m[2]!)) {
+        if (m[1]) sid = m[2]!;
+        else bare = m[2]!;
+        at = line(decorator!);
+      }
       const mark = /^@([\w.]+)/.exec(decorator!.text)?.[1];
       if (mark && (d.tests.skips ?? []).includes(mark)) skipped = true;
     }
@@ -251,12 +265,20 @@ function testOf(node: Node, d: Description): CodeTest | null {
     for (let p = holder.parent; p; p = p.parent) {
       if (p.type === "class_definition") qualified = `${p.childForFieldName("name")?.text}.${qualified}`;
     }
-    return { name: qualified, sid, start: line(holder), end: lastLine(holder), skipped };
+    return { name: qualified, sid, bare: sid ? null : bare, at, start: line(holder), end: lastLine(holder), skipped };
   }
   return null;
 }
 
-/** Whether a file is in a language a description covers, so that the tools read it for tags. */
+/**
+ * Whether a line differs from the one it replaces only by `@spec ` put before a bare sid, as `sheriff reindex` writes
+ * the SpecTag of a test an earlier release read by its bare sid (s-rah8b37kytb682y).
+ */
+export function onlySpecTagged(was: string, now: string): boolean {
+  return now !== was && now.replace(/@spec (s-[2-9a-hjkmnp-z]{15})/g, "$1") === was;
+}
+
+/** Whether a file is in a language a description covers, so that the tools read it for SpecTags. */
 export function readsForTags(path: string): boolean {
   const ext = extname(path);
   return descriptions.some((d) => d.extensions.includes(ext));

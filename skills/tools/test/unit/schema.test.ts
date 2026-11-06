@@ -9,7 +9,7 @@ const schema = loadSchema(REPO);
 const ok = { location: "x/1", sid: sid("ok"), kind: "rule", title: "t", status: "", text: "", refs: [] };
 const file = (...nodes: object[]) => ({ schemaVersion: 1, scope: "x", section: "x", nodes });
 
-test("s-eferktypcj7njt5 accepts every file of the specification as it stands", () => {
+test("@spec s-eferktypcj7njt5 accepts every file of the specification as it stands", () => {
   for (const f of loadSpecification(REPO).files) assert.deepEqual(schema.check(f.data), [], f.path);
 });
 
@@ -37,7 +37,7 @@ const refused: Record<string, object> = {
   ] },
 };
 for (const [what, node] of Object.entries(refused)) {
-  test(`s-eferktypcj7njt5 refuses ${what}`, () => {
+  test(`@spec s-eferktypcj7njt5 refuses ${what}`, () => {
     assert.notDeepEqual(schema.check(file(node)), []);
   });
 }
@@ -56,17 +56,17 @@ const accepted: Record<string, object> = {
   "an archived node with its reason and replacement": { ...ok, archived: { date: "2026-10-28", reason: "r", replacedBy: NONE } },
 };
 for (const [what, node] of Object.entries(accepted)) {
-  test(`s-eferktypcj7njt5 accepts ${what}`, () => {
+  test(`@spec s-eferktypcj7njt5 accepts ${what}`, () => {
     assert.deepEqual(schema.check(file(node)), []);
   });
 }
 
-test("s-eferktypcj7njt5 names the field that is wrong", () => {
+test("@spec s-eferktypcj7njt5 names the field that is wrong", () => {
   const [error] = schema.check(file({ ...ok, children: [{ ...ok, status: "done" }] }));
   assert.match(error!, /\/nodes\/0\/children\/0\/status/);
 });
 
-test("s-eferktypcj7njt5 names a field nobody declared, and a required field that is missing", () => {
+test("@spec s-eferktypcj7njt5 names a field nobody declared, and a required field that is missing", () => {
   assert.ok(schema.check(file({ ...ok, foo: 1 })).some((e) => /\/nodes\/0.*"foo"/.test(e)), "the undeclared field");
   const { text: _, ...withoutText } = ok;
   assert.ok(schema.check(file(withoutText)).some((e) => /\/nodes\/0.*"text"/.test(e)), "the missing field");
@@ -81,7 +81,7 @@ const EXTENSION = {
 };
 const extended = (extension: object) => loadSchema(repo({ "specs/_schema/project.schema.json": extension }));
 
-test("s-xzcw3hv4hmxz7h7 composes a project's extension with the schema: its kinds, the fields it adds to a kind, the properties of a file and of a link", () => {
+test("@spec s-xzcw3hv4hmxz7h7 composes a project's extension with the schema: its kinds, the fields it adds to a kind, the properties of a file and of a link", () => {
   const ours = extended(EXTENSION);
   assert.deepEqual(ours.extension, []);
   assert.deepEqual(ours.check(file({ ...ok, kind: "job", steps: ["open"] })), []);
@@ -95,7 +95,7 @@ test("s-xzcw3hv4hmxz7h7 composes a project's extension with the schema: its kind
   assert.notDeepEqual(schema.check(file({ ...ok, kind: "job", steps: ["open"] })), [], "the kind, where no extension declares it");
 });
 
-test("s-xzcw3hv4hmxz7h7 refuses an extension that does more than add, and then composes nothing", () => {
+test("@spec s-xzcw3hv4hmxz7h7 refuses an extension that does more than add, and then composes nothing", () => {
   const cases: Record<string, object> = {
     "a key the schema of an extension does not hold": { ...EXTENSION, nodes: {} },
     "a kind the SpecSheriff guidelines already have": { kinds: { rule: { needsCode: true, schema: {} } } },
@@ -112,12 +112,12 @@ test("s-xzcw3hv4hmxz7h7 refuses an extension that does more than add, and then c
   }
 });
 
-test("s-eferktypcj7njt5 accepts a list whose members are objects naming the property that holds each one's value", () => {
+test("@spec s-eferktypcj7njt5 accepts a list whose members are objects naming the property that holds each one's value", () => {
   const listed = { ...ok, list: { of: "the levels", property: "name", members: [{ name: "core", rank: 1 }, "auxiliary"] } };
   assert.deepEqual(schema.check(file(listed)), []);
 });
 
-test("s-eferktypcj7njt5 takes a field of type one of naming its source, with the values gathered beside it, and refuses one naming two sources", () => {
+test("@spec s-eferktypcj7njt5 takes a field of type one of naming its source, with the values gathered beside it, and refuses one naming two sources", () => {
   const event = (type: object, more: object = {}) => ({ ...ok, kind: "recordType", unknown: "refused", fields: [{ name: "kind", type, required: true, text: "", ...more }] });
   assert.deepEqual(schema.check(file(event({ is: "one of", from: "domains" }, { gathered: [{ value: "paid", sid: NONE }] }))), []);
   assert.deepEqual(schema.check(file(event({ is: "one of", from: "kindSids", kind: "rule" }))), []);

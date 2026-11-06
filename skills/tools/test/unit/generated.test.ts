@@ -32,7 +32,7 @@ function project(): string {
   return root;
 }
 
-test("s-zefk589ykh37b8u keeps the readable export and the map out of git", () => {
+test("@spec s-zefk589ykh37b8u keeps the readable export and the map out of git", () => {
   const root = project();
   spawnSync("git", ["init", "-q"], { cwd: root });
   exportMarkdown(root);
@@ -42,12 +42,12 @@ test("s-zefk589ykh37b8u keeps the readable export and the map out of git", () =>
   }
 });
 
-test("s-uw9n84edf7cbe9n orders the domains each after every domain it uses, the order of their names deciding a tie", () => {
+test("@spec s-uw9n84edf7cbe9n orders the domains each after every domain it uses, the order of their names deciding a tie", () => {
   const spec = loadSpecification(project());
   assert.deepEqual(domainOrder(spec), ["zeta", "alpha", "helper"]);
 });
 
-test("s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it", () => {
+test("@spec s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it", () => {
   const header = (name: string, uses: string[] = []) => file(name, `00-${name}`, node(name, { kind: "domain", level: "core", code: null, sections: [], refs: uses.map((u) => ({ type: "consumes", to: sid(`${u} section`) })) }));
   const section = (name: string) => file(name, "s", node(`${name} section`, { kind: "section", text: "S.", children: [node(`${name} rule`)] }));
   const root = repo({
@@ -58,7 +58,7 @@ test("s-uw9n84edf7cbe9n puts a domain as close as possible before the first doma
   assert.deepEqual(domainOrder(loadSpecification(root)), ["b", "a", "z"]);
 });
 
-test("s-kh8qcd5kxgh9z3j exports every file of the specification to markdown, each node with its sid, text and reason", () => {
+test("@spec s-kh8qcd5kxgh9z3j exports every file of the specification to markdown, each node with its sid, text and reason", () => {
   const root = project();
   exportMarkdown(root);
   const md = readFileSync(join(root, "md-version", "_guidelines", "spec.md"), "utf8");
@@ -110,7 +110,7 @@ function values(n: SpecNode): string[] {
 
 const exported = (root: string, part: string) => readFileSync(join(root, "md-version", `${part}.md`), "utf8");
 
-test("s-k4nqjr96ux7a5m7 the export writes a node with every value its file holds, each that is not text under its key as JSON", () => {
+test("@spec s-k4nqjr96ux7a5m7 the export writes a node with every value its file holds, each that is not text under its key as JSON", () => {
   const root = everything();
   exportMarkdown(root);
   const spec = loadSpecification(root);
@@ -121,7 +121,7 @@ test("s-k4nqjr96ux7a5m7 the export writes a node with every value its file holds
   assert.ok(exported(root, loc("_guidelines", "spec")).includes(`**list:**\n\n\`\`\`json\n${JSON.stringify(spec.nodes.get(sid("listed rule"))!.node.list, null, 2)}\n\`\`\``));
 });
 
-test("s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction, its ratio and the sid, location and title of the node at the other end", () => {
+test("@spec s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction, its ratio and the sid, location and title of the node at the other end", () => {
   const root = everything();
   exportMarkdown(root);
   const spec = loadSpecification(root);
@@ -132,7 +132,7 @@ test("s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction
   assert.ok(exported(root, loc("_guidelines", "spec")).includes(`- implements ← ${sid("listed rule")} ${at("listed rule").location} listed rule`));
 });
 
-test("s-k4nqjr96ux7a5m7 the export writes a node's children after it, each under a heading one level deeper than its parent's", () => {
+test("@spec s-k4nqjr96ux7a5m7 the export writes a node's children after it, each under a heading one level deeper than its parent's", () => {
   const root = everything();
   exportMarkdown(root);
   const spec = loadSpecification(root);
@@ -147,7 +147,7 @@ test("s-k4nqjr96ux7a5m7 the export writes a node's children after it, each under
   assert.deepEqual(order, [...order].sort((a, b) => a - b));
 });
 
-test("s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the export does, except its metadata", () => {
+test("@spec s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the export does, except its metadata", () => {
   const root = everything();
   exportMarkdown(root);
   const out = guide(loadSpecification(root));
@@ -159,7 +159,7 @@ test("s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the 
   assert.ok(out.includes(`**list:**`) && out.includes(`- implements → ${sid("base")}`));
 });
 
-test("s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of a file that is gone", () => {
+test("@spec s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of a file that is gone", () => {
   const root = project();
   exportMarkdown(root);
   const once = readFileSync(join(root, "md-version", "_guidelines", "spec.md"), "utf8");
@@ -169,7 +169,7 @@ test("s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of
   assert.deepEqual(readdirSync(join(root, "md-version")).sort(), [".gitignore", "_guidelines", "alpha", "contracts", "helper", "zeta"]);
 });
 
-test("s-jsqxdx47wkkj7gp the export and the map empty the folder they write into and keep the folder itself, which a running server may hold", () => {
+test("@spec s-jsqxdx47wkkj7gp the export and the map empty the folder they write into and keep the folder itself, which a running server may hold", () => {
   const root = project();
   for (const [dir, write] of [["md-version", exportMarkdown], [join("specs", "_viewer"), render]] as const) {
     mkdirSync(join(root, dir), { recursive: true });
@@ -181,7 +181,7 @@ test("s-jsqxdx47wkkj7gp the export and the map empty the folder they write into 
   }
 });
 
-test("s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of", () => {
+test("@spec s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of", () => {
   const root = project();
   render(root);
   const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
@@ -189,7 +189,7 @@ test("s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap 
   assert.deepEqual(readdirSync(join(root, "specs", "_viewer")).sort(), [".gitignore", "index.html"]);
 });
 
-test("s-rpv4fkdqqguptqd the map's page carries markmap and every library it needs, each with its licence notice, and loads nothing from the network", () => {
+test("@spec s-rpv4fkdqqguptqd the map's page carries markmap and every library it needs, each with its licence notice, and loads nothing from the network", () => {
   const root = project();
   render(root);
   const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
@@ -203,7 +203,7 @@ test("s-rpv4fkdqqguptqd the map's page carries markmap and every library it need
   for (const notice of ["Mike Bostock", "Gerald", "Mapbox", "unencumbered", "Sam Hocevar"]) assert.ok(page.includes(notice), notice);
 });
 
-test("s-rpv4fkdqqguptqd the map's page reads a title as text, so that no title makes it load anything", () => {
+test("@spec s-rpv4fkdqqguptqd the map's page reads a title as text, so that no title makes it load anything", () => {
   const root = project();
   const path = join(root, "specs", "zeta", "z.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
@@ -225,7 +225,7 @@ test("s-rpv4fkdqqguptqd the map's page reads a title as text, so that no title m
   assert.deepEqual(titles(zeta), ["zeta", "zeta section", "Costs $x$ and &lt;b&gt;more&lt;/b&gt;"]);
 });
 
-test("s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last", () => {
+test("@spec s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last", () => {
   const root = project();
   render(root);
   const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
@@ -239,13 +239,13 @@ test("s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level 
   assert.ok(page.includes("zeta rule") && page.includes("runtime"));
 });
 
-test("s-zu8ne3wq84zchc4 the map shows titles and nesting only, nothing of a rule's text", () => {
+test("@spec s-zu8ne3wq84zchc4 the map shows titles and nesting only, nothing of a rule's text", () => {
   const root = project();
   render(root);
   assert.ok(!readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8").includes("What zeta rule requires."));
 });
 
-test("s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines and the figures counted off the model as it prints", () => {
+test("@spec s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines and the figures counted off the model as it prints", () => {
   const root = project();
   const out = guide(loadSpecification(root));
   for (const name of ["base", "base rule", "project", "our levels"]) assert.ok(out.includes(sid(name)), name);
@@ -254,7 +254,7 @@ test("s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines and th
   assert.match(out, /alpha: 3 nodes, 0 checked/);
 });
 
-test("s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole", () => {
   const spec = loadSpecification(REPO);
   const out = guide(spec);
   for (const [s, at] of spec.nodes) if (at.file.path.startsWith("specs/_guidelines/")) assert.ok(out.includes(s), s);
