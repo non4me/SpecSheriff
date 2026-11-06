@@ -3444,6 +3444,13 @@
                     "ruling": "Following the owner's ruling on §s-hheus6f395ynqvc: a symbol of the system's code outside its tests.",
                     "type": "textual"
                   }
+                ],
+                "todos": [
+                  {
+                    "date": "2026-11-06",
+                    "by": "the owner",
+                    "text": "A draft is above all work on the specification, and the tests and the code are secondary in it. While a draft, a test a commit does not change and that names no node is reported rather than refused, as untagged code is, and the tests of the system's code need not run at a push, to keep the work quick. A project with tests can then commit its setup before every test is tied to a node. The task that makes a test carry a tag takes it up."
+                  }
                 ]
               }
             },
