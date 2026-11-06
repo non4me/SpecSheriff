@@ -21,6 +21,18 @@ export const AGENT: string | null = (() => {
   }
 })();
 
+/**
+ * A project's own check or generator (s-2fau85dfyyeq66m, s-km4x4s26kv7pjze): the sid of the rule listing it, its name
+ * in that rule's list, the command that runs it, and the globs naming the files of its code and of its tests.
+ */
+export interface ProjectTool {
+  rule: string;
+  name: string;
+  command: string;
+  code: string[];
+  tests: string[];
+}
+
 export interface Config {
   /** Globs naming where the system's code lives: read for tags. */
   code: string[];
@@ -31,6 +43,8 @@ export interface Config {
   /** The command that runs the tests of the system's code, before a commit is shared. */
   testCommand: string | null;
   review: ReviewSettings;
+  checks: ProjectTool[];
+  generators: ProjectTool[];
 }
 
 const FILE = "sheriff.config.json";
@@ -44,7 +58,7 @@ export function loadConfig(root: string, agent: string | null = AGENT): Config {
     throw new Error(`${FILE}: ${(error as Error).message}`);
   }
   for (const key of Object.keys(raw)) {
-    if (![...KEYS, "writesSpecSheriffGuidelines", "testCommand", "review"].includes(key)) throw new Error(`${FILE}: ${key} is no setting of the SpecSheriff tools`);
+    if (![...KEYS, "writesSpecSheriffGuidelines", "testCommand", "review", "checks", "generators"].includes(key)) throw new Error(`${FILE}: ${key} is no setting of the SpecSheriff tools`);
   }
   for (const key of KEYS) {
     const value = raw[key];
@@ -61,7 +75,28 @@ export function loadConfig(root: string, agent: string | null = AGENT): Config {
     writesSpecSheriffGuidelines: raw.writesSpecSheriffGuidelines === true,
     testCommand: (raw.testCommand as string | undefined) ?? null,
     review,
+    checks: readTools(raw.checks, "checks"),
+    generators: readTools(raw.generators, "generators"),
   };
+}
+
+/** The entries of `checks` or `generators`, each refused where it lacks a rule, a name, a command or its globs. */
+function readTools(value: unknown, key: string): ProjectTool[] {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) throw new Error(`${FILE}: ${key} must be a list`);
+  return value.map((t: Record<string, unknown>, i) => {
+    const text = (k: string) => {
+      if (typeof t?.[k] !== "string" || !(t[k] as string).length) throw new Error(`${FILE}: ${key}[${i}] must name its ${k}`);
+      return t[k] as string;
+    };
+    const globs = (k: string) => {
+      const g = t?.[k] ?? [];
+      if (!Array.isArray(g) || !g.every((x) => typeof x === "string")) throw new Error(`${FILE}: ${key}[${i}].${k} must be a list of glob patterns`);
+      return g as string[];
+    };
+    for (const k of Object.keys(t ?? {})) if (!["rule", "name", "command", "code", "tests"].includes(k)) throw new Error(`${FILE}: ${key}[${i}].${k} is no setting of the SpecSheriff tools`);
+    return { rule: text("rule"), name: text("name"), command: text("command"), code: globs("code"), tests: globs("tests") };
+  });
 }
 
 /** Where a model or an effort a project's settings once held is kept now: the user's git configuration. */

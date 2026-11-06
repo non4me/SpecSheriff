@@ -1,20 +1,21 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { createContext, runInContext } from "node:vm";
 import { confirm } from "../../src/confirmations.ts";
 import { exportMarkdown, guide, render } from "../../src/generated.ts";
 import { domainOrder } from "../../src/model.ts";
 import { reindex } from "../../src/reindex.ts";
 import { loadSpecification, type SpecNode } from "../../src/spec-files.ts";
 import { REPO } from "../repo.ts";
-import { file, node, OWNER, repo, sid } from "../fixture.ts";
+import { file, loc, node, OWNER, repo, sid } from "../fixture.ts";
 import { LEVELS_RULE } from "../../src/model.ts";
 
 function project(): string {
   const root = repo({
-    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule", { rationale: "Because." })] })),
+    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule", { reason: "Because." })] })),
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owner: OWNER, text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
     ] })),
@@ -75,7 +76,7 @@ function everything(): string {
   const root = repo({
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [
       node("listed rule", {
-        rationale: "Because.",
+        reason: "Because.",
         refs: [{ type: "implements", to: sid("base") }],
         list: { of: "the colours", members: ["red", "green"], declaredIn: { file: "src/colour.ts", declaration: "Colour" } },
         meta: {
@@ -91,7 +92,7 @@ function everything(): string {
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core"] } }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [
-      node("Invoice", { kind: "record", text: "A bill sent to a customer.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
+      node("Invoice", { kind: "recordType", text: "A bill sent to a customer.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
       node("customer", { kind: "term", text: "Whoever is billed.", refs: [{ type: "term-relation", to: sid("Invoice"), ratio: "1:0..N" }] }),
     ] })),
     "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "domain", owner: OWNER, level: "core", code: "src/alpha", sections: [] })),
@@ -103,8 +104,8 @@ function everything(): string {
 
 /** Every value a node's file holds for it, other than the text written as headings, links and children: each as the export writes it. */
 function values(n: SpecNode): string[] {
-  const { id, sid: s, kind, title, status, text, rationale, refs, children, ...rest } = n;
-  return [s, kind, title, text, ...(rationale ? [rationale] : []), ...Object.entries(rest).map(([k, v]) => (typeof v === "string" ? v : JSON.stringify(v, null, 2)))];
+  const { location, sid: s, kind, title, status, text, reason, refs, children, ...rest } = n;
+  return [s, kind, title, text, ...(reason ? [reason] : []), ...Object.entries(rest).map(([k, v]) => (typeof v === "string" ? v : JSON.stringify(v, null, 2)))];
 }
 
 const exported = (root: string, part: string) => readFileSync(join(root, "md-version", `${part}.md`), "utf8");
@@ -113,32 +114,32 @@ test("s-k4nqjr96ux7a5m7 the export writes a node with every value its file holds
   const root = everything();
   exportMarkdown(root);
   const spec = loadSpecification(root);
-  for (const [name, part] of [["listed rule", "_guidelines/spec"], ["Invoice", "contracts/c"], ["customer", "contracts/c"], ["alpha", "alpha/00-alpha"]] as const) {
+  for (const [name, part] of [["listed rule", loc("_guidelines", "spec")], ["Invoice", "contracts/c"], ["customer", "contracts/c"], ["alpha", "alpha/00-alpha"]] as const) {
     const md = exported(root, part);
     for (const v of values(spec.nodes.get(sid(name))!.node)) assert.ok(md.includes(v), `${name}: ${v}`);
   }
-  assert.ok(exported(root, "_guidelines/spec").includes(`**list:**\n\n\`\`\`json\n${JSON.stringify(spec.nodes.get(sid("listed rule"))!.node.list, null, 2)}\n\`\`\``));
+  assert.ok(exported(root, loc("_guidelines", "spec")).includes(`**list:**\n\n\`\`\`json\n${JSON.stringify(spec.nodes.get(sid("listed rule"))!.node.list, null, 2)}\n\`\`\``));
 });
 
-test("s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction, its ratio and the sid, address and title of the node at the other end", () => {
+test("s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction, its ratio and the sid, location and title of the node at the other end", () => {
   const root = everything();
   exportMarkdown(root);
   const spec = loadSpecification(root);
   const at = (name: string) => spec.nodes.get(sid(name))!.node;
   const md = exported(root, "contracts/c");
-  assert.ok(md.includes(`- term-relation 1:0..N → ${sid("Invoice")} ${at("Invoice").id} Invoice`));
-  assert.ok(md.includes(`- term-relation 0..N:1 ← ${sid("customer")} ${at("customer").id} customer`));
-  assert.ok(exported(root, "_guidelines/spec").includes(`- implements ← ${sid("listed rule")} ${at("listed rule").id} listed rule`));
+  assert.ok(md.includes(`- term-relation 1:0..N → ${sid("Invoice")} ${at("Invoice").location} Invoice`));
+  assert.ok(md.includes(`- term-relation 0..N:1 ← ${sid("customer")} ${at("customer").location} customer`));
+  assert.ok(exported(root, loc("_guidelines", "spec")).includes(`- implements ← ${sid("listed rule")} ${at("listed rule").location} listed rule`));
 });
 
 test("s-k4nqjr96ux7a5m7 the export writes a node's children after it, each under a heading one level deeper than its parent's", () => {
   const root = everything();
   exportMarkdown(root);
   const spec = loadSpecification(root);
-  const md = exported(root, "_guidelines/spec");
+  const md = exported(root, loc("_guidelines", "spec"));
   const heading = (name: string, level: number) => {
     const n = spec.nodes.get(sid(name))!.node;
-    const i = md.indexOf(`${"#".repeat(level)} ${n.id} ${n.title}\n`);
+    const i = md.indexOf(`${"#".repeat(level)} ${n.location} ${n.title}\n`);
     assert.ok(i >= 0 && md[i - 1] !== "#", `${name} at level ${level}`);
     return i;
   };
@@ -150,7 +151,7 @@ test("s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the 
   const root = everything();
   exportMarkdown(root);
   const out = guide(loadSpecification(root));
-  const md = exported(root, "_guidelines/spec");
+  const md = exported(root, loc("_guidelines", "spec"));
   const metadata = md.slice(md.indexOf("**meta:**"), md.indexOf("**Links:**", md.indexOf("**meta:**")));
   assert.ok(metadata.includes("Which colours."));
   assert.ok(out.includes(md.replace(metadata, "").trimEnd()), "the export of the base, its metadata left out");
@@ -168,12 +169,60 @@ test("s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of
   assert.deepEqual(readdirSync(join(root, "md-version")).sort(), [".gitignore", "_guidelines", "alpha", "contracts", "helper", "zeta"]);
 });
 
+test("s-jsqxdx47wkkj7gp the export and the map empty the folder they write into and keep the folder itself, which a running server may hold", () => {
+  const root = project();
+  for (const [dir, write] of [["md-version", exportMarkdown], [join("specs", "_viewer"), render]] as const) {
+    mkdirSync(join(root, dir), { recursive: true });
+    writeFileSync(join(root, dir, "stale.md"), "left by hand\n");
+    const before = statSync(join(root, dir), { bigint: true }).ino;
+    write(root);
+    assert.equal(statSync(join(root, dir), { bigint: true }).ino, before, dir);
+    assert.ok(!existsSync(join(root, dir, "stale.md")), dir);
+  }
+});
+
 test("s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of", () => {
   const root = project();
   render(root);
   const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
-  assert.match(page, /markmap-autoloader@\d+\.\d+\.\d+/);
+  assert.match(page, /markmap\.Markmap\.create\(/);
   assert.deepEqual(readdirSync(join(root, "specs", "_viewer")).sort(), [".gitignore", "index.html"]);
+});
+
+test("s-rpv4fkdqqguptqd the map's page carries markmap and every library it needs, each with its licence notice, and loads nothing from the network", () => {
+  const root = project();
+  render(root);
+  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  assert.doesNotMatch(page, /<script[^>]*\bsrc=|<link\b|@import|url\(\s*["']?https?:|\b(?:src|href)\s*=\s*["']?https?:/i);
+  // An address stands only as a namespace of XML or inside a library's notice, where nothing loads it.
+  const hosts = new Set([...page.matchAll(/https?:\/\/([^/"'\s>)]+)/g)].map((m) => m[1]!));
+  assert.deepEqual([...hosts].filter((h) => !["www.w3.org", "d3js.org", "unlicense.org"].includes(h)), []);
+  for (const library of ["d3", "internmap", "delaunator", "robust-predicates", "markmap-view", "@gera2ld/jsx-dom", "d3-flextree"]) {
+    assert.match(page, new RegExp(`^ \\* ${library.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")} \\d+\\.\\d+\\.\\d+$`, "m"), library);
+  }
+  for (const notice of ["Mike Bostock", "Gerald", "Mapbox", "unencumbered", "Sam Hocevar"]) assert.ok(page.includes(notice), notice);
+});
+
+test("s-rpv4fkdqqguptqd the map's page reads a title as text, so that no title makes it load anything", () => {
+  const root = project();
+  const path = join(root, "specs", "zeta", "z.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  data.nodes[0].children[0].title = "Costs $x$ and <b>more</b>";
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  render(root);
+  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  assert.ok(!page.includes("<b>more"), "the title written as markup");
+  assert.doesNotMatch(page, /katex/i);
+  // The page's own scripts, the outline and the drawing, run against a markmap that keeps the tree it is given.
+  const scripts = [...page.matchAll(/<script>([^]*?)<\/script>/g)].map((m) => m[1]!);
+  const drawn: { tree?: any } = {};
+  const context = createContext({ markmap: { Markmap: { create: (_svg: unknown, _options: unknown, tree: unknown) => (drawn.tree = tree) } } });
+  for (const script of [scripts[0]!, scripts.at(-1)!]) runInContext(script.replace(/^const OUTLINE/, "var OUTLINE"), context);
+  const titles = (n: any): string[] => [n.content, ...n.children.flatMap(titles)];
+  assert.equal(drawn.tree.content, "Specification");
+  assert.ok(titles(drawn.tree).includes("Costs $x$ and &lt;b&gt;more&lt;/b&gt;"), titles(drawn.tree).join(" | "));
+  const zeta = drawn.tree.children.find((c: any) => c.content === "1 core").children.find((c: any) => c.content === "zeta");
+  assert.deepEqual(titles(zeta), ["zeta", "zeta section", "Costs $x$ and &lt;b&gt;more&lt;/b&gt;"]);
 });
 
 test("s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last", () => {

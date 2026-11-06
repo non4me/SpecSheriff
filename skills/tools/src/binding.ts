@@ -1,11 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, posix } from "node:path";
 import { readCode, type CodeFile, type CodeSymbol } from "./code.ts";
 import { loadConfig, readsAs, type Config } from "./config.ts";
 import { before, changes, codeChanges, commitTexts, git, trackedFiles } from "./diff.ts";
-import { addresses, partOf } from "./model.ts";
+import { fixtureGlobs, isFixture, isProjectKind, liveRule, locations, partOf, PROJECT } from "./model.ts";
+import { needsCode, schemaRefusals } from "./schema.ts";
+import { runGenerators } from "./generators.ts";
 import { judgedHere } from "./reindex.ts";
-import { loadSpecification, type SpecNode, type Specification } from "./spec-files.ts";
+import { loadSpecification, specPaths, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 import { generateTypes, typeFiles, waitingRecords } from "./types.ts";
 import type { Finding } from "./validate.ts";
 
@@ -17,8 +19,8 @@ export interface BindingFinding extends Finding {
 const SID_ANYWHERE = /\bs-[2-9a-hjkmnp-z]{15}\b/g;
 
 /** The files the check of the citations outside the specification reads: the code, the tests and the documents, the tools' own included. */
-function outsideFiles(root: string, config: Config): string[] {
-  return trackedFiles(root).filter((p) => !p.startsWith("specs/") && (readsAs(config, p) !== null || p.endsWith(".md")));
+function outsideFiles(root: string, config: Config, fixtures: string[]): string[] {
+  return trackedFiles(root).filter((p) => !p.startsWith("specs/") && !isFixture(fixtures, p) && (readsAs(config, p) !== null || p.endsWith(".md")));
 }
 
 async function readAll(root: string, paths: string[]): Promise<CodeFile[]> {
@@ -93,26 +95,66 @@ export function changedTags(commit: Commit): Set<string> {
 }
 
 export async function binding(root: string): Promise<BindingFinding[]> {
+  // Every file is validated before anything is checked, and a refusal stops the checks (s-xzcw3hv4hmxz7h7).
+  const unread: BindingFinding[] = [];
+  const read = specPaths(root).flatMap((path) => {
+    try {
+      return [{ path, data: JSON.parse(readFileSync(join(root, path), "utf8")) as unknown }];
+    } catch (error) {
+      unread.push({ where: path, message: (error as Error).message });
+      return [];
+    }
+  });
+  const refused = [...unread, ...schemaRefusals(root, read)];
+  if (refused.length) return refused;
+
   const findings: BindingFinding[] = [];
   const config = loadConfig(root);
   const spec = loadSpecification(root);
   const exists = (sid: string) => spec.nodes.has(sid);
   const checked = (sid: string) => spec.nodes.get(sid)?.node.status === "checked";
+  // A rule, and a node of a project's own kind that needs code, is implemented and tested (s-vsh384ybt4w25a2).
+  const needs = needsCode(root);
+  const coded = (kind?: string) => kind === "rule" || Boolean(kind && isProjectKind(kind) && needs(kind));
   const { codeFiles, testFiles, changedSymbols, changedTests } = await readCommit(root, config, spec);
+  // The specification is live once the project's own guidelines hold the rule putting it live; a commit adding that
+  // rule holds it checked, and no commit takes it out (s-j9r8z4xdrfkfs47).
+  const projectNodes = (file: SpecFile | undefined) => {
+    const out: SpecNode[] = [];
+    const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (out.push(n), walk(n.children)));
+    walk(file?.data.nodes);
+    return out;
+  };
+  const nowLive = liveRule(projectNodes(spec.files.find((f) => f.path === PROJECT)));
+  const lastProject = before(root, PROJECT);
+  let wasLive: SpecNode | undefined;
+  try {
+    wasLive = lastProject ? liveRule(projectNodes({ path: PROJECT, data: JSON.parse(lastProject) })) : undefined;
+  } catch {
+    wasLive = undefined;
+  }
+  const live = Boolean(nowLive);
+  if (nowLive && !wasLive && nowLive.status !== "checked") findings.push({ where: nodeWhere(spec, nowLive.sid), message: "puts the specification live, and is not checked" });
+  if (wasLive && !nowLive) findings.push({ where: PROJECT, message: "takes out the rule that puts the specification live" });
   const at = (path: string, line: number) => `${path}:${line}`;
 
   // Tags.
   const rulesChanged = new Set<string>();
   for (const file of codeFiles) {
     for (const p of file.problems) findings.push({ where: at(file.path, p.line), message: p.message });
-    for (const s of file.symbols) if (s.tags.length === 0) findings.push({ where: at(file.path, s.start), message: `${s.name} carries no tag` });
+    for (const s of file.symbols) {
+      if (s.tags.length) continue;
+      // In draft mode an untagged symbol a commit leaves alone is reported, not refused (s-kkbqcb9xrpaepwn).
+      const left = !live && !(changedSymbols.get(file.path)?.has(s) ?? false);
+      findings.push({ where: at(file.path, s.start), message: `${s.name} carries no tag`, ...(left ? { reported: true as const } : {}) });
+    }
     for (const s of allSymbols(file.symbols)) {
       const changed = changedSymbols.get(file.path)?.has(s) ?? false;
       for (const t of s.tags) {
         if (!t.sid) continue;
         if (!exists(t.sid)) findings.push({ where: at(file.path, t.line), message: `the tag on ${s.name} ${t.sid} names no node` });
         else if (changed && !checked(t.sid)) findings.push({ where: at(file.path, t.line), message: `${s.name}, whose code the commit changes, is tagged ${t.sid}, a node not checked` });
-        if (changed && spec.nodes.get(t.sid)?.node.kind === "rule") rulesChanged.add(t.sid);
+        if (changed && coded(spec.nodes.get(t.sid)?.node.kind)) rulesChanged.add(t.sid);
       }
     }
   }
@@ -128,8 +170,8 @@ export async function binding(root: string): Promise<BindingFinding[]> {
       testSids.add(t.sid);
       const kind = spec.nodes.get(t.sid)?.node.kind;
       if (!exists(t.sid)) findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, which names no node` });
-      else if (kind !== "rule" && kind !== "term") {
-        const named = kind === "record" ? "a data record" : kind === "domain" ? "a domain's header" : `a ${kind}`;
+      else if (kind !== "rule" && kind !== "term" && !(kind && isProjectKind(kind))) {
+        const named = kind === "recordType" ? "a RecordType" : kind === "domain" ? "a domain's header" : `a ${kind}`;
         findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, ${named}, where a test carries the sid of a rule or a term` });
       } else if (changedTests.get(file.path)?.has(t.name) && !checked(t.sid)) {
         findings.push({ where: at(file.path, t.start), message: `the test "${t.name}", which the commit changes, carries ${t.sid}, a node not checked` });
@@ -181,19 +223,22 @@ export async function binding(root: string): Promise<BindingFinding[]> {
     if (listedTests.join("|") !== wantTests.join("|")) {
       findings.push({ where: nodeWhere(spec, sid), message: `its list of tests is not what the tests' sids produce: ${wantTests.join(", ") || "none"}` });
     }
-    const list = node.list as { of: string; members: string[]; declaredIn?: { file: string; declaration: string } } | undefined;
+    const list = node.list as { of: string; members: unknown[]; property?: string; declaredIn?: { file: string; declaration: string } } | undefined;
     if (list?.declaredIn) {
       const declared = await declaration(root, list.declaredIn.file, list.declaredIn.declaration);
-      const same = declared !== null && [...declared].sort().join("|") === [...list.members].sort().join("|");
+      // A member that is an object is compared by the property the list names.
+      const values = list.members.map((m) => String(m && typeof m === "object" ? (m as Record<string, unknown>)[list.property ?? ""] : m));
+      const same = declared !== null && [...declared].sort().join("|") === [...values].sort().join("|");
       if (!same) findings.push({ where: nodeWhere(spec, sid), message: `its list of ${list.of} does not match ${list.declaredIn.declaration} in ${list.declaredIn.file}: ${declared === null ? "no such declaration" : declared.join(", ")}` });
     }
   }
 
   const running = new Set(testFiles.flatMap((f) => f.tests.filter((t) => t.sid && !t.skipped).map((t) => t.sid!)));
-  findings.push(...implementation(spec, new Set(producedCode.keys()), running));
-  findings.push(...generatedCopies(root, spec));
-  findings.push(...addressesOutside(root, config, spec));
+  findings.push(...implementation(spec, new Set(producedCode.keys()), running, coded));
+  findings.push(...generatedCopies(root, spec, config));
+  findings.push(...locationsOutside(root, config, spec));
   findings.push(...drift(root, spec, config));
+  findings.push(...(await projectToolTests(root, config)));
   return findings;
 }
 
@@ -202,7 +247,7 @@ export async function binding(root: string): Promise<BindingFinding[]> {
  * symbol or no test that runs carries out — its own, or one of a rule implementing it, followed down the implements
  * links — unless an exempts link reaches it or a section it stands under. Reported only.
  */
-function implementation(spec: Specification, tagged: Set<string>, tested: Set<string>): BindingFinding[] {
+function implementation(spec: Specification, tagged: Set<string>, tested: Set<string>, coded: (kind?: string) => boolean): BindingFinding[] {
   const parent = new Map<string, string>();
   for (const f of spec.files) {
     const walk = (nodes: SpecNode[], up?: string): void => nodes.forEach((n) => {
@@ -220,7 +265,7 @@ function implementation(spec: Specification, tagged: Set<string>, tested: Set<st
   const exempting = pointing("exempts");
   const found: BindingFinding[] = [];
   for (const [sid, { node, file }] of spec.nodes) {
-    if (node.kind !== "rule" || node.status !== "checked") continue;
+    if (!coded(node.kind) || node.status !== "checked") continue;
     if (file.path.startsWith("specs/_guidelines/") || file.path === "specs/tech/debt.json") continue;
     let exempt = false;
     for (let at: string | undefined = sid; at && !exempt; at = parent.get(at)) exempt = exempting.has(at);
@@ -238,19 +283,19 @@ function implementation(spec: Specification, tagged: Set<string>, tested: Set<st
   return found;
 }
 
-/** The files of the generated types and runtime checks, each compared with what the data record nodes generate now. */
-function generatedCopies(root: string, spec: Specification): BindingFinding[] {
+/** The files of the generated types and runtime checks, each compared with what the RecordTypes generate now. */
+function generatedCopies(root: string, spec: Specification, config: Config): BindingFinding[] {
   const { files, refusals } = generateTypes(spec);
-  const found: BindingFinding[] = [...refusals];
+  const found: BindingFinding[] = [...refusals, ...projectCopies(root, spec, config)];
   // Code generated from the nodes waits for every node it comes from to be checked, and no commit changes it meanwhile.
   const waiting = waitingRecords(spec);
   if (waiting.length) {
-    for (const sid of waiting) found.push({ where: nodeWhere(spec, sid), message: "the types and runtime checks generated from the data record nodes wait for its confirmation", reported: true });
+    for (const sid of waiting) found.push({ where: nodeWhere(spec, sid), message: "the types and runtime checks generated from the RecordTypes wait for its confirmation", reported: true });
     for (const f of files) {
       const path = join(root, f.path);
       const kept = existsSync(path) ? readFileSync(path, "utf8").replace(/\r\n/g, "\n") : null;
       const last = before(root, f.path)?.replace(/\r\n/g, "\n") ?? null;
-      if (kept !== last) found.push({ where: f.path, message: `changed while the data record nodes it is generated from wait for their confirmation: ${waiting.join(", ")}` });
+      if (kept !== last) found.push({ where: f.path, message: `changed while the RecordTypes it is generated from wait for their confirmation: ${waiting.join(", ")}` });
     }
     return found;
   }
@@ -259,14 +304,59 @@ function generatedCopies(root: string, spec: Specification): BindingFinding[] {
     // Git may check a text file out with CRLF endings; what is committed holds LF.
     const kept = existsSync(path) ? readFileSync(path, "utf8").replace(/\r\n/g, "\n") : null;
     if (kept === null) found.push({ where: f.path, message: "missing: a file of the generated types and runtime checks, which sheriff types writes" });
-    else if (kept !== f.text) found.push({ where: f.path, message: "not what the data record nodes generate now; sheriff types writes it anew" });
+    else if (kept !== f.text) found.push({ where: f.path, message: "not what the RecordTypes generate now; sheriff types writes it anew" });
+  }
+  return found;
+}
+
+/** The files of the project's own generators, each compared with what its generator prints now, or with the last commit while it waits for its own nodes. */
+function projectCopies(root: string, spec: Specification, config: Config): BindingFinding[] {
+  const own = runGenerators(root, spec, config);
+  const found: BindingFinding[] = [...own.refusals];
+  const read = (text: string | null | undefined) => (text ?? null)?.replace(/\r\n/g, "\n") ?? null;
+  for (const sid of own.waiting) found.push({ where: nodeWhere(spec, sid), message: "the files a project's generator writes from it wait for its confirmation", reported: true });
+  for (const f of own.files) {
+    const path = join(root, f.path);
+    const kept = read(existsSync(path) ? readFileSync(path, "utf8") : null);
+    if (f.waiting.length) {
+      if (kept !== read(before(root, f.path))) found.push({ where: f.path, message: `changed while the nodes it is generated from wait for their confirmation: ${f.waiting.join(", ")}` });
+    } else if (kept === null) found.push({ where: f.path, message: `missing: a file the generator "${f.generator}" writes, which sheriff types writes` });
+    else if (kept !== f.text) found.push({ where: f.path, message: `not what the generator "${f.generator}" generates now; sheriff types writes it anew` });
+  }
+  return found;
+}
+
+/**
+ * The tests of each of the project's own checks and generators carry the sid of the rule listing it, and where the
+ * commit changes its code, a test carrying that sid exists (s-sfjka4zc4rhfu67). Its code and its tests are the files
+ * the settings name for it.
+ */
+async function projectToolTests(root: string, config: Config): Promise<BindingFinding[]> {
+  const found: BindingFinding[] = [];
+  const tools = [...config.checks.map((t) => ({ ...t, kind: "check" })), ...config.generators.map((t) => ({ ...t, kind: "generator" }))];
+  if (!tools.length) return found;
+  const tracked = trackedFiles(root).filter((p) => existsSync(join(root, p)));
+  const changed = changes(root).map((c) => c.path);
+  const matches = (globs: string[], path: string) => globs.some((g) => posix.matchesGlob(path, g));
+  for (const tool of tools) {
+    const carried = new Set<string>();
+    for (const path of tracked.filter((p) => matches(tool.tests, p))) {
+      const read = await readCode(path, readFileSync(join(root, path), "utf8"));
+      for (const t of read?.tests ?? []) {
+        if (t.sid) carried.add(t.sid);
+        if (t.sid !== tool.rule) found.push({ where: `${path}:${t.start}`, message: `the test "${t.name}" of the ${tool.kind} "${tool.name}" carries ${t.sid ?? "no sid"}, not ${tool.rule}, the rule listing it` });
+      }
+    }
+    if (changed.some((p) => matches(tool.code, p)) && !carried.has(tool.rule)) {
+      found.push({ where: `${tool.kind} "${tool.name}"`, message: `the code of the ${tool.kind} "${tool.name}" changes, and no test carries the sid of the rule listing it, ${tool.rule}` });
+    }
   }
   return found;
 }
 
 function nodeWhere(spec: Specification, sid: string): string {
   const at = spec.nodes.get(sid)!;
-  return `${at.file.path}: ${sid} (${at.node.id})`;
+  return `${at.file.path}: ${sid} (${at.node.location})`;
 }
 
 /** The members a declaration holds: the enum a JSON pointer names in a schema, or the string literals of a symbol in the code. */
@@ -279,32 +369,34 @@ async function declaration(root: string, file: string, name: string): Promise<st
       value = (value as Record<string, unknown> | undefined)?.[step.replace(/~1/g, "/").replace(/~0/g, "~")];
     }
     const members = Array.isArray(value) ? value : (value as { enum?: unknown[] } | undefined)?.enum;
-    return Array.isArray(members) ? members.map(String) : null;
+    if (Array.isArray(members)) return members.map(String);
+    // An object declares its keys, as the kinds of a project's extension are declared.
+    return value && typeof value === "object" ? Object.keys(value) : null;
   }
   const read = await readCode(file, text);
   return read?.symbols.find((s) => s.name === name)?.strings ?? null;
 }
 
 /** Every file the repository keeps outside `specs/` and the tools, tracked by git or new and not ignored. */
-function keptOutside(root: string, config: Config): string[] {
-  return trackedFiles(root).filter((p) => !p.startsWith("specs/") && !(config.writesSpecSheriffGuidelines && p.startsWith("skills/")) && existsSync(join(root, p)));
+function keptOutside(root: string, fixtures: string[]): string[] {
+  return trackedFiles(root).filter((p) => !p.startsWith("specs/") && !isFixture(fixtures, p) && existsSync(join(root, p)));
 }
 
-function addressesOutside(root: string, config: Config, spec: Specification): BindingFinding[] {
-  const prefixes = new Set(["contracts", "tech", "_guidelines/spec", "_guidelines/tools", "_guidelines/project"]);
+function locationsOutside(root: string, config: Config, spec: Specification): BindingFinding[] {
+  const prefixes = new Set(["contracts", "tech", ...["spec", "tools", "project"].map((file) => "_guidelines/" + file)]);
   for (const f of spec.files) {
     const { part, file } = partOf(f.path);
     prefixes.add(part === "_guidelines" || part === "tech" ? `${part}/${file}` : part);
   }
   const escape = (p: string) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const escaped = [...prefixes].map(escape).join("|");
-  // A place is a number, whether or not it names a node now, or the name a term or a file gives the node it addresses.
-  const named = [...addresses(spec).values()].filter((a) => a.includes("/") && !/\/\d+(?:\.\d+)*$/.test(a)).sort((a, b) => b.length - a.length).map(escape).join("|");
+  // A place is a number, whether or not it names a node now, or the name a term or a file gives the node it locates.
+  const named = [...locations(spec).values()].filter((a) => a.includes("/") && !/\/\d+(?:\.\d+)*$/.test(a)).sort((a, b) => b.length - a.length).map(escape).join("|");
   const pattern = new RegExp(`(?<![\\w./-])(?:(?:${escaped})/\\d+(?:\\.\\d+)*(?![\\w])${named ? `|(?:${named})(?![\\w]|\\.\\w)` : ""})`, "gi");
   const found: BindingFinding[] = [];
-  for (const path of keptOutside(root, config)) {
+  for (const path of keptOutside(root, fixtureGlobs(spec))) {
     readFileSync(join(root, path), "utf8").split("\n").forEach((text, i) => {
-      for (const m of text.matchAll(pattern)) found.push({ where: `${path}:${i + 1}`, message: `${m[0]} is a node's address; cite the node by its sid` });
+      for (const m of text.matchAll(pattern)) found.push({ where: `${path}:${i + 1}`, message: `${m[0]} is a node's location; cite the node by its sid` });
     });
   }
   return found;
@@ -339,9 +431,15 @@ function drift(root: string, spec: Specification, config: Config): BindingFindin
     }
     return versions.get(path)!;
   };
+  // The latest commit that changed any of the files, changes one commit makes counting as made at once.
+  const newest = (files: string[]) =>
+    files.map((f) => git(root, "log", "-1", "--format=%H", "--follow", "--", f).out.trim()).filter(Boolean).sort((a, b) => position(a) - position(b))[0];
+  const later = (a: string | null | undefined, b: string | null | undefined) => Boolean(a && b && position(a) < position(b));
   for (const [sid, { node, file }] of spec.nodes) {
-    const code = ((node.meta ?? {}) as { code?: Array<{ file: string }> }).code ?? [];
-    if (!code.length || !judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
+    const meta = (node.meta ?? {}) as { code?: Array<{ file: string }>; tests?: string[] };
+    const code = (meta.code ?? []).map((c) => c.file);
+    const tests = [...new Set((meta.tests ?? []).map((t) => t.split("::")[0]!))];
+    if ((!code.length && !tests.length) || !judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
     const history = historyOf(file.path);
     let textChanged: string | null = null;
     for (let i = 0; i < history.length; i++) {
@@ -352,13 +450,12 @@ function drift(root: string, spec: Specification, config: Config): BindingFindin
         break;
       }
     }
-    const codeChanged = code
-      .map((c) => git(root, "log", "-1", "--format=%H", "--follow", "--", c.file).out.trim())
-      .filter(Boolean)
-      .sort((a, b) => position(a) - position(b))[0];
-    if (textChanged && codeChanged && position(textChanged) < position(codeChanged)) {
-      found.push({ where: nodeWhere(spec, sid), message: "its text changed after its code last did", reported: true });
-    }
+    const codeChanged = newest(code);
+    const testsChanged = newest(tests);
+    const where = nodeWhere(spec, sid);
+    if (later(textChanged, testsChanged)) found.push({ where, message: "its tests lag behind its text", reported: true });
+    if (later(textChanged, codeChanged)) found.push({ where, message: "its code lags behind its text", reported: true });
+    if (later(testsChanged, codeChanged)) found.push({ where, message: "its code may not have caught up with its tests", reported: true });
   }
   return found;
 }
@@ -373,7 +470,7 @@ export async function citationsOutside(root: string): Promise<Finding[]> {
     walk(f.data.nodes);
   }
   const found: Finding[] = [];
-  for (const path of outsideFiles(root, config)) {
+  for (const path of outsideFiles(root, config, fixtureGlobs(spec))) {
     readFileSync(join(root, path), "utf8").split("\n").forEach((text, i) => {
       for (const m of text.matchAll(SID_ANYWHERE)) {
         if (!spec.nodes.has(m[0]) && !archived.has(m[0])) found.push({ where: `${path}:${i + 1}`, message: `${m[0]} names no node` });

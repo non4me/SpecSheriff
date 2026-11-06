@@ -9,7 +9,8 @@ import { init, remove } from "./init.ts";
 import { message } from "./message.ts";
 import { review } from "./review.ts";
 import { reindex } from "./reindex.ts";
-import { show } from "./show.ts";
+import { show, todos } from "./show.ts";
+import { modelOf } from "./model.ts";
 import { loadSpecification, specificationOf, type SpecFile, type Specification } from "./spec-files.ts";
 import { writeTypes } from "./types.ts";
 import { validate } from "./validate.ts";
@@ -17,15 +18,17 @@ import { validate } from "./validate.ts";
 const USAGE = `Usage: sheriff <command>
 
 Commands:
-  reindex                     give sids, compute addresses, rebuild incoming links and headers' indexes,
+  reindex                     give sids, compute locations, rebuild incoming links and headers' indexes,
                               empty every status no confirmation by its owner holds
   validate                    check the specification on its own
   confirm [--withdraw] <sid>  record the owner's confirmation of a node's wording, or withdraw it
-  show <sid|address>          print a node with its links
+  show <sid|location>         print a node with its links
+  todos                       print the work put off on the nodes, the newest first, each with its node
+  model                       print the model of the specification as JSON, which a project's own check or generator reads
   export                      write the readable export in markdown to md-version/
   render                      write the map to specs/_viewer/
   guide                       print the guidelines and where the specification stands
-  types                       write the types and runtime checks generated from the data records
+  types                       write the types and runtime checks generated from the RecordTypes
                               into the files the technical appendix lists for them
   binding                     check the specification against the code and the tests
   citations                   check the sids in the code, the tests and the documents
@@ -71,8 +74,8 @@ async function run(command: string | undefined, args: string[]): Promise<number>
     }
     case "validate": {
       const findings = validate(root, { before: lastCommitted() });
-      for (const f of findings) process.stdout.write(`${f.where}: ${f.message}\n`);
-      return findings.length ? 1 : 0;
+      for (const f of findings) process.stdout.write(`${f.where}: ${f.reported ? "reported: " : ""}${f.message}\n`);
+      return findings.some((f) => !f.reported) ? 1 : 0;
     }
     case "confirm": {
       const withdraw = args[0] === "--withdraw";
@@ -89,13 +92,16 @@ async function run(command: string | undefined, args: string[]): Promise<number>
     case "render":
       process.stdout.write(`written: ${render(root)}\n`);
       return 0;
+    case "model":
+      process.stdout.write(JSON.stringify(modelOf(loadSpecification(root)), null, 2) + "\n");
+      return 0;
     case "guide":
       process.stdout.write(guide(loadSpecification(root)));
       return 0;
     case "types": {
       const report = writeTypes(root);
       for (const f of report.refusals) process.stdout.write(`${f.where}: ${f.message}\n`);
-      for (const sid of report.waiting) process.stdout.write(`${sid}: a data record node not yet checked; the types and runtime checks wait for its confirmation\n`);
+      for (const sid of report.waiting) process.stdout.write(`${sid}: a node not yet checked; the files generated from it wait for its confirmation\n`);
       for (const path of report.written) process.stdout.write(`written: ${path}\n`);
       return report.refusals.length ? 1 : 0;
     }
@@ -141,8 +147,11 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       return findings.length ? 1 : 0;
     }
     case "show":
-      if (!args[0]) throw new Error("name a node by its sid or its address");
+      if (!args[0]) throw new Error("name a node by its sid or its location");
       process.stdout.write(show(loadSpecification(root), args[0]));
+      return 0;
+    case "todos":
+      process.stdout.write(todos(loadSpecification(root)));
       return 0;
     default:
       process.stderr.write(`sheriff: unknown command: ${command}\n\n${USAGE}`);

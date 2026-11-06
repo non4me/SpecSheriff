@@ -2,7 +2,7 @@
 # The export and the map are written in the working tree, a failure to write them reported and stopping
 # nothing, since the commit holds neither; the checks of the specification on its own,
 # against the code and of the citations outside it read the commit being made. Last, whatever they found,
-# the types the staged data record nodes generate are written there, each file written copied into the
+# the types the staged RecordTypes generate are written there, each file written copied into the
 # working tree for its author to stage, and nothing staged; what the generator refuses stops the commit.
 . "$(dirname "$0")/sheriff.sh"
 . "$(dirname "$0")/staged.sh"

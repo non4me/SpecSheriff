@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { guard } from "../../src/guard.ts";
 import { message } from "../../src/message.ts";
-import { claudeArgs, codexArgs, codexRunner, review, reviewInput, runnerSettings, SYSTEM_PROMPT, VERDICT_SCHEMA, type Runner } from "../../src/review.ts";
+import { claudeArgs, codexArgs, codexRunner, programOfShim, review, reviewInput, runnerEnv, runnerSettings, SYSTEM_PROMPT, VERDICT_SCHEMA, type Runner } from "../../src/review.ts";
 import { spawnSync } from "node:child_process";
 import { gitConfig } from "../repo.ts";
 import { loadConfig } from "../../src/config.ts";
@@ -57,7 +57,7 @@ test("s-83ev4wwesbwnhnp lets an edit through where a test carries the sid of eve
   assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: join(root, "test", "draft.test.ts"), content: `test("${sid("draft")} drafts", () => {});\n` } }), null);
 });
 
-test("s-4kd2pave7vm4hmd reads the tests as the edit would leave the working tree", async () => {
+test("s-st6td4mua9uqt9z reads the tests as the edit would leave the working tree", async () => {
   const root = codeProject();
   const path = join(root, "test", "open.test.ts");
   const refused = await guard(root, { tool_name: "MultiEdit", tool_input: { file_path: path, edits: [{ old_string: sid("open"), new_string: sid("draft") }] } });
@@ -222,7 +222,7 @@ test("s-nyh9yk22ba6g77q leaves the files generated from the specification out of
   assert.ok(!/src\/types\.ts|schemas\/checks\.json|reference: string/.test(change!), input);
 });
 
-test("s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a data record requires as carried out by the types and runtime checks generated from it", async () => {
+test("s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a RecordType requires as carried out by the types and runtime checks generated from it", async () => {
   const root = typedProject("customer", ["src/**"]);
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace('"name": "number"', '"name": "reference"'));
@@ -233,9 +233,9 @@ test("s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts wha
   assert.ok(left, input);
   assert.match(left!, /src\/types\.ts/);
   assert.match(left!, /schemas\/checks\.json/);
-  assert.match(left!, /types and runtime checks generated from the data records/);
+  assert.match(left!, /types and runtime checks generated from the RecordTypes/);
   assert.match(left!, /compares them with what the nodes produce/);
-  assert.match(SYSTEM_PROMPT, /what a data record requires .*carried out by the types and runtime checks generated from it/i);
+  assert.match(SYSTEM_PROMPT, /what a RecordType requires .*carried out by the types and runtime checks generated from it/i);
 });
 
 test("s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding", async () => {
@@ -337,4 +337,57 @@ test("s-xr5xxa9cxf2mq5u runs the Codex CLI in an empty directory with a Codex ho
     if (saved.CODEX_HOME === undefined) delete process.env.CODEX_HOME;
     else process.env.CODEX_HOME = saved.CODEX_HOME;
   }
+});
+
+test("s-xr5xxa9cxf2mq5u holds the Claude Code CLI's answer to the schema of the verdict", () => {
+  const args = claudeArgs({ claudeModel: "opus", claudeFallbackModel: "sonnet", claudeEffort: "high" }, "/prompt.md");
+  assert.equal(args[args.indexOf("--json-schema") + 1], VERDICT_SCHEMA);
+});
+
+test("s-xr5xxa9cxf2mq5u reads an answer that passes with a finding, or refuses with none, as one that cannot be read", async () => {
+  const root = codeProject();
+  put(root, "src/open.ts", CHANGED_OPEN);
+  const msg = `Accounts (${sid("open")})\n`;
+  const finding = { rule: sid("open"), file: "src/open.ts", line: 3, problem: "doubles" };
+  assert.match(texts(await review(root, msg, { run: answer("pass", [finding]) }))[0]!, /cannot be read/);
+  assert.match(texts(await review(root, msg, { run: answer("refuse", []) }))[0]!, /cannot be read/);
+});
+
+test("s-xr5xxa9cxf2mq5u hands a runner only the variables of the environment it needs, none an agent or git sets", () => {
+  const env = runnerEnv({ PATH: "/bin", HOME: "/home/u", LANG: "C.UTF-8", HTTPS_PROXY: "http://p", ANTHROPIC_API_KEY: "k", CLAUDE_CONFIG_DIR: "/c",
+    CLAUDECODE: "1", CLAUDE_EFFORT: "low", CLAUDE_CODE_SESSION_ID: "s", GIT_DIR: "/r/.git", GIT_WORK_TREE: "/tmp/x", OPENAI_API_KEY: "o", SECRET_TOKEN: "x" });
+  assert.deepEqual(Object.keys(env).sort(), ["ANTHROPIC_API_KEY", "CLAUDE_CONFIG_DIR", "HOME", "HTTPS_PROXY", "LANG", "OPENAI_API_KEY", "PATH"]);
+});
+
+test("s-xr5xxa9cxf2mq5u starts the program an npm command script starts, with the arguments it gives, rather than the script through a shell", () => {
+  const exe = '@ECHO off\r\nGOTO start\r\n:find_dp0\r\nSET dp0=%~dp0\r\nEXIT /b\r\n:start\r\nSETLOCAL\r\nCALL :find_dp0\r\n"%dp0%\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe"   %*\r\n';
+  assert.deepEqual(programOfShim(exe, "C:\\npm"), { program: "C:\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe", args: [] });
+  const js = '@ECHO off\r\nSETLOCAL\r\nCALL :find_dp0\r\nIF EXIST "%dp0%\\node.exe" (\r\n  SET "_prog=%dp0%\\node.exe"\r\n) ELSE (\r\n  SET "_prog=node"\r\n)\r\nendLocal & goto #_undefined_# 2>NUL || title %COMSPEC% & "%_prog%"  "%dp0%\\node_modules\\@openai\\codex\\bin\\codex.js" %*\r\n';
+  assert.deepEqual(programOfShim(js, "C:\\npm"), { program: process.execPath, args: ["C:\\npm\\node_modules\\@openai\\codex\\bin\\codex.js"] });
+});
+
+test("s-vp24dqydygztqbt gives the runner the nodes with their reasons and each changed symbol whole with the tags that bind it, and asks it to judge each symbol", async () => {
+  const root = codeProject();
+  editSpec(root, (d) => (nodeIn(d, "open").reason = "An account holds what is put in."));
+  put(root, "src/open.ts", CHANGED_OPEN);
+  const input = await reviewInput(root, `Accounts (${sid("open")})\n`);
+  assert.ok(input.includes("An account holds what is put in."), input);
+  const [, symbols] = input.split(/^# The symbols the commit changes$/m);
+  assert.ok(symbols && symbols.includes("src/open.ts") && symbols.includes(sid("open")) && symbols.includes("return amount * 2;"), input);
+  assert.match(SYSTEM_PROMPT, /each changed symbol/i);
+  assert.match(SYSTEM_PROMPT, /a tag naming a node the symbol does not implement/i);
+  assert.match(SYSTEM_PROMPT, new RegExp(`names no node.*s-kgbzk2ph9e6jfb4`, "s"));
+});
+
+test("s-vp24dqydygztqbt gives the runner only the symbols of the system's code, telling a symbol with no tag from one whose tag names no node", async () => {
+  const root = codeProject();
+  put(root, "src/open.ts", CHANGED_OPEN);
+  put(root, "src/pad.ts", "/** @spec none formatting only, no rule of the system */\nexport function pad(s: string) {\n  return s.padStart(4);\n}\n\nexport function raw(s: string) {\n  return s;\n}\n");
+  put(root, "test/helper.test.ts", "export function helper() {\n  return 1;\n}\n");
+  const input = await reviewInput(root, `Accounts (${sid("open")})\n`);
+  const [, symbols] = input.split(/^# The symbols the commit changes$/m);
+  const section = symbols!.split(/^# The change$/m)[0]!;
+  assert.ok(!section.includes("test/helper.test.ts"), section);
+  assert.match(section, /src\/pad\.ts:\d+-\d+ pad \(tags: none: formatting only, no rule of the system\)/);
+  assert.match(section, /src\/pad\.ts:\d+-\d+ raw \(tags: no tag\)/);
 });

@@ -33,6 +33,9 @@ test("s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, the Sp
   assert.equal(manifest.skills, "./skills/");
   assert.deepEqual(manifest.hooks, {});
   assert.ok(!existsSync(`${CODEX_PLUGIN}/hooks/hooks.json`));
+  // The scripts the agent's hooks for Codex call, each as the plugin for Claude Code holds it.
+  assert.deepEqual(readdirSync(`${CODEX_PLUGIN}/hooks`).sort(), ["after-edit.sh", "changed.mjs", "guard.sh", "session-start.sh"]);
+  for (const script of readdirSync(`${CODEX_PLUGIN}/hooks`)) assert.equal(read(`${CODEX_PLUGIN}/hooks/${script}`), read(`${PLUGIN}/hooks/${script}`), script);
   assert.deepEqual(readdirSync(`${CODEX_PLUGIN}/skills`).sort(), ["spec", "spec-adopt", "spec-init", "spec-remove", "spec-review"]);
   for (const skill of readdirSync(`${CODEX_PLUGIN}/skills`)) assert.ok(existsSync(`${CODEX_PLUGIN}/skills/${skill}/SKILL.md`), skill);
   for (const name of ["spec.json", "tools.json"]) assert.equal(read(`${CODEX_PLUGIN}/tools/guidelines/${name}`), read(join(REPO, "specs", "_guidelines", name)), name);

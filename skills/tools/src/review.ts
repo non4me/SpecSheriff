@@ -1,8 +1,9 @@
 import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { join } from "node:path";
+import { delimiter, join } from "node:path";
 import { changedTags, readCommit } from "./binding.ts";
+import { isProjectKind } from "./model.ts";
 import { loadConfig, readsAs, type ReviewSettings } from "./config.ts";
 import { base, changes, codeChanges, commitTexts, git } from "./diff.ts";
 import { messageText } from "./message.ts";
@@ -48,11 +49,16 @@ function defaultsNotice(runner: ReviewSettings["runner"], defaulted: string[]): 
 
 const SIDS = /\bs-[2-9a-hjkmnp-z]{15}\b/g;
 
-export const SYSTEM_PROMPT = `You are the independent reviewer of one commit. You are given the commit's message, the text of the nodes of the specification it names, and its change, and nothing else: judge the code against those nodes, not against what its author may have meant.
+export const SYSTEM_PROMPT = `You are the independent reviewer of one commit. You are given the commit's message, the text and the reason of the nodes of the specification it names, each symbol of the code the commit changes, whole, with the tags that bind it, and the commit's change, and nothing else: judge the code against those nodes, not against what its author may have meant.
 
-Refuse the commit where the code does something no named node states, or leaves out something a named node requires. Pass it otherwise. Judge only what the change adds or changes.
+Refuse the commit where the code does something no named node states in its text, or leaves out something a named node requires. A node's reason says what its rule protects: read a case its text leaves open by it.
 
-The files generated from the specification are left out of the change, and the input names them: they hold the types and runtime checks generated from the data records, which another check compares with what the nodes produce. Count what a data record requires as carried out by the types and runtime checks generated from it, and never refuse a commit because those files are not in the change.
+Judge each changed symbol whole, not only its changed lines, against the nodes its tags name. Refuse the commit where a changed symbol:
+- does something no node its tags name states in its text;
+- carries a tag naming a node the symbol does not implement;
+- carries the tag that names no node while it implements the system's logic. Such a finding names s-kgbzk2ph9e6jfb4, the rule that every symbol carries a tag, as its node.
+
+The files generated from the specification are left out of the change, and the input names them: they hold the types and runtime checks generated from the RecordTypes, or what a project's generator wrote, which another check compares with what the nodes produce. Count what a RecordType requires as carried out by the types and runtime checks generated from it, and never refuse a commit because those files are not in the change.
 
 Answer with one JSON object and nothing around it:
 {"verdict": "pass" | "refuse", "findings": [{"rule": "<the sid of the node>", "file": "<path>", "line": <line in the new file>, "problem": "<what the code does or leaves out>"}]}
@@ -70,12 +76,29 @@ async function changesCode(root: string): Promise<boolean> {
 export async function reviewInput(root: string, text: string): Promise<string> {
   const spec = loadSpecification(root);
   const config = loadConfig(root);
-  const named = new Set([...(messageText(text).match(SIDS) ?? []), ...changedTags(await readCommit(root, config))]);
+  const commit = await readCommit(root, config);
+  const named = new Set([...(messageText(text).match(SIDS) ?? []), ...changedTags(commit)]);
+  // Each symbol of the system's code outside its tests the commit changes, whole as the commit leaves it, with its
+  // file, its lines and its tags (s-vp24dqydygztqbt).
+  const symbols = [...commit.changedSymbols].filter(([path]) => readsAs(config, path) === "code").flatMap(([path, changed]) => {
+    const lines = readFileSync(join(root, path), "utf8").split("\n");
+    return [...changed].map((sym) => {
+      // A tag naming no node is told from no tag at all, since the reviewer judges the reason the one gives.
+      const tags = sym.tags.map((t) => t.sid ?? `none: ${t.none ?? ""}`).join(", ") || "no tag";
+      return `## ${path}:${sym.start}-${sym.end} ${sym.name} (tags: ${tags})\n\n\`\`\`\n${lines.slice(sym.start - 1, sym.end).join("\n")}\n\`\`\``;
+    });
+  });
   const nodes = [...named].flatMap((sid) => {
     const node = spec.nodes.get(sid)?.node;
     if (!node) return [];
-    const parts = [`## ${node.id} ${node.title} (${sid})`, "", node.text];
-    if (node.kind === "record") parts.push("", "Fields:", JSON.stringify({ fields: node.fields, unknown: node.unknown }, null, 2));
+    const parts = [`## ${node.location} ${node.title} (${sid})`, "", node.text];
+    if (node.reason) parts.push("", `Why: ${node.reason}`);
+    if (node.kind === "recordType") parts.push("", "Fields:", JSON.stringify({ fields: node.fields, unknown: node.unknown }, null, 2));
+    else if (isProjectKind(node.kind)) {
+      // A node of a project's own kind with the values its kind declares (s-nyh9yk22ba6g77q).
+      const { location: _l, sid: _s, kind: _k, title: _t, status: _st, text: _x, reason: _r, refs: _f, meta: _m, children: _c, ...values } = node;
+      if (Object.keys(values).length) parts.push("", "Values:", JSON.stringify(values, null, 2));
+    }
     return [parts.join("\n")];
   });
   // The whole change, less the files generated from the specification: the binding check compares them with what the nodes produce,
@@ -83,10 +106,15 @@ export async function reviewInput(root: string, text: string): Promise<string> {
   const paths = typeFiles(spec).paths;
   const generated = paths.map((p) => `:(exclude)${p}`);
   const diff = changes(root).length ? git(root, "diff", base(root), "--no-color", "--no-ext-diff", "--", ".", ...generated).out : "";
-  const sections = [`# The commit's message\n\n${messageText(text).trim()}`, `# The nodes it names\n\n${nodes.join("\n\n") || "(none)"}`, `# The change\n\n\`\`\`diff\n${diff}\`\`\``];
+  const sections = [
+    `# The commit's message\n\n${messageText(text).trim()}`,
+    `# The nodes it names\n\n${nodes.join("\n\n") || "(none)"}`,
+    `# The symbols the commit changes\n\n${symbols.join("\n\n") || "(none)"}`,
+    `# The change\n\n\`\`\`diff\n${diff}\`\`\``,
+  ];
   if (paths.length) {
     const named = paths.map((p) => `- ${p}`).join("\n");
-    sections.push(`# The files left out of the change\n\nThese files hold the types and runtime checks generated from the data records, and another check compares them with what the nodes produce; they are left out of the change whether the commit changes them or not:\n\n${named}`);
+    sections.push(`# The files left out of the change\n\nThese files hold the types and runtime checks generated from the RecordTypes, and another check compares them with what the nodes produce; they are left out of the change whether the commit changes them or not:\n\n${named}`);
   }
   return sections.join("\n\n") + "\n";
 }
@@ -103,8 +131,44 @@ export function claudeArgs(values: Record<string, string>, promptFile: string): 
     "--disable-slash-commands",
     "--no-session-persistence",
     "--output-format", "json",
+    "--json-schema", VERDICT_SCHEMA,
     "--system-prompt-file", promptFile,
   ];
+}
+
+/** The variables of the environment a runner is handed: the system's paths and folders, the user's name, the locale, a proxy and the certificates to trust, and those by which its CLI finds its sign-in and chooses its provider; none an agent sets for its session, and none of git's. */
+const ALLOWED = [
+  "PATH", "PATHEXT", "SYSTEMROOT", "SYSTEMDRIVE", "WINDIR", "COMSPEC", "PROGRAMDATA", "PROGRAMFILES", "PROGRAMFILES(X86)", "PROGRAMW6432",
+  "HOME", "USERPROFILE", "HOMEDRIVE", "HOMEPATH", "APPDATA", "LOCALAPPDATA", "TMP", "TEMP", "TMPDIR", "USER", "USERNAME", "LOGNAME",
+  "LANG", "LC_*", "HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY", "NODE_EXTRA_CA_CERTS", "SSL_CERT_FILE", "SSL_CERT_DIR",
+  "CLAUDE_CONFIG_DIR", "CLAUDE_CODE_OAUTH_TOKEN", "CLAUDE_CODE_USE_BEDROCK", "CLAUDE_CODE_USE_VERTEX", "CLAUDE_CODE_GIT_BASH_PATH",
+  "ANTHROPIC_*", "AWS_*", "CLOUD_ML_REGION", "GOOGLE_APPLICATION_CREDENTIALS", "OPENAI_*",
+];
+
+/** The variables of an environment a runner is handed, the allowed ones alone. */
+export function runnerEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const allowed = (name: string) => ALLOWED.some((a) => (a.endsWith("*") ? name.toUpperCase().startsWith(a.slice(0, -1)) : name.toUpperCase() === a));
+  return Object.fromEntries(Object.entries(env).filter(([k]) => allowed(k)));
+}
+
+/**
+ * The program an npm command script starts and the arguments it gives it: the executable it names, or Node with the
+ * script it names. Null where the script names neither.
+ */
+export function programOfShim(text: string, dir: string): { program: string; args: string[] } | null {
+  const target = [...text.matchAll(/"%(?:~dp0|dp0%)([^"]+?\.(exe|js|cjs|mjs))"/gi)].at(-1);
+  if (!target) return null;
+  const path = `${dir.replace(/[\\/]+$/, "")}\\${target[1]!.replace(/^[\\/]+/, "")}`;
+  return target[2]!.toLowerCase() === "exe" ? { program: path, args: [] } : { program: process.execPath, args: [path] };
+}
+
+/** Where a command is a program on the search path, or a command script npm installed, the program and the arguments to start it with. */
+function resolveProgram(command: string): { program: string; args: string[] } | null {
+  for (const dir of (process.env.PATH ?? process.env.Path ?? "").split(delimiter).filter(Boolean)) {
+    if (existsSync(join(dir, `${command}.exe`))) return { program: join(dir, `${command}.exe`), args: [] };
+    if (existsSync(join(dir, `${command}.cmd`))) return programOfShim(readFileSync(join(dir, `${command}.cmd`), "utf8"), dir);
+  }
+  return null;
 }
 
 /**
@@ -112,12 +176,13 @@ export function claudeArgs(values: Record<string, string>, promptFile: string): 
  * installed by npm is a command script, which only a shell starts; the shell is given the empty argument
  * and each holding a space, as a path under a profile named with one does, quoted.
  */
-function runCli(command: string, args: string[], name: string, input: string, settings: RunSettings, cwd: string, env?: NodeJS.ProcessEnv): RunResult {
-  const windows = process.platform === "win32";
-  const options = { input, cwd, env, encoding: "utf8" as const, timeout: settings.minutes * 60_000, maxBuffer: 1 << 26 };
-  const quoted = (a: string) => (a === "" || /\s/.test(a) ? `"${a}"` : a);
-  const run = windows ? spawnSync([command, ...args.map(quoted)].join(" "), { ...options, shell: true }) : spawnSync(command, args, options);
-  if ((run.error as NodeJS.ErrnoException | undefined)?.code === "ENOENT" || (windows && run.status !== 0 && /not recognized|not found/i.test(run.stderr))) {
+function runCli(command: string, args: string[], name: string, input: string, settings: RunSettings, cwd: string, env: NodeJS.ProcessEnv = {}): RunResult {
+  const options = { input, cwd, env: { ...runnerEnv(process.env), ...env }, encoding: "utf8" as const, timeout: settings.minutes * 60_000, maxBuffer: 1 << 26 };
+  // Started as a program, never through a shell, so that the time limit ends the CLI itself and no argument is read by a shell.
+  const found = process.platform === "win32" ? resolveProgram(command) : { program: command, args: [] };
+  if (!found) return { status: "missing", detail: `the ${name}, ${command}, is not installed` };
+  const run = spawnSync(found.program, [...found.args, ...args], options);
+  if ((run.error as NodeJS.ErrnoException | undefined)?.code === "ENOENT") {
     return { status: "missing", detail: `the ${name}, ${command}, is not installed` };
   }
   if ((run.error as NodeJS.ErrnoException | undefined)?.code === "ETIMEDOUT" || run.signal) return { status: "timeout", detail: `${settings.minutes} minutes` };
@@ -201,7 +266,7 @@ export const codexRunner: Runner = (input, settings) => {
     const files = { prompt: join(runDir, "reviewer.md"), schema: join(runDir, "verdict.schema.json"), out: join(runDir, "verdict.json") };
     writeFileSync(files.prompt, SYSTEM_PROMPT);
     writeFileSync(files.schema, VERDICT_SCHEMA);
-    const run = runCli("codex", codexArgs(settings.values, files), "Codex CLI", input, settings, workDir, { ...process.env, CODEX_HOME: home });
+    const run = runCli("codex", codexArgs(settings.values, files), "Codex CLI", input, settings, workDir, { CODEX_HOME: home });
     if (run.status !== "ok") return run;
     if (!existsSync(files.out)) return { status: "failed", detail: `the Codex CLI wrote no answer: ${run.out.trim().slice(0, 300)}` };
     return { status: "ok", out: readFileSync(files.out, "utf8") };
@@ -231,7 +296,9 @@ function readVerdict(out: string): Verdict | null {
   const v = value as Verdict | null;
   if (!v || (v.verdict !== "pass" && v.verdict !== "refuse") || !Array.isArray(v.findings)) return null;
   const sound = v.findings.every((f) => typeof f.rule === "string" && typeof f.file === "string" && Number.isInteger(f.line) && typeof f.problem === "string");
-  return sound ? v : null;
+  // A pass naming a finding, or a refusal naming none, contradicts itself, and is read as an answer that cannot be read.
+  const consistent = (v.verdict === "pass") === (v.findings.length === 0);
+  return sound && consistent ? v : null;
 }
 
 /** The review of the commit being made: none where it changes no code; a refusal where the reviewer refuses or no review can be held. */
@@ -249,6 +316,5 @@ export async function review(root: string, text: string, { run, notice }: { run?
   const verdict = readVerdict(result.out);
   if (!verdict) return [{ where, message: `the reviewer's answer cannot be read: ${result.out.trim().slice(0, 300)}` }];
   if (verdict.verdict === "pass") return [];
-  if (!verdict.findings.length) return [{ where, message: "the reviewer refused the commit and named no finding" }];
   return verdict.findings.map((f) => ({ where: `${f.file}:${f.line}`, message: `${f.rule}: ${f.problem}` }));
 }

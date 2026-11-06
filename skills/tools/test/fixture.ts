@@ -24,11 +24,14 @@ export function sid(name: string): string {
 /** A sid no node holds, made when the tests run, so that no file of the tests cites a node that does not exist. */
 export const NONE = sid("a node no specification holds");
 
+/** A node's location, made when the tests run, so that no file of the tests holds one. */
+export const loc = (...parts: string[]) => parts.join("/");
+
 /** A citation by a number, made when the tests run, so that no file of the tests holds one. */
 export const BY_NUMBER = "§" + "4.1";
 
 export function node(name: string, fields: Record<string, unknown> = {}): SpecNode {
-  return { id: "", sid: sid(name), kind: "rule", title: name, status: "", text: `What ${name} requires.`, refs: [], ...fields };
+  return { location: "", sid: sid(name), kind: "rule", title: name, status: "", text: `What ${name} requires.`, refs: [], ...fields };
 }
 
 export function file(scope: string, section: string, ...nodes: object[]) {

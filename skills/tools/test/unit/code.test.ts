@@ -53,12 +53,12 @@ test("s-zrsc6asgmhv8tnc reads the sid a TypeScript test opens its name with, a t
   assert.equal(file!.tests[0]!.name, `${A} opens an account`);
 });
 
-test("s-4kd2pave7vm4hmd reads a TypeScript test its framework is told to skip, by its call or by its options, as skipped", async () => {
+test("s-jgejd5rpd9d43pd reads a TypeScript test its framework is told to skip, by its call or by its options, as skipped", async () => {
   const file = await readCode("test/a.test.ts", `test("${A} runs", () => {});\ntest.skip("${A} skipped", () => {});\nit.todo("${A} to do");\ntest("${A} skipped by option", { skip: true }, () => {});\ntest("${A} not skipped", { skip: false }, () => {});\n`);
   assert.deepEqual(file!.tests.map((t) => [t.name.slice(A.length + 1), t.skipped]), [["runs", false], ["skipped", true], ["to do", true], ["skipped by option", true], ["not skipped", false]]);
 });
 
-test("s-4kd2pave7vm4hmd reads a Python test marked to be skipped or expected to fail as skipped", async () => {
+test("s-jgejd5rpd9d43pd reads a Python test marked to be skipped or expected to fail as skipped", async () => {
   const file = await readCode("tests/test_a.py", `import pytest\n\n@pytest.mark.spec("${A}")\ndef test_runs():\n    pass\n\n@pytest.mark.skip(reason="later")\n@pytest.mark.spec("${A}")\ndef test_skipped():\n    pass\n\n@pytest.mark.xfail\n@pytest.mark.spec("${A}")\ndef test_failing():\n    pass\n`);
   assert.deepEqual(file!.tests.map((t) => [t.name, t.skipped]), [["test_runs", false], ["test_skipped", true], ["test_failing", true]]);
 });

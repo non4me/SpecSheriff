@@ -50,10 +50,10 @@ is `specs/_schema/` (§s-eferktypcj7njt5). A node holds:
 
 - `sid` — permanent, `s-` plus 15 characters from `23456789abcdefghjkmnpqrstuvwxyz`; the only way a
   node is cited, anywhere. A node written without one is given one by `sheriff reindex`.
-- `id` — the address computed from where the node stands. Nothing cites it, and nobody writes it:
-  `sheriff reindex` does.
-- `kind` (`section`, which holds rules and requires nothing; `rule`; `term`; `record`; `domain`, a
-  domain's header), `title`, `status` (`""` or `"checked"`), `text` (what must hold), `rationale` (why,
+- `location` — where the node is in the specification, computed from its place. Nothing cites it, and
+  nobody writes it: `sheriff reindex` does.
+- `kind` (`section`, which holds rules and requires nothing; `rule`; `term`; `recordType`; `domain`, a
+  domain's header), `title`, `status` (`""` or `"checked"`), `text` (what must hold), `reason` (why,
   kept apart from the requirement), `list` (`of`, `members`, `declaredIn`), `owner` on a section or a
   header, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
   and the lists of the `code` and the `tests` bound to the node, which must agree with the tags and
@@ -73,7 +73,7 @@ the plugin when a session starts) check the staged commit, its message and, wher
 review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by hand, and
 `npm test` runs the tools' tests.
 
-- **Status.** Any change to a node's wording — title, text, rationale, or the values its kind carries
+- **Status.** Any change to a node's wording — title, text, reason, or the values its kind carries
   such as `list` — needs its status written `""`: `sheriff guard` refuses an edit that leaves it
   checked. A node becomes checked only on the owner's agreement after reading it, never on your own
   judgement, by `npx sheriff confirm <sid>` (git names the owner). The one exception the owner allows:
@@ -106,7 +106,7 @@ review. `npx sheriff validate`, `binding`, `citations` and `show <sid>` run by h
   the owner's agreement to that node covers it, so confirm it and report it in one line, naming the
   node it follows from.
 - Files outside `specs/` — the docs, this file, later the code — cite a node by its sid, never by its
-  address; the tools refuse an address outside the specification.
+  location; the tools refuse a location outside the specification.
 - Commit messages follow the history: the part first, then what changed, in plain sentences
   ("SpecSheriff guidelines: …").
 
@@ -116,9 +116,9 @@ The tools are written in TypeScript on Node and read code with tree-sitter. Thei
 `skills/tools/` (the npm package providing `sheriff`) and `skills/pytest-specsheriff/` (the
 plugin for pytest). In the worked example and any project taking the SpecSheriff guidelines, every
 symbol of the system's code carries `@spec <sid>` (or `@spec none <reason>`) in the comment directly
-above it, a test declares the sid it verifies and is written first, and a commit changing code names
-every checked node it serves; the exact syntax is in
-`tools.json`. The repository's tools, configuration and tests are exempt from tags by where they live
-(§s-kgbzk2ph9e6jfb4). The tools' own tests are not exempt from sids, by the owner's choice
+above it, a test declares the sid of the node it is written from and is written first, and a commit
+changing code names every checked node its changed symbols implement; the exact syntax is in
+`tools.json`. The repository's configuration, its own tools and their tests are not the system's code
+and carry no tags, by where they live (§s-hheus6f395ynqvc). The tools' own tests are not exempt from sids, by the owner's choice
 (2026-10-28): each declares the sid of the node of `spec.json` or `tools.json` it verifies and is
 written before the code it tests, so that this repository works by the method it offers.

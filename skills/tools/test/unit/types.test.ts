@@ -10,19 +10,20 @@ import { loadSpecification } from "../../src/spec-files.ts";
 import { generateTypes, writeTypes } from "../../src/types.ts";
 import { confirm } from "../../src/confirmations.ts";
 import { file, node, OWNER, sid, taking } from "../fixture.ts";
+import { codeProject, editSpec, typedProject, withGenerator } from "../code-project.ts";
 
 /** The base's rule on data structures, which the rule of the stack listing the files implements. */
 const DATA_STRUCTURES = "s-e877bnfa559tvk9";
 const FILES = ["src/types.ts", "app/types.py", "schemas/checks.json"];
 
 const field = (name: string, type: object, required: boolean | string = true) => ({ name, type, required, text: "" });
-const record = (title: string, fields: object[], more: Record<string, unknown> = {}) => node(title, { kind: "record", title, fields, unknown: "refused", ...more });
+const record = (title: string, fields: object[], more: Record<string, unknown> = {}) => node(title, { kind: "recordType", title, fields, unknown: "refused", ...more });
 const filesRule = (members: string[], name = "generated types") =>
   node(name, { refs: [{ type: "implements", to: DATA_STRUCTURES }], list: { of: "the files of the generated types and runtime checks", members } });
 
 /**
- * A project taking the SpecSheriff guidelines, with data records in contracts and in a domain, and a stack listing where
- * the types go; its data records confirmed, since the code generated from them waits for that.
+ * A project taking the SpecSheriff guidelines, with RecordTypes in contracts and in a domain, and a stack listing where
+ * the types go; its RecordTypes confirmed, since the code generated from them waits for that.
  */
 function project(contracts: object[], bank: object[] = [], stack: object[] = [filesRule(FILES)], more: Record<string, unknown> = {}): string {
   const root = taking({
@@ -32,7 +33,7 @@ function project(contracts: object[], bank: object[] = [], stack: object[] = [fi
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: stack })),
     ...more,
   });
-  const records = [...loadSpecification(root).nodes].filter(([, { node }]) => node.kind === "record").map(([s]) => s);
+  const records = [...loadSpecification(root).nodes].filter(([, { node }]) => node.kind === "recordType").map(([s]) => s);
   if (records.length) confirm(root, records, { me: OWNER });
   return root;
 }
@@ -112,7 +113,7 @@ test("s-f5rz6b7dhxejjts sheriff types writes only a file that is missing or hold
   assert.match(readFileSync(types, "utf8"), /^export type Customer = \{$/m);
 });
 
-test("s-f5rz6b7dhxejjts sheriff types writes no file while a data record node is unchecked, and names each such node", () => {
+test("s-f5rz6b7dhxejjts sheriff types writes no file while a RecordType is unchecked, and names each such node", () => {
   const root = project([customer(), record("order", [field("number", { is: "text" })])]);
   confirm(root, [sid("order")], { me: OWNER, withdraw: true });
   assert.deepEqual(writeTypes(root), { written: [], refusals: [], waiting: [sid("order")] });
@@ -135,9 +136,9 @@ test("s-pvzms7d8kxb8dk2 takes the list from a rule of the stack only", () => {
   assert.deepEqual(generateTypes(loadSpecification(root)).files, []);
 });
 
-// ---- s-suv42g8r3ra2h6b: what a data record node generates.
+// ---- s-suv42g8r3ra2h6b: what a RecordType generates.
 
-test("s-suv42g8r3ra2h6b writes each data record as a type tagged with its sid and a definition under $defs, in each language", () => {
+test("s-suv42g8r3ra2h6b writes each RecordType as a type tagged with its sid and a definition under $defs, in each language", () => {
   const root = project([customer(), record("user account", [
     field("owner", { is: "identifier of", record: sid("customer") }),
     field("tags", { is: "list of", of: { is: "text" } }, false),
@@ -207,7 +208,7 @@ test("s-suv42g8r3ra2h6b takes the files in the code-point order of their paths a
   assert.deepEqual(names, ["First", "Between", "Second"]);
 });
 
-test("s-suv42g8r3ra2h6b holds the fields of every data record up the refines links first, the topmost first", () => {
+test("s-suv42g8r3ra2h6b holds the fields of every RecordType up the refines links first, the topmost first", () => {
   const root = project([
     record("base event", [field("at", { is: "instant" })]),
     record("account event", [field("account", { is: "text" })], { refs: [{ type: "refines", to: sid("base event") }] }),
@@ -218,7 +219,7 @@ test("s-suv42g8r3ra2h6b holds the fields of every data record up the refines lin
   assert.deepEqual(JSON.parse(out["schemas/checks.json"]!).$defs.AuditEvent.required, ["at", "account"]);
 });
 
-test("s-suv42g8r3ra2h6b refers to a data record by the name of its type, in Python as a string, and the files compile and run", () => {
+test("s-suv42g8r3ra2h6b refers to a RecordType by the name of its type, in Python as a string, and the files compile and run", () => {
   const root = project([customer(), record("order", [field("buyer", { is: "record", record: sid("customer") }), field("lines", { is: "list of", of: { is: "record", record: sid("customer") } }, false)])]);
   const out = generated(root);
   assert.match(out["src/types.ts"]!, /^ {2}buyer: Customer;$/m);
@@ -229,7 +230,7 @@ test("s-suv42g8r3ra2h6b refers to a data record by the name of its type, in Pyth
   assert.equal(pythonRuns(out["app/types.py"]!), "ok");
   const order = checker(out["schemas/checks.json"]!, "Order");
   assert.ok(order({ buyer: { number: "1" } }));
-  assert.ok(!order({ buyer: { number: "1", extra: true } }), "a property the data record refuses");
+  assert.ok(!order({ buyer: { number: "1", extra: true } }), "a property the RecordType refuses");
 });
 
 test("s-suv42g8r3ra2h6b cannot generate a name that is no identifier in its file's language, or that the file already uses", () => {
@@ -253,7 +254,7 @@ test("s-suv42g8r3ra2h6b cannot generate a name that is no identifier in its file
   assert.equal(writeTypes(root).written.length, 0);
 });
 
-// ---- s-nk8td3ez58gahc4: a data record its variants refine.
+// ---- s-nk8td3ez58gahc4: a RecordType its variants refine.
 
 /** A payment whose kind chooses its variant: a card payment has fields of its own, inside the details every payment holds. */
 const payments = () => [
@@ -265,7 +266,7 @@ const payments = () => [
   record("card payment", [field("last4", { is: "text" })], { answersTo: { kind: "card" }, refs: [{ type: "refines", to: sid("payment") }] }),
 ];
 
-test("s-nk8td3ez58gahc4 writes a data record its variants refine as the union of each variant and a member for the values no variant answers to", () => {
+test("s-nk8td3ez58gahc4 writes a RecordType its variants refine as the union of each variant and a member for the values no variant answers to", () => {
   const out = generated(project(payments()));
   assert.equal(out["src/types.ts"], [
     `/** @spec ${sid("payment")} */`,
@@ -368,7 +369,7 @@ test("s-nk8td3ez58gahc4 lets exactly one member hold each payment, in every lang
   assert.equal(pythonRuns(out["app/types.py"]!), "ok");
 });
 
-test("s-nk8td3ez58gahc4 sets a variant's own fields beside the data record's where it has no field of type variant, and leaves out the member nobody needs", () => {
+test("s-nk8td3ez58gahc4 sets a variant's own fields beside the RecordType's where it has no field of type variant, and leaves out the member nobody needs", () => {
   const root = project([
     record("light", [field("state", { is: "one of", values: ["on"] })], { chosenBy: ["state"] }),
     record("lit light", [field("lumens", { is: "whole number" })], { answersTo: { state: "on" }, refs: [{ type: "refines", to: sid("light") }] }),
@@ -399,7 +400,7 @@ test("s-nk8td3ez58gahc4 follows each node on a property nobody declared, and lea
   ]);
   const defs = JSON.parse(generated(root)["schemas/checks.json"]!).$defs;
   assert.deepEqual(Object.keys(defs.NoteOther.properties), ["kind"], "an object holding nothing is not declared");
-  assert.equal(defs.NoteOther.additionalProperties, undefined, "the data record keeps what nobody declared");
+  assert.equal(defs.NoteOther.additionalProperties, undefined, "the RecordType keeps what nobody declared");
   assert.equal(defs.SignedNote.additionalProperties, false, "the variant refuses it");
   assert.equal(defs.SignedNote.properties.extra.additionalProperties, false, "inside the field of type variant too");
   assert.deepEqual(defs.SignedNote.required, ["kind", "extra"]);
@@ -480,17 +481,17 @@ test("s-4npdup7mjkva69y bounds how many members a list holds in the runtime chec
 
 test("s-4npdup7mjkva69y gives a field of type one of the values the lists of domains declare for it, in the order the specification reads", () => {
   const root = project([
-    record("event", [field("kind", { is: "one of", values: ["opened"] })], { chosenBy: ["kind"] }),
+    record("event", [field("kind", { is: "one of", from: "domains" })], { chosenBy: ["kind"] }),
   ], [
-    node("bank events", { list: { of: "the kinds of event the bank brings", members: ["paid"], field: "kind" }, refs: [{ type: "refines", to: sid("event") }] }),
+    node("bank events", { list: { of: "the kinds of event the bank brings", members: ["opened", "paid"], field: "kind" }, refs: [{ type: "refines", to: sid("event") }] }),
     record("paid event", [field("amount", { is: "number" })], { answersTo: { kind: "paid" }, refs: [{ type: "refines", to: sid("event") }] }),
   ]);
   const out = generated(root);
-  assert.deepEqual(JSON.parse(out["schemas/checks.json"]!).$defs.EventOther.properties.kind, { enum: ["paid", "opened"] });
+  assert.deepEqual(JSON.parse(out["schemas/checks.json"]!).$defs.EventOther.properties.kind, { enum: ["opened", "paid"] });
   assert.match(out["src/types.ts"]!, /export type EventOther = \{\n {2}kind: "opened";\n\};/);
 });
 
-test("s-4npdup7mjkva69y gives an identifier the type of the field identifying the data record it names", () => {
+test("s-4npdup7mjkva69y gives an identifier the type of the field identifying the RecordType it names", () => {
   const root = project([
     record("ticket", [field("seq", { is: "whole number", minimum: 1 })], { identifiedBy: "seq" }),
     record("reply", [field("ticket", { is: "identifier of", record: sid("ticket") })]),
@@ -499,4 +500,43 @@ test("s-4npdup7mjkva69y gives an identifier the type of the field identifying th
   assert.match(out["src/types.ts"]!, /^ {2}ticket: number;$/m);
   assert.match(out["app/types.py"]!, /^ {4}"ticket": int,$/m);
   assert.deepEqual(JSON.parse(out["schemas/checks.json"]!).$defs.Reply.properties.ticket, { type: "integer", minimum: 1 });
+});
+
+test("s-f5rz6b7dhxejjts sheriff types writes the files a project's own generator prints, and refuses a path under specs/", () => {
+  const root = codeProject();
+  withGenerator(root);
+  const written = writeTypes(root);
+  assert.deepEqual(written.written, ["gen/titles.txt"]);
+  assert.equal(readFileSync(join(root, "gen", "titles.txt"), "utf8"), "open\n");
+  const inside = codeProject();
+  withGenerator(inside, "specs/forged.json");
+  assert.ok(writeTypes(inside).refusals.some((f) => /specs\/forged\.json/.test(f.where + f.message)));
+});
+
+test("s-kh8qcd5kxgh9z3j each generated file waits only for the nodes it is generated from: a generator's file for its nodes and its rule, the types for the RecordTypes", () => {
+  const root = codeProject();
+  withGenerator(root);
+  editSpec(root, (d) => d.nodes[0].children.push(node("order", { kind: "recordType", title: "order", fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" })));
+  const report = writeTypes(root);
+  assert.deepEqual(report.written, ["gen/titles.txt"]);
+  assert.deepEqual(report.waiting, [sid("order")]);
+
+  const typed = typedProject();
+  withGenerator(typed, "gen/titles.txt", "customer");
+  confirm(typed, [sid("our generators")], { me: OWNER, withdraw: true });
+  rmSync(join(typed, "src", "types.ts"));
+  const again = writeTypes(typed);
+  assert.deepEqual(again.written, ["src/types.ts"]);
+  assert.deepEqual(again.waiting, [sid("our generators")]);
+  assert.ok(!existsSync(join(typed, "gen", "titles.txt")));
+});
+
+test("s-f5rz6b7dhxejjts sheriff types refuses a path a project's generator prints into git's own directory, or naming the repository itself, and then writes no file", () => {
+  for (const path of [".git/hooks/pre-commit", "."]) {
+    const root = codeProject();
+    withGenerator(root, path);
+    const report = writeTypes(root);
+    assert.deepEqual(report.written, [], path);
+    assert.ok(report.refusals.some((f) => f.message.includes(`prints ${path}`)), `${path}: ${report.refusals.map((f) => f.message).join("; ")}`);
+  }
 });

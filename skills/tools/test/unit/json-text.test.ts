@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { keysTwice, mergeKeys } from "../../src/json-text.ts";
 
-test("s-4kd2pave7vm4hmd finds a key an object holds twice, naming the key and both lines", () => {
+test("s-7zqsstgnuc772ba finds a key an object holds twice, naming the key and both lines", () => {
   const text = '{\n  "a": 1,\n  "b": {\n    "c": 1,\n    "c": 2\n  },\n  "a": 3\n}\n';
   assert.deepEqual(keysTwice(text), [
     { path: "/b", key: "c", lines: [4, 5] },
@@ -10,7 +10,7 @@ test("s-4kd2pave7vm4hmd finds a key an object holds twice, naming the key and bo
   ]);
 });
 
-test("s-4kd2pave7vm4hmd finds nothing where every key is held once", () => {
+test("s-7zqsstgnuc772ba finds nothing where every key is held once", () => {
   assert.deepEqual(keysTwice('{"a": [{"a": 1}, {"a": 2}], "b": "a"}'), []);
 });
 
@@ -46,6 +46,6 @@ test("s-f5rz6b7dhxejjts keeps text it does not merge exactly as JSON.parse reads
   assert.deepEqual(mergeKeys(text).merged, []);
 });
 
-test("s-4kd2pave7vm4hmd refuses text that is not JSON, naming the line", () => {
+test("s-7zqsstgnuc772ba refuses text that is not JSON, naming the line", () => {
   assert.throws(() => keysTwice('{\n "a": 1,\n "b" 2\n}'), /line 3/);
 });

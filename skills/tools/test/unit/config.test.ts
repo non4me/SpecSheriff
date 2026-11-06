@@ -16,7 +16,7 @@ test("s-zefk589ykh37b8u reads the globs naming where the system's code and its t
   const config = loadConfig(withConfig('{ "code": ["src/**/*.ts"], "tests": ["test/**/*.test.ts"] }'));
   assert.deepEqual(config, {
     code: ["src/**/*.ts"], tests: ["test/**/*.test.ts"], writesSpecSheriffGuidelines: false, testCommand: null,
-    review: { runner: "claude", minutes: 20 },
+    review: { runner: "claude", minutes: 20 }, checks: [], generators: [],
   });
 });
 
@@ -75,4 +75,12 @@ test("s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a k
   assert.throws(() => loadConfig(withConfig("{ nope")), /sheriff\.config\.json/);
   assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "other": 1 }')), /other/);
   assert.throws(() => loadConfig(withConfig('{ "code": "src", "tests": [] }')), /code/);
+});
+
+test("s-zefk589ykh37b8u reads each of the project's own checks and generators: the rule listing it, its name there, its command and the globs of its code and tests", () => {
+  const tool = { rule: "s-" + "a".repeat(15), name: "no internal names", command: "node tools/scan.mjs", code: ["tools/scan.mjs"], tests: ["tools/scan.test.mjs"] };
+  const config = loadConfig(withConfig(JSON.stringify({ code: [], tests: [], checks: [tool], generators: [{ ...tool, name: "routes" }] })));
+  assert.deepEqual(config.checks, [tool]);
+  assert.deepEqual(config.generators, [{ ...tool, name: "routes" }]);
+  assert.throws(() => loadConfig(withConfig(JSON.stringify({ code: [], tests: [], checks: [{ ...tool, command: undefined }] }))), /checks.*command/);
 });

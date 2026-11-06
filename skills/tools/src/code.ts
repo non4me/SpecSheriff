@@ -255,3 +255,9 @@ function testOf(node: Node, d: Description): CodeTest | null {
   }
   return null;
 }
+
+/** Whether a file is in a language a description covers, so that the tools read it for tags. */
+export function readsForTags(path: string): boolean {
+  const ext = extname(path);
+  return descriptions.some((d) => d.extensions.includes(ext));
+}

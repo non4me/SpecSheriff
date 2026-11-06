@@ -18,11 +18,11 @@ export async function message(root: string, text: string): Promise<Finding[]> {
     const node = spec.nodes.get(sid)?.node;
     if (!node) findings.push({ where, message: `names ${sid}, which names no node` });
     else if (node.kind === "domain" || node.kind === "section") {
-      findings.push({ where, message: `names ${sid} (${node.id}), a ${node.kind === "domain" ? "domain's header" : "section"}, which requires nothing a change could serve` });
+      findings.push({ where, message: `names ${sid} (${node.location}), a ${node.kind === "domain" ? "domain's header" : "section"}, which requires nothing a change could serve` });
     }
   }
   for (const sid of changedTags(await readCommit(root, loadConfig(root)))) {
-    if (!named.has(sid)) findings.push({ where, message: `the commit changes code tagged ${sid} (${spec.nodes.get(sid)?.node.id ?? "no node"}), and it does not name it` });
+    if (!named.has(sid)) findings.push({ where, message: `the commit changes code tagged ${sid} (${spec.nodes.get(sid)?.node.location ?? "no node"}), and it does not name it` });
   }
   return findings;
 }

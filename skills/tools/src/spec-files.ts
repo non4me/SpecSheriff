@@ -4,13 +4,13 @@ import { fileURLToPath } from "node:url";
 
 export interface SpecNode {
   sid: string;
-  id: string;
+  location: string;
   kind: string;
   title: string;
   status: string;
   text: string;
   refs: Array<{ type: string; to?: string; from?: string; ratio?: string }>;
-  rationale?: string;
+  reason?: string;
   meta?: Record<string, unknown>;
   children?: SpecNode[];
   [field: string]: unknown;

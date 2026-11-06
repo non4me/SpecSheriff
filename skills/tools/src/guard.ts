@@ -121,7 +121,7 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
       const touched = edited.has(file.path) && (!old || old.status !== "checked" || fingerprint(old) !== fingerprint(node));
       // A node the edit leaves as it was still turns unconfirmed where the edit gives it another owner.
       if (touched || holds(spec, lines, sid)) {
-        reasons.push(`${sid} (${node.id}) would stand checked over a wording its owner ${ownerOf(after, sid) ?? "(none named)"} has not confirmed: leave its status empty for its owner to confirm`);
+        reasons.push(`${sid} (${node.location}) would stand checked over a wording its owner ${ownerOf(after, sid) ?? "(none named)"} has not confirmed: leave its status empty for its owner to confirm`);
       }
     }
   }
@@ -158,7 +158,7 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
         for (const t of read?.tests ?? []) if (t.sid) tested.add(t.sid);
       }
       for (const sid of rules) {
-        if (!tested.has(sid)) reasons.push(`no test carries ${sid} (${spec.nodes.get(sid)!.node.id}), a rule whose code this edit changes: write its test first`);
+        if (!tested.has(sid)) reasons.push(`no test carries ${sid} (${spec.nodes.get(sid)!.node.location}), a rule whose code this edit changes: write its test first`);
       }
     }
   }

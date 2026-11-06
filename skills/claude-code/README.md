@@ -115,7 +115,7 @@ own — with every node's wording and links, and works by them.
 **When.** Whenever a node is drafted, changed or put to the owner, and whenever the owner reads a part
 of the specification. Ask for a new rule in your own words, and the agent drafts it by this skill.
 
-**What it asks.** Whether you confirm a node, one node at a time, shown whole: its title, its address
+**What it asks.** Whether you confirm a node, one node at a time, shown whole: its title, its location
 and sid, its text and its reason, with what changed marked. Before it shows you a node, another agent
 that did not write it looks for what is wrong with it; a doubt that would change what the node states
 comes to you with its reason. Answer with a plain confirmation, such as "ok": a reply that asks
@@ -151,7 +151,7 @@ is handed what they refuse and fixes it.
 
 - `pre-commit` checks the commit being made: the specification on its own (`sheriff validate`), the
   specification against the code (`sheriff binding`), and the citations outside it
-  (`sheriff citations`); last, `sheriff types` writes the types generated from the data records.
+  (`sheriff citations`); last, `sheriff types` writes the types generated from the RecordTypes.
 - `commit-msg` checks that a commit changing code names every checked rule its changed symbols' tags
   name (`sheriff message`), and then an independent reviewer — Claude Code run with no tools and no
   settings, given only the change and the text of those rules — judges whether the code does what

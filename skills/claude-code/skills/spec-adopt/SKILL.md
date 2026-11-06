@@ -33,11 +33,11 @@ what the domains share under `specs/contracts/`:
 
 - a heading becomes a section, its preamble the section's text;
 - a numbered requirement becomes a rule, its continuation paragraphs, tables and code blocks part
-  of its text; a reason the document gives for it becomes its `rationale`;
+  of its text; a reason the document gives for it becomes its `reason`;
 - every word stays as the document has it, and nothing is dropped, merged or reordered;
-- every status is `""`, and no node gets a sid or an address by hand.
+- every status is `""`, and no node gets a sid or a location by hand.
 
-Run `sheriff reindex`: it gives every node its sid and its address.
+Run `sheriff reindex`: it gives every node its sid and its location.
 
 ## 3. Move every citation onto a sid
 

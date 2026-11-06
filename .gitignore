@@ -4,6 +4,7 @@ md-version/
 specs/_viewer/
 skills/tools/guidelines/
 skills/tools/grammars/
+skills/tools/map/
 __pycache__/
 .pytest_cache/
 *.egg-info/

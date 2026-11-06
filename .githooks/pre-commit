@@ -1,8 +1,10 @@
 #!/bin/sh
 # Written by sheriff init: runs this hook's script from the SpecSheriff tools a plugin keeps on this
 # machine — the copy in the data directory of the plugin for Claude Code, or the tools of the plugin for
-# Codex CLI in Codex's cache — those of the higher release where both are there. Where neither is, the
-# commit or the push goes through and the git hooks are turned off in this clone, which says so.
+# Codex CLI in Codex's cache — those of the higher release where both are there; then the project's own
+# tools for this hook, the files of .githooks/<hook>.d/ whose first line names their interpreter, in the
+# byte order of their names, whatever the checks found. Where no tools are found, the commit or the push
+# goes through unless a project's own tool fails, and the hook says that no check of SpecSheriff ran.
 newer() {
   a=$1 b=$2
   while [ -n "$a$b" ]; do
@@ -15,6 +17,13 @@ newer() {
   done
   return 1
 }
+hook=$(basename "$0")
+root=$(git rev-parse --show-toplevel) || exit 1
+# git's standard input, kept for the checks and for each of the project's own tools: the refs a push sends; the
+# other hooks are handed none.
+input=$(mktemp) || exit 1
+trap 'rm -f "$input"' EXIT
+case $hook in pre-push) cat > "$input" ;; *) : > "$input" ;; esac
 codex=${CODEX_HOME:-$HOME/.codex}
 case $codex in *\\*) codex=$(printf '%s' "$codex" | tr '\\' /) ;; esac
 tools= version=
@@ -24,9 +33,35 @@ for dir in "${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsher
   release=$(sed -n '1s/ .*//p' "$dir/release")
   if [ -z "$tools" ] || newer "$release" "$version"; then tools=$dir version=$release; fi
 done
+status=0
 if [ -z "$tools" ]; then
-  [ "$(git config --local core.hooksPath)" = .githooks ] && git config --local --unset core.hooksPath
-  echo "sheriff: no check ran: the SpecSheriff tools of no plugin are on this machine, so the git hooks are turned off in this clone; git config core.hooksPath .githooks turns them on again" >&2
-  exit 0
+  case $hook in
+    pre-commit | pre-push) echo "sheriff: no check of SpecSheriff ran: the SpecSheriff tools of no plugin are on this machine" >&2 ;;
+  esac
+else
+  sh "$tools/hooks/$hook" "$@" < "$input" || status=1
 fi
-exec sh "$tools/hooks/$(basename "$0")" "$@"
+# The project's own tools, each run from the root by the interpreter its first line names, and refused where it
+# fails or changes the staged files or the commit's message.
+steps="$(dirname "$0")/$hook.d"
+if [ -d "$steps" ]; then
+  # Listed in byte order, the C locale held to the listing, so that each tool runs in git's own environment.
+  paths=$(LC_ALL=C; export LC_ALL; for path in "$steps"/*; do printf '%s\n' "$path"; done)
+  while IFS= read -r path; do
+    [ -f "$path" ] || continue
+    first=$(head -n 1 "$path" | tr -d '\r')
+    case $first in
+      '#!'*) ;;
+      *) echo "sheriff: $path is not run: its first line names no interpreter" >&2; continue ;;
+    esac
+    tree=$(git write-tree 2>/dev/null)
+    message=
+    [ "$hook" = commit-msg ] && message=$(cat "$1")
+    (cd "$root" && ${first#\#!} "$path" "$@" < "$input") || { echo "sheriff: the project's own tool $path failed" >&2; status=1; }
+    if [ "$(git write-tree 2>/dev/null)" != "$tree" ]; then echo "sheriff: the project's own tool $path changed the staged files" >&2; status=1; fi
+    if [ "$hook" = commit-msg ] && [ "$(cat "$1")" != "$message" ]; then echo "sheriff: the project's own tool $path changed the commit's message" >&2; status=1; fi
+  done <<EOF
+$paths
+EOF
+fi
+exit $status

@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { sid } from "../fixture.ts";
-import { codeProject, OPEN, put, typedProject } from "../code-project.ts";
+import { loc, sid } from "../fixture.ts";
+import { codeProject, OPEN, put, typedProject, withGenerator } from "../code-project.ts";
 import { PLUGIN, pluginHook, plugins } from "../plugin.ts";
 
 const machine = plugins();
@@ -34,7 +34,7 @@ function typedHooked(): string {
   assert.equal(run.status, 0, run.stdout + run.stderr);
   return root;
 }
-/** Changes the data record of the typed project, its wording confirmed again by its owner. */
+/** Changes the RecordType of the typed project, its wording confirmed again by its owner. */
 function editRecord(root: string, from: string, to: string): void {
   const path = join(root, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace(from, to));
@@ -48,12 +48,12 @@ test("s-477gtdrkw34dzxw the pre-commit hook writes the types the staged nodes ge
   git(root, "add", "specs");
   const run = commit(root, `Ledger: a customer is known by its reference (${sid("customer")})`);
   assert.notEqual(run.status, 0);
-  assert.match(run.stdout + run.stderr, /src\/types\.ts: not what the data record nodes generate/);
+  assert.match(run.stdout + run.stderr, /src\/types\.ts: not what the RecordTypes generate/);
   assert.match(readFileSync(join(root, "src", "types.ts"), "utf8"), /^ {2}reference: string;$/m);
   assert.ok(!git(root, "diff", "--cached", "--name-only").stdout.includes("src/types.ts"), "nothing staged by the hook");
 });
 
-test("s-477gtdrkw34dzxw a changed data record node is committed before its confirmation, its types left as they were and their wait reported", () => {
+test("s-477gtdrkw34dzxw a changed RecordType is committed before its confirmation, its types left as they were and their wait reported", () => {
   const root = typedHooked();
   const before = readFileSync(join(root, "src", "types.ts"), "utf8");
   const path = join(root, "specs", "contracts", "c.json");
@@ -66,7 +66,7 @@ test("s-477gtdrkw34dzxw a changed data record node is committed before its confi
   assert.equal(readFileSync(join(root, "src", "types.ts"), "utf8"), before);
 });
 
-test("s-477gtdrkw34dzxw the pre-commit hook stops a commit whose staged data record nodes cannot be generated", () => {
+test("s-477gtdrkw34dzxw the pre-commit hook stops a commit whose staged RecordTypes cannot be generated", () => {
   const root = typedHooked();
   editRecord(root, '"title": "customer"', '"title": "3d customer"');
   git(root, "add", "specs");
@@ -94,11 +94,11 @@ test("s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the expo
 test("s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together", () => {
   const root = hooked();
   const path = join(root, "specs", "contracts", "c.json");
-  writeFileSync(path, readFileSync(path, "utf8").replace('"id": "contracts/1"', '"id": "contracts/9"'));
+  writeFileSync(path, readFileSync(path, "utf8").replace(`"location": "${loc("contracts", "1")}"`, `"location": "${loc("contracts", "9")}"`));
   git(root, "add", "-A");
-  const run = commit(root, "Contracts: an address moved by hand");
+  const run = commit(root, "Contracts: a location moved by hand");
   assert.notEqual(run.status, 0);
-  assert.match(run.stdout + run.stderr, /contracts\/9 is not the address/);
+  assert.match(run.stdout + run.stderr, /contracts\/9 is not the one its place gives/);
 });
 
 test("s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it", () => {
@@ -106,7 +106,7 @@ test("s-477gtdrkw34dzxw the checks read what is staged, not what the working tre
   put(root, "README.md", "Staged.\n");
   git(root, "add", "README.md");
   const path = join(root, "specs", "contracts", "c.json");
-  writeFileSync(path, readFileSync(path, "utf8").replace('"id": "contracts/1"', '"id": "contracts/9"'));
+  writeFileSync(path, readFileSync(path, "utf8").replace(`"location": "${loc("contracts", "1")}"`, `"location": "${loc("contracts", "9")}"`));
   const run = commit(root, "Docs: staged alone");
   assert.equal(run.status, 0, run.stdout + run.stderr);
 });
@@ -232,4 +232,79 @@ test("s-477gtdrkw34dzxw the pre-push hook compares every ref the push sends, tag
 
   const deleted = git(root, "push", "-q", "origin", ":release");
   assert.equal(deleted.status, 0, deleted.stderr);
+});
+
+test("s-n4m5zvh96yb299p runs the project's own tools of a hook after the checks, names a file it does not run, and fails where one fails or changes the staged files", () => {
+  const root = hooked();
+  const setUp = commit(root, "Set up");
+  assert.equal(setUp.status, 0, setUp.stdout + setUp.stderr);
+  const steps = join(root, ".githooks", "pre-commit.d");
+  mkdirSync(steps);
+  writeFileSync(join(steps, "10-ok.sh"), "#!/bin/sh\necho ran > ran.txt\n");
+  writeFileSync(join(steps, "20-notes.txt"), "what these tools are for\n");
+  put(root, "docs/a.md", "A note.\n");
+  git(root, "add", "docs/a.md");
+  const ok = commit(root, "Docs: a note");
+  assert.equal(ok.status, 0, ok.stdout + ok.stderr);
+  assert.match(ok.stdout + ok.stderr, /20-notes\.txt.*not run/);
+  assert.equal(readFileSync(join(root, "ran.txt"), "utf8").trim(), "ran");
+  writeFileSync(join(steps, "30-scan.sh"), "#!/bin/sh\necho an internal name found >&2\nexit 1\n");
+  put(root, "docs/b.md", "B note.\n");
+  git(root, "add", "docs/b.md");
+  const failed = commit(root, "Docs: b note");
+  assert.notEqual(failed.status, 0);
+  assert.match(failed.stdout + failed.stderr, /an internal name found/);
+  assert.match(failed.stdout + failed.stderr, /30-scan\.sh/);
+  rmSync(join(steps, "30-scan.sh"));
+  writeFileSync(join(steps, "30-stage.sh"), "#!/bin/sh\necho extra > extra.txt\ngit add extra.txt\n");
+  const staged = commit(root, "Docs: b note");
+  assert.notEqual(staged.status, 0);
+  assert.match(staged.stdout + staged.stderr, /30-stage\.sh.*changed the staged files/);
+});
+
+test("s-477gtdrkw34dzxw the agent's hook after an edit runs the checks only where something changed since they last ran", () => {
+  const root = hooked();
+  const afterEdit = () => pluginHook("after-edit.sh", machine, root);
+  assert.equal(afterEdit().status, 0);
+  put(root, "src/open.ts", OPEN + "export function close() {}\n");
+  assert.equal(afterEdit().status, 2);
+  const unchanged = afterEdit();
+  assert.equal(unchanged.status, 0, unchanged.stderr);
+  assert.equal(unchanged.stderr, "");
+  put(root, "src/open.ts", OPEN + "export function close() { return 1; }\n");
+  assert.equal(afterEdit().status, 2);
+});
+
+test("s-477gtdrkw34dzxw the agent's hook after an edit tells the agent each node whose status the reindex emptied", () => {
+  const root = hooked();
+  const path = join(root, "specs", "contracts", "c.json");
+  writeFileSync(path, readFileSync(path, "utf8").replace("What open requires.", "What open requires now."));
+  const run = pluginHook("after-edit.sh", machine, root);
+  assert.match(run.stdout + run.stderr, new RegExp(`status emptied: ${sid("open")}`));
+});
+
+test("s-477gtdrkw34dzxw after an agent's edit, a file changed while the checks run is checked at the next edit, not taken as checked", () => {
+  const root = hooked();
+  withGenerator(root);
+  // The generator runs once in the regeneration and again in the checks, counting each run in a file of its own.
+  const gen = join(root, "gen.mjs");
+  writeFileSync(gen, 'import { appendFileSync } from "node:fs";\nappendFileSync("count.txt", "run\\n");\n' + readFileSync(gen, "utf8"));
+  const runs = () => readFileSync(join(root, "count.txt"), "utf8").split("\n").filter(Boolean).length;
+  pluginHook("after-edit.sh", machine, root);
+  const first = runs();
+  pluginHook("after-edit.sh", machine, root);
+  assert.ok(runs() > first, `the second edit ran no check: ${runs()} runs`);
+});
+
+test("s-n4m5zvh96yb299p runs the project's own tools in git's own environment, the locale they are listed in held to the listing", () => {
+  const root = hooked();
+  assert.equal(commit(root, "Set up").status, 0);
+  const steps = join(root, ".githooks", "pre-commit.d");
+  mkdirSync(steps);
+  writeFileSync(join(steps, "10-locale.sh"), '#!/bin/sh\necho "${LC_ALL-unset}" > locale.txt\n');
+  put(root, "docs/a.md", "A note.\n");
+  git(root, "add", "docs/a.md");
+  const run = commit(root, "Docs: a note");
+  assert.equal(run.status, 0, run.stdout + run.stderr);
+  assert.equal(readFileSync(join(root, "locale.txt"), "utf8").trim(), machine.env.LC_ALL ?? "unset");
 });

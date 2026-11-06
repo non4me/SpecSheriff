@@ -34,7 +34,7 @@ test("s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run wh
   const command = (event: string, tool?: string) =>
     hooks[event].filter((e: any) => !tool || new RegExp(`^(${e.matcher})$`).test(tool)).flatMap((e: any) => e.hooks.map((h: any) => h.command)).join("\n");
   for (const tool of ["Edit", "MultiEdit", "Write"]) assert.match(command("PreToolUse", tool), /\$\{CLAUDE_PLUGIN_ROOT\}\/hooks\/guard\.sh/, tool);
-  for (const tool of ["Edit", "MultiEdit", "Write", "Bash"]) assert.match(command("PostToolUse", tool), /\$\{CLAUDE_PLUGIN_ROOT\}\/hooks\/after-edit\.sh/, tool);
+  for (const tool of ["Edit", "MultiEdit", "Write", "Bash", "PowerShell"]) assert.match(command("PostToolUse", tool), /\$\{CLAUDE_PLUGIN_ROOT\}\/hooks\/after-edit\.sh/, tool);
   assert.equal(command("PreToolUse", "Bash"), "");
   assert.match(command("SessionStart"), /\$\{CLAUDE_PLUGIN_ROOT\}\/hooks\/session-start\.sh/);
 });
@@ -130,17 +130,19 @@ test("s-4mej6ccn7xu3d3p a git hook runs the tools of the higher release where it
   assert.equal(ran(), "codex pre-push");
 });
 
-test("s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets the commit through, turns the git hooks off in that clone, and says how to turn them on again", () => {
+test("s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets the commit through, keeps the git hooks on, and says at every commit that no check of SpecSheriff ran", () => {
   const root = initialised();
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
   git(root, "add", "-A");
   const env = { ...plugins().env, CODEX_HOME: codexHome(false).home };
   const run = spawnSync("git", ["commit", "-qm", "first"], { cwd: root, encoding: "utf8", env });
   assert.equal(run.status, 0, run.stderr);
-  assert.match(run.stderr, /no check ran/);
-  assert.match(run.stderr, /git config core\.hooksPath \.githooks/);
-  assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), "");
-  assert.equal(git(root, "log", "--oneline").stdout.trim().split("\n").length, 1);
+  assert.match(run.stderr, /no check of SpecSheriff ran/);
+  assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
+  const again = spawnSync("git", ["commit", "-q", "--allow-empty", "-m", "second"], { cwd: root, encoding: "utf8", env });
+  assert.equal(again.status, 0, again.stderr);
+  assert.match(again.stderr, /no check of SpecSheriff ran/);
+  assert.equal(git(root, "log", "--oneline").stdout.trim().split("\n").length, 2);
 });
 
 test("s-4mej6ccn7xu3d3p the session start names each git hook an earlier release of sheriff init wrote, saying that sheriff init replaces it", () => {

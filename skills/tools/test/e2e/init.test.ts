@@ -244,3 +244,51 @@ test("s-7unxytshhc4md54 this repository holds what sheriff init writes, so that 
   assert.equal(run.status, 0, run.stderr);
   assert.doesNotMatch(run.stdout, /written|replaced|left as it is/, run.stdout);
 });
+
+test("s-7unxytshhc4md54 sheriff init writes, unchecked, the rule that puts the specification live where the repository keeps no code the tools read, and not where it keeps some", () => {
+  const live = (root: string) => JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].children?.find((n: { text: string }) => n.text === "This project's specification is live.");
+  const empty = fresh();
+  sheriff(empty, "init");
+  const rule = live(empty);
+  assert.ok(rule, "the live rule");
+  assert.equal(rule.status, "");
+  assert.deepEqual(rule.refs, [{ type: "refines", to: "s-qzthyh7yqvfhsa2" }]);
+  const coded = fresh();
+  writeFileSync(join(coded, "app.ts"), "export const a = 1;\n");
+  sheriff(coded, "init");
+  assert.equal(live(coded), undefined);
+});
+
+test("s-7unxytshhc4md54 sheriff init names each hook the repository ran from elsewhere before, and sheriff remove each folder of the project's own tools it leaves", () => {
+  const root = fresh();
+  mkdirSync(join(root, ".git", "hooks"), { recursive: true });
+  writeFileSync(join(root, ".git", "hooks", "pre-push"), "#!/bin/sh\nexit 0\n");
+  writeFileSync(join(root, ".git", "hooks", "pre-commit.sample"), "#!/bin/sh\nexit 0\n");
+  const init = sheriff(root, "init");
+  assert.match(init.stdout, /\.git\/hooks\/pre-push no longer runs.*\.githooks\/pre-push\.d\//);
+  assert.doesNotMatch(init.stdout, /pre-commit\.sample/);
+  mkdirSync(join(root, ".githooks", "pre-push.d"));
+  writeFileSync(join(root, ".githooks", "pre-push.d", "scan.sh"), "#!/bin/sh\nexit 0\n");
+  const removed = sheriff(root, "remove");
+  assert.match(removed.stdout, /\.githooks\/pre-push\.d.*no longer run/);
+});
+
+test("s-7unxytshhc4md54 sheriff init names each hook of a hooks folder core.hooksPath names by an absolute path, and of a linked worktree's repository", () => {
+  const root = fresh();
+  const elsewhere = mkdtempSync(join(tmpdir(), "sheriff-hooks-"));
+  writeFileSync(join(elsewhere, "pre-commit"), "#!/bin/sh\nexit 0\n");
+  spawnSync("git", ["config", "core.hooksPath", elsewhere], { cwd: root });
+  const absolute = sheriff(root, "init");
+  assert.ok(absolute.stdout.includes(`${elsewhere.replaceAll("\\", "/")}/pre-commit no longer runs`) || absolute.stdout.includes(`${elsewhere}/pre-commit no longer runs`), absolute.stdout);
+
+  const main = fresh();
+  mkdirSync(join(main, ".git", "hooks"), { recursive: true });
+  writeFileSync(join(main, ".git", "hooks", "pre-push"), "#!/bin/sh\nexit 0\n");
+  writeFileSync(join(main, "README.md"), "A project.\n");
+  spawnSync("git", ["add", "-A"], { cwd: main });
+  spawnSync("git", ["-c", "user.email=o@example.org", "-c", "user.name=O", "commit", "-qm", "first"], { cwd: main });
+  const tree = join(mkdtempSync(join(tmpdir(), "sheriff-worktree-")), "w");
+  spawnSync("git", ["worktree", "add", "-q", tree], { cwd: main });
+  const linked = sheriff(tree, "init");
+  assert.match(linked.stdout, /hooks\/pre-push no longer runs/);
+});

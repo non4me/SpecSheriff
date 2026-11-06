@@ -60,7 +60,7 @@ export function typedProject(title = "customer", code = ["src/app/**"]): string 
   const root = taking({
     "sheriff.config.json": { code, tests: ["test/**"] },
     "specs/contracts/c.json": file("contracts", "c", node("ledger", { kind: "section", text: "Ledger.", children: [
-      node("customer", { kind: "record", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused", meta: { code: [{ file: "src/types.ts" }] } }),
+      node("customer", { kind: "recordType", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused", meta: { code: [{ file: "src/types.ts" }] } }),
     ] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [
       node("generated types", { refs: [{ type: "implements", to: DATA_STRUCTURES }], list: { of: "the files of the generated types and runtime checks", members: ["src/types.ts", "schemas/checks.json"] } }),
@@ -74,4 +74,33 @@ export function typedProject(title = "customer", code = ["src/app/**"]): string 
   git(root, "add", "-A");
   git(root, "commit", "-qm", "first");
   return root;
+}
+
+/** The base's rule on a project's own generators, which the rule listing them refines. */
+export const OWN_GENERATORS = "s-km4x4s26kv7pjze";
+
+/**
+ * Adds to a project a generator listed by a rule of its own guidelines: it prints, for the node named `from`, a file at
+ * `path` holding that node's title, or a path under specs/ where `path` says so. The rule is confirmed.
+ */
+export function withGenerator(root: string, path = "gen/titles.txt", from = "open"): void {
+  const project = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(project, "utf8"));
+  data.nodes[0].children = [...(data.nodes[0].children ?? []), node("our generators", {
+    refs: [{ type: "refines", to: OWN_GENERATORS }],
+    list: { of: "the project's own generators", property: "name", members: [{ name: "titles" }] },
+  })];
+  writeFileSync(project, JSON.stringify(data, null, 2) + "\n");
+  writeFileSync(join(root, "gen.mjs"), [
+    'let input = "";',
+    'process.stdin.on("data", (c) => (input += c)).on("end", () => {',
+    `  const open = JSON.parse(input).nodes.find((n) => n.sid === "${sid(from)}");`,
+    `  console.log(JSON.stringify([{ path: "${path}", content: open.title + "\\n", sids: [open.sid] }]));`,
+    '});',
+  ].join("\n"));
+  const config = JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8"));
+  config.generators = [{ rule: sid("our generators"), name: "titles", command: "node gen.mjs", code: ["gen.mjs"], tests: [] }];
+  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify(config));
+  reindex(root);
+  confirm(root, [sid("our generators")], { me: OWNER });
 }

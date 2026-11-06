@@ -3,11 +3,12 @@ import assert from "node:assert/strict";
 import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { binding, citationsOutside } from "../../src/binding.ts";
+import { FIXTURES_RULE, LIVE_RULE } from "../../src/model.ts";
 import { confirm } from "../../src/confirmations.ts";
 import { reindex } from "../../src/reindex.ts";
 import { DATA_STRUCTURES } from "../../src/types.ts";
-import { BY_NUMBER, node, NONE, OWNER, sid } from "../fixture.ts";
-import { codeProject as project, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, typedProject } from "../code-project.ts";
+import { BY_NUMBER, loc, node, NONE, OWNER, sid } from "../fixture.ts";
+import { codeProject as project, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, typedProject, withGenerator } from "../code-project.ts";
 
 const messages = async (root: string) => (await binding(root)).filter((f) => !f.reported).map((f) => `${f.where}: ${f.message}`);
 async function expectOne(root: string, pattern: RegExp): Promise<void> {
@@ -139,28 +140,51 @@ test("s-xqs2e24mx5253ye refuses a list its declaration in the code or in a schem
   await expectOne(schema, /does not match .*#\/\$defs\/status/);
 });
 
-test("s-jau82aq9juv9zzh refuses a node's address in a file outside the specification", async () => {
+test("s-jau82aq9juv9zzh refuses a node's location in a file outside the specification", async () => {
   const root = project();
-  put(root, "docs/notes.md", "As Contracts/1.1 says.\n");
-  await expectOne(root, /docs\/notes\.md:1: .*Contracts\/1\.1.*address/);
+  put(root, "docs/notes.md", `As ${loc("Contracts", "1.1")} says.\n`);
+  await expectOne(root, /docs\/notes\.md:1: .*Contracts\/1\.1.*location/);
 });
 
-test("s-jau82aq9juv9zzh refuses a node's address in any file the repository keeps outside the specification, a term's and a file's included", async () => {
+test("s-jau82aq9juv9zzh refuses a node's location in any file the repository keeps outside the specification, a term's and a file's included", async () => {
   const root = project();
-  put(root, "config/routes.yaml", "# as contracts/1.1 says\n");
+  put(root, "config/routes.yaml", `# as ${loc("contracts", "1.1")} says\n`);
   put(root, "notes.txt", "Read contracts/c and contracts/Account.\nThe file specs/contracts/c.json and contracts/c.json are paths.\n");
-  editSpec(root, (d) => d.nodes[0].children.push({ id: "", sid: sid("account term"), kind: "term", title: "account", status: "", text: "An account.", refs: [] }));
-  await expectOne(root, /config\/routes\.yaml:1: .*contracts\/1\.1.*address/);
-  await expectOne(root, /notes\.txt:1: contracts\/c is a node's address/);
-  await expectOne(root, /notes\.txt:1: contracts\/Account is a node's address/);
+  editSpec(root, (d) => d.nodes[0].children.push({ location: "", sid: sid("account term"), kind: "term", title: "account", status: "", text: "An account.", refs: [] }));
+  await expectOne(root, /config\/routes\.yaml:1: .*contracts\/1\.1.*location/);
+  await expectOne(root, /notes\.txt:1: contracts\/c is a node's location/);
+  await expectOne(root, /notes\.txt:1: contracts\/Account is a node's location/);
   assert.ok(!(await messages(root)).some((m) => m.startsWith("notes.txt:2")), (await messages(root)).join("\n"));
 });
 
-test("s-zefk589ykh37b8u reads no file of the tools for an address where the SpecSheriff guidelines are written", async () => {
+/** A rule of the project's own guidelines listing the fixtures of its tests (s-6hha5en226aj8hu). */
+function listFixtures(root: string, members: string[]): void {
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  data.nodes[0].children = [node("fixtures", { refs: [{ type: "refines", to: FIXTURES_RULE }], list: { of: "the fixtures of the tests of the checks", members } })];
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+}
+
+test("s-nh8b2hjvzasdxmd refuses a location in the files of the tools too, and leaves out those the project's own guidelines list as fixtures", async () => {
   const root = project();
-  put(root, "skills/tool/test/a.test.ts", `test("${sid("open")} reads contracts/1.1", () => {});\n`);
+  const at = ["contracts", "1.1"].join("/");
+  put(root, "skills/tool/test/a.test.ts", `test("${sid("open")} reads ${at}", () => {});\n`);
+  put(root, "skills/tool/test/fixtures/data.txt", `${at}\n`);
   writeFileSync(join(root, "sheriff.config.json"), JSON.stringify({ code: ["src/**"], tests: ["test/**", "skills/*/test/**"], writesSpecSheriffGuidelines: true }));
-  assert.ok(!(await messages(root)).some((m) => /address/.test(m)));
+  listFixtures(root, ["skills/*/test/fixtures/**"]);
+  reindex(root);
+  const found = await messages(root);
+  assert.ok(found.some((m) => /skills\/tool\/test\/a\.test\.ts:1: .*is a node's location/.test(m)), found.join("\n"));
+  assert.ok(!found.some((m) => m.includes("fixtures/data.txt")), found.join("\n"));
+});
+
+test("s-m8nmfsxkcfu7cjp leaves out of the citations the files the project's own guidelines list as fixtures", async () => {
+  const root = project();
+  put(root, "test/fixtures/cited.md", `See §${NONE}.\n`);
+  listFixtures(root, ["test/fixtures/**"]);
+  reindex(root);
+  const found = (await citationsOutside(root)).map((f) => `${f.where}: ${f.message}`);
+  assert.ok(!found.some((m) => m.includes("cited.md")), found.join("\n"));
 });
 
 const notImplemented = async (root: string) => (await binding(root)).filter((f) => f.reported && f.message.startsWith("not implemented")).map((f) => `${f.where}: ${f.message}`);
@@ -221,10 +245,10 @@ test("s-rah8b37kytb682y refuses a test carrying the sid of a node that is neithe
   await expectOne(root, new RegExp(`test/kinds\\.test\\.ts:1: the test "${sid("accounts")} the accounts" carries ${sid("accounts")}, a section, where a test carries the sid of a rule or a term`));
   const typed = typedProject();
   put(typed, "test/kinds.test.ts", `test("${sid("customer")} the customer", () => {});\n`);
-  await expectOne(typed, /test\/kinds\.test\.ts:1: .* a data record, where a test carries the sid of a rule or a term/);
+  await expectOne(typed, /test\/kinds\.test\.ts:1: .* a RecordType, where a test carries the sid of a rule or a term/);
 });
 
-test("s-4kd2pave7vm4hmd reads the tests and the documents of the tools for citations where the SpecSheriff guidelines are written", async () => {
+test("s-m8nmfsxkcfu7cjp reads the tests and the documents of the tools for citations where the SpecSheriff guidelines are written", async () => {
   const root = project();
   put(root, "skills/tool/SKILL.md", `See §${NONE}.\n`);
   put(root, "skills/tool/test/a.test.ts", `test("${sid("open")} opens", () => open("${NONE}"));\n`);
@@ -242,20 +266,56 @@ test("s-jau82aq9juv9zzh reports a rule whose text changed after its code, and re
   git(root, "commit", "-qm", "reworded");
   const found = await binding(root);
   const drift = found.filter((f) => f.reported);
-  assert.ok(drift.some((f) => f.where.includes(sid("open")) && /text changed/.test(f.message)), found.map((f) => f.message).join("\n"));
+  assert.ok(drift.some((f) => f.where.includes(sid("open")) && /behind its text|caught up/.test(f.message)), found.map((f) => f.message).join("\n"));
 });
 
-test("s-4kd2pave7vm4hmd reads a node's file under every name it had, so that renaming it is no change to the node's text", async () => {
+const lagging = async (root: string) => (await binding(root)).filter((f) => f.reported && f.where.includes(sid("open"))).map((f) => f.message);
+
+test("s-txbwsthdqhvyzd2 reports a node whose tests and code lag behind its text, naming each, and refuses nothing", async () => {
+  const root = project();
+  editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
+  confirm(root, [sid("open")], { me: OWNER });
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "reworded");
+  const found = await lagging(root);
+  assert.ok(found.some((m) => /its tests lag behind its text/.test(m)), found.join("\n"));
+  assert.ok(found.some((m) => /its code lags behind its text/.test(m)), found.join("\n"));
+  assert.ok(!(await binding(root)).some((f) => !f.reported && f.where.includes(sid("open"))));
+});
+
+test("s-txbwsthdqhvyzd2 reports a node whose code has not caught up with its tests", async () => {
+  const root = project();
+  put(root, "test/open.test.ts", `test("${sid("open")} opens an account", () => {});\ntest("${sid("open")} opens an account twice", () => {});\n`);
+  editSpec(root, (d) => nodeIn(d, "open").meta.tests.push(`test/open.test.ts::${sid("open")} opens an account twice`));
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "a test first");
+  const found = await lagging(root);
+  assert.ok(found.some((m) => /its code may not have caught up with its tests/.test(m)), found.join("\n"));
+  assert.ok(!found.some((m) => /behind its text/.test(m)), found.join("\n"));
+});
+
+test("s-txbwsthdqhvyzd2 counts the changes one commit makes as made at once", async () => {
+  const root = project();
+  editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
+  confirm(root, [sid("open")], { me: OWNER });
+  put(root, "test/open.test.ts", `test("${sid("open")} opens an account", () => { /* reworded */ });\n`);
+  put(root, "src/open.ts", readFileSync(join(root, "src", "open.ts"), "utf8") + "// reworded\n");
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "all at once");
+  assert.deepEqual(await lagging(root), []);
+});
+
+test("s-txbwsthdqhvyzd2 reads a node's file under every name it had, so that renaming it is no change to the node's text", async () => {
   const root = project();
   git(root, "mv", "specs/contracts/c.json", "specs/contracts/accounts.json");
   reindex(root);
   git(root, "add", "-A");
   git(root, "commit", "-qm", "renamed");
   const found = await binding(root);
-  assert.ok(!found.some((f) => f.reported && /text changed/.test(f.message)), found.map((f) => `${f.where}: ${f.message}`).join("\n"));
+  assert.ok(!found.some((f) => f.reported && /behind its text|caught up/.test(f.message)), found.map((f) => `${f.where}: ${f.message}`).join("\n"));
 });
 
-test("s-4kd2pave7vm4hmd refuses a sid in the code, the tests or the documents that names no node, the archive's included, and a number naming a node", async () => {
+test("s-m8nmfsxkcfu7cjp refuses a sid in the code, the tests or the documents that names no node, the archive's included, and a number naming a node", async () => {
   const root = project();
   put(root, "docs/notes.md", `See §${NONE} and ${BY_NUMBER}.\n`);
   const found = (await citationsOutside(root)).map((f) => `${f.where}: ${f.message}`);
@@ -264,21 +324,21 @@ test("s-4kd2pave7vm4hmd refuses a sid in the code, the tests or the documents th
   assert.ok(!found.some((m) => m.includes("README.md")), found.join("\n"));
 });
 
-test("s-4kd2pave7vm4hmd passes the generated copies the data record nodes produce, and refuses one edited by hand, left behind or missing", async () => {
+test("s-dbk2vyeg8z5jxna passes the generated copies the RecordTypes produce, and refuses one edited by hand, left behind or missing", async () => {
   assert.deepEqual(await messages(typedProject()), []);
   const edited = typedProject();
   put(edited, "src/types.ts", readFileSync(join(edited, "src/types.ts"), "utf8").replace("number: string;", "number: number;"));
-  await expectOne(edited, /^src\/types\.ts: not what the data record nodes generate/);
+  await expectOne(edited, /^src\/types\.ts: not what the RecordTypes generate/);
   const behind = typedProject();
   const path = join(behind, "specs", "contracts", "c.json");
   writeFileSync(path, readFileSync(path, "utf8").replace('"name": "number"', '"name": "code"'));
-  await expectOne(behind, /^schemas\/checks\.json: not what the data record nodes generate/);
+  await expectOne(behind, /^schemas\/checks\.json: not what the RecordTypes generate/);
   const missing = typedProject();
   rmSync(join(missing, "schemas", "checks.json"));
   await expectOne(missing, /^schemas\/checks\.json: missing/);
 });
 
-test("s-4kd2pave7vm4hmd holds a generated copy to what the last commit holds while a data record node is unchecked, reporting the node", async () => {
+test("s-dbk2vyeg8z5jxna holds a generated copy to what the last commit holds while a RecordType is unchecked, reporting the node", async () => {
   const typed = typedProject();
   const path = join(typed, "specs/contracts/c.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
@@ -291,10 +351,10 @@ test("s-4kd2pave7vm4hmd holds a generated copy to what the last commit holds whi
   const reported = (await binding(typed)).filter((f) => f.reported).map((f) => `${f.where}: ${f.message}`);
   assert.ok(reported.some((m) => m.includes(sid("customer")) && /wait for its confirmation/.test(m)), reported.join("\n"));
   put(typed, "src/types.ts", readFileSync(join(typed, "src/types.ts"), "utf8").replace("number: string;", "reference: string;"));
-  await expectOne(typed, new RegExp(`^src/types\\.ts: changed while the data record nodes it is generated from wait for their confirmation: ${sid("customer")}`));
+  await expectOne(typed, new RegExp(`^src/types\\.ts: changed while the RecordTypes it is generated from wait for their confirmation: ${sid("customer")}`));
 });
 
-test("s-4kd2pave7vm4hmd refuses a name that cannot be generated, and a second list of the files of the types", async () => {
+test("s-dbk2vyeg8z5jxna refuses a name that cannot be generated, and a second list of the files of the types", async () => {
   await expectOne(typedProject("3d customer"), new RegExp(`${sid("customer")}.*3dCustomer cannot be generated in src/types\\.ts`));
   const two = typedProject();
   const path = join(two, "specs", "tech", "stack.json");
@@ -312,4 +372,132 @@ test("s-pvzms7d8kxb8dk2 reads a file of types as the system's code where the glo
   delete data.nodes[0].children[0].meta;
   writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
   await expectOne(root, new RegExp(`${sid("customer")}.*its list of code, none, is not what the tags produce: src/types\\.ts`));
+});
+
+test("s-vsh384ybt4w25a2 reports a checked node of a project's own kind that needs code and has none, but not one that needs no code, and lets a test carry its sid", async () => {
+  const withKind = (needsCode: boolean) => {
+    const root = project();
+    writeFileSync(join(root, "specs", "_schema", "project.schema.json"), JSON.stringify({ kinds: { job: { needsCode, schema: {} } } }));
+    editSpec(root, (d) => d.nodes[0].children.push(node("nightly", { kind: "job" })));
+    reindex(root);
+    confirm(root, [sid("nightly"), sid("accounts")], { me: OWNER });
+    return root;
+  };
+  const coded = withKind(true);
+  assert.ok((await binding(coded)).some((f) => f.reported && f.where.includes(sid("nightly")) && /not implemented/.test(f.message)));
+  assert.ok(!(await binding(withKind(false))).some((f) => f.where.includes(sid("nightly")) && /not implemented/.test(f.message)));
+  put(coded, "test/nightly.test.ts", `test("${sid("nightly")} runs at night", () => {});\n`);
+  editSpec(coded, (d) => (nodeIn(d, "nightly").meta = { tests: [`test/nightly.test.ts::${sid("nightly")} runs at night`] }));
+  assert.ok(!(await messages(coded)).some((m) => /nightly\.test\.ts/.test(m)), (await messages(coded)).join("\n"));
+});
+
+test("s-5hb9k2e34dgn284 compares a list whose members are objects by the property it names, and a JSON object by its keys", async () => {
+  const root = project();
+  put(root, "config/kinds.json", JSON.stringify({ kinds: { plain: { rate: 0 }, savings: { rate: 2 } } }));
+  editSpec(root, (d) => d.nodes[0].children.push(node("kinds", { list: { of: "the kinds of account", property: "name", members: [{ name: "plain", note: "free" }, { name: "savings" }], declaredIn: { file: "config/kinds.json", declaration: "#/kinds" } } })));
+  assert.ok(!(await messages(root)).some((m) => /kinds of account/.test(m)), (await messages(root)).join("\n"));
+  editSpec(root, (d) => nodeIn(d, "kinds").list.members.pop());
+  await expectOne(root, /the kinds of account.* does not match/);
+});
+
+test("s-dbk2vyeg8z5jxna compares the files a project's own generator prints with what is committed, and refuses one edited by hand", async () => {
+  const root = project();
+  withGenerator(root);
+  put(root, "gen/titles.txt", "open\n");
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "generated");
+  assert.ok(!(await messages(root)).some((m) => m.includes("gen/titles.txt")), (await messages(root)).join("\n"));
+  put(root, "gen/titles.txt", "edited\n");
+  await expectOne(root, /gen\/titles\.txt: .*not what .* generates now/);
+});
+
+test("s-utf4mbt7ref8g9c holds the code of a project's own check to a test carrying the sid of the rule listing it, and each of its tests to that sid", async () => {
+  const root = project();
+  editSpec(root, (d) => d.nodes[0].children.push(node("our checks", { list: { of: "the project's own checks", property: "name", members: [{ name: "scan", onFailure: "refused" }] } })));
+  confirm(root, [sid("our checks")], { me: OWNER });
+  const config = JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8"));
+  config.checks = [{ rule: sid("our checks"), name: "scan", command: "node tools/scan.mjs", code: ["tools/scan.mjs"], tests: ["tools/scan.test.mjs"] }];
+  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify(config));
+  put(root, "tools/scan.mjs", "process.exit(0);\n");
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "a check");
+  put(root, "tools/scan.mjs", "process.exit(0); // changed\n");
+  await expectOne(root, /the code of the check "scan" changes, and no test carries the sid of the rule listing it/);
+  put(root, "tools/scan.test.mjs", `test("${sid("open")} scans", () => {});\n`);
+  await expectOne(root, new RegExp(`tools/scan\\.test\\.mjs.*carries ${sid("open")}, not ${sid("our checks")}`));
+  put(root, "tools/scan.test.mjs", `test("${sid("our checks")} scans", () => {});\n`);
+  assert.ok(!(await messages(root)).some((m) => /scan/.test(m)), (await messages(root)).join("\n"));
+});
+
+/** The rule of the project's own guidelines putting the specification live (s-qzthyh7yqvfhsa2), confirmed where asked. */
+function putLive(root: string, confirmed = true): void {
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  data.nodes[0].children = [...(data.nodes[0].children ?? []), node("live", { title: "The specification is live", text: "This project's specification is live.", refs: [{ type: "refines", to: LIVE_RULE }] })];
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  reindex(root);
+  if (confirmed) confirm(root, [sid("live")], { me: OWNER });
+}
+
+test("s-j9r8z4xdrfkfs47 in draft mode reports an untagged symbol a commit leaves alone and refuses one it changes; in live mode refuses both", async () => {
+  const draft = project();
+  put(draft, "src/old.ts", "export const legacy = 1;\n");
+  git(draft, "add", "-A");
+  git(draft, "commit", "-qm", "old code");
+  const found = await binding(draft);
+  assert.ok(found.some((f) => f.reported && /legacy carries no tag/.test(f.message)), found.map((f) => f.message).join("\n"));
+  assert.ok(!found.some((f) => !f.reported && /legacy carries no tag/.test(f.message)));
+  put(draft, "src/old.ts", "export const legacy = 2;\n");
+  await expectOne(draft, /legacy carries no tag/);
+  const live = project();
+  putLive(live);
+  git(live, "add", "-A");
+  git(live, "commit", "-qm", "live");
+  put(live, "src/old.ts", "export const legacy = 1;\n");
+  git(live, "add", "-A");
+  git(live, "commit", "-qm", "old code");
+  await expectOne(live, /legacy carries no tag/);
+});
+
+test("s-j9r8z4xdrfkfs47 refuses a commit putting the specification live with the rule unchecked or a symbol untagged, and one taking it back", async () => {
+  const unchecked = project();
+  putLive(unchecked, false);
+  await expectOne(unchecked, /puts the specification live.*not checked/);
+  const untagged = project();
+  put(untagged, "src/old.ts", "export const legacy = 1;\n");
+  git(untagged, "add", "-A");
+  git(untagged, "commit", "-qm", "old code");
+  putLive(untagged);
+  await expectOne(untagged, /legacy carries no tag/);
+  const back = project();
+  putLive(back);
+  git(back, "add", "-A");
+  git(back, "commit", "-qm", "live");
+  const path = join(back, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  data.nodes[0].children = data.nodes[0].children.filter((n: { sid: string }) => n.sid !== sid("live"));
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  reindex(back);
+  await expectOne(back, /takes out the rule that puts the specification live/);
+});
+
+test("s-xzcw3hv4hmxz7h7 sheriff binding refuses a file the schema refuses before it checks anything, naming the file and every refusal in it", async () => {
+  const root = project();
+  const path = join(root, "specs", "contracts", "c.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  delete data.nodes[0].children[0].refs;
+  data.nodes[0].children[1].children = "none";
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  assert.deepEqual(await messages(root), [
+    "specs/contracts/c.json: /nodes/0/children/0: must have required property 'refs': \"refs\"",
+    "specs/contracts/c.json: /nodes/0/children/1/children: must be array",
+  ]);
+});
+
+test("s-xzcw3hv4hmxz7h7 sheriff binding refuses where the schema of an extension refuses the project's extension, naming it, and checks nothing more", async () => {
+  const root = project();
+  writeFileSync(join(root, "specs", "_schema", "project.schema.json"), JSON.stringify({ nodes: {} }));
+  const found = await messages(root);
+  assert.equal(found.length, 1, found.join("\n"));
+  assert.match(found[0]!, /^specs\/_schema\/project\.schema\.json: .*"nodes"/);
 });

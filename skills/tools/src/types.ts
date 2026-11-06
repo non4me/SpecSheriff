@@ -1,3 +1,5 @@
+import { loadConfig } from "./config.ts";
+import { runGenerators } from "./generators.ts";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, extname, join, posix } from "node:path";
 import { loadSpecification, type SpecNode, type Specification } from "./spec-files.ts";
@@ -11,7 +13,7 @@ const SCHEMA = "https://json-schema.org/draft/2020-12/schema";
 type Bounds = { minimum?: number; exclusiveMinimum?: number; maximum?: number; exclusiveMaximum?: number };
 /** The bounds on how many members a list holds. */
 type ListBounds = { minItems?: number; maxItems?: number };
-type NeutralType = Bounds & ListBounds & { is: string; values?: string[]; of?: NeutralType; record?: string; fields?: Field[] };
+type NeutralType = Bounds & ListBounds & { is: string; values?: string[]; from?: string; kind?: string; of?: NeutralType; record?: string; fields?: Field[] };
 type Field = { name: string; type: NeutralType; required: boolean | string };
 
 /** A type as every language is written from it. */
@@ -41,7 +43,7 @@ export interface GeneratedFile {
 
 const where = (spec: Specification, sid: string) => {
   const at = spec.nodes.get(sid)!;
-  return `${at.file.path}: ${sid} (${at.node.id})`;
+  return `${at.file.path}: ${sid} (${at.node.location})`;
 };
 
 /** The files the rule of the stack lists for the generated types and runtime checks, and what is refused in that list. */
@@ -65,14 +67,14 @@ export function typeFiles(spec: Specification): { paths: string[]; refusals: Fin
   return { paths, refusals };
 }
 
-/** The name of a data record's type: the first letter of each word of its name raised, and the spaces dropped. */
+/** The name of a RecordType's type: the first letter of each word of its name raised, and the spaces dropped. */
 const typeName = (title: string) => title.split(/\s+/).filter(Boolean).map(raise).join("");
 function raise(word: string): string {
   const [first = "", ...rest] = [...word];
   return first.toUpperCase() + rest.join("");
 }
 
-/** What the data record nodes declare, in the order the specification reads, as the declarations each file is written from. */
+/** What the RecordTypes declare, in the order the specification reads, as the declarations each file is written from. */
 function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[] } {
   const refusals: Finding[] = [];
   const refuse = (sid: string, message: string) => refusals.push({ where: where(spec, sid), message });
@@ -82,7 +84,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
 
   const record = (sid: string | undefined) => {
     const n = sid ? spec.nodes.get(sid)?.node : undefined;
-    return n?.kind === "record" ? n : undefined;
+    return n?.kind === "recordType" ? n : undefined;
   };
   const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to))?.to);
   const chain = (n: SpecNode | undefined): SpecNode[] => {
@@ -93,8 +95,8 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
   const fieldsOf = (n: SpecNode) => (n.fields as Field[] | undefined) ?? [];
   const holding = (n: SpecNode, name: string) => chain(n).find((c) => fieldsOf(c).some((f) => f.name === name));
 
-  // The values of each field of type one of a data record holds: its own list, then the lists rules of
-  // domains define for it, in the order the specification reads.
+  // The values of each field of type one of a RecordType holds: its own list, or the values gathered beside it,
+  // in the order the specification reads them (s-4npdup7mjkva69y).
   const declared = new Map<string, string[]>();
   const declare = (holder: SpecNode, name: string, values: string[]) => {
     const key = `${holder.sid} ${name}`;
@@ -102,11 +104,11 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
     declared.set(key, [...known, ...values.filter((v, i) => !known.includes(v) && values.indexOf(v) === i)]);
   };
   for (const n of reading) {
-    if (n.kind === "record") for (const f of fieldsOf(n)) if (f.type.is === "one of") declare(n, f.name, f.type.values ?? []);
-    const list = n.list as { field?: string; members: string[] } | undefined;
-    const target = list?.field ? refined(n) : undefined;
-    const holder = target && holding(target, list!.field!);
-    if (holder) declare(holder, list!.field!, list!.members);
+    if (n.kind !== "recordType") continue;
+    for (const f of fieldsOf(n) as Array<Field & { gathered?: Array<{ value: string }> }>) {
+      if (f.type.is !== "one of") continue;
+      declare(n, f.name, f.type.from ? (f.gathered ?? []).map((g) => g.value) : (f.type.values ?? []));
+    }
   }
   const valuesOf = (holder: SpecNode | null, name: string, type: NeutralType) => (holder ? declared.get(`${holder.sid} ${name}`) : undefined) ?? [...new Set(type.values ?? [])];
 
@@ -127,7 +129,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
       case "map of": return { t: "map", of: resolve(sid, type.of!, null, name, seen) };
       case "record": {
         const named = record(type.record);
-        if (!named) refuse(sid, `${name} is a data record ${type.record}, which names no data record node`);
+        if (!named) refuse(sid, `${name} is a record of ${type.record}, which names no RecordType`);
         return { t: "ref", name: named ? typeName(named.title) : "" };
       }
       case "identifier of": {
@@ -164,7 +166,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
   const inherited = (n: SpecNode) => chain(n).reverse().flatMap((c) => fieldsOf(c).map((field) => ({ holder: c, field })));
 
   const decls: Decl[] = [];
-  const records = reading.filter((n) => n.kind === "record");
+  const records = reading.filter((n) => n.kind === "recordType");
   for (const n of records) {
     const variantFields = chain(n).flatMap((c) => fieldsOf(c).filter((f) => f.type.is === "variant"));
     if (variantFields.length > 1) refuse(n.sid, `holds two fields of type variant, its inherited ones counted: ${variantFields.map((f) => f.name).join(", ")}`);
@@ -175,7 +177,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
     const parent = n.answersTo ? refined(n) : undefined;
     if (parent) {
       // A variant: each choosing field fixed to the value it answers to, its own fields inside the field of
-      // type variant, or beside the data record's where there is none.
+      // type variant, or beside the RecordType's where there is none.
       const answersTo = n.answersTo as Record<string, string>;
       const fields = inherited(parent);
       const mine = fieldsOf(n).map((field) => ({ holder: n, field }));
@@ -195,7 +197,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
       decls.push({ name, sid: n.sid, kind: "object", props: props(name), closed });
       continue;
     }
-    // A data record its variants refine: the union of each variant, and of a member for the
+    // A RecordType its variants refine: the union of each variant, and of a member for the
     // combinations of the choosing fields' values no variant answers to.
     const choosing = (chain(n).find((c) => c.chosenBy)?.chosenBy as string[] | undefined) ?? [];
     const values = choosing.map((k) => {
@@ -346,7 +348,7 @@ const jsonSchema: Language = {
 
 const LANGUAGES: Record<string, Language> = { ".ts": typescript, ".py": python, ".json": jsonSchema };
 
-/** The files the data record nodes generate, or what refuses them; nothing where the technical appendix lists no files. */
+/** The files the RecordTypes generate, or what refuses them; nothing where the technical appendix lists no files. */
 export function generateTypes(spec: Specification): { files: GeneratedFile[]; refusals: Finding[] } {
   const { paths, refusals } = typeFiles(spec);
   if (!paths.length) return { files: [], refusals };
@@ -375,24 +377,28 @@ export function generateTypes(spec: Specification): { files: GeneratedFile[]; re
  * Writes each generated file that is missing or holds, line endings aside, anything else than what the
  * nodes generate, and names it; writes nothing where anything is refused.
  */
-/** The data record nodes not yet checked, which the code generated from the nodes waits for (s-kh8qcd5kxgh9z3j). */
+/** The RecordTypes not yet checked, which the code generated from the nodes waits for (s-kh8qcd5kxgh9z3j). */
 export function waitingRecords(spec: Specification): string[] {
-  return [...spec.nodes].filter(([, { node }]) => node.kind === "record" && node.status !== "checked").map(([sid]) => sid);
+  return [...spec.nodes].filter(([, { node }]) => node.kind === "recordType" && node.status !== "checked").map(([sid]) => sid);
 }
 
 export function writeTypes(root: string): { written: string[]; refusals: Finding[]; waiting: string[] } {
   const spec = loadSpecification(root);
   const { files, refusals } = generateTypes(spec);
-  if (refusals.length) return { written: [], refusals, waiting: [] };
-  const waiting = waitingRecords(spec);
-  if (waiting.length) return { written: [], refusals: [], waiting };
+  const own = runGenerators(root, spec, loadConfig(root));
+  if (refusals.length || own.refusals.length) return { written: [], refusals: [...refusals, ...own.refusals], waiting: [] };
+  // Each file waits only for the nodes it is generated from (s-kh8qcd5kxgh9z3j): the types for the RecordTypes, a
+  // generator's file for its own nodes and the rule listing its generator.
+  const records = waitingRecords(spec);
+  const ready = [...(records.length ? [] : files), ...own.files.filter((f) => !f.waiting.length)];
+  const waiting = [...records, ...own.waiting.filter((s) => !records.includes(s))];
   const written: string[] = [];
-  for (const f of files) {
+  for (const f of ready) {
     const path = join(root, f.path);
     if (existsSync(path) && readFileSync(path, "utf8").replace(/\r\n/g, "\n") === f.text) continue;
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, f.text);
     written.push(f.path);
   }
-  return { written, refusals: [], waiting: [] };
+  return { written, refusals: [], waiting };
 }

@@ -7,6 +7,27 @@ export const LEVELS_RULE = "s-nkyty4dy9x2v2a4";
 export const SID = /^s-[2-9a-hjkmnp-z]{15}$/;
 /** The file of a project's own guidelines. */
 export const PROJECT = "specs/_guidelines/project.json";
+/** The sid of the base's rule putting a specification live, which the rule of a project's own guidelines doing so refines. */
+export const LIVE_RULE = "s-qzthyh7yqvfhsa2";
+
+/** The rule of a project's own guidelines putting its specification live, where its file holds one (s-qzthyh7yqvfhsa2). */
+export function liveRule(nodes: Iterable<SpecNode>): SpecNode | undefined {
+  for (const n of nodes) if (n.refs?.some((r) => r.type === "refines" && r.to === LIVE_RULE)) return n;
+  return undefined;
+}
+
+/** The sid of the base's rule on the fixtures of tests, which the rule of a project's own guidelines listing them refines. */
+export const FIXTURES_RULE = "s-6hha5en226aj8hu";
+
+/** The glob patterns naming the fixtures of tests: the members of each list a node refining the rule on fixtures holds. */
+export function fixtureGlobs(spec: Specification): string[] {
+  return [...spec.nodes.values()]
+    .filter(({ node }) => node.refs?.some((r) => r.type === "refines" && r.to === FIXTURES_RULE))
+    .flatMap(({ node }) => ((node.list as { members?: string[] } | undefined)?.members ?? []));
+}
+
+/** Whether a path is one of the fixtures of tests the globs name. */
+export const isFixture = (globs: string[], path: string) => globs.some((glob) => posix.matchesGlob(path, glob));
 
 export function partOf(path: string): { part: string; file: string; specSheriffGuidelines: boolean } {
   const [, part = "", ...rest] = path.split("/");
@@ -14,12 +35,16 @@ export function partOf(path: string): { part: string; file: string; specSheriffG
   return { part, file, specSheriffGuidelines: part === "_guidelines" && (file === "spec" || file === "tools") };
 }
 
-/** A part whose files are numbered one by one under addresses of their own, rather than straight through. */
+/** A part whose files are numbered one by one under locations of their own, rather than straight through. */
 const numberedByFile = (part: string) => part === "_guidelines" || part === "tech";
-const numbered = new Set(["section", "rule", "record"]);
+/** The kinds of the SpecSheriff guidelines; any other is a kind a project's extension declares (s-vsh384ybt4w25a2). */
+export const BASE_KINDS = new Set(["domain", "section", "rule", "term", "recordType"]);
+export const isProjectKind = (kind: string) => !BASE_KINDS.has(kind);
+/** Every kind but a term, located by its name, and a domain's header, by its domain's, is numbered as a rule is. */
+const numbered = { has: (kind: string) => kind !== "term" && kind !== "domain" };
 
-/** Every node's address, computed from where it stands. */
-export function addresses(spec: Specification): Map<string, string> {
+/** Every node's location, computed from where it is. */
+export function locations(spec: Specification): Map<string, string> {
   const ids = new Map<string, string>();
   const number = (nodes: SpecNode[], base: string, path: string, counter = { n: 0 }) => {
     for (const n of nodes) {
@@ -36,17 +61,17 @@ export function addresses(spec: Specification): Map<string, string> {
   for (const f of spec.files) {
     const { part, file } = partOf(f.path);
     if (numberedByFile(part)) {
-      const address = `${part}/${file}`;
+      const location = `${part}/${file}`;
       const [top, ...more] = f.data.nodes;
       if (!top) continue;
-      ids.set(top.sid, address);
-      number(top.children ?? [], address, "");
-      number(more, address, "", { n: top.children?.filter((c) => numbered.has(c.kind)).length ?? 0 });
+      ids.set(top.sid, location);
+      number(top.children ?? [], location, "");
+      number(more, location, "", { n: top.children?.filter((c) => numbered.has(c.kind)).length ?? 0 });
       continue;
     }
     if (!straight.has(part)) straight.set(part, { n: 0 });
     if (part === "contracts") {
-      // The node at the top of a file of contracts is addressed by the file; the rest are numbered straight through.
+      // The node at the top of a file of contracts is located by the file; the rest are numbered straight through.
       const [top, ...more] = f.data.nodes;
       if (!top) continue;
       ids.set(top.sid, `${part}/${file}`);
@@ -64,24 +89,26 @@ export function addresses(spec: Specification): Map<string, string> {
   return ids;
 }
 
-const NOT_CITING = new Set(["refs", "children", "sections"]);
-const CITATION = /§(s-[2-9a-hjkmnp-z]{15})(?![0-9a-z])|§([^\s,;)]+)/g;
+const NOT_CITING = new Set(["refs", "children", "sections", "gathered"]);
+const SID_CITED = /§(s-[2-9a-hjkmnp-z]{15})(?![0-9a-z])/g;
+const LOCATION_CITED = /§(?!s-[2-9a-hjkmnp-z]{15}(?![0-9a-z]))([^\s,;)]+)/g;
 
-/** The sids a node cites, and any node it cites by an address instead, each once, in the order written. */
-export function citations(node: SpecNode): { sids: string[]; addresses: string[] } {
+/**
+ * The sids a node cites, text quoted as code included, and any node it cites by a location instead, outside text
+ * quoted as code, where the notation is shown; each once, in the order written.
+ */
+export function citations(node: SpecNode): { sids: string[]; locations: string[] } {
   const sids = new Set<string>();
   const found = new Set<string>();
   const read = (value: unknown) => {
     if (typeof value === "string") {
-      for (const m of value.replace(/`[^`]*`/g, "").matchAll(CITATION)) {
-        if (m[1]) sids.add(m[1]);
-        else found.add("§" + m[2]!.replace(/\.+$/, ""));
-      }
+      for (const m of value.matchAll(SID_CITED)) sids.add(m[1]!);
+      for (const m of value.replace(/`[^`]*`/g, "").matchAll(LOCATION_CITED)) found.add("§" + m[1]!.replace(/\.+$/, ""));
     } else if (Array.isArray(value)) value.forEach(read);
     else if (value && typeof value === "object") Object.values(value).forEach(read);
   };
   for (const [key, value] of Object.entries(node)) if (!NOT_CITING.has(key)) read(value);
-  return { sids: [...sids].filter((s) => s !== node.sid), addresses: [...found] };
+  return { sids: [...sids].filter((s) => s !== node.sid), locations: [...found] };
 }
 
 export type Incoming = { type: string; from: string; ratio?: string };
@@ -107,6 +134,18 @@ export function incoming(spec: Specification): Map<string, Incoming[]> {
 }
 
 /** The node's owner: named by the nearest section or header above it or by itself, else by its domain's header, else the specification's. */
+/** One node of the model `sheriff model` prints: as its file holds it, without the nodes under it, with where it stands and its owner. */
+export type ModelNode = Omit<SpecNode, "children"> & { part: string; file: string; parent: string | null; owner: string | null; children?: undefined };
+
+/** The model of the specification: every node as its file holds it, with its part, its file, the node above it and its owner (s-f5rz6b7dhxejjts). */
+export function modelOf(spec: Specification): { nodes: ModelNode[] } {
+  const nodes = [...spec.nodes].map(([sid, { node, file, parent }]) => {
+    const { children: _, ...own } = node;
+    return { ...own, part: partOf(file.path).part, file: file.path, parent: parent?.sid ?? null, owner: ownerOf(spec, sid) };
+  });
+  return { nodes };
+}
+
 export function ownerOf(spec: Specification, sid: string): string | null {
   const at = spec.nodes.get(sid);
   if (!at) return null;
@@ -177,7 +216,7 @@ export function domainOrder(spec: Specification): string[] {
 }
 
 /** What a node holds beside its wording: its place, status, links, metadata, owner, and what the reindex builds. */
-const NOT_WORDING = new Set(["id", "sid", "kind", "status", "refs", "meta", "children", "owner", "sections", "archived"]);
+const NOT_WORDING = new Set(["location", "sid", "kind", "status", "refs", "meta", "children", "owner", "sections", "archived"]);
 
 function sorted(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(sorted);
@@ -187,8 +226,20 @@ function sorted(value: unknown): unknown {
   return value;
 }
 
-/** The SHA-256 of one canonical string of the node's wording: title, text, reason and the values its kind carries. */
+/**
+ * The SHA-256 of one canonical string of the node's wording: title, text, reason and the values its kind carries.
+ * The reason stands there under `rationale`, the key earlier releases wrote, so that renaming the key changed no
+ * fingerprint and no confirmation given before it.
+ */
 export function fingerprint(node: SpecNode): string {
-  const wording = Object.fromEntries(Object.entries(node).filter(([k]) => !NOT_WORDING.has(k)));
-  return createHash("sha256").update(JSON.stringify(sorted(wording))).digest("hex");
+  const wording = Object.fromEntries(Object.entries(node).filter(([k]) => !NOT_WORDING.has(k)).map(([k, v]) => [k === "reason" ? "rationale" : k, v]));
+  // What the reindex builds beside a field, the values gathered for it, is no one's wording. A field taking the values
+  // the domains add stands as earlier releases wrote it, with an empty list of its own (s-v4qus7raqnwzneb).
+  const earlier = (v: unknown) => {
+    if (!v || typeof v !== "object" || Array.isArray(v)) return v;
+    const { from, ...rest } = v as Record<string, unknown>;
+    return (rest as { is?: unknown }).is === "one of" && from === "domains" && !("values" in rest) ? { ...rest, values: [] } : v;
+  };
+  const built = JSON.parse(JSON.stringify(wording, (k, v) => (k === "gathered" ? undefined : earlier(v))));
+  return createHash("sha256").update(JSON.stringify(sorted(built))).digest("hex");
 }

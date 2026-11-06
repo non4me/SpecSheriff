@@ -1,6 +1,8 @@
 import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, rmdirSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { git } from "./diff.ts";
+import { dirname, isAbsolute, join } from "node:path";
+import { readsForTags } from "./code.ts";
+import { git, trackedFiles } from "./diff.ts";
+import { LIVE_RULE } from "./model.ts";
 import { newSid } from "./reindex.ts";
 import { canonical } from "./spec-files.ts";
 
@@ -125,6 +127,20 @@ export function init(root: string, agent: string = "claude"): InitReport {
   if (agent === "claude") declareToClaude(root, report);
   else writeCodexHooks(root, report);
 
+  // Taking up the method moves where git looks for hooks, so a hook the repository ran before stops running: each is
+  // named, with where to move it to keep it running (s-n4m5zvh96yb299p).
+  const hooksPath = git(root, "config", "core.hooksPath").out.trim();
+  if (hooksPath !== ".githooks") {
+    // Where git looked: core.hooksPath, absolute or from the root, else the hooks of the repository's git directory,
+    // which a linked worktree shares with the clone it was added to.
+    const dir = (hooksPath || git(root, "rev-parse", "--git-path", "hooks").out.trim() || ".git/hooks").replaceAll("\\", "/");
+    const full = isAbsolute(dir) ? dir : join(root, dir);
+    if (existsSync(full)) {
+      for (const name of readdirSync(full).filter((n) => !n.endsWith(".sample")).sort()) {
+        report.notes.push(`${dir}/${name} no longer runs, since the git hooks now run from .githooks; move it into .githooks/${name}.d/ to keep it running`);
+      }
+    }
+  }
   if (git(root, "config", "core.hooksPath").out.trim() !== ".githooks") {
     if (git(root, "config", "core.hooksPath", ".githooks").ok) report.notes.push("the git hooks are turned on: core.hooksPath is .githooks");
     else report.notes.push("not a git repository: turn the hooks on with git config core.hooksPath .githooks");
@@ -139,8 +155,13 @@ export function init(root: string, agent: string = "claude"): InitReport {
     if (!owner) report.notes.push("git names no email: specs/_guidelines/project.json was not written; set git config user.email and run sheriff init again");
     else {
       const project = { schemaVersion: 1, scope: "_guidelines", section: "project", nodes: [{
-        id: "_guidelines/project", sid: newSid(new Set()), kind: "section", title: "The project's own guidelines", status: "",
+        location: ["_guidelines", "project"].join("/"), sid: newSid(new Set()), kind: "section", title: "The project's own guidelines", status: "",
         text: "What only this project's specification needs beyond the SpecSheriff guidelines.", owner, refs: [],
+        // A project starting without code has nothing to tag, so it starts live, the rule unchecked (s-qzthyh7yqvfhsa2).
+        ...(keepsCode(root) ? {} : { children: [{
+          location: ["_guidelines", "project", "1"].join("/"), sid: newSid(new Set()), kind: "rule", title: "The specification is live", status: "",
+          text: "This project's specification is live.", refs: [{ type: "refines", to: LIVE_RULE }],
+        }] }),
       }] };
       write("specs/_guidelines/project.json", canonical(project));
     }
@@ -257,6 +278,12 @@ export function remove(root: string): RemoveReport {
   if (git(root, "config", "--local", "core.hooksPath").out.trim() === ".githooks" && git(root, "config", "--local", "--unset", "core.hooksPath").ok) {
     report.notes.push("unset: core.hooksPath, which named .githooks");
   }
+  // The project's own tools are left with their folders, and stop running with the hooks.
+  if (existsSync(join(root, ".githooks"))) {
+    for (const name of readdirSync(join(root, ".githooks")).filter((n) => n.endsWith(".d")).sort()) {
+      report.notes.push(`.githooks/${name} is left, and the project's own tools in it no longer run`);
+    }
+  }
   if (existsSync(join(root, "sheriff.config.json"))) drop("sheriff.config.json");
   for (const dir of [".githooks", ".claude", ".codex"]) {
     if (existsSync(join(root, dir)) && !readdirSync(join(root, dir)).length) rmdirSync(join(root, dir));
@@ -274,4 +301,10 @@ function settle(root: string, path: string, settings: object, report: RemoveRepo
     rmSync(join(root, path));
     report.removed.push(path);
   }
+}
+
+/** Whether the repository keeps a file in a language the SpecSheriff tools read for tags. */
+function keepsCode(root: string): boolean {
+  const ignored = (p: string) => p.startsWith("node_modules/") || p.startsWith(".git/");
+  return trackedFiles(root).some((p) => !ignored(p) && readsForTags(p));
 }

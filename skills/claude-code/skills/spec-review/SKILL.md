@@ -24,7 +24,7 @@ you never write into the specification what the owner has not seen. Load the ski
 
 ## Showing a node
 
-- One node at a time, shown whole: its title, its address and sid, its text and its reason, the
+- One node at a time, shown whole: its title, its location and sid, its text and its reason, the
   places that changed in bold. Never fragments of a node, never several nodes at once.
 - Say in a few lines what changed and why, and what follows from it in other nodes.
 - End with one question: whether it is confirmed. One question to a message.

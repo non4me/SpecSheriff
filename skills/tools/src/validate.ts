@@ -1,17 +1,21 @@
+import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { loadConfig } from "./config.ts";
+import { loadConfig, type Config } from "./config.ts";
 import { everConfirmed, holds, readConfirmations } from "./confirmations.ts";
 import { keysTwice } from "./json-text.ts";
-import { addresses, citations, incoming, isDomain, LEVELS_RULE, levelsOf, ownerOf, partOf, PROJECT } from "./model.ts";
+import { BASE_KINDS, citations, isProjectKind, locations, modelOf, incoming, isDomain, LEVELS_RULE, levelsOf, ownerOf, partOf, PROJECT } from "./model.ts";
 import { headerIndex, judgedHere } from "./reindex.ts";
-import { loadSchema } from "./schema.ts";
+import { EXTENSION, loadSchema, readExtension, SCHEMA_FILES } from "./schema.ts";
+import { fieldKey, gather } from "./values.ts";
 import { specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface Finding {
   /** The file, and the node where there is one. */
   where: string;
   message: string;
+  /** Reported rather than refused. */
+  reported?: true;
 }
 
 export interface ValidateOptions {
@@ -19,7 +23,8 @@ export interface ValidateOptions {
   before?: Specification;
 }
 
-const REQUIRING = new Set(["rule", "record", "term"]);
+/** Every kind but a section and a domain's header requires something, a project's own kinds included (s-vsh384ybt4w25a2). */
+const REQUIRING = { has: (kind: string) => kind !== "section" && kind !== "domain" };
 const isBase = (path: string) => !["_guidelines", "tech"].includes(partOf(path).part);
 
 export function validate(root: string, { before }: ValidateOptions = {}): Finding[] {
@@ -31,7 +36,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   if (!config.writesSpecSheriffGuidelines) {
     const schemaDir = join(root, "specs", "_schema");
     const schemaFiles = existsSync(schemaDir)
-      ? readdirSync(schemaDir, { recursive: true, encoding: "utf8" }).filter((p) => statSync(join(schemaDir, p)).isFile()).map((p) => `specs/_schema/${p.replaceAll("\\", "/")}`)
+      ? readdirSync(schemaDir, { recursive: true, encoding: "utf8" }).filter((p) => statSync(join(schemaDir, p)).isFile()).map((p) => `specs/_schema/${p.replaceAll("\\", "/")}`).filter((p) => p !== EXTENSION)
       : [];
     for (const path of [...paths.filter((p) => partOf(p).specSheriffGuidelines), ...schemaFiles]) {
       findings.push({ where: path, message: "a copy of the SpecSheriff guidelines or of their schema, which a project reads from the SpecSheriff tools" });
@@ -41,6 +46,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
 
   // Files read as text and against the schema; a file that does not read stops the checks of the nodes.
   const schema = loadSchema(root);
+  for (const e of schema.extension) findings.push({ where: EXTENSION, message: e });
   const files: SpecFile[] = [];
   for (const path of [...paths, ...schemaPaths(root)]) {
     const text = readFileSync(join(root, path), "utf8");
@@ -60,11 +66,11 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   const spec = withTaken(root, files);
   const at = (sid: string) => {
     const n = spec.nodes.get(sid)!;
-    return `${n.file.path}: ${sid} (${n.node.id})`;
+    return `${n.file.path}: ${sid} (${n.node.location})`;
   };
   const refuse = (sid: string, message: string) => findings.push({ where: at(sid), message });
 
-  // Sids and ids held once, terms and data records named once.
+  // Sids and locations held once, terms and RecordTypes named once.
   const count = (values: Array<[string, string]>, what: (v: string) => string) => {
     const seen = new Map<string, string[]>();
     for (const [v, where] of values) seen.set(v, [...(seen.get(v) ?? []), where]);
@@ -74,14 +80,14 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   for (const f of [...spec.files, ...spec.archive]) walk(f.data.nodes, (node) => all.push({ node, path: f.path }));
   count(all.map(({ node, path }) => [node.sid, path]), (v) => `sid ${v} is held by more than one node`);
   const live = all.filter(({ path }) => !path.startsWith("specs/_archive/"));
-  count(live.map(({ node, path }) => [node.id, path]), (v) => `id ${v} is held by more than one node`);
+  count(live.map(({ node, path }) => [node.location, path]), (v) => `location ${v} is held by more than one node`);
   count(live.filter(({ node }) => node.kind === "term").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `term "${v}" is named by more than one term node`);
-  count(live.filter(({ node }) => node.kind === "record").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `data record "${v}" is the name of more than one data record node`);
+  count(live.filter(({ node }) => node.kind === "recordType").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `RecordType "${v}" is the name of more than one RecordType`);
   for (const { node, path } of live) if (node.kind === "term" && partOf(path).part !== "contracts") refuse(node.sid, "a term node outside contracts, where alone a term is declared");
 
-  const ids = addresses(spec);
+  const ids = locations(spec);
   for (const [sid, { node }] of spec.nodes) {
-    if (ids.has(sid) && ids.get(sid) !== node.id) refuse(sid, `id ${node.id} is not the address its place gives, ${ids.get(sid)}`);
+    if (ids.has(sid) && ids.get(sid) !== node.location) refuse(sid, `location ${node.location} is not the one its place gives, ${ids.get(sid)}`);
   }
 
   // Confirmations and the archive.
@@ -104,7 +110,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   for (const [sid, was] of before?.nodes ?? []) {
     if (spec.nodes.has(sid) || !judgedHere(was.file.path, config.writesSpecSheriffGuidelines)) continue;
     if (everConfirmed(lines, sid) && !archived.has(sid)) {
-      findings.push({ where: `${was.file.path}: ${sid} (${was.node.id})`, message: "removed after a confirmation was given for it, but not in the archive with the reason for its removal" });
+      findings.push({ where: `${was.file.path}: ${sid} (${was.node.location})`, message: "removed after a confirmation was given for it, but not in the archive with the reason for its removal" });
     }
   }
 
@@ -119,7 +125,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     }
     const cited = citations(node);
     for (const c of cited.sids) if (!out.some((r) => r.to === c)) refuse(sid, `cites ${c} but holds no link to it`);
-    for (const a of cited.addresses) refuse(sid, `cites ${a} by its address, not its sid`);
+    for (const a of cited.locations) refuse(sid, `cites ${a} by its location, not its sid`);
     for (const r of out.filter((r) => r.type === "cites")) {
       if (!cited.sids.includes(r.to!)) refuse(sid, `holds a cites link to ${r.to} but does not cite it`);
       if (out.some((o) => o.to === r.to && o.type !== "cites")) refuse(sid, `holds a cites link to ${r.to} beside a link of another type to it`);
@@ -138,7 +144,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   // Wording of checked nodes, and sections.
   for (const [sid, { node }] of spec.nodes) {
     if (node.status !== "checked") continue;
-    for (const field of ["title", "text", "rationale"] as const) {
+    for (const field of ["title", "text", "reason"] as const) {
       const value = node[field];
       if (typeof value !== "string") continue;
       const bare = value.replace(/`[^`]*`/g, "").replace(/"[^"]*"|“[^”]*”/g, "");
@@ -152,14 +158,41 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   }
 
   domains(spec, built, refuse, findings);
-  variants(spec, refuse);
+  objectsInLists(spec, refuse);
+  variants(spec, refuse, new Set([...BASE_KINDS, ...Object.keys(readExtension(root)?.kinds ?? {})]));
   appendices(spec, refuse);
+  findings.push(...projectChecks(root, config, spec));
   return findings;
+}
+
+/**
+ * Runs each check a project's own guidelines add (s-2fau85dfyyeq66m) by the command the settings name, in the directory
+ * the other checks read, the model on its standard input. An exit status other than zero refuses, or is reported where
+ * the rule listing the check says so; what it printed is shown with it.
+ */
+function projectChecks(root: string, config: Config, spec: Specification): Finding[] {
+  const found: Finding[] = [];
+  if (!config.checks.length) return found;
+  const model = JSON.stringify(modelOf(spec));
+  for (const check of config.checks) {
+    const where = `check "${check.name}"`;
+    const list = spec.nodes.get(check.rule)?.node.list as { members?: unknown[]; property?: string } | undefined;
+    const member = list?.members?.find((m) => Boolean(m) && typeof m === "object" && (m as Record<string, unknown>)[list.property ?? "name"] === check.name) as Record<string, unknown> | undefined;
+    if (!member) {
+      found.push({ where, message: `the settings name a check the rule ${check.rule} does not list` });
+      continue;
+    }
+    const run = spawnSync(check.command, { cwd: root, input: model, shell: true, encoding: "utf8", maxBuffer: 1 << 26 });
+    if (run.status === 0) continue;
+    const output = `${run.stdout ?? ""}${run.stderr ?? ""}`.trim();
+    found.push({ where, message: output || `ended with exit status ${run.status}`, ...(member.onFailure === "reported" ? { reported: true as const } : {}) });
+  }
+  return found;
 }
 
 function schemaPaths(root: string): string[] {
   const dir = join(root, "specs", "_schema");
-  return existsSync(dir) ? ["node.schema.json", "section-file.schema.json"].filter((n) => existsSync(join(dir, n))).map((n) => `specs/_schema/${n}`) : [];
+  return existsSync(dir) ? [...SCHEMA_FILES, "project.schema.json"].filter((n) => existsSync(join(dir, n))).map((n) => `specs/_schema/${n}`) : [];
 }
 
 function walk(nodes: SpecNode[] | undefined, visit: (n: SpecNode) => void): void {
@@ -203,8 +236,8 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
   for (const [sid, { node, file }] of spec.nodes) {
     for (const r of node.refs.filter((r) => r.type === "exempts" && r.to)) {
       const target = spec.nodes.get(r.to!)?.node.kind;
-      if (file.path !== PROJECT || (target !== "rule" && target !== "section")) {
-        refuse(sid, "an exempts link must go from a node of the project's own guidelines to a rule or a section");
+      if (file.path !== PROJECT || !target || (target !== "rule" && target !== "section" && !isProjectKind(target))) {
+        refuse(sid, "an exempts link must go from a node of the project's own guidelines to a rule, a node of a project's own kind or a section");
       }
     }
     for (const r of node.refs.filter((r) => r.type === "consumes" && r.to)) {
@@ -245,14 +278,26 @@ function findCycle(uses: Map<string, Set<string>>): string[] | null {
   return null;
 }
 
-type NeutralType = { is: string; values?: string[]; fields?: Field[]; of?: NeutralType; record?: string };
-type Field = { name: string; type: NeutralType };
+type NeutralType = { is: string; values?: string[]; from?: string; kind?: string; fields?: Field[]; of?: NeutralType; record?: string };
+type Field = { name: string; type: NeutralType; gathered?: Array<{ value: string; sid: string }> };
 
-function variants(spec: Specification, refuse: Refuse): void {
+/** Each member of a list that is an object holds the property the list names (s-v7vd4ydrwexsgsj). */
+function objectsInLists(spec: Specification, refuse: Refuse): void {
+  for (const [sid, { node }] of spec.nodes) {
+    const list = node.list as { members?: unknown[]; property?: string } | undefined;
+    (list?.members ?? []).forEach((m, i) => {
+      if (!m || typeof m !== "object" || Array.isArray(m)) return;
+      if (!list!.property) refuse(sid, `member ${i + 1} of its list is an object, and the list names no property holding its value`);
+      else if (!(list!.property in m)) refuse(sid, `member ${i + 1} of its list lacks the property "${list!.property}" the list names`);
+    });
+  }
+}
+
+function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void {
   const record = (sid: string | undefined) => (sid ? spec.nodes.get(sid)?.node : undefined);
-  const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "record")?.to);
+  const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "recordType")?.to);
   const chain = (n: SpecNode | undefined): SpecNode[] => (n ? [n, ...chain(refined(n))] : []);
-  // A data record's fields, the fields every variant holds in its field of type variant included.
+  // A RecordType's fields, the fields every variant holds in its field of type variant included.
   const fieldsOf = (n: SpecNode) => ((n.fields as Field[]) ?? []).flatMap((f) => [f, ...(f.type.is === "variant" ? (f.type.fields ?? []) : [])]);
   const fieldsUpChain = (n: SpecNode | undefined): Field[] => chain(n).flatMap(fieldsOf);
   const holding = (n: SpecNode | undefined, name: string): SpecNode | undefined =>
@@ -260,44 +305,45 @@ function variants(spec: Specification, refuse: Refuse): void {
   const part = (n: SpecNode) => partOf(spec.nodes.get(n.sid)!.file.path).part;
 
   // Where each value of a field choosing a variant is declared: its own list, then the lists rules of
-  // domains define for it, each list found by its rule's refines link to a data record of contracts.
+  // domains define for it, each list found by its rule's refines link to a RecordType of contracts.
   const declared = new Map<string, Map<string, SpecNode[]>>();
   const declare = (holder: SpecNode, name: string, value: string, by: SpecNode) => {
     const key = `${holder.sid} ${name}`;
     if (!declared.has(key)) declared.set(key, new Map());
     declared.get(key)!.set(value, [...(declared.get(key)!.get(value) ?? []), by]);
   };
+  // Each value comes from the field's one source: its own list, or the values gathered for it (s-xfu2gpzddjnmgks).
+  const gathered = gather(spec);
   for (const [, { node }] of spec.nodes) {
-    if (node.kind !== "record") continue;
-    for (const f of (node.fields as Field[]) ?? []) if (f.type.is === "one of") for (const v of f.type.values ?? []) declare(node, f.name, v, node);
+    if (node.kind !== "recordType") continue;
+    for (const f of (node.fields as Field[]) ?? []) {
+      if (f.type.is !== "one of") continue;
+      if (f.type.from) for (const g of gathered.get(fieldKey(node, f.name)) ?? []) declare(node, f.name, g.value, spec.nodes.get(g.sid)?.node ?? node);
+      else for (const v of f.type.values ?? []) declare(node, f.name, v, node);
+    }
     const variantFields = chain(node).flatMap((n) => ((n.fields as Field[]) ?? []).filter((f) => f.type.is === "variant"));
     if (variantFields.length > 1) refuse(node.sid, `holds two fields of type variant, its inherited ones counted: ${variantFields.map((f) => f.name).join(", ")}`);
   }
   for (const [sid, { node }] of spec.nodes) {
     const list = node.list as { field?: string; members: string[] } | undefined;
     if (!list?.field) continue;
-    const target = record(node.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "record")?.to);
+    const target = record(node.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "recordType")?.to);
     if (!isDomain(part(node))) refuse(sid, `a list of the values of ${list.field} standing in ${part(node)}, not in a domain`);
     if (!target || part(target) !== "contracts") {
-      refuse(sid, `a list of the values of ${list.field} that refines no data record described in contracts`);
-      continue;
-    }
-    if (!((target.chosenBy as string[] | undefined) ?? []).includes(list.field)) {
-      refuse(sid, `declares values of ${list.field}, not a field ${target.sid} names as choosing its variant`);
+      refuse(sid, `a list of the values of ${list.field} that refines no RecordType described in contracts`);
       continue;
     }
     const holder = holding(target, list.field);
     const field = ((holder?.fields as Field[]) ?? []).find((f) => f.name === list.field);
-    if (!holder || field?.type.is !== "one of") refuse(sid, `declares values of ${list.field}, a field with no list of values`);
-    else for (const v of list.members) declare(holder, list.field, v, node);
+    if (!holder || field?.type.is !== "one of" || field.type.from !== "domains") refuse(sid, `declares values of ${list.field}, whose values the domains do not add`);
   }
   for (const values of declared.values()) {
     for (const [value, by] of values) if (by.length > 1) for (const n of by) refuse(n.sid, `"${value}" is declared more than once: ${by.map((b) => b.sid).join(", ")}`);
   }
-  // A field of type one of holds at least one value: a data record's own field in its list or in a
+  // A field of type one of holds at least one value: a RecordType's own field in its list or in a
   // domain's list for it, one standing inside another type in its own list.
   for (const [sid, { node }] of spec.nodes) {
-    if (node.kind !== "record") continue;
+    if (node.kind !== "recordType") continue;
     const empty = (name: string, type: NeutralType, own: boolean) => {
       if (type.is === "one of" && !(own ? declared.get(`${sid} ${name}`)?.size : type.values?.length)) refuse(sid, `${name} is of type one of with no value, in its own list or in a list of a domain`);
       if (type.of) empty(name, type.of, false);
@@ -306,12 +352,23 @@ function variants(spec: Specification, refuse: Refuse): void {
     for (const f of (node.fields as Field[]) ?? []) empty(f.name, f.type, true);
   }
 
+  // The values gathered beside each field are what its source produces, and a kind it names is one the schema holds.
+  for (const [sid, { node }] of spec.nodes) {
+    if (node.kind !== "recordType") continue;
+    for (const f of fieldsOf(node)) {
+      if (f.type.is !== "one of") continue;
+      if (f.type.from === "kindSids" && !kinds.has(f.type.kind ?? "")) refuse(sid, `${f.name} names the kind ${f.type.kind}, which the schema does not hold`);
+      const want = f.type.from ? (gathered.get(fieldKey(node, f.name)) ?? []) : undefined;
+      if (JSON.stringify(f.gathered) !== JSON.stringify(want)) refuse(sid, `the values gathered beside ${f.name} are not what their source produces; sheriff reindex writes them`);
+    }
+  }
+
   const answers = new Map<string, string[]>();
   for (const [sid, { node }] of spec.nodes) {
-    if (node.kind !== "record" || !node.answersTo) continue;
+    if (node.kind !== "recordType" || !node.answersTo) continue;
     const parent = refined(node);
     if (!parent) {
-      refuse(sid, "a data record variant that refines no data record");
+      refuse(sid, "a RecordType variant that refines no RecordType");
       continue;
     }
     let chooser: SpecNode | undefined = parent;
@@ -319,7 +376,7 @@ function variants(spec: Specification, refuse: Refuse): void {
     const chosenBy = (chooser?.chosenBy as string[]) ?? [];
     const answersTo = node.answersTo as Record<string, string>;
     if (JSON.stringify(Object.keys(answersTo).sort()) !== JSON.stringify([...chosenBy].sort())) {
-      refuse(sid, `answers to ${Object.keys(answersTo).join(", ")}, not to the fields its data record names as choosing it, ${chosenBy.join(", ") || "none"}`);
+      refuse(sid, `answers to ${Object.keys(answersTo).join(", ")}, not to the fields its RecordType names as choosing it, ${chosenBy.join(", ") || "none"}`);
     }
     const inherited = fieldsUpChain(parent);
     // A value is declared in its choosing field's own list or in a domain's list for it, and the
@@ -333,17 +390,17 @@ function variants(spec: Specification, refuse: Refuse): void {
       else if (by.length === 1 && part(node) !== part(by[0]!)) refuse(sid, `stands in ${part(node)}, while the value "${value}" it answers to for ${name} is declared in ${part(by[0]!)}`);
     }
     const own = ((node.fields as Field[]) ?? []).filter((f) => !inherited.some((i) => i.name === f.name));
-    if (own.length === 0) refuse(sid, "a data record variant that declares no field of its own");
+    if (own.length === 0) refuse(sid, "a RecordType variant that declares no field of its own");
     const key = `${chooser?.sid} ${JSON.stringify(Object.entries(answersTo).sort())}`;
     answers.set(key, [...(answers.get(key) ?? []), sid]);
   }
   for (const sids of answers.values()) if (sids.length > 1) for (const sid of sids) refuse(sid, "answers to values another variant of its record answers to");
 
-  // An identifier takes the type of the field identifying the data record it names, so that field,
+  // An identifier takes the type of the field identifying the RecordType it names, so that field,
   // followed from one identifier to the next, ends in a field of another type.
   const identifying = (n: SpecNode) => fieldsUpChain(n).find((f) => f.name === n.identifiedBy);
   for (const [sid, { node }] of spec.nodes) {
-    if (node.kind !== "record") continue;
+    if (node.kind !== "recordType") continue;
     const by = node.identifiedBy as string | undefined;
     if (by && !fieldsUpChain(node).some((f) => f.name === by)) refuse(sid, `identified by ${by}, which is none of its fields`);
     const visit = (field: string, type: NeutralType) => {

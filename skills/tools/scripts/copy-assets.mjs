@@ -12,7 +12,11 @@ const require = createRequire(import.meta.url);
 const guidelines = new URL("../guidelines/", import.meta.url);
 mkdirSync(guidelines, { recursive: true });
 for (const name of ["spec.json", "tools.json"]) cpSync(new URL(`../../../specs/_guidelines/${name}`, import.meta.url), new URL(name, guidelines));
-cpSync(new URL("../../../specs/_schema/", import.meta.url), new URL("_schema/", guidelines), { recursive: true });
+// The schema's own files only, so that this repository's extension of it, were it to keep one, reaches no project.
+mkdirSync(new URL("_schema/", guidelines), { recursive: true });
+for (const name of ["node.schema.json", "section-file.schema.json", "extension.schema.json"]) {
+  cpSync(new URL(`../../../specs/_schema/${name}`, import.meta.url), new URL(`_schema/${name}`, guidelines));
+}
 
 const grammars = new URL("../grammars/", import.meta.url);
 mkdirSync(grammars, { recursive: true });
@@ -25,6 +29,40 @@ for (const wasm of [
   cpSync(require.resolve(wasm), new URL(basename(wasm), grammars));
 }
 
+/** The directory a package is installed in, found as Node finds it, since a package's exports may hide its own files. */
+function installedAt(name) {
+  for (let at = fileURLToPath(new URL("..", import.meta.url)); ; at = dirname(at)) {
+    if (existsSync(join(at, "node_modules", name, "package.json"))) return join(at, "node_modules", name);
+    if (dirname(at) === at) throw new Error(`${name}: not installed; run npm install`);
+  }
+}
+
+// The libraries the map's web page carries, so that it loads nothing from the network: each file starts with the
+// licence notice of every library it holds. markmap-view's file holds two libraries no package installs, whose
+// notices are kept beside this script; the build stops where the file holds another release of them.
+const map = new URL("../map/", import.meta.url);
+rmSync(map, { recursive: true, force: true });
+mkdirSync(map, { recursive: true });
+const installed = (name) => {
+  const dir = installedAt(name);
+  return { name, version: JSON.parse(readFileSync(join(dir, "package.json"), "utf8")).version, licence: readFileSync(join(dir, "LICENSE"), "utf8") };
+};
+const kept = (name, version) => ({ name, version, licence: readFileSync(new URL(`bundled-licences/${name.replace("/", "-")}-${version}`, import.meta.url), "utf8") });
+const notices = (libraries) =>
+  `/*!\n${libraries.map((l) => [` * ${l.name} ${l.version}`, " *", ...l.licence.trimEnd().split(/\r?\n/).map((line) => ` * ${line}`.trimEnd())].join("\n")).join("\n *\n")}\n */\n`;
+const view = readFileSync(join(installedAt("markmap-view"), "dist", "browser", "index.js"), "utf8");
+if (!view.includes("@gera2ld/jsx-dom v2.2.2")) throw new Error("markmap-view holds another release of @gera2ld/jsx-dom: keep its notice in scripts/bundled-licences/");
+if (!/const version\$?\d* = "2\.1\.2";[^]{0,1000}?function flextree\(/.test(view)) throw new Error("markmap-view holds another release of d3-flextree: keep its notice in scripts/bundled-licences/");
+const carried = {
+  "d3.js": notices(["d3", "internmap", "delaunator", "robust-predicates"].map(installed)) + readFileSync(join(installedAt("d3"), "dist", "d3.min.js"), "utf8"),
+  "markmap-view.js": notices([installed("markmap-view"), kept("@gera2ld/jsx-dom", "2.2.2"), kept("d3-flextree", "2.1.2")]) + view,
+};
+for (const [name, text] of Object.entries(carried)) {
+  // A script ends at the first `</script` the page holds, whatever the script's own syntax.
+  if (/<\/script/i.test(text)) throw new Error(`${name} holds </script and cannot be carried inside the map's web page`);
+  writeFileSync(new URL(name, map), text);
+}
+
 const pkg = fileURLToPath(new URL("..", import.meta.url));
 const claude = fileURLToPath(new URL("../../claude-code/", import.meta.url));
 const codex = fileURLToPath(new URL("../../codex/", import.meta.url));
@@ -35,7 +73,7 @@ const built = `${version} built ${new Date().toISOString()}\n`;
 function layOut(plugin, agent) {
   const tools = join(plugin, "tools");
   rmSync(tools, { recursive: true, force: true });
-  for (const part of ["package.json", "dist", "grammars", "languages", "guidelines", "assets", "hooks"]) cpSync(join(pkg, part), join(tools, part), { recursive: true });
+  for (const part of ["package.json", "dist", "grammars", "languages", "guidelines", "assets", "hooks", "map"]) cpSync(join(pkg, part), join(tools, part), { recursive: true });
 
   // ponytail: the dependencies are laid flat, one version of each; nest them if two ever need different versions.
   const copied = new Set();
@@ -110,4 +148,4 @@ for (const skill of readdirSync(join(claude, "skills"))) {
 // The scripts the agent's hooks for Codex call; Codex reads its hooks from the project, never from the plugin.
 rmSync(join(codex, "hooks"), { recursive: true, force: true });
 mkdirSync(join(codex, "hooks"));
-for (const script of ["session-start.sh", "guard.sh", "after-edit.sh"]) cpSync(join(claude, "hooks", script), join(codex, "hooks", script));
+for (const script of ["session-start.sh", "guard.sh", "after-edit.sh", "changed.mjs"]) cpSync(join(claude, "hooks", script), join(codex, "hooks", script));

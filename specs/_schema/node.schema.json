@@ -113,18 +113,18 @@
       }
     },
     {
-      "$comment": "A data record node: a data record the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the data record's name and its text what the data record is. The implementation's types and runtime checks are generated from it and never written beside it. A data record that refines another data record node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the data record it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
+      "$comment": "A RecordType: a structure of data the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the RecordType's name and its text what the RecordType is. The implementation's types and runtime checks are generated from it and never written beside it. A RecordType that refines another RecordType node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the RecordType it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
       "if": {
         "properties": {
           "kind": {
-            "const": "record"
+            "const": "recordType"
           }
         }
       },
       "then": {
         "properties": {
           "fields": {
-            "$comment": "The data record's own fields, in the order they read; one inherited from the data record it refines is not repeated here. At most one is of type variant, since that field is where the chosen variant's fields stand and a second would leave unsaid which one holds them.",
+            "$comment": "The RecordType's own fields, in the order they read; one inherited from the RecordType it refines is not repeated here. At most one is of type variant, since that field is where the chosen variant's fields stand and a second would leave unsaid which one holds them.",
             "type": "array",
             "items": {
               "$ref": "#/$defs/field"
@@ -151,7 +151,7 @@
             ]
           },
           "chosenBy": {
-            "$comment": "On a data record whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
+            "$comment": "On a RecordType whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
@@ -160,7 +160,7 @@
             }
           },
           "answersTo": {
-            "$comment": "On a data record variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest data record up its chain of refines names as choosing it.",
+            "$comment": "On a RecordType variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest RecordType up its chain of refines names as choosing it.",
             "type": "object",
             "minProperties": 1,
             "propertyNames": {
@@ -172,7 +172,7 @@
             }
           },
           "identifiedBy": {
-            "$comment": "Where another data record refers to this one by an identifier: the field, its own or inherited, that identifies it, whose type an identifier of it takes.",
+            "$comment": "Where another RecordType refers to this one by an identifier: the field, its own or inherited, that identifies it, whose type an identifier of it takes.",
             "$ref": "#/$defs/fieldName"
           }
         },
@@ -201,7 +201,7 @@
           ]
         },
         "then": {
-          "$comment": "A field of type variant stands only on the data record that names the fields choosing its variant.",
+          "$comment": "A field of type variant stands only on the RecordType that names the fields choosing its variant.",
           "required": [
             "chosenBy"
           ]
@@ -214,8 +214,8 @@
     "base": {
       "type": "object",
       "properties": {
-        "id": {
-          "$ref": "#/$defs/nodeId"
+        "location": {
+          "$ref": "#/$defs/location"
         },
         "sid": {
           "$ref": "#/$defs/sid"
@@ -227,11 +227,11 @@
             "section",
             "rule",
             "term",
-            "record"
+            "recordType"
           ]
         },
         "title": {
-          "$comment": "What the node is called where it is shown in a few words — in a link, in an index, in the map: a term's title is the term it defines, a data record's the data record's name.",
+          "$comment": "What the node is called where it is shown in a few words — in a link, in an index, in the map: a term's title is the term it defines, a RecordType's the RecordType's name.",
           "type": "string",
           "minLength": 1
         },
@@ -242,7 +242,7 @@
           "$comment": "What must hold; for a section or a header, what it is responsible for.",
           "type": "string"
         },
-        "rationale": {
+        "reason": {
           "$comment": "Why the requirement in text must hold; not part of it.",
           "type": "string"
         },
@@ -287,7 +287,7 @@
         }
       },
       "required": [
-        "id",
+        "location",
         "sid",
         "kind",
         "title",
@@ -296,8 +296,8 @@
         "refs"
       ]
     },
-    "nodeId": {
-      "$comment": "An address: the part the node stands in followed by its place there, e.g. contracts/4.1, or the domain's name alone for the header of a domain. Computed by the reindex from where the node stands and never written by hand; nothing refers to it.",
+    "location": {
+      "$comment": "A location: the part the node is in followed by its place there, e.g. contracts/4.1, or the domain's name alone for the header of a domain. Computed by the reindex from where the node is and never written by hand; nothing refers to it.",
       "type": "string",
       "pattern": "^_?[a-z][a-z0-9-]*(/[A-Za-z0-9][A-Za-z0-9 ./-]*)?$"
     },
@@ -413,12 +413,22 @@
           "minLength": 1
         },
         "members": {
-          "$comment": "Each member on its own, so that a machine can compare them with the declaration that holds them.",
+          "$comment": "Each member on its own, so that a machine can compare them with the declaration that holds them: a primitive value, or an object whose property the list names holds its value and whose other properties state what holds of it.",
           "type": "array",
           "minItems": 1,
           "items": {
-            "type": "string"
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "object"
+            ]
           }
+        },
+        "property": {
+          "$comment": "Where a member is an object: the property each such member holds its value under.",
+          "type": "string",
+          "minLength": 1
         },
         "declaredIn": {
           "type": "object",
@@ -440,7 +450,7 @@
           "additionalProperties": false
         },
         "field": {
-          "$comment": "On a list declaring values of a field choosing a data record variant: the name of that field, of the data record of contracts the list's rule refines.",
+          "$comment": "On a list declaring values of a field choosing a RecordType variant: the name of that field, of the RecordType of contracts the list's rule refines.",
           "$ref": "#/$defs/fieldName"
         }
       },
@@ -456,7 +466,7 @@
       "pattern": "^[a-z][A-Za-z0-9]*$"
     },
     "field": {
-      "$comment": "One field as a data record node declares it: its name, its type, whether it is required and what it says.",
+      "$comment": "One field as a RecordType node declares it: its name, its type, whether it is required and what it says.",
       "type": "object",
       "properties": {
         "name": {
@@ -471,6 +481,26 @@
         "text": {
           "$comment": "What the field says.",
           "type": "string"
+        },
+        "gathered": {
+          "$comment": "Beside a field whose values come from elsewhere than its own list: every value gathered for it, each with the sid of the node it comes from, gathered anew by the reindex and never written by hand.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "sid": {
+                "$ref": "#/$defs/sid"
+              }
+            },
+            "required": [
+              "value",
+              "sid"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "required": [
@@ -513,7 +543,7 @@
       }
     },
     "neutralType": {
-      "$comment": "A field's type in neutral terms, named by is; the appendix of the tools says what each generates, and a project's technical appendix names the JSON Schema validator that runs the generated runtime checks. email address is text holding one email address; instant is a moment of time, carrying its offset from UTC; date is a day of the calendar, with no time of day and no time zone; any value is data of no shape the specification declares; one of lists its values; list of, the type of its members and any bounds on how many members it holds; map of, the type of its values, each kept under a key of text; record and identifier of, the sid of the data record node they name, a data record variant excluded. variant is the object of the fields the chosen data record variant declares, beside the fields every variant holds: it stands only as a field's own type, on the data record that names the fields choosing its variant.",
+      "$comment": "A field's type in neutral terms, named by is; the appendix of the tools says what each generates, and a project's technical appendix names the JSON Schema validator that runs the generated runtime checks. email address is text holding one email address; instant is a moment of time, carrying its offset from UTC; date is a day of the calendar, with no time of day and no time zone; any value is data of no shape the specification declares; one of lists its values; list of, the type of its members and any bounds on how many members it holds; map of, the type of its values, each kept under a key of text; record and identifier of, the sid of the RecordType node they name, a RecordType variant excluded. variant is the object of the fields the chosen RecordType variant declares, beside the fields every variant holds: it stands only as a field's own type, on the RecordType that names the fields choosing its variant.",
       "type": "object",
       "properties": {
         "is": {
@@ -549,21 +579,75 @@
             }
           },
           "then": {
+            "$comment": "The one source of the field's values (s-xfu2gpzddjnmgks): its own list, or, under from, the values the domains add, the names of the domains, or the sids of the nodes of the kind it names.",
             "properties": {
               "values": {
+                "$comment": "The values the field's own list declares.",
                 "type": "array",
-                "minItems": 0,
+                "minItems": 1,
                 "uniqueItems": true,
                 "items": {
                   "type": "string",
                   "minLength": 1
-                },
-                "$comment": "The values the field's own list declares; empty where every value of a field choosing a data record variant is declared in the lists of domains."
+                }
+              },
+              "from": {
+                "enum": [
+                  "domains",
+                  "domainNames",
+                  "kindSids"
+                ]
+              },
+              "kind": {
+                "$comment": "Under from kindSids: the kind whose nodes' sids are the values.",
+                "type": "string",
+                "minLength": 1
               }
             },
-            "required": [
-              "values"
-            ]
+            "oneOf": [
+              {
+                "required": [
+                  "values"
+                ],
+                "not": {
+                  "required": [
+                    "from"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "from"
+                ],
+                "not": {
+                  "required": [
+                    "values"
+                  ]
+                }
+              }
+            ],
+            "if": {
+              "properties": {
+                "from": {
+                  "const": "kindSids"
+                }
+              },
+              "required": [
+                "from"
+              ]
+            },
+            "then": {
+              "required": [
+                "kind"
+              ]
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "kind"
+                ]
+              }
+            }
           }
         },
         {
@@ -631,7 +715,7 @@
           }
         },
         {
-          "$comment": "The bounds a whole number or a number may take, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the data record.",
+          "$comment": "The bounds a whole number or a number may take, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the RecordType.",
           "if": {
             "properties": {
               "is": {
@@ -660,7 +744,7 @@
           }
         },
         {
-          "$comment": "The bounds on how many members a list holds, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the data record.",
+          "$comment": "The bounds on how many members a list holds, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the RecordType.",
           "if": {
             "properties": {
               "is": {

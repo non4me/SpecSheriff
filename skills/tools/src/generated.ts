@@ -1,16 +1,42 @@
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { domainOrder, isDomain, levelsOf, partOf } from "./model.ts";
 import { nodeMarkdown } from "./show.ts";
 import { loadSpecification, type SpecNode, type Specification } from "./spec-files.ts";
 
 const EXPORT = "md-version";
-const MARKMAP = "https://cdn.jsdelivr.net/npm/markmap-autoloader@0.18.12";
 
-/** Empties a directory written from the nodes alone and keeps it out of git, so that no repository stores it whatever its own ignore file says. */
+/** The libraries the map's web page carries, in the order it runs them, each with its licence notice; the build writes them. */
+const LIBRARIES = ["d3.js", "markmap-view.js"].map((name) => new URL(`../map/${name}`, import.meta.url));
+
+/**
+ * The page's own script: it reads the outline into the tree markmap draws, one node a line nested by its indent,
+ * and shows each title as text, so that nothing in a title is read as markup or makes the page load anything.
+ */
+const DRAW = String.raw`const text = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const root = { content: "", children: [] };
+const open = [{ depth: -1, node: root }];
+for (const line of OUTLINE.split("\n")) {
+  const heading = /^# (.*)$/.exec(line);
+  const item = /^( *)- (.*)$/.exec(line);
+  if (heading) root.content = text(heading[1]);
+  if (!item) continue;
+  const depth = item[1].length / 2;
+  const node = { content: text(item[2].replace(/\\(.)/g, "$1")), children: [] };
+  while (open[open.length - 1].depth >= depth) open.pop();
+  open[open.length - 1].node.children.push(node);
+  open.push({ depth, node });
+}
+markmap.Markmap.create("svg.markmap", null, root);`;
+
+/**
+ * Empties a directory written from the nodes alone and keeps it out of git, so that no repository stores it whatever
+ * its own ignore file says. The directory itself stays, since a server running on it may hold it, and Windows
+ * removes no directory a process holds.
+ */
 function regenerated(root: string, dir: string): void {
-  rmSync(join(root, dir), { recursive: true, force: true });
   mkdirSync(join(root, dir), { recursive: true });
+  for (const entry of readdirSync(join(root, dir))) rmSync(join(root, dir, entry), { recursive: true, force: true });
   writeFileSync(join(root, dir, ".gitignore"), "*\n");
 }
 
@@ -65,21 +91,27 @@ export function outline(spec: Specification): string {
   return out.join("\n") + "\n";
 }
 
-/** Writes the map: one web page that draws it with markmap from the outline it carries. */
+/**
+ * Writes the map: one web page that draws it with markmap from the outline it carries, holding markmap and every
+ * library it needs, so that it loads nothing from the network.
+ */
 export function render(root: string): string {
   const spec = loadSpecification(root);
+  // Every `<` written as its escape, so that no title ends the script it stands in.
+  const carried = JSON.stringify(outline(spec)).replace(/</g, "\\u003c");
   const page = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The map of the specification</title>
-<style>html, body, .markmap { margin: 0; height: 100%; } .markmap > svg { width: 100%; height: 100%; }</style>
-<script src="${MARKMAP}"></script>
+<style>html, body { margin: 0; height: 100%; } svg.markmap { display: block; width: 100%; height: 100%; }</style>
 </head>
 <body>
-<div class="markmap"><script type="text/template">
-${outline(spec).replace(/<\/script/gi, "<\\/script")}</script></div>
+<svg class="markmap"></svg>
+<script>const OUTLINE = ${carried};</script>
+${LIBRARIES.map((library) => `<script>\n${readFileSync(library, "utf8")}</script>`).join("\n")}
+<script>\n${DRAW}\n</script>
 </body>
 </html>
 `;
