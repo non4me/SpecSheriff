@@ -268,3 +268,15 @@ test("s-zh2vcr3xjumppg5 spec-init offers each setting of the runner the configur
     assert.doesNotMatch(text, /--model|--effort/, skill);
   }
 });
+
+test("s-477gtdrkw34dzxw the plugin's session start names no file of the project's own tools, which run by the interpreter their first line names", () => {
+  const root = gitRepo(true);
+  mkdirSync(join(root, ".githooks", "pre-commit.d"), { recursive: true });
+  writeFileSync(join(root, ".githooks", "pre-commit"), "#!/bin/sh\nexit 0\n");
+  writeFileSync(join(root, ".githooks", "pre-commit.d", "10-scan.sh"), "#!/bin/sh\nexit 0\n");
+  writeFileSync(join(root, ".githooks", "pre-commit.d", "README"), "what these tools are for\n");
+  git(root, "add", "--chmod=+x", ".githooks/pre-commit");
+  git(root, "add", "--chmod=-x", ".githooks/pre-commit.d");
+  const start = pluginHook("session-start.sh", plugins(), root);
+  assert.doesNotMatch(start.stdout, /pre-commit\.d/);
+});

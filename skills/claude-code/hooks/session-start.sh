@@ -28,9 +28,11 @@ elif [ "$path" != ".githooks" ]; then
   echo "SpecSheriff: core.hooksPath is $path, not .githooks, so the git hooks sheriff init writes do not run"
 fi
 # A git hook not executable is skipped where files keep that bit: named, with how to make it executable on
-# every system, the file and the index left to the author.
+# every system, the file and the index left to the author. The project's own tools in .githooks/<hook>.d/ are run
+# by the interpreter their first line names, so they need no such bit and are not named.
 filemode=$(git -C "$root" config --bool core.fileMode)
 git -C "$root" ls-files -s -- .githooks | while read -r mode object stage file; do
+  case $file in .githooks/*/*) continue ;; esac
   if [ "$mode" != 100755 ] || { [ "$filemode" != false ] && [ ! -x "$root/$file" ]; }; then
     echo "SpecSheriff: the git hook $file is not executable, so git skips it where files keep that bit: chmod +x $file && git update-index --chmod=+x $file, then commit it"
   fi

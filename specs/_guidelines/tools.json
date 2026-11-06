@@ -763,6 +763,7 @@
               "skills/tools/test/e2e/hooks.test.ts::s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
               "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw in a repository taking the method the session start names each setting the user's configuration lacks, with its default, and has the agent ask for them once on each machine",
               "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index",
+              "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start names no file of the project's own tools, which run by the interpreter their first line names",
               "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory",
               "skills/tools/test/e2e/plugin.test.ts::s-477gtdrkw34dzxw the session start of the plugin for Claude Code writes each setting the user gave as an option, in any repository, wherever the configuration lacks it or holds another value",
               "skills/tools/test/unit/config.test.ts::s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
