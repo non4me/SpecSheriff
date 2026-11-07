@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <mask id="s">
+    <rect width="32" height="32" fill="#fff"/>
+    <path d="M13 12h7v1h-7zM12 13h8v1h-8zM11 14h2v1h-2zM11 15h2v1h-2zM12 16h6v1h-6zM13 17h6v1h-6zM18 18h2v1h-2zM18 19h2v1h-2zM9 20h10v1h-10zM9 21h9v1h-9z" fill="#000"/>
+  </mask>
+  <g mask="url(#s)" fill="#17232b">
+    <path d="M16.00,0.00 L20.23,12.00 L31.63,12.00 L22.82,20.27 L25.71,31.99 L16.00,25.43 L6.29,31.99 L9.18,20.27 L0.37,12.00 L11.77,12.00Z"/>
+    <circle cx="16" cy="2" r="2.3"/>
+    <circle cx="30" cy="13" r="2.3"/>
+    <circle cx="24" cy="30" r="2.3"/>
+    <circle cx="8" cy="30" r="2.3"/>
+    <circle cx="2" cy="13" r="2.3"/>
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-// Renders every export of the mark from the owner's three drawings beside this script, each at its exact
+// Renders every export of the mark from the five drawings beside this script, each at its exact
 // size, so that a change to a drawing is one run of `node _promo/brand/render.mjs` and the exports never drift.
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -17,6 +17,8 @@ if (createHash("sha256").update(coin).digest("hex") !== COIN_SHA256 || !coin.inc
 }
 const icon = read("icon.svg"); // up to 128 px: its line is heavier and its rings larger
 const star = read("star.svg"); // above 128 px
+const favicon16 = read("favicon-16.svg"); // the browser's icons, each drawn on its own grid of pixels
+const favicon32 = read("favicon-32.svg");
 
 const out = new URL("exports/", import.meta.url);
 mkdirSync(out, { recursive: true });
@@ -25,8 +27,9 @@ const svg = (name, text) => writeFileSync(new URL(name, out), optimize(text, {
   plugins: [{ name: "preset-default", params: { overrides: { removeViewBox: false } } }], // a scaled image keeps its drawing
 }).data);
 const sizes = new Map();
+const raster = (text, width) => new Resvg(text, { fitTo: { mode: "width", value: width } }).render().asPng();
 const png = (name, text, width, height) => {
-  const data = new Resvg(text, { fitTo: { mode: "width", value: width } }).render().asPng();
+  const data = raster(text, width);
   writeFileSync(new URL(name, out), data);
   sizes.set(name, { data, width, height });
   return data;
@@ -43,18 +46,23 @@ function place(width, height, background, drawing, inner) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${fill}<svg x="${(width - inner) / 2}" y="${(height - inner) / 2}" width="${inner}" height="${inner}" viewBox="${viewBox}">${body}</svg></svg>`;
 }
 
-/** An ICO holding one PNG, which every browser reads. */
-function ico(data, size) {
-  const head = Buffer.alloc(22);
+/** An ICO holding PNGs, which every browser reads; each image is `[data, size]`. */
+function ico(images) {
+  const head = Buffer.alloc(6 + 16 * images.length);
   head.writeUInt16LE(1, 2);
-  head.writeUInt16LE(1, 4);
-  head.writeUInt8(size, 6);
-  head.writeUInt8(size, 7);
-  head.writeUInt16LE(1, 10);
-  head.writeUInt16LE(32, 12);
-  head.writeUInt32LE(data.length, 14);
-  head.writeUInt32LE(22, 18);
-  return Buffer.concat([head, data]);
+  head.writeUInt16LE(images.length, 4);
+  let offset = head.length;
+  images.forEach(([data, size], i) => {
+    const entry = 6 + 16 * i;
+    head.writeUInt8(size, entry);
+    head.writeUInt8(size, entry + 1);
+    head.writeUInt16LE(1, entry + 4);
+    head.writeUInt16LE(32, entry + 6);
+    head.writeUInt32LE(data.length, entry + 8);
+    head.writeUInt32LE(offset, entry + 12);
+    offset += data.length;
+  });
+  return Buffer.concat([head, ...images.map(([data]) => data)]);
 }
 
 // The README's header, light or dark following the reader's theme.
@@ -71,7 +79,10 @@ png("apple-touch-icon.png", place(180, 180, "#fff", star, 140), 180, 180);
 png("icon-192.png", place(192, 192, "#fff", star, 150), 192, 192);
 png("icon-512.png", place(512, 512, "#fff", star, 400), 512, 512);
 png("icon-512-maskable.png", place(512, 512, "#fff", star, 360), 512, 512); // the mark inside the 409 px safe circle
-writeFileSync(new URL("favicon.ico", out), ico(png("favicon-32.png", place(32, 32, null, icon, 32), 32, 32), 32));
+// The browser's icons: its own drawing at each size, the ICO holding both.
+const favicon16png = raster(favicon16, 16);
+sizes.set("favicon.ico (16)", { data: favicon16png, width: 16, height: 16 });
+writeFileSync(new URL("favicon.ico", out), ico([[favicon16png, 16], [png("favicon-32.png", favicon32, 32, 32), 32]]));
 
 for (const [name, { data, width, height }] of sizes) {
   if (data.readUInt32BE(16) !== width || data.readUInt32BE(20) !== height) throw new Error(`${name} is not ${width}×${height}`);
