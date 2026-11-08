@@ -6,13 +6,8 @@
 
 **No code ships without a rule that warrants it.**
 
-SpecSheriff is a method of spec-anchored development, the tools that hold a project to it, and a
-worked example of it. The specification is a set of small rule nodes, each with a permanent
-identifier, a reason held apart from the requirement, and a status, draft or approved, that says
-whether one of its owners has approved the wording. Every symbol in the code names the rule it implements,
-every test declares the rule it verifies, and every commit is checked against the rules it claims to
-serve — by deterministic checks, and by an independent reviewer that sees only the change and the
-text of those rules.
+SpecSheriff is a spec-anchored development method and the tools that enforce it: code is written only
+against approved rules of the specification, and every commit is checked against them.
 
 ## Three parts
 
