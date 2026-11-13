@@ -12,7 +12,7 @@
       "if": {
         "properties": {
           "kind": {
-            "const": "domain"
+            "const": "header"
           }
         }
       },
@@ -100,7 +100,7 @@
       "if": {
         "properties": {
           "kind": {
-            "const": "rule"
+            "const": "TextRule"
           }
         }
       },
@@ -117,7 +117,7 @@
       "if": {
         "properties": {
           "kind": {
-            "const": "recordType"
+            "const": "RecordType"
           }
         }
       },
@@ -221,13 +221,13 @@
           "$ref": "#/$defs/sid"
         },
         "kind": {
-          "$comment": "domain is the header of a domain; a term's title is the term it defines.",
+          "$comment": "header is a domain's header; a term's title is the term it defines.",
           "enum": [
-            "domain",
+            "header",
             "section",
-            "rule",
+            "TextRule",
             "term",
-            "recordType"
+            "RecordType"
           ]
         },
         "title": {

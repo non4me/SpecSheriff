@@ -12,16 +12,19 @@
       "type": "string"
     },
     "kinds": {
-      "$comment": "The project's own kinds of node, each by its name: whether its nodes need code, and the JSON Schema of the fields its nodes hold beside those every node holds. A kind of the SpecSheriff guidelines cannot be declared again, nor record, the name earlier releases gave recordType, which the reindex renames.",
+      "$comment": "The project's own kinds of node, each by its name: whether its nodes need code, and the JSON Schema of the fields its nodes hold beside those every node holds. A kind of the SpecSheriff guidelines cannot be declared again, nor a name an earlier release gave one of them, which the reindex renames: record, recordType, rule and domain.",
       "type": "object",
       "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$",
+        "pattern": "^[A-Za-z][A-Za-z0-9]*$",
         "not": {
           "enum": [
-            "domain",
+            "header",
             "section",
-            "rule",
+            "TextRule",
             "term",
+            "RecordType",
+            "domain",
+            "rule",
             "recordType",
             "record"
           ]
@@ -50,11 +53,11 @@
       "type": "object",
       "propertyNames": {
         "enum": [
-          "domain",
+          "header",
           "section",
-          "rule",
+          "TextRule",
           "term",
-          "recordType"
+          "RecordType"
         ]
       },
       "additionalProperties": {

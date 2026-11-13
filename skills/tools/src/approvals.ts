@@ -89,7 +89,7 @@ export function approve(root: string, sids: string[], { me, withdraw = false }: 
     const at = spec.nodes.get(sid);
     if (!at) throw new Error(`${sid}: no node holds this sid`);
     if (isContainer(at.node.kind)) {
-      throw new Error(`${sid}: a ${at.node.kind === "domain" ? "domain's header" : "section"}, whose status is built from the nodes under it, so nobody approves it`);
+      throw new Error(`${sid}: a ${at.node.kind === "header" ? "domain's header" : "section"}, whose status is built from the nodes under it, so nobody approves it`);
     }
     if (takesGuidelines(root) && partOf(at.file.path).specSheriffGuidelines) {
       throw new Error(`${sid}: a node of the SpecSheriff guidelines, approved only in the repository they are written in`);

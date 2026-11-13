@@ -99,7 +99,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff export, render and guide write the export 
 });
 
 test("@spec s-f5rz6b7dhxejjts sheriff types writes the types where the technical appendix lists them, and refuses what cannot be generated", () => {
-  const customer = (title: string) => node("customer", { kind: "recordType", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" });
+  const customer = (title: string) => node("customer", { kind: "RecordType", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" });
   const files = (title: string) => ({
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [customer(title)] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [

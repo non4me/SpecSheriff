@@ -143,7 +143,7 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
     }
     const spec = loadSpecification(root);
     const rules = new Set<string>();
-    for (const s of touched) for (const t of s.tags) if (t.sid && spec.nodes.get(t.sid)?.node.kind === "rule") rules.add(t.sid);
+    for (const s of touched) for (const t of s.tags) if (t.sid && spec.nodes.get(t.sid)?.node.kind === "TextRule") rules.add(t.sid);
     if (rules.size) {
       // The tests as the edit leaves them: those the working tree holds, and those the edit writes.
       const tested = new Set<string>();

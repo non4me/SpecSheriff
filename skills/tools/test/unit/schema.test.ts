@@ -6,7 +6,7 @@ import { NONE, repo, sid } from "../fixture.ts";
 import { REPO } from "../repo.ts";
 
 const schema = loadSchema(REPO);
-const ok = { location: "x/1", sid: sid("ok"), kind: "rule", title: "t", status: "draft", text: "", refs: [] };
+const ok = { location: "x/1", sid: sid("ok"), kind: "TextRule", title: "t", status: "draft", text: "", refs: [] };
 const file = (...nodes: object[]) => ({ schemaVersion: 1, scope: "x", section: "x", nodes });
 
 test("@spec s-eferktypcj7njt5 accepts every file of the specification as it stands", () => {
@@ -25,16 +25,16 @@ const refused: Record<string, object> = {
   "a link naming both its ends": { ...ok, refs: [{ type: "cites", to: NONE, from: NONE }] },
   "a comment opening with TODO": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "TODO x" }] } },
   "a comment of a type other than problem": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "x", type: "note" }] } },
-  "a RecordType without fields": { ...ok, kind: "recordType" },
-  "a header without its level": { ...ok, kind: "domain" },
+  "a RecordType without fields": { ...ok, kind: "RecordType" },
+  "a header without its level": { ...ok, kind: "header" },
   "an archived node without its reason": { ...ok, archived: { date: "2026-10-28" } },
-  "a bound on a field of text": { ...ok, kind: "recordType", unknown: "refused", fields: [{ name: "a", type: { is: "text", minimum: 1 }, required: true, text: "" }] },
-  "a bound on how many members a field of text holds": { ...ok, kind: "recordType", unknown: "refused", fields: [{ name: "a", type: { is: "text", minItems: 1 }, required: true, text: "" }] },
-  "a bound on the value of a field of type list of": { ...ok, kind: "recordType", unknown: "refused", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minimum: 1 }, required: true, text: "" }] },
-  "a bound on how many members a list holds that is no whole number of zero or more": { ...ok, kind: "recordType", unknown: "refused", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minItems: -1 }, required: true, text: "" }] },
-  "a field of type variant on a RecordType naming no field choosing its variant": { ...ok, kind: "recordType", unknown: "refused", fields: [{ name: "context", type: { is: "variant" }, required: "where it holds a value", text: "" }] },
+  "a bound on a field of text": { ...ok, kind: "RecordType", unknown: "refused", fields: [{ name: "a", type: { is: "text", minimum: 1 }, required: true, text: "" }] },
+  "a bound on how many members a field of text holds": { ...ok, kind: "RecordType", unknown: "refused", fields: [{ name: "a", type: { is: "text", minItems: 1 }, required: true, text: "" }] },
+  "a bound on the value of a field of type list of": { ...ok, kind: "RecordType", unknown: "refused", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minimum: 1 }, required: true, text: "" }] },
+  "a bound on how many members a list holds that is no whole number of zero or more": { ...ok, kind: "RecordType", unknown: "refused", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minItems: -1 }, required: true, text: "" }] },
+  "a field of type variant on a RecordType naming no field choosing its variant": { ...ok, kind: "RecordType", unknown: "refused", fields: [{ name: "context", type: { is: "variant" }, required: "where it holds a value", text: "" }] },
   "a list naming a field with something other than a field name": { ...ok, list: { of: "x", members: ["a"], field: "Not a name" } },
-  "a RecordType holding two fields of type variant": { ...ok, kind: "recordType", unknown: "refused", fields: [
+  "a RecordType holding two fields of type variant": { ...ok, kind: "RecordType", unknown: "refused", fields: [
     { name: "context", type: { is: "variant" }, required: "where it holds a value", text: "" },
     { name: "details", type: { is: "variant" }, required: "where it holds a value", text: "" },
   ] },
@@ -48,14 +48,14 @@ for (const [what, node] of Object.entries(refused)) {
 const accepted: Record<string, object> = {
   "owners on a section": { ...ok, kind: "section", owners: ["a@b.c", "d@e.f"] },
   "a comment of type problem": { ...ok, meta: { comments: [{ date: "2026-10-28", by: "a", text: "x", type: "problem" }] } },
-  "a bound on a whole number": { ...ok, kind: "recordType", unknown: "kept", fields: [{ name: "a", type: { is: "whole number", minimum: 1 }, required: true, text: "" }] },
-  "bounds on how many members a list holds": { ...ok, kind: "recordType", unknown: "kept", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minItems: 1, maxItems: 3 }, required: true, text: "" }] },
-  "a field of type date": { ...ok, kind: "recordType", unknown: "kept", fields: [{ name: "a", type: { is: "date" }, required: true, text: "" }] },
-  "a RecordType holding one field of type variant beside others": { ...ok, kind: "recordType", unknown: "refused", chosenBy: ["kind"], fields: [
+  "a bound on a whole number": { ...ok, kind: "RecordType", unknown: "kept", fields: [{ name: "a", type: { is: "whole number", minimum: 1 }, required: true, text: "" }] },
+  "bounds on how many members a list holds": { ...ok, kind: "RecordType", unknown: "kept", fields: [{ name: "a", type: { is: "list of", of: { is: "text" }, minItems: 1, maxItems: 3 }, required: true, text: "" }] },
+  "a field of type date": { ...ok, kind: "RecordType", unknown: "kept", fields: [{ name: "a", type: { is: "date" }, required: true, text: "" }] },
+  "a RecordType holding one field of type variant beside others": { ...ok, kind: "RecordType", unknown: "refused", chosenBy: ["kind"], fields: [
     { name: "kind", type: { is: "one of", values: ["a", "b"] }, required: true, text: "" },
     { name: "context", type: { is: "variant", fields: [{ name: "concerns", type: { is: "text" }, required: true, text: "" }] }, required: "where it holds a value", text: "" },
   ] },
-  "a header with its level, code and index": { ...ok, kind: "domain", level: "core", code: null, sections: [] },
+  "a header with its level, code and index": { ...ok, kind: "header", level: "core", code: null, sections: [] },
   "an archived node with its reason and replacement": { ...ok, archived: { date: "2026-10-28", reason: "r", replacedBy: NONE } },
 };
 for (const [what, node] of Object.entries(accepted)) {
@@ -78,7 +78,7 @@ test("@spec s-eferktypcj7njt5 names a field nobody declared, and a required fiel
 /** A project's extension: a kind of its own, a field it adds to rules, and a property of a file and of a link. */
 const EXTENSION = {
   kinds: { job: { needsCode: true, schema: { properties: { steps: { type: "array", items: { type: "string" } } }, required: ["steps"] } } },
-  fields: { rule: { properties: { severity: { enum: ["low", "high"] } } } },
+  fields: { TextRule: { properties: { severity: { enum: ["low", "high"] } } } },
   file: { properties: { domainCode: { type: "string" } } },
   link: { properties: { note: { type: "string" } } },
 };
@@ -101,10 +101,12 @@ test("@spec s-xzcw3hv4hmxz7h7 composes a project's extension with the schema: it
 test("@spec s-xzcw3hv4hmxz7h7 refuses an extension that does more than add, and then composes nothing", () => {
   const cases: Record<string, object> = {
     "a key the schema of an extension does not hold": { ...EXTENSION, nodes: {} },
-    "a kind the SpecSheriff guidelines already have": { kinds: { rule: { needsCode: true, schema: {} } } },
-    "a kind named record, the name earlier releases gave recordType, which the reindex renames": { kinds: { record: { needsCode: true, schema: {} } } },
+    "a kind the SpecSheriff guidelines already have": { kinds: { TextRule: { needsCode: true, schema: {} } } },
+    "a kind named rule, the name earlier releases gave TextRule, which the reindex renames": { kinds: { rule: { needsCode: true, schema: {} } } },
+    "a kind named domain, the name earlier releases gave header, which the reindex renames": { kinds: { domain: { needsCode: true, schema: {} } } },
+    "a kind named record, the name earlier releases gave RecordType, which the reindex renames": { kinds: { record: { needsCode: true, schema: {} } } },
     "a kind with no word on whether it needs code": { kinds: { job: { schema: {} } } },
-    "a field the schema already defines": { fields: { rule: { properties: { text: { type: "number" } } } } },
+    "a field the schema already defines": { fields: { TextRule: { properties: { text: { type: "number" } } } } },
     "a field a kind of its own names as the schema does": { kinds: { job: { needsCode: false, schema: { properties: { title: { type: "number" } } } } } },
     "a property a file already has": { file: { properties: { scope: { type: "number" } } } },
   };
@@ -121,9 +123,9 @@ test("@spec s-eferktypcj7njt5 accepts a list whose members are objects naming th
 });
 
 test("@spec s-eferktypcj7njt5 takes a field of type one of naming its source, with the values gathered beside it, and refuses one naming two sources", () => {
-  const event = (type: object, more: object = {}) => ({ ...ok, kind: "recordType", unknown: "refused", fields: [{ name: "kind", type, required: true, text: "", ...more }] });
+  const event = (type: object, more: object = {}) => ({ ...ok, kind: "RecordType", unknown: "refused", fields: [{ name: "kind", type, required: true, text: "", ...more }] });
   assert.deepEqual(schema.check(file(event({ is: "one of", from: "domains" }, { gathered: [{ value: "paid", sid: NONE }] }))), []);
-  assert.deepEqual(schema.check(file(event({ is: "one of", from: "kindSids", kind: "rule" }))), []);
+  assert.deepEqual(schema.check(file(event({ is: "one of", from: "kindSids", kind: "TextRule" }))), []);
   assert.notDeepEqual(schema.check(file(event({ is: "one of", values: ["a"], from: "domains" }))), [], "two sources");
   assert.notDeepEqual(schema.check(file(event({ is: "one of", from: "kindSids" }))), [], "the sids of no kind named");
 });

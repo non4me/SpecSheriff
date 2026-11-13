@@ -81,7 +81,7 @@ export function outline(spec: Specification): string {
   const levels = levelsOf(spec) ?? [];
   const order = domainOrder(spec);
   const domainFiles = (d: string) => files((p) => p === d);
-  const levelOf = (d: string) => domainFiles(d).flatMap((f) => f.data.nodes).find((n) => n.kind === "domain")?.level as string | undefined;
+  const levelOf = (d: string) => domainFiles(d).flatMap((f) => f.data.nodes).find((n) => n.kind === "header")?.level as string | undefined;
   const branches = [...levels.map((l, i) => ({ title: `${i + 1} ${l}`, has: (lv?: string) => lv === l })), { title: "No level listed", has: (lv?: string) => !lv || !levels.includes(lv) }];
   for (const b of branches) {
     const domains = order.filter((d) => isDomain(d) && b.has(levelOf(d)));
@@ -89,7 +89,7 @@ export function outline(spec: Specification): string {
     out.push(item(0, b.title));
     for (const d of domains) {
       const nodes = domainFiles(d).flatMap((f) => f.data.nodes);
-      const header = nodes.find((n) => n.kind === "domain");
+      const header = nodes.find((n) => n.kind === "header");
       out.push(header ? nodeItem(1, header) : item(1, d));
       branch(nodes.filter((n) => n !== header), 2, out);
     }

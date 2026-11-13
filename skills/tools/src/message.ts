@@ -17,8 +17,8 @@ export async function message(root: string, text: string): Promise<Finding[]> {
   for (const sid of named) {
     const node = spec.nodes.get(sid)?.node;
     if (!node) findings.push({ where, message: `names ${sid}, which names no node` });
-    else if (node.kind === "domain" || node.kind === "section") {
-      findings.push({ where, message: `names ${sid} (${node.location}), a ${node.kind === "domain" ? "domain's header" : "section"}, which requires nothing a change could serve` });
+    else if (node.kind === "header" || node.kind === "section") {
+      findings.push({ where, message: `names ${sid} (${node.location}), a ${node.kind === "header" ? "domain's header" : "section"}, which requires nothing a change could serve` });
     }
   }
   for (const sid of changedTags(await readCommit(root, loadConfig(root)))) {

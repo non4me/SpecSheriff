@@ -72,14 +72,18 @@ function compose(node: Json, file: Json, ext: Extension): string[] {
  * project's extension alone where the schema of an extension refuses it, since nothing is then composed to validate
  * the files against, else every refusal in each file.
  */
-export function schemaRefusals(root: string, files: Array<{ path: string; data: unknown }>): Array<{ where: string; message: string }> {
-  const schema = loadSchema(root);
+export function schemaRefusals(root: string, files: Array<{ path: string; data: unknown }>, extension?: Extension): Array<{ where: string; message: string }> {
+  const schema = loadSchema(root, extension);
   if (schema.extension.length) return schema.extension.map((message) => ({ where: EXTENSION, message }));
   return files.flatMap((f) => schema.check(f.data).map((message) => ({ where: f.path, message })));
 }
 
-/** The schema of the repository's specification: its own where it writes the SpecSheriff guidelines, else the one the tools carry, composed with the project's extension. */
-export function loadSchema(root: string): Schema {
+/**
+ * The schema of the repository's specification: its own where it writes the SpecSheriff guidelines, else the one the
+ * tools carry, composed with the project's extension, or with the one given where the reindex has renamed what an
+ * earlier release wrote in it and not yet written it.
+ */
+export function loadSchema(root: string, given?: Extension): Schema {
   const dir = takesGuidelines(root) ? join(CARRIED, "_schema") : join(root, "specs", "_schema");
   const read = (name: string): Json => JSON.parse(readFileSync(join(dir, name), "utf8"));
   const errorsOf = (validate: { errors?: Array<{ instancePath: string; message?: string; params: unknown }> | null }) => {
@@ -102,7 +106,7 @@ export function loadSchema(root: string): Schema {
   let extension: string[] = [];
   let ext: Extension | null = null;
   try {
-    ext = readExtension(root);
+    ext = given ?? readExtension(root);
   } catch (error) {
     extension = [`cannot be read: ${(error as Error).message}`];
   }

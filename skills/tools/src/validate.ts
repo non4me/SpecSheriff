@@ -24,7 +24,7 @@ export interface ValidateOptions {
 }
 
 /** Every kind but a section and a domain's header requires something, a project's own kinds included (s-vsh384ybt4w25a2). */
-const REQUIRING = { has: (kind: string) => kind !== "section" && kind !== "domain" };
+const REQUIRING = { has: (kind: string) => kind !== "section" && kind !== "header" };
 const isBase = (path: string) => !["_guidelines", "tech"].includes(partOf(path).part);
 
 export function validate(root: string, { before }: ValidateOptions = {}): Finding[] {
@@ -82,7 +82,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   const live = all.filter(({ path }) => !path.startsWith("specs/_archive/"));
   count(live.map(({ node, path }) => [node.location, path]), (v) => `location ${v} is held by more than one node`);
   count(live.filter(({ node }) => node.kind === "term").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `term "${v}" is named by more than one term node`);
-  count(live.filter(({ node }) => node.kind === "recordType").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `RecordType "${v}" is the name of more than one RecordType`);
+  count(live.filter(({ node }) => node.kind === "RecordType").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `RecordType "${v}" is the name of more than one RecordType`);
   for (const { node, path } of live) if (node.kind === "term" && partOf(path).part !== "contracts") refuse(node.sid, "a term node outside contracts, where alone a term is declared");
 
   const ids = locations(spec);
@@ -227,7 +227,7 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
     if (!parts.has(part)) parts.set(part, { sections: [] });
     const entry = parts.get(part)!;
     for (const n of f.data.nodes) {
-      if (n.kind === "domain") (entry.header = n), entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
+      if (n.kind === "header") (entry.header = n), entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
       else if (n.kind === "section") entry.sections.push(n);
     }
   }
@@ -250,12 +250,12 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
   for (const [sid, { node, file }] of spec.nodes) {
     for (const r of node.refs.filter((r) => r.type === "exempts" && r.to)) {
       const target = spec.nodes.get(r.to!)?.node.kind;
-      if (file.path !== PROJECT || !target || (target !== "rule" && target !== "section" && !isProjectKind(target))) {
+      if (file.path !== PROJECT || !target || (target !== "TextRule" && target !== "section" && !isProjectKind(target))) {
         refuse(sid, "an exempts link must go from a node of the project's own guidelines to a rule, a node of a project's own kind or a section");
       }
     }
     for (const r of node.refs.filter((r) => r.type === "consumes" && r.to)) {
-      const from = node.kind === "domain" ? domainOf.get(sid) : undefined;
+      const from = node.kind === "header" ? domainOf.get(sid) : undefined;
       const to = spec.nodes.get(r.to!)?.node.kind === "section" ? domainOf.get(r.to!) : undefined;
       if (!from || !to || from === to) {
         refuse(sid, "a consumes link must go from a domain's header to a section of another domain");
@@ -309,7 +309,7 @@ function objectsInLists(spec: Specification, refuse: Refuse): void {
 
 function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void {
   const record = (sid: string | undefined) => (sid ? spec.nodes.get(sid)?.node : undefined);
-  const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "recordType")?.to);
+  const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "RecordType")?.to);
   const chain = (n: SpecNode | undefined): SpecNode[] => (n ? [n, ...chain(refined(n))] : []);
   // A RecordType's fields, the fields every variant holds in its field of type variant included.
   const fieldsOf = (n: SpecNode) => ((n.fields as Field[]) ?? []).flatMap((f) => [f, ...(f.type.is === "variant" ? (f.type.fields ?? []) : [])]);
@@ -329,7 +329,7 @@ function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void
   // Each value comes from the field's one source: its own list, or the values gathered for it (s-xfu2gpzddjnmgks).
   const gathered = gather(spec);
   for (const [, { node }] of spec.nodes) {
-    if (node.kind !== "recordType") continue;
+    if (node.kind !== "RecordType") continue;
     for (const f of (node.fields as Field[]) ?? []) {
       if (f.type.is !== "one of") continue;
       if (f.type.from) for (const g of gathered.get(fieldKey(node, f.name)) ?? []) declare(node, f.name, g.value, spec.nodes.get(g.sid)?.node ?? node);
@@ -341,7 +341,7 @@ function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void
   for (const [sid, { node }] of spec.nodes) {
     const list = node.list as { field?: string; members: string[] } | undefined;
     if (!list?.field) continue;
-    const target = record(node.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "recordType")?.to);
+    const target = record(node.refs.find((r) => r.type === "refines" && record(r.to)?.kind === "RecordType")?.to);
     if (!isDomain(part(node))) refuse(sid, `a list of the values of ${list.field} standing in ${part(node)}, not in a domain`);
     if (!target || part(target) !== "contracts") {
       refuse(sid, `a list of the values of ${list.field} that refines no RecordType described in contracts`);
@@ -357,7 +357,7 @@ function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void
   // A field of type one of holds at least one value: a RecordType's own field in its list or in a
   // domain's list for it, one standing inside another type in its own list.
   for (const [sid, { node }] of spec.nodes) {
-    if (node.kind !== "recordType") continue;
+    if (node.kind !== "RecordType") continue;
     const empty = (name: string, type: NeutralType, own: boolean) => {
       if (type.is === "one of" && !(own ? declared.get(`${sid} ${name}`)?.size : type.values?.length)) refuse(sid, `${name} is of type one of with no value, in its own list or in a list of a domain`);
       if (type.of) empty(name, type.of, false);
@@ -368,7 +368,7 @@ function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void
 
   // The values gathered beside each field are what its source produces, and a kind it names is one the schema holds.
   for (const [sid, { node }] of spec.nodes) {
-    if (node.kind !== "recordType") continue;
+    if (node.kind !== "RecordType") continue;
     for (const f of fieldsOf(node)) {
       if (f.type.is !== "one of") continue;
       if (f.type.from === "kindSids" && !kinds.has(f.type.kind ?? "")) refuse(sid, `${f.name} names the kind ${f.type.kind}, which the schema does not hold`);
@@ -379,7 +379,7 @@ function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void
 
   const answers = new Map<string, string[]>();
   for (const [sid, { node }] of spec.nodes) {
-    if (node.kind !== "recordType" || !node.answersTo) continue;
+    if (node.kind !== "RecordType" || !node.answersTo) continue;
     const parent = refined(node);
     if (!parent) {
       refuse(sid, "a RecordType variant that refines no RecordType");
@@ -414,7 +414,7 @@ function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void
   // followed from one identifier to the next, ends in a field of another type.
   const identifying = (n: SpecNode) => fieldsUpChain(n).find((f) => f.name === n.identifiedBy);
   for (const [sid, { node }] of spec.nodes) {
-    if (node.kind !== "recordType") continue;
+    if (node.kind !== "RecordType") continue;
     const by = node.identifiedBy as string | undefined;
     if (by && !fieldsUpChain(node).some((f) => f.name === by)) refuse(sid, `identified by ${by}, which is none of its fields`);
     const visit = (field: string, type: NeutralType) => {

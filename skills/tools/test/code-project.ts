@@ -87,7 +87,7 @@ export function typedProject(title = "customer", code = ["src/app/**"]): string 
   const root = taking({
     "sheriff.config.json": { code, tests: ["test/**"] },
     "specs/contracts/c.json": file("contracts", "c", node("ledger", { kind: "section", text: "Ledger.", children: [
-      node("customer", { kind: "recordType", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused", meta: { code: [{ file: "src/types.ts" }] } }),
+      node("customer", { kind: "RecordType", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused", meta: { code: [{ file: "src/types.ts" }] } }),
     ] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [
       node("generated types", { refs: [{ type: "implements", to: DATA_STRUCTURES }], list: { of: "the files of the generated types and runtime checks", members: ["src/types.ts", "schemas/checks.json"] } }),

@@ -15,12 +15,43 @@ and you never write into the specification what the owner has not seen. Load the
 
 1. Draft it by the guidelines' section on how a rule is written, and weigh it against every rule it
    touches: what it contradicts, repeats or leaves uncovered.
-2. Have it checked apart: give a reviewer that did not write it — another agent, with the guidelines
+2. Read it once more before anyone else does. Cut every word that carries no thought and no needed
+   detail, but never a condition or a subject. Then look for the signals of a sentence holding more
+   than one thought, or a node holding requirements carried out apart: a sentence over 25 words, a
+   semicolon, a parenthesis holding a second thought, a paragraph of more than three sentences, a
+   node of more than three requirements. Each signal is a reason to check, never a limit: rewrite
+   what it finds unless it states one thought. A paragraph holds one main thought with its
+   qualifications and the reasoning it rests on.
+3. Have it checked apart: give a reviewer that did not write it — another agent, with the guidelines
    and the draft and nothing of your reasoning — the task of finding what is wrong with it. A
    finding that fixes the wording against the guidelines is applied; a doubt that would change what
    the node states goes to the owner with its reason, never written in unseen.
-3. Write it to its file with its status `draft`. `sheriff guard` refuses an edit that leaves a node
+4. Write it to its file with its status `draft`. `sheriff guard` refuses an edit that leaves a node
    approved over a wording for which no approval stands.
+
+## Naming
+
+A name is proposed to the owners with the count behind it, and they decide. These are the rules it is
+weighed by.
+
+1. **A special name only for a real term.** A word gets a special name only where it names a
+   procedure, an entity, a constant or a variable, and the same word also stands in the text in its
+   ordinary sense. Anything else stays an ordinary word. A name nobody needs suggests a special
+   meaning the word does not have.
+2. **Confusion is counted, not guessed.** Read every occurrence of the word in the specification and
+   the documents, and count those in another sense. Where the other sense stands in a few places and
+   is itself loosely worded, rewrite those places and keep the word plain: "Node.js" for the runtime,
+   "exit code" for "exit status".
+3. **A name is one word, as concrete as possible.** Its words are joined, each opening with a capital:
+   RecordType, SpecTag, RuntimeCheck. It says what the thing is, by its context of use or by what it
+   holds, never only whose it is: SpecList would say only that a list belongs to the specification.
+4. **A property is written through its object.** A property of an object that has a name of its own
+   is written as the object's name, a dot and the property's key, in code font: `TextRule.list`,
+   `RecordType.fields`, `meta.comments`. It gets a name of its own only where it is also used apart
+   from its object, as NodeKind is.
+5. **A value is written as the schema holds it**, in code font: `implements`, `one of`, `draft`.
+6. **A position is said in words.** A thing already named keeps its name wherever it stands: "a
+   RecordType of another domain", never DomainRecordType.
 
 ## Showing a node
 

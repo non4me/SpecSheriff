@@ -17,7 +17,7 @@ const DATA_STRUCTURES = "s-e877bnfa559tvk9";
 const FILES = ["src/types.ts", "app/types.py", "schemas/checks.json"];
 
 const field = (name: string, type: object, required: boolean | string = true) => ({ name, type, required, text: "" });
-const record = (title: string, fields: object[], more: Record<string, unknown> = {}) => node(title, { kind: "recordType", title, fields, unknown: "refused", ...more });
+const record = (title: string, fields: object[], more: Record<string, unknown> = {}) => node(title, { kind: "RecordType", title, fields, unknown: "refused", ...more });
 const filesRule = (members: string[], name = "generated types") =>
   node(name, { refs: [{ type: "implements", to: DATA_STRUCTURES }], list: { of: "the files of the generated types and runtime checks", members } });
 
@@ -28,12 +28,12 @@ const filesRule = (members: string[], name = "generated types") =>
 function project(contracts: object[], bank: object[] = [], stack: object[] = [filesRule(FILES)], more: Record<string, unknown> = {}): string {
   const root = taking({
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: contracts })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "header", level: "core", code: null, sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("accounts", { kind: "section", text: "Accounts.", children: bank })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: stack })),
     ...more,
   });
-  const records = [...loadSpecification(root).nodes].filter(([, { node }]) => node.kind === "recordType").map(([s]) => s);
+  const records = [...loadSpecification(root).nodes].filter(([, { node }]) => node.kind === "RecordType").map(([s]) => s);
   if (records.length) approve(root, records, { me: OWNER });
   return root;
 }
@@ -516,7 +516,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff types writes the files a project's own gen
 test("@spec s-kh8qcd5kxgh9z3j each generated file waits only for the nodes it is generated from: a generator's file for its nodes and its rule, the types for the RecordTypes", () => {
   const root = codeProject();
   withGenerator(root);
-  editSpec(root, (d) => d.nodes[0].children.push(node("order", { kind: "recordType", title: "order", fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" })));
+  editSpec(root, (d) => d.nodes[0].children.push(node("order", { kind: "RecordType", title: "order", fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" })));
   const report = writeTypes(root);
   assert.deepEqual(report.written, ["gen/titles.txt"]);
   assert.deepEqual(report.waiting, [sid("order")]);

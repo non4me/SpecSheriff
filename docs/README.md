@@ -69,7 +69,7 @@ SpecSheriff and what it lacks.
 
 The method's own specification is written as nodes, the way it asks a project's to be, and the tools
 hold this repository to it. The base, [`spec.json`](../specs/_guidelines/spec.json), states what is
-held, what is checked, when, and what a failure costs, and names no technology. The appendix of the
+held, what is checked, when, and what a failure costs. The appendix of the
 tools, [`tools.json`](../specs/_guidelines/tools.json), says how the SpecSheriff tools carry the base
 out: where the files are, the commands, the agent's hooks and git's, how each check is made,
 how the code and a test carry their SpecTag, who runs the reviewer and how an approval is recorded

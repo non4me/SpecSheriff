@@ -31,7 +31,7 @@ export const loc = (...parts: string[]) => parts.join("/");
 export const BY_NUMBER = "§" + "4.1";
 
 export function node(name: string, fields: Record<string, unknown> = {}): SpecNode {
-  return { location: "", sid: sid(name), kind: "rule", title: name, status: "draft", text: `What ${name} requires.`, refs: [], ...fields };
+  return { location: "", sid: sid(name), kind: "TextRule", title: name, status: "draft", text: `What ${name} requires.`, refs: [], ...fields };
 }
 
 export function file(scope: string, section: string, ...nodes: object[]) {

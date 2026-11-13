@@ -84,7 +84,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
 
   const record = (sid: string | undefined) => {
     const n = sid ? spec.nodes.get(sid)?.node : undefined;
-    return n?.kind === "recordType" ? n : undefined;
+    return n?.kind === "RecordType" ? n : undefined;
   };
   const refined = (n: SpecNode) => record(n.refs.find((r) => r.type === "refines" && record(r.to))?.to);
   const chain = (n: SpecNode | undefined): SpecNode[] => {
@@ -104,7 +104,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
     declared.set(key, [...known, ...values.filter((v, i) => !known.includes(v) && values.indexOf(v) === i)]);
   };
   for (const n of reading) {
-    if (n.kind !== "recordType") continue;
+    if (n.kind !== "RecordType") continue;
     for (const f of fieldsOf(n) as Array<Field & { gathered?: Array<{ value: string }> }>) {
       if (f.type.is !== "one of") continue;
       declare(n, f.name, f.type.from ? (f.gathered ?? []).map((g) => g.value) : (f.type.values ?? []));
@@ -166,7 +166,7 @@ function declarations(spec: Specification): { decls: Decl[]; refusals: Finding[]
   const inherited = (n: SpecNode) => chain(n).reverse().flatMap((c) => fieldsOf(c).map((field) => ({ holder: c, field })));
 
   const decls: Decl[] = [];
-  const records = reading.filter((n) => n.kind === "recordType");
+  const records = reading.filter((n) => n.kind === "RecordType");
   for (const n of records) {
     const variantFields = chain(n).flatMap((c) => fieldsOf(c).filter((f) => f.type.is === "variant"));
     if (variantFields.length > 1) refuse(n.sid, `holds two fields of type variant, its inherited ones counted: ${variantFields.map((f) => f.name).join(", ")}`);
@@ -379,7 +379,7 @@ export function generateTypes(spec: Specification): { files: GeneratedFile[]; re
  */
 /** The RecordTypes not yet approved, which the code generated from the nodes waits for (s-kh8qcd5kxgh9z3j). */
 export function waitingRecords(spec: Specification): string[] {
-  return [...spec.nodes].filter(([, { node }]) => node.kind === "recordType" && node.status !== "approved").map(([sid]) => sid);
+  return [...spec.nodes].filter(([, { node }]) => node.kind === "RecordType" && node.status !== "approved").map(([sid]) => sid);
 }
 
 export function writeTypes(root: string): { written: string[]; refusals: Finding[]; waiting: string[] } {

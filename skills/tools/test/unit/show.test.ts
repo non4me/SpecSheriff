@@ -12,7 +12,7 @@ const spec = loadSpecification(REPO);
 function fixture() {
   const root = repo({
     "specs/contracts/c.json": file("contracts", "c", node("billing", { kind: "section", text: "Billing.", children: [
-      node("Bill", { kind: "recordType", text: "A bill.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
+      node("Bill", { kind: "RecordType", text: "A bill.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
       node("payer", { kind: "term", text: "Whoever pays.", refs: [{ type: "term-relation", to: sid("Bill"), ratio: "1:0..N" }] }),
       node("billed rule", { reason: "Because.", list: { of: "the currencies", members: ["EUR"] }, meta: { todos: [{ date: "2026-11-02", by: "owner@example.org", text: "Add USD." }] } }),
     ] })),
@@ -75,9 +75,9 @@ test("@spec s-k4nqjr96ux7a5m7 writes a list whose members are objects as a table
 test("@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field after its JSON, each with the sid, location and title of the node it comes from", () => {
   const root = repo({
     "specs/contracts/c.json": file("contracts", "c", node("kinds", { kind: "section", text: "Kinds.", children: [
-      node("event", { kind: "recordType", text: "An event.", unknown: "refused", fields: [{ name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "" }] }),
+      node("event", { kind: "RecordType", text: "An event.", unknown: "refused", fields: [{ name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "" }] }),
     ] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [] })),
     "specs/bank/e.json": file("bank", "e", node("events", { kind: "section", text: "Events.", children: [
       node("bank events", { list: { of: "the kinds of event", members: ["paid"], field: "kind" }, refs: [{ type: "refines", to: sid("event") }] }),
     ] })),

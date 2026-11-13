@@ -19,7 +19,7 @@ export function approvalRule(nodes: Iterable<SpecNode>): SpecNode | undefined {
 /** The rule approving the specification as `sheriff init` writes it and the reindex adds it where it is missing, a draft (s-7unxytshhc4md54). */
 export function approvalRuleNode(): SpecNode {
   return {
-    location: "", sid: "", kind: "rule", title: "The specification is approved", status: "draft",
+    location: "", sid: "", kind: "TextRule", title: "The specification is approved", status: "draft",
     text: "This project's specification is approved.", refs: [{ type: "refines", to: APPROVAL_RULE }],
   } as SpecNode;
 }
@@ -34,7 +34,7 @@ export function specificationApproved(nodes: Iterable<SpecNode>): boolean {
 }
 
 /** Whether a node is a section or a domain's header, whose status is built from the nodes under it (s-9kfdycuq34beqvs). */
-export const isContainer = (kind: string | undefined) => kind === "section" || kind === "domain";
+export const isContainer = (kind: string | undefined) => kind === "section" || kind === "header";
 
 /** The sid of the base's rule on the fixtures of tests, which the rule of a project's own guidelines listing them refines. */
 export const FIXTURES_RULE = "s-6hha5en226aj8hu";
@@ -58,10 +58,10 @@ export function partOf(path: string): { part: string; file: string; specSheriffG
 /** A part whose files are numbered one by one under locations of their own, rather than straight through. */
 const numberedByFile = (part: string) => part === "_guidelines" || part === "tech";
 /** The kinds of the SpecSheriff guidelines; any other is a kind a project's extension declares (s-vsh384ybt4w25a2). */
-export const BASE_KINDS = new Set(["domain", "section", "rule", "term", "recordType"]);
+export const BASE_KINDS = new Set(["header", "section", "TextRule", "term", "RecordType"]);
 export const isProjectKind = (kind: string) => !BASE_KINDS.has(kind);
 /** Every kind but a term, located by its name, and a domain's header, by its domain's, is numbered as a rule is. */
-const numbered = { has: (kind: string) => kind !== "term" && kind !== "domain" };
+const numbered = { has: (kind: string) => kind !== "term" && kind !== "header" };
 
 /** Every node's location, computed from where it is. */
 export function locations(spec: Specification): Map<string, string> {
@@ -100,7 +100,7 @@ export function locations(spec: Specification): Map<string, string> {
       continue;
     }
     for (const n of f.data.nodes) {
-      if (n.kind === "domain") {
+      if (n.kind === "header") {
         ids.set(n.sid, part);
         number(n.children ?? [], part, "", straight.get(part));
       } else number([n], part, "", straight.get(part));
@@ -191,7 +191,7 @@ export function ownersOf(spec: Specification, sid: string): string[] {
   if (!["_guidelines", "tech", "contracts"].includes(part)) {
     for (const f of spec.files) {
       if (partOf(f.path).part !== part) continue;
-      const header = named(f.data.nodes.find((n) => n.kind === "domain"));
+      const header = named(f.data.nodes.find((n) => n.kind === "header"));
       if (header) return header;
     }
   }
@@ -215,14 +215,14 @@ export function builtStatuses(spec: Specification): Map<string, "draft" | "appro
     });
     walk(f.data.nodes);
     if (isDomain(part)) {
-      const every = f.data.nodes.every((n) => n.kind === "domain" || (isContainer(n.kind) ? allUnder(n) : approved(n) && allUnder(n)));
+      const every = f.data.nodes.every((n) => n.kind === "header" || (isContainer(n.kind) ? allUnder(n) : approved(n) && allUnder(n)));
       byDomain.set(part, (byDomain.get(part) ?? true) && every);
     }
   }
   for (const f of spec.files) {
     const { part } = partOf(f.path);
     if (!isDomain(part)) continue;
-    for (const n of f.data.nodes) if (n.kind === "domain") out.set(n.sid, byDomain.get(part) ? "approved" : "draft");
+    for (const n of f.data.nodes) if (n.kind === "header") out.set(n.sid, byDomain.get(part) ? "approved" : "draft");
   }
   return out;
 }
@@ -279,6 +279,9 @@ export function domainOrder(spec: Specification): string[] {
 }
 
 /** What a node holds beside its wording: its place, status, links, metadata, owners, and what the reindex builds. */
+/** The name earlier releases wrote for each kind they wrote otherwise, which a fingerprint keeps (s-v4qus7raqnwzneb). */
+const EARLIER_KINDS: Record<string, string> = { TextRule: "rule", RecordType: "recordType", header: "domain" };
+
 const NOT_WORDING = new Set(["location", "sid", "kind", "status", "refs", "meta", "children", "owner", "owners", "sections", "archived"]);
 
 function sorted(value: unknown): unknown {
@@ -301,6 +304,8 @@ export function fingerprint(node: SpecNode): string {
   const earlier = (v: unknown) => {
     if (!v || typeof v !== "object" || Array.isArray(v)) return v;
     const { from, ...rest } = v as Record<string, unknown>;
+    // A field whose values are the sids of a kind's nodes names that kind as earlier releases wrote it.
+    if (from === "kindSids" && typeof rest.kind === "string" && EARLIER_KINDS[rest.kind]) return { ...rest, from, kind: EARLIER_KINDS[rest.kind] };
     return (rest as { is?: unknown }).is === "one of" && from === "domains" && !("values" in rest) ? { ...rest, values: [] } : v;
   };
   const built = JSON.parse(JSON.stringify(wording, (k, v) => (k === "gathered" ? undefined : earlier(v))));

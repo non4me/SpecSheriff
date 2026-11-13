@@ -20,7 +20,7 @@ test("@spec s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outsi
 function project() {
   return repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER, OTHER], children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", owners: ["bank@example.org"], level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", owners: ["bank@example.org"], level: "core", code: null, sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("a", { kind: "section", children: [node("open")] })),
   });
 }

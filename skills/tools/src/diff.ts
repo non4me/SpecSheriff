@@ -117,11 +117,15 @@ export async function commitTexts(root: string, read: (path: string) => boolean)
   };
 }
 
+/** The whitespace a line opens with. */
+const indentation = (text: string) => text.match(/^[ \t]*/)![0];
+
 /**
  * The lines of a change that change code: a line that holds a tag always does; a line that differs
  * from the one it replaces only in a comment, or in a name the commit renames everywhere it spells
  * it, does not. A line is read as tokens of its language, comments left out and strings kept apart
- * from names, so that a sid a citation names, which stands in a comment, changes nothing.
+ * from names, so that a sid a citation names, which stands in a comment, changes nothing. In Python a
+ * line whose indentation changes always does, its indentation deciding the block it stands in.
  */
 export async function codeChanges(changes: FileChange[], texts: Texts): Promise<Map<string, { added: Set<number>; removed: Set<number> }>> {
   const result = new Map<string, { added: Set<number>; removed: Set<number> }>();
@@ -154,6 +158,8 @@ export async function codeChanges(changes: FileChange[], texts: Texts): Promise<
     removed.forEach((old, i) => {
       const neu = added[i]!;
       if (old.text.includes("@spec") || neu.text.includes("@spec")) return real(old, neu);
+      // In Python a line's indentation decides the block it stands in, so moving it changes the code.
+      if (python && indentation(old.text) !== indentation(neu.text)) return real(old, neu);
       const a = tokensOf(lexedBefore, old);
       const b = tokensOf(lexedAfter, neu);
       if (a.join(" ") === b.join(" ")) return;

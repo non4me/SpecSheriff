@@ -15,7 +15,7 @@ const at = (root: string, name: string) => loadSpecification(root).nodes.get(sid
 function bank(extra: Record<string, unknown> = {}) {
   return repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
     "specs/bank/a.json": file("bank", "a", node("accounts", { kind: "section", text: "Accounts.", children: [node("open", { refs: [{ type: "cites", to: sid("close") }, { type: "cites", from: sid("lend") }] }), node("close")] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "What is shared.", children: [node("term", { kind: "term", title: "account" })] })),
     ...extra,
@@ -56,7 +56,7 @@ test("@spec s-yggv9myedprnaa7 rebuilds the index in a domain's header from the d
 
 test("@spec s-yggv9myedprnaa7 names in a header's index the headers of the domains using a section", () => {
   const root = bank({
-    "specs/loans/00-loans.json": file("loans", "00-loans", node("loans", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] })),
+    "specs/loans/00-loans.json": file("loans", "00-loans", node("loans", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] })),
   });
   reindex(root);
   assert.deepEqual(at(root, "header").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts.", usedBy: [sid("loans")] }]);
@@ -66,7 +66,7 @@ test("@spec s-f5rz6b7dhxejjts gives a sid to a node that has none, its location 
   const root = bank();
   const path = join(root, "specs", "contracts", "c.json");
   const data = JSON.parse(readFileSync(path, "utf8"));
-  data.nodes[0].children.push({ kind: "rule", title: "new", status: "draft", text: "New.", refs: [] });
+  data.nodes[0].children.push({ kind: "TextRule", title: "new", status: "draft", text: "New.", refs: [] });
   writeFileSync(path, JSON.stringify(data));
   reindex(root);
   const added = JSON.parse(readFileSync(path, "utf8")).nodes[0].children[1];
@@ -176,12 +176,35 @@ test("@spec s-f5rz6b7dhxejjts renames what an earlier release wrote under anothe
   assert.deepEqual(Object.keys(lend), ["location", "sid", "kind", "title", "status", "text", "refs", "reason"]);
   assert.equal(lend.location, "bank/2.1");
   assert.equal(lend.reason, "Why lend.");
-  assert.equal(at(root, "loan").kind, "recordType");
+  assert.equal(at(root, "loan").kind, "RecordType");
   const gone = JSON.parse(readFileSync(join(root, "specs", "_archive", "bank.json"), "utf8")).nodes[0];
   assert.equal(gone.reason, "Why it went.");
   assert.equal(gone.rationale, undefined);
   assert.equal(gone.id, undefined);
   assert.equal(gone.location, "bank/9");
+});
+
+test("@spec s-f5rz6b7dhxejjts renames the kinds an earlier release wrote, where a field's values come from a kind and in the extension", () => {
+  const root = bank({
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
+    "specs/bank/r.json": file("bank", "r", node("records", { kind: "section", text: "Records.", children: [
+      node("open rule", { kind: "rule" }),
+      node("event", { kind: "recordType", title: "event", unknown: "refused", fields: [{ name: "rule", type: { is: "one of", from: "kindSids", kind: "rule" }, required: true, text: "" }] }),
+    ] })),
+    "specs/_schema/project.schema.json": { fields: { rule: { type: "object" }, recordType: { type: "object" } } },
+  });
+  reindex(root);
+  assert.equal(at(root, "header").kind, "header");
+  assert.equal(at(root, "open rule").kind, "TextRule");
+  assert.equal(at(root, "event").kind, "RecordType");
+  assert.equal((at(root, "event").fields as Array<{ type: { kind: string } }>)[0]!.type.kind, "TextRule");
+  const extension = JSON.parse(readFileSync(join(root, "specs", "_schema", "project.schema.json"), "utf8"));
+  assert.deepEqual(Object.keys(extension.fields), ["TextRule", "RecordType"]);
+});
+
+test("@spec s-v4qus7raqnwzneb keeps an approval through the renaming of the kind a field's values come from", () => {
+  const event = (kind: string) => node("event", { kind: "RecordType", title: "event", unknown: "refused", fields: [{ name: "rule", type: { is: "one of", from: "kindSids", kind }, required: true, text: "" }] });
+  assert.equal(fingerprint(event("TextRule")), fingerprint(event("rule")));
 });
 
 test("@spec s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge", () => {
@@ -215,10 +238,10 @@ test("@spec s-jsqxdx47wkkj7gp run again on what it left, the reindex changes not
 test("@spec s-ju5vcanbjph7mgh writes beside a field the values gathered from its source, each with the node it comes from, and none beside a field holding its own list", () => {
   const root = bank({
     "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
-      node("event", { kind: "recordType", title: "event", unknown: "refused", fields: [
+      node("event", { kind: "RecordType", title: "event", unknown: "refused", fields: [
         { name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "" },
         { name: "domain", type: { is: "one of", from: "domainNames" }, required: true, text: "" },
-        { name: "rule", type: { is: "one of", from: "kindSids", kind: "rule" }, required: true, text: "" },
+        { name: "rule", type: { is: "one of", from: "kindSids", kind: "TextRule" }, required: true, text: "" },
         { name: "colour", type: { is: "one of", values: ["red"] }, required: true, text: "" },
       ] }),
     ] })),
@@ -238,7 +261,7 @@ test("@spec s-ju5vcanbjph7mgh writes beside a field the values gathered from its
 test("@spec s-f5rz6b7dhxejjts gives a field of type one of whose own list an earlier release wrote empty the values the domains add", () => {
   const root = bank({
     "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
-      node("event", { kind: "recordType", title: "event", unknown: "refused", fields: [{ name: "kind", type: { is: "one of", values: [] }, required: true, text: "" }] }),
+      node("event", { kind: "RecordType", title: "event", unknown: "refused", fields: [{ name: "kind", type: { is: "one of", values: [] }, required: true, text: "" }] }),
     ] })),
   });
   reindex(root);

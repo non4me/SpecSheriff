@@ -66,6 +66,16 @@ test("@spec s-kgbzk2ph9e6jfb4 counts as changed a line whose text after // or # 
   await expectOne(root, new RegExp(`src/paint\\.py:1: .*${sid("open")}.*a draft node`));
 });
 
+test("@spec s-kgbzk2ph9e6jfb4 counts as changed a Python line moved out of its block by its indentation alone", async () => {
+  const root = project();
+  put(root, "src/paint.py", `# @spec ${sid("open")}\ndef paint(x):\n    if x:\n        prime()\n        coat()\n`);
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "paint");
+  editSpec(root, (d) => (nodeIn(d, "open").text = "Opening, reworded."));
+  put(root, "src/paint.py", `# @spec ${sid("open")}\ndef paint(x):\n    if x:\n        prime()\n    coat()\n`);
+  await expectOne(root, new RegExp(`src/paint\\.py:1: .*${sid("open")}.*a draft node`));
+});
+
 test("@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose only change is a line inside a comment of several lines", async () => {
   const root = project();
   put(root, "src/open.ts", OPEN.replace("  return amount;", "  /*\n   * Returns the amount.\n   */\n  return amount;"));

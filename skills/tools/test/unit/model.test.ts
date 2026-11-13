@@ -14,7 +14,7 @@ test("@spec s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guideli
 
 test("@spec s-kag2m9tzdnduxdx locates a domain's header by its name and numbers its sections straight through its files", () => {
   const root = repo({
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [] })),
     "specs/bank/accounts.json": file("bank", "accounts", node("accounts", { kind: "section", children: [node("open"), node("term", { kind: "term", title: "account" }), node("close")] })),
     "specs/bank/loans.json": file("bank", "loans", node("loans", { kind: "section", children: [node("lend")] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", children: [node("node")] })),
@@ -86,7 +86,7 @@ test("@spec s-bpdqd9v72wg7vsz builds no link of a project into the SpecSheriff g
 test("@spec s-67vekyup7y8smap takes a node's owners from the nearest section or header naming them, else the specification's", () => {
   const root = repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", owners: ["bank@example.org"], level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", owners: ["bank@example.org"], level: "core", code: null, sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("a", { kind: "section", children: [node("r1"), node("inner", { kind: "section", owners: ["inner@example.org", "second@example.org"], children: [node("r2")] })] })),
     "specs/contracts/c.json": file("contracts", "c", node("c", { kind: "section", children: [node("r3")] })),
   });
@@ -106,7 +106,7 @@ test("@spec s-67vekyup7y8smap names no owner where the specification names none"
 test("@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it that are no section, and a domain's header's from every node of the domain", () => {
   const approved = { status: "approved" };
   const root = repo({
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "header", level: "core", code: null, sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("all approved", { kind: "section", children: [node("a1", approved), node("inner", { kind: "section", children: [node("a2", approved)] })] })),
     "specs/bank/b.json": file("bank", "b", node("one draft", { kind: "section", children: [node("b1", approved), node("deep", { kind: "section", children: [node("b2")] })] })),
     "specs/contracts/c.json": file("contracts", "c", node("terms", { kind: "section", children: [node("t1", { kind: "term", ...approved })] })),
@@ -135,7 +135,7 @@ test("@spec s-v4qus7raqnwzneb fingerprints a node's wording and the values its k
   assert.equal(fingerprint({ ...base, status: "approved", location: "x/9", refs: [{ type: "cites", to: sid("cited") }], meta: { todos: [] }, owners: ["x@y.z"], owner: "x@y.z" }), same);
   assert.notEqual(fingerprint({ ...base, title: "other" }), same);
   assert.notEqual(fingerprint({ ...base, reason: "other" }), same);
-  const header = node("h", { kind: "domain", level: "core", code: null, sections: [] });
+  const header = node("h", { kind: "header", level: "core", code: null, sections: [] });
   assert.equal(fingerprint({ ...header, sections: [{ sid: sid("section"), title: "t", text: "" }] }), fingerprint(header));
   assert.notEqual(fingerprint({ ...header, level: "auxiliary" }), fingerprint(header));
   const listed = node("l", { list: { of: "x", members: ["a", "b"] } });
@@ -144,7 +144,7 @@ test("@spec s-v4qus7raqnwzneb fingerprints a node's wording and the values its k
 });
 
 test("@spec s-v4qus7raqnwzneb keeps the reason under its earlier name in the fingerprint, so an approval given before the rename stands", () => {
-  const renamed = { location: "x/1", sid: sid("pinned"), kind: "rule", title: "t", status: "draft", text: "x", reason: "y", refs: [] };
+  const renamed = { location: "x/1", sid: sid("pinned"), kind: "TextRule", title: "t", status: "draft", text: "x", reason: "y", refs: [] };
   // The fingerprint the release before the rename gave this wording, with the reason under the key `rationale`.
   assert.equal(fingerprint(renamed as never), "d97a5bc9b8d7cd0b5e1a2e191f26f46d87b8c62e3b8a020269a747dc3b5562ff");
 });
@@ -158,7 +158,7 @@ test("@spec s-zefk589ykh37b8u tells a file's part and whether it holds the SpecS
 test("@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among the rules of their section", () => {
   const root = repo({
     "specs/_schema/project.schema.json": { kinds: { job: { needsCode: true, schema: {} } } },
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [] })),
     "specs/bank/accounts.json": file("bank", "accounts", node("accounts", { kind: "section", children: [node("open"), node("nightly", { kind: "job" }), node("close")] })),
   });
   const ids = locations(loadSpecification(root));
@@ -168,7 +168,7 @@ test("@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among th
 
 test("@spec s-v4qus7raqnwzneb leaves the values gathered beside a field out of the fingerprint", () => {
   const field = (gathered?: object[]) => ({ name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "", ...(gathered ? { gathered } : {}) });
-  const record = (gathered?: object[]) => node("event", { kind: "recordType", unknown: "refused", fields: [field(gathered)] });
+  const record = (gathered?: object[]) => node("event", { kind: "RecordType", unknown: "refused", fields: [field(gathered)] });
   assert.equal(fingerprint(record([{ value: "paid", sid: sid("bank events") }])), fingerprint(record()));
 });
 
@@ -188,7 +188,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds i
 
 test("@spec s-v4qus7raqnwzneb fingerprints a field taking the values the domains add as earlier releases wrote it, so an approval given before the reindex rewrote it stands", () => {
   const field = (type: object) => ({ name: "kind", type, required: true, text: "" });
-  const record = (type: object) => node("event", { kind: "recordType", unknown: "refused", fields: [field({ is: "list of", of: type })] });
+  const record = (type: object) => node("event", { kind: "RecordType", unknown: "refused", fields: [field({ is: "list of", of: type })] });
   assert.equal(fingerprint(record({ is: "one of", from: "domains" })), fingerprint(record({ is: "one of", values: [] })));
   assert.notEqual(fingerprint(record({ is: "one of", from: "domainNames" })), fingerprint(record({ is: "one of", values: [] })));
 });

@@ -20,11 +20,11 @@ function project(): string {
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [node("shared rule")] })),
-    "specs/zeta/00-zeta.json": file("zeta", "00-zeta", node("zeta", { kind: "domain", level: "core", code: null, sections: [] })),
+    "specs/zeta/00-zeta.json": file("zeta", "00-zeta", node("zeta", { kind: "header", level: "core", code: null, sections: [] })),
     "specs/zeta/z.json": file("zeta", "z", node("zeta section", { kind: "section", text: "Z.", children: [node("zeta rule")] })),
-    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "domain", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("zeta section") }] })),
+    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("zeta section") }] })),
     "specs/alpha/a.json": file("alpha", "a", node("alpha section", { kind: "section", text: "A.", children: [node("alpha rule")] })),
-    "specs/helper/00-helper.json": file("helper", "00-helper", node("helper", { kind: "domain", level: "auxiliary", code: null, sections: [] })),
+    "specs/helper/00-helper.json": file("helper", "00-helper", node("helper", { kind: "header", level: "auxiliary", code: null, sections: [] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [node("runtime")] })),
   });
   reindex(root);
@@ -49,7 +49,7 @@ test("@spec s-uw9n84edf7cbe9n orders the domains each after every domain it uses
 });
 
 test("@spec s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it", () => {
-  const header = (name: string, uses: string[] = []) => file(name, `00-${name}`, node(name, { kind: "domain", level: "core", code: null, sections: [], refs: uses.map((u) => ({ type: "consumes", to: sid(`${u} section`) })) }));
+  const header = (name: string, uses: string[] = []) => file(name, `00-${name}`, node(name, { kind: "header", level: "core", code: null, sections: [], refs: uses.map((u) => ({ type: "consumes", to: sid(`${u} section`) })) }));
   const section = (name: string) => file(name, "s", node(`${name} section`, { kind: "section", text: "S.", children: [node(`${name} rule`)] }));
   const root = repo({
     "specs/a/00-a.json": header("a"), "specs/a/s.json": section("a"),
@@ -93,10 +93,10 @@ function everything(): string {
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core"] } }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [
-      node("Invoice", { kind: "recordType", text: "A bill sent to a customer.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
+      node("Invoice", { kind: "RecordType", text: "A bill sent to a customer.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
       node("customer", { kind: "term", text: "Whoever is billed.", refs: [{ type: "term-relation", to: sid("Invoice"), ratio: "1:0..N" }] }),
     ] })),
-    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "domain", owners: [OWNER], level: "core", code: "src/alpha", sections: [] })),
+    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "header", owners: [OWNER], level: "core", code: "src/alpha", sections: [] })),
     "specs/alpha/a.json": file("alpha", "a", node("alpha section", { kind: "section", text: "A.", children: [node("alpha rule")] })),
   });
   reindex(root);

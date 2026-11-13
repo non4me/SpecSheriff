@@ -19,7 +19,7 @@ export function fieldsOf(n: SpecNode): Field[] {
 
 /** The RecordType a node refines, where it refines one. */
 export function refinedRecord(spec: Specification, n: SpecNode): SpecNode | undefined {
-  const to = n.refs.find((r) => r.type === "refines" && spec.nodes.get(r.to ?? "")?.node.kind === "recordType")?.to;
+  const to = n.refs.find((r) => r.type === "refines" && spec.nodes.get(r.to ?? "")?.node.kind === "RecordType")?.to;
   return to ? spec.nodes.get(to)?.node : undefined;
 }
 
@@ -44,7 +44,7 @@ export function gather(spec: Specification): Map<string, Gathered[]> {
   const out = new Map<string, Gathered[]>();
   const nodes = [...spec.nodes.values()];
   for (const { node } of nodes) {
-    if (node.kind !== "recordType") continue;
+    if (node.kind !== "RecordType") continue;
     for (const f of fieldsOf(node)) {
       if (f.type.is !== "one of" || !f.type.from) continue;
       const found: Gathered[] = [];
@@ -55,7 +55,7 @@ export function gather(spec: Specification): Map<string, Gathered[]> {
           for (const m of list.members ?? []) found.push({ value: String(m), sid: rule.sid });
         }
       } else if (f.type.from === "domainNames") {
-        for (const { node: header, file } of nodes) if (header.kind === "domain") found.push({ value: partOf(file.path).part, sid: header.sid });
+        for (const { node: header, file } of nodes) if (header.kind === "header") found.push({ value: partOf(file.path).part, sid: header.sid });
       } else if (f.type.from === "kindSids") {
         for (const { node: n, file } of nodes) {
           const { part } = partOf(file.path);

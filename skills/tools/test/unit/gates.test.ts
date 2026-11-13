@@ -29,6 +29,12 @@ test("@spec s-ef93u6cnbs2sevr refuses a message leaving out a node a changed sym
   assert.ok(found.some((m) => m.includes(sid("open")) && /does not name/.test(m)), found.join("\n"));
 });
 
+test("@spec s-ef93u6cnbs2sevr leaves out of what a message must name the tags on symbols in the tests", async () => {
+  const root = codeProject();
+  put(root, "test/open.test.ts", `${OPEN_TEST}/** @spec ${sid("open")} */\nexport function helper() {\n  return 2;\n}\n`);
+  assert.deepEqual(texts(await message(root, "Tests: a helper added\n")), []);
+});
+
 test("@spec s-ef93u6cnbs2sevr refuses a message naming a section or a node that does not exist, its comment lines left out", async () => {
   const root = codeProject();
   const found = texts(await message(root, `Accounts (${sid("accounts")}, ${NONE})\n# ${sid("draft")} in a comment\n`));
@@ -79,7 +85,7 @@ test("@spec s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node a
   const text = readFileSync(path, "utf8");
   const refused = await guard(root, edit(path, "What open requires.", "What open requires, reworded."));
   assert.match(refused ?? "", new RegExp(`${sid("open")}.*would stand approved over a wording for which no approval stands`));
-  const drafted = text.replace("What open requires.", "What open requires, reworded.").replace(/("sid": "[^"]+",\n\s+"kind": "rule",\n\s+"title": "open",\n\s+"status": )"approved"/, '$1"draft"');
+  const drafted = text.replace("What open requires.", "What open requires, reworded.").replace(/("sid": "[^"]+",\n\s+"kind": "TextRule",\n\s+"title": "open",\n\s+"status": )"approved"/, '$1"draft"');
   assert.equal(await guard(root, { tool_name: "Write", tool_input: { file_path: path, content: drafted } }), null);
 });
 

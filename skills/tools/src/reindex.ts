@@ -7,7 +7,7 @@ import { trackedFiles } from "./diff.ts";
 import { migrateApprovals, readApprovals, stands } from "./approvals.ts";
 import { mergeKeys, type KeyTwice } from "./json-text.ts";
 import { APPROVAL_RULE, approvalRule, approvalRuleNode, builtStatuses, fingerprint, incoming, isContainer, locations, partOf, PROJECT, SID } from "./model.ts";
-import { schemaRefusals } from "./schema.ts";
+import { EXTENSION, schemaRefusals, type Extension } from "./schema.ts";
 import { fieldKey, fieldsOf, gather } from "./values.ts";
 import { canonical, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
@@ -33,7 +33,35 @@ export function newSid(taken: Set<string>): string {
 /** The keys earlier releases of the tools wrote under another name, each with its name now. */
 const RENAMED_KEYS: Record<string, string> = { id: "location", rationale: "reason" };
 /** The kinds earlier releases wrote under another name. */
-const RENAMED_KINDS: Record<string, string> = { record: "recordType" };
+const RENAMED_KINDS: Record<string, string> = { record: "RecordType", recordType: "RecordType", rule: "TextRule", domain: "header" };
+
+/** Renames the kind a field's values come from, in the field's type and in every type nested in it. */
+function renameSourceKind(type: unknown): void {
+  if (!type || typeof type !== "object" || Array.isArray(type)) return;
+  const t = type as { from?: unknown; kind?: unknown; of?: unknown; fields?: unknown };
+  if (t.from === "kindSids" && typeof t.kind === "string" && RENAMED_KINDS[t.kind]) t.kind = RENAMED_KINDS[t.kind];
+  renameSourceKind(t.of);
+  if (Array.isArray(t.fields)) for (const f of t.fields) renameSourceKind((f as { type?: unknown })?.type);
+}
+
+/**
+ * The project's extension with each kind it adds fields to under its name now, where an earlier release wrote another,
+ * the order of its keys kept; null where it keeps no extension, cannot be read or renames nothing.
+ */
+function renamedExtension(root: string): Extension | null {
+  const path = join(root, EXTENSION);
+  if (!existsSync(path)) return null;
+  let ext: Extension;
+  try {
+    ext = JSON.parse(readFileSync(path, "utf8")) as Extension;
+  } catch {
+    // An extension that is no JSON is refused by the validation, which reads it itself.
+    return null;
+  }
+  const fields = ext?.fields;
+  if (!fields || typeof fields !== "object" || !Object.keys(fields).some((k) => RENAMED_KINDS[k])) return null;
+  return { ...ext, fields: Object.fromEntries(Object.entries(fields).map(([k, v]) => [RENAMED_KINDS[k] ?? k, v])) };
+}
 
 /**
  * Renames, in every node of every file, the archive's included, what an earlier release wrote under another name,
@@ -58,8 +86,10 @@ function renameEarlier(files: SpecFile[]): void {
       for (const k of Object.keys(node)) delete (node as Record<string, unknown>)[k];
       Object.assign(node, Object.fromEntries(renamed));
     }
+    // A field whose values are the sids of a kind's nodes names that kind as an earlier release wrote it.
+    if (node.kind === "RecordType") for (const f of fieldsOf(node)) renameSourceKind(f.type);
     // An empty own list was how earlier releases said a field takes the values the domains add.
-    if (node.kind === "recordType") for (const f of fieldsOf(node)) {
+    if (node.kind === "RecordType") for (const f of fieldsOf(node)) {
       if (f.type.is === "one of" && Array.isArray(f.type.values) && !f.type.values.length && !f.type.from) {
         const { values: _, ...rest } = f.type;
         f.type = { ...rest, from: "domains" };
@@ -96,7 +126,7 @@ function asValidated(f: SpecFile): unknown {
     if (!archived) {
       if (!("sid" in n)) n.sid = A_SID;
       n.location = "x";
-      if (n.kind === "domain") n.sections = [];
+      if (n.kind === "header") n.sections = [];
       if (isContainer(n.kind as string)) n.status = "draft";
       ungathered(n.fields);
     }
@@ -133,7 +163,7 @@ function headers(spec: Specification): Array<{ header: SpecNode; sections: SpecN
     if (!parts.has(part)) parts.set(part, { sections: [] });
     const entry = parts.get(part)!;
     for (const n of f.data.nodes) {
-      if (n.kind === "domain") {
+      if (n.kind === "header") {
         entry.header = n;
         entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
       } else if (n.kind === "section") entry.sections.push(n);
@@ -145,7 +175,7 @@ function headers(spec: Specification): Array<{ header: SpecNode; sections: SpecN
 /** The index a header carries, as the domain's sections produce it. */
 export function headerIndex(spec: Specification, sections: SpecNode[], built: ReturnType<typeof incoming>) {
   return sections.map((s) => {
-    const usedBy = (built.get(s.sid) ?? []).filter((r) => r.type === "consumes" && spec.nodes.get(r.from)?.node.kind === "domain").map((r) => r.from);
+    const usedBy = (built.get(s.sid) ?? []).filter((r) => r.type === "consumes" && spec.nodes.get(r.from)?.node.kind === "header").map((r) => r.from);
     return { sid: s.sid, title: s.title, text: s.text, ...(usedBy.length ? { usedBy } : {}) };
   });
 }
@@ -171,8 +201,9 @@ export function reindex(root: string): ReindexReport {
     }
   });
   renameEarlier(files);
+  const extension = renamedExtension(root);
   // Validated once what an earlier release wrote is changed, and before anything is computed (s-xzcw3hv4hmxz7h7).
-  const refused = schemaRefusals(root, files.map((f) => ({ path: f.path, data: asValidated(f) })));
+  const refused = schemaRefusals(root, files.map((f) => ({ path: f.path, data: asValidated(f) })), extension ?? undefined);
   if (refused.length) throw new Error(`the schema refuses what the reindex reads, so it writes no file:\n${refused.map((r) => `${r.where}: ${r.message}`).join("\n")}`);
   // A specification without the rule approving it gets the rule as `sheriff init` writes it, a draft (s-f5rz6b7dhxejjts).
   const project = files.find((f) => f.path === PROJECT);
@@ -201,7 +232,7 @@ export function reindex(root: string): ReindexReport {
   // Beside each field whose values come from elsewhere than its own list, the values gathered for it (s-ju5vcanbjph7mgh).
   const gathered = gather(spec);
   for (const [, { node }] of spec.nodes) {
-    if (node.kind !== "recordType") continue;
+    if (node.kind !== "RecordType") continue;
     for (const f of fieldsOf(node)) {
       if (f.type.is === "one of" && f.type.from) f.gathered = gathered.get(fieldKey(node, f.name)) ?? [];
       else delete f.gathered;
@@ -233,6 +264,10 @@ export function reindex(root: string): ReindexReport {
       writeFileSync(join(root, f.path), text);
       report.written.push(f.path);
     }
+  }
+  if (extension) {
+    writeFileSync(join(root, EXTENSION), canonical(extension));
+    report.written.push(EXTENSION);
   }
   return report;
 }

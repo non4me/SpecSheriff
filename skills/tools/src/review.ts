@@ -93,7 +93,7 @@ export async function reviewInput(root: string, text: string): Promise<string> {
     if (!node) return [];
     const parts = [`## ${node.location} ${node.title} (${sid})`, "", node.text];
     if (node.reason) parts.push("", `Why: ${node.reason}`);
-    if (node.kind === "recordType") parts.push("", "Fields:", JSON.stringify({ fields: node.fields, unknown: node.unknown }, null, 2));
+    if (node.kind === "RecordType") parts.push("", "Fields:", JSON.stringify({ fields: node.fields, unknown: node.unknown }, null, 2));
     else if (isProjectKind(node.kind)) {
       // A node of a project's own kind with the values its kind declares (s-nyh9yk22ba6g77q).
       const { location: _l, sid: _s, kind: _k, title: _t, status: _st, text: _x, reason: _r, refs: _f, meta: _m, children: _c, ...values } = node;

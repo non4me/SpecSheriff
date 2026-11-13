@@ -101,10 +101,14 @@ export async function readCommit(root: string, config: Config, spec = loadSpecif
   return { codeFiles, testFiles, changedSymbols, changedTests };
 }
 
-/** The sids the SpecTags on the symbols a commit changes name, inner symbols' own included. */
+/** The sids the SpecTags on the symbols of code a commit changes name, inner symbols' own included; a symbol in the tests does not count. */
 export function changedTags(commit: Commit): Set<string> {
   const sids = new Set<string>();
-  for (const symbols of commit.changedSymbols.values()) for (const s of symbols) for (const t of s.tags) if (t.sid) sids.add(t.sid);
+  const code = new Set(commit.codeFiles.map((f) => f.path));
+  for (const [path, symbols] of commit.changedSymbols) {
+    if (!code.has(path)) continue;
+    for (const s of symbols) for (const t of s.tags) if (t.sid) sids.add(t.sid);
+  }
   return sids;
 }
 
@@ -129,7 +133,7 @@ export async function binding(root: string): Promise<BindingFinding[]> {
   const approved = (sid: string) => spec.nodes.get(sid)?.node.status === "approved";
   // A rule, and a node of a project's own kind that needs code, is implemented and tested (s-vsh384ybt4w25a2).
   const needs = needsCode(root);
-  const coded = (kind?: string) => kind === "rule" || Boolean(kind && isProjectKind(kind) && needs(kind));
+  const coded = (kind?: string) => kind === "TextRule" || Boolean(kind && isProjectKind(kind) && needs(kind));
   const { codeFiles, testFiles, changedSymbols, changedTests } = await readCommit(root, config, spec);
   // The specification is approved while the rule of the project's own guidelines approving it is; before the commit it
   // is as the last commit holds it, read as the reindex would rewrite it, and a commit putting it back to draft records
@@ -195,8 +199,8 @@ export async function binding(root: string): Promise<BindingFinding[]> {
       testSids.add(t.sid);
       const kind = spec.nodes.get(t.sid)?.node.kind;
       if (!exists(t.sid)) findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, which names no node` });
-      else if (kind !== "rule" && kind !== "term" && !(kind && isProjectKind(kind))) {
-        const named = kind === "recordType" ? "a RecordType" : kind === "domain" ? "a domain's header" : `a ${kind}`;
+      else if (kind !== "TextRule" && kind !== "term" && !(kind && isProjectKind(kind))) {
+        const named = kind === "RecordType" ? "a RecordType" : kind === "header" ? "a domain's header" : `a ${kind}`;
         findings.push({ where: at(file.path, t.start), message: `the test "${t.name}" carries ${t.sid}, ${named}, where a test carries the SpecTag of a rule or a term` });
       } else if (changedTests.get(file.path)?.has(t.name) && !approved(t.sid)) {
         findings.push({ where: at(file.path, t.start), message: `the test "${t.name}", which the commit changes, carries ${t.sid}, a draft node` });

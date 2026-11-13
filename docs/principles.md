@@ -6,52 +6,54 @@ first.
 
 ## What SpecSheriff is for
 
-SpecSheriff offers the skills and the scripts that guarantee work in this paradigm and make it as
-easy as it can be: what a principle below requires, a script checks or a skill carries out, so that
-nobody has to remember it.
+SpecSheriff offers the skills and the scripts that guarantee that work follows the paradigm of
+spec-anchored development. They also make working this way as easy as it can be: whatever a principle
+below requires, a script checks or a skill carries out, so that nobody has to remember it.
 
 ## Three documents, changing at three rates
 
-The specification of a project working this way is made of three documents. The guidelines say how
-the specification is kept and implemented; they hardly change over the project's life. The base
+The specification of a project that uses SpecSheriff consists of three documents. The guidelines say how
+the specification is kept and implemented; they hardly change over the project's life. Whatever in
+the guidelines prescribes how the system is organised belongs in their extensions. A project uses
+an extension only if it chooses to. The base
 specification says what the system does, as rules linked to one another; it changes only when the
 business logic or the system's core functionality does. The technical appendix says how the system
-is built; it changes most often, since debugging a defect found usually changes it, and rules particular to
-the implementation, such as those of a user interface, are made precise there.
+is built; it changes most often, since debugging a defect usually changes the appendix, and rules specific to
+the implementation, such as those of a user interface, are refined there.
 
 ## The specification first, in one direction
 
-Every change runs the same way. The specification changes first, as single rules, each with its
+Every change follows the same course. The specification changes first, in individual rules, each with its
 permanent identifier, the sid. Then the tests of those rules are written, and then the code that makes
 them pass. Never the reverse: wanting the code to behave differently is a reason to change a rule.
 
 ## Rule, test and code bound by the sid
 
-A rule knows the code that implements it and the tests written from it, and every symbol of the code
+A rule knows the code that implements it and the tests written from it, and every symbol in the code
 and every test carries a SpecTag naming that rule by its sid. The sid also links rules to one another,
-so that what a change touches is traced exactly, and the context given to a person or an agent is the
+so that what a change touches is traced exactly, and the context given to a person or an agent consists of the
 rules that bear on the task rather than the whole specification.
 
 ## Deterministic checks hold every participant to the contract
 
-Checks that answer the same for the same change hold the chain together: hooks in the agent's
-harness, at each of its edits, where the order rule, test, code is also held; and git hooks at every
+Checks that give the same answer for the same change hold the chain together: hooks in the agent's
+harness, which run at each edit the agent makes and also enforce the order of rule, test and code; and git hooks at every
 commit, the final gate on each participant's machine, whoever made the change; a team that needs the
 gate to hold for everyone runs the same checks in CI. The one judgement that is not deterministic — whether
-the code does only what its rules say — is made at every commit that changes code by an independent
-reviewer.
+the code does only what its rules say — is made by an independent reviewer
+at every commit that changes code.
 
 ## A rule is self-sufficient
 
-Everything that bears on a rule is in its node and seen at a glance: its text and its reason, the
+Everything that bears on a rule is in its node and can be seen at a glance: its text and its reason, the
 links it makes and the links the rest of the specification makes to it, the decisions taken on it,
-the work deferred on it, and comments, an open problem marked as one.
+the work on it that has been deferred, and comments, with an open problem marked as such.
 
 ## Nothing unapproved is implemented
 
 Anyone may change or add a rule. A rule is implemented only once one of its owners has approved it,
 having understood it and judged it legitimate. A change to its wording makes it a draft again until
 one of its owners approves the new wording; a change that only states what an owner has already
-approved, or changes no meaning, is approved in that owner's name and reported to them. The
+approved, or changes no meaning, is approved on that owner's behalf and reported to them. The
 specification has owners by default, one or several; a domain or any section may name its own, and a
 rule's owners are those named nearest above it.
