@@ -29,8 +29,8 @@ them pass. Never the reverse: wanting the code to behave differently is a reason
 
 ## Rule, test and code bound by the sid
 
-A rule knows the code that implements it and the tests written from it, and every symbol in the code
-and every test carries a SpecTag naming that rule by its sid. The sid also links rules to one another,
+A rule knows the code that implements it and the tests written from it. That code and each of those tests are
+bound to the rule by a SpecTag naming it by its sid. The sid also links rules to one another,
 so that what a change touches is traced exactly, and the context given to a person or an agent consists of the
 rules that bear on the task rather than the whole specification.
 
