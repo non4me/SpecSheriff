@@ -36,12 +36,22 @@ rules that bear on the task rather than the whole specification.
 
 ## Deterministic checks hold every participant to the contract
 
-Checks that give the same answer for the same change hold the chain together: hooks in the agent's
-harness, which run at each edit the agent makes and also enforce the order of rule, test and code; and git hooks at every
-commit, the final gate on each participant's machine, whoever made the change; a team that needs the
-gate to hold for everyone runs the same checks in CI. The one judgement that is not deterministic — whether
-the code does only what its rules say — is made by an independent reviewer
-at every commit that changes code.
+Checks that produce the same result for the same change hold the chain of rule, test and code together:
+
+- hooks in the agent's harness run on each edit the agent makes, and make sure that a rule is written before
+  its tests and its tests before its code;
+- git hooks run on every commit, as the last checks on each participant's machine that can refuse the commit,
+  whoever made the change.
+
+A team that needs the git hooks' checks to apply to everyone also runs them in CI.
+
+An independent reviewer makes the judgements that are not deterministic:
+
+- for every commit in which code is changed: whether the code does only what its rules say;
+- for a commit whose message states that a rule's implementation needs no change: whether that statement is
+  true;
+- for a commit in which a node of the technical appendix is approved: whether the node refines the rules of
+  the base specification that it implements and contradicts no rule of the base specification.
 
 ## A rule is self-sufficient
 
@@ -51,9 +61,17 @@ the work on it that has been deferred, and comments, with an open problem marked
 
 ## Nothing unapproved is implemented
 
-Anyone may change or add a rule. A rule is implemented only once one of its owners has approved it,
-having understood it and judged it legitimate. A change to its wording makes it a draft again until
-one of its owners approves the new wording; a change that only states what an owner has already
-approved, or changes no meaning, is approved on that owner's behalf and reported to them. The
-specification has owners by default, one or several; a domain or any section may name its own, and a
-rule's owners are those named nearest above it.
+Anyone may change or add a rule. A rule is implemented only after one of its owners has approved it,
+having understood it and judged it legitimate. A change to a rule's wording makes the rule a draft again
+until one of its owners approves the new wording.
+
+A node is approved on behalf of one of its owners, and the approval is reported to that owner, in each of
+these cases:
+
+- the change to the node only states what an owner has already approved, or does not change the node's
+  meaning;
+- the node belongs to the technical appendix, implements an approved rule of the base specification, and was
+  written by an agent that was implementing that rule.
+
+The specification has one or more default owners. A domain or any section may name its own owners, and a
+rule's owners are those named by the nearest section or domain above it that names owners.
