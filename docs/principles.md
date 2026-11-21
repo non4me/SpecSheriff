@@ -50,8 +50,9 @@ An independent reviewer makes the judgements that are not deterministic:
 - for every commit in which code is changed: whether the code does only what its rules say;
 - for a commit whose message states that a rule's implementation needs no change: whether that statement is
   true;
-- for a commit in which a node of the technical appendix is approved: whether the node refines the rules of
-  the base specification that it implements and contradicts no rule of the base specification.
+- for a commit in which a node of the technical appendix is approved, if the node implements a rule of the base
+  specification: whether the node refines the rules of the base specification that it implements and contradicts
+  no rule of the base specification.
 
 ## A rule is self-sufficient
 
