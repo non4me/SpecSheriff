@@ -48,11 +48,16 @@ A team that needs the git hooks' checks to apply to everyone also runs them in C
 An independent reviewer makes the judgements that are not deterministic:
 
 - for every commit in which code is changed: whether the code does only what its rules say;
+- for every commit that adds or changes a comment in the code: whether each such comment is consistent with the
+  code that it describes and with the rules that this code implements;
 - for a commit whose message states that a rule's implementation needs no change: whether that statement is
   true;
 - for a commit in which a node of the technical appendix is approved, if the node implements a rule of the base
   specification: whether the node refines the rules of the base specification that it implements and contradicts
   no rule of the base specification.
+
+A finding that the reviewer makes about a comment that a commit adds or changes is only a warning: the reviewer
+does not refuse a commit because of such a finding.
 
 ## A rule is self-sufficient
 
