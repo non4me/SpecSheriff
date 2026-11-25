@@ -1,0 +1,234 @@
+<title>Узел описания инструментов: Проверка по схеме, прежде чем команда работает с файлами</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Проверка по схеме, прежде чем команда работает с файлами <span style="color:var(--muted);font-weight:400">· Validation against the schema before a command works on the files</span></h1>
+<div class="sub">tools 7.1.3 (new, after "How the schema of the specification is composed") · new:tools-7-1-validate · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Каждая команда опирается на структуру, которую схема задаёт для файла. Только проверка по схеме показывает, где файл отступает от этой структуры и что там не так. <code>sheriff reindex</code> строит каждый файл из всех файлов, поэтому если записать лишь некоторые из них, файлы разойдутся друг с другом.
+
+Ключ, записанный дважды, объединяется первым, потому что файл, прочитанный без объединения, хранит только последнее значение. То, что записал более ранний выпуск, изменяется первым, потому что схема отвергает его старые имена. То, что <code>sheriff reindex</code> пишет сам, исключается, потому что узел, написанный вручную, получает это только тогда, когда команда запущена.</div>
+  <div><div class="label">Reason</div>Each command relies on the structure that the schema defines for a file. Only validation against the schema shows where a file departs from that structure and what is wrong there. <code>sheriff reindex</code> builds each file from all the files, so writing only some of them would leave the files inconsistent with one another.
+
+A key written more than once is merged first, since a file read without the merge holds only its last value. What an earlier release wrote is changed first, since the schema refuses its old names. What <code>sheriff reindex</code> writes itself is excluded from the validation, since a node written by hand receives it only when <code>sheriff reindex</code> runs.</div>
+</div>
+<p class="hint" style="margin-top:8px">Как было в узле «The schema and a project's extension», с уточнением «из всех файлов». Последнее предложение — без отрицания, по вашему замечанию к предыдущему узлу. Второй абзац остаётся, хотя рецензент предлагал заменить его одним предложением: его замена неточна, а нынешний абзац даёт по причине на каждый шаг.</p>
+
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-emrfpzw2d5bgb6x s-xzcw3hv4hmxz7h7">
+  <td class="en"><p><code>sheriff validate</code>, <code>sheriff binding</code> and <code>sheriff reindex</code> validate each file of a part of the specification, if the repository keeps that file (<span class="cite" data-sid="s-emrfpzw2d5bgb6x" title="Every file of the specification complies with its JSON Schema">§10.1.2</span>). The schema they use is <code>section-file.schema.json</code>, composed with the extensions of the schema (<span class="cite" data-sid="s-xzcw3hv4hmxz7h7" title="The schema and a project's extension">§tools 7.1.2</span>). They validate the files at these points:</p></td>
+  <td class="ru"><p><code>sheriff validate</code>, <code>sheriff binding</code> и <code>sheriff reindex</code> проверяют каждый файл части спецификации, если этот файл хранит репозиторий (<span class="cite" data-sid="s-emrfpzw2d5bgb6x" title="Every file of the specification complies with its JSON Schema">§10.1.2</span>). Они проверяют по <code>section-file.schema.json</code>, составленной с расширениями схемы (<span class="cite" data-sid="s-xzcw3hv4hmxz7h7" title="The schema and a project's extension">§tools 7.1.2</span>). Файлы они проверяют в такие моменты:</p></td>
+  <td class="change">Из узла «The schema and a project's extension». Было: «<code>sheriff validate</code> проверяет каждый файл валидатором JSON Schema по базовой схеме…». Новое: проверяются только файлы, которые хранит репозиторий, а не guidelines и расширения, которые проект берёт из плагина. Файл архива здесь больше не назван: по вашему решению от 12 ноября строка 10.1.2 не распространяется на архив, потому что архив может хранить узел в формате прежнего выпуска. Как проверяется архив, скажет узел «A removed node and the archive», следующий по очереди.</td>
+  <td class="links"><span class="cite" data-sid="s-emrfpzw2d5bgb6x">Every file of the specification complies with its JSON Schema</span><span class="cite" data-sid="s-xzcw3hv4hmxz7h7">The schema and a project's extension</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="">
+  <td class="en"><div class="li">• <code>sheriff validate</code>, before any check that reads their nodes;</div></td>
+  <td class="ru"><div class="li">• <code>sheriff validate</code> — до любой проверки, которая читает их узлы;</div></td>
+  <td class="change">Уточнено: раньше сказано «прежде всего», но проверка дважды записанного ключа и проверка копии guidelines идут раньше, они не читают узлов.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-2" data-cites="">
+  <td class="en"><div class="li">• <code>sheriff binding</code>, before it checks anything;</div></td>
+  <td class="ru"><div class="li">• <code>sheriff binding</code> — прежде, чем что-либо проверять;</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-3" data-cites="">
+  <td class="en"><div class="li">• <code>sheriff reindex</code>, before it computes anything.</div></td>
+  <td class="ru"><div class="li">• <code>sheriff reindex</code> — прежде, чем что-либо вычислять.</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-4" data-cites="s-gb8s9657a65hqmv">
+  <td class="en"><p>Before that validation, <code>sheriff reindex</code> merges each key written more than once and changes what an earlier release wrote (<span class="cite" data-sid="s-gb8s9657a65hqmv" title="What `sheriff reindex` changes in what an earlier release wrote">§tools 2.3 (new)</span>). It excludes from the validation only what it writes itself:</p></td>
+  <td class="ru"><p>До этой проверки <code>sheriff reindex</code> объединяет каждый ключ, записанный больше одного раза, и изменяет то, что записал более ранний выпуск (<span class="cite" data-sid="s-gb8s9657a65hqmv" title="What `sheriff reindex` changes in what an earlier release wrote">§tools 2.3 (new)</span>). Из проверки он исключает только то, что пишет сам:</p></td>
+  <td class="change">Как было, только два предложения вместо одного.</td>
+  <td class="links"><span class="cite" data-sid="s-gb8s9657a65hqmv">What `sheriff reindex` changes in what an earlier release wrote</span></td>
+</tr>
+<tr class="part" id="part-5" data-cites="">
+  <td class="en"><div class="li">• the links pointing at a node;</div></td>
+  <td class="ru"><div class="li">• связи, указывающие на узел;</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-6" data-cites="">
+  <td class="en"><div class="li">• the sid that it gives a node;</div></td>
+  <td class="ru"><div class="li">• sid, который он даёт узлу;</div></td>
+  <td class="change">Было: «вне архива — sid, которого у узла нет, и каждое расположение». Оговорка об архиве не нужна: файл архива здесь не проверяется. Без отрицания, по вашему замечанию к предыдущему узлу.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-7" data-cites="s-kag2m9tzdnduxdx">
+  <td class="en"><div class="li">• every location (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>);</div></td>
+  <td class="ru"><div class="li">• каждое расположение (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>);</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"><span class="cite" data-sid="s-kag2m9tzdnduxdx">A node's location</span></td>
+</tr>
+<tr class="part" id="part-8" data-cites="s-9kfdycuq34beqvs s-yggv9myedprnaa7">
+  <td class="en"><div class="li">• the approval status of a section (<span class="cite" data-sid="s-9kfdycuq34beqvs" title="How a section's approval status is determined">§1.3.8</span>) and of a domain's header (<span class="cite" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">§11.1.3</span>);</div></td>
+  <td class="ru"><div class="li">• статус одобрения раздела (<span class="cite" data-sid="s-9kfdycuq34beqvs" title="How a section's approval status is determined">§1.3.8</span>) и заголовка домена (<span class="cite" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">§11.1.3</span>);</div></td>
+  <td class="change">Как было, отдельным пунктом.</td>
+  <td class="links"><span class="cite" data-sid="s-9kfdycuq34beqvs">How a section's approval status is determined</span><span class="cite" data-sid="s-yggv9myedprnaa7">A domain's specification opens with its header</span></td>
+</tr>
+<tr class="part" id="part-9" data-cites="s-2r59txnms5serdr">
+  <td class="en"><div class="li">• the index of the sections in a domain's header (<span class="cite" data-sid="s-2r59txnms5serdr" title="A domain's header carries the index built from its sections">§11.1.4</span>);</div></td>
+  <td class="ru"><div class="li">• оглавление разделов в заголовке домена (<span class="cite" data-sid="s-2r59txnms5serdr" title="A domain's header carries the index built from its sections">§11.1.4</span>);</div></td>
+  <td class="change">Как было, со ссылкой на правило расширения Domains об оглавлении.</td>
+  <td class="links"><span class="cite" data-sid="s-2r59txnms5serdr">A domain's header carries the index built from its sections</span></td>
+</tr>
+<tr class="part" id="part-10" data-cites="s-ju5vcanbjph7mgh">
+  <td class="en"><div class="li">• the values gathered beside a field (<span class="cite" data-sid="s-ju5vcanbjph7mgh" title="Gathered values are written beside their field">§12.9</span>).</div></td>
+  <td class="ru"><div class="li">• значения, собранные рядом с полем (<span class="cite" data-sid="s-ju5vcanbjph7mgh" title="Gathered values are written beside their field">§12.9</span>).</div></td>
+  <td class="change">Как было, со ссылкой на правило расширения RecordType о собранных значениях.</td>
+  <td class="links"><span class="cite" data-sid="s-ju5vcanbjph7mgh">Gathered values are written beside their field</span></td>
+</tr>
+<tr class="part" id="part-11" data-cites="s-xzcw3hv4hmxz7h7">
+  <td class="en"><p>Where the SpecSheriff tools refuse an extension of the schema (<span class="cite" data-sid="s-xzcw3hv4hmxz7h7" title="The schema and a project's extension">§tools 7.1.2</span>), or the schema refuses a file, <code>sheriff validate</code>, <code>sheriff binding</code> and <code>sheriff reindex</code> name that extension or each such file, with every refusal in it. Each of these commands then stops, and <code>sheriff reindex</code> leaves every file unchanged.</p></td>
+  <td class="ru"><p>Если инструменты SpecSheriff отвергают расширение схемы (<span class="cite" data-sid="s-xzcw3hv4hmxz7h7" title="The schema and a project's extension">§tools 7.1.2</span>) или схема отвергает файл, <code>sheriff validate</code>, <code>sheriff binding</code> и <code>sheriff reindex</code> называют это расширение или каждый такой файл и каждый отказ в нём. После этого каждая из этих команд останавливается, а <code>sheriff reindex</code> оставляет каждый файл без изменений.</p></td>
+  <td class="change">Было: так поступали <code>sheriff binding</code> и <code>sheriff reindex</code>. Теперь сказано и о <code>sheriff validate</code>, который уже так поступает с файлами. Отвергнув расширение проекта, <code>sheriff validate</code> сейчас проверяет файлы по схеме без него и сообщает о лишних отказах; в этапе 3 он перестанет это делать. Последние два предложения — без отрицания, по вашему замечанию к предыдущему узлу.</td>
+  <td class="links"><span class="cite" data-sid="s-xzcw3hv4hmxz7h7">The schema and a project's extension</span></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-emrfpzw2d5bgb6x"><span class="loc">реализует · 10.1.2</span> <b>Every file of the specification complies with its JSON Schema</b><br><span class="meta">guidelines · s-emrfpzw2d5bgb6x</span></li>
+<li class="node" data-sid="s-eferktypcj7njt5"><span class="loc">реализует · 5.1</span> <b>The structure of the specification is defined by its machine-readable schema</b><br><span class="rut">Структуру спецификации задаёт её машиночитаемая схема</span><br><span class="meta">guidelines · s-eferktypcj7njt5</span></li>
+<li class="node" data-sid="s-xzcw3hv4hmxz7h7"><span class="loc">ссылается · tools 7.1.2</span> <b>The schema and a project's extension</b><br><span class="meta">appendix of the tools · s-xzcw3hv4hmxz7h7</span></li>
+<li class="node" data-sid="s-gb8s9657a65hqmv"><span class="loc">ссылается · tools 2.3 (new)</span> <b>What `sheriff reindex` changes in what an earlier release wrote</b><br><span class="rut">Что `sheriff reindex` меняет в записанном прежним выпуском</span><br><span class="meta">draft of the appendix of the tools · s-gb8s9657a65hqmv</span></li>
+<li class="node" data-sid="s-9kfdycuq34beqvs"><span class="loc">ссылается · 1.3.8</span> <b>How a section's approval status is determined</b><br><span class="rut">Как определяется статус одобрения раздела</span><br><span class="meta">guidelines · s-9kfdycuq34beqvs</span></li>
+<li class="node" data-sid="s-yggv9myedprnaa7"><span class="loc">ссылается · 11.1.3</span> <b>A domain's specification opens with its header</b><br><span class="rut">Спецификация домена открывается его заголовком</span><br><span class="meta">extension domains · s-yggv9myedprnaa7</span></li>
+<li class="node" data-sid="s-2r59txnms5serdr"><span class="loc">ссылается · 11.1.4</span> <b>A domain's header carries the index built from its sections</b><br><span class="rut">Заголовок домена несёт построенный указатель его разделов</span><br><span class="meta">extension domains · s-2r59txnms5serdr</span></li>
+<li class="node" data-sid="s-ju5vcanbjph7mgh"><span class="loc">ссылается · 12.9</span> <b>Gathered values are written beside their field</b><br><span class="meta">extension recordtype · s-ju5vcanbjph7mgh</span></li>
+<li class="node" data-sid="s-kag2m9tzdnduxdx"><span class="loc">ссылается · 8.5</span> <b>A node's location</b><br><span class="rut">Расположение узла</span><br><span class="meta">guidelines · s-kag2m9tzdnduxdx</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «The schema and a project's extension»</h2>
+<ul class="plain">
+<li><code>sheriff reindex and sheriff binding refuse a file the schema refuses, naming it, rather than fail on it</code><br><span class="meta">skills/tools/test/e2e/commands.test.ts</span></li>
+<li><code>sheriff binding refuses a file the schema refuses before it checks anything, naming the file and every refusal in it</code><br><span class="meta">skills/tools/test/unit/binding.test.ts</span></li>
+<li><code>sheriff binding refuses where the schema of an extension refuses the project's extension, naming it, and checks nothing more</code><br><span class="meta">skills/tools/test/unit/binding.test.ts</span></li>
+<li><code>the reindex refuses a file the schema refuses, naming the file and every refusal in it, and then writes no file</code><br><span class="meta">skills/tools/test/unit/reindex.test.ts</span></li>
+<li><code>the reindex refuses a sid that is not one, since only a sid a node lacks is left out of the validation</code><br><span class="meta">skills/tools/test/unit/reindex.test.ts</span></li>
+<li><code>the reindex refuses where the schema of an extension refuses the project's extension, naming it, and then writes no file</code><br><span class="meta">skills/tools/test/unit/reindex.test.ts</span></li>
+<li><code>the reindex validates once it has changed what an earlier release wrote, and leaves out what it writes itself</code><br><span class="meta">skills/tools/test/unit/reindex.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка узла «The schema and a project's extension», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre>`sheriff validate` проверяет каждый файл валидатором JSON Schema по базовой схеме SpecSheriff guidelines, составленной с расширением проекта (§s-eferktypcj7njt5).
+
+Сначала расширение проверяется по схеме расширения. Эта схема позволяет расширению добавлять только NodeKinds, свойства существующего NodeKind и свойства файла или связи.
+
+То, что добавляет расширение, присоединяется к базовой схеме:
+
+- его NodeKinds присоединяются к NodeKinds, которые может иметь узел;
+- его условия присоединяются к тем, которым подчиняется каждый узел;
+- его свойства файла и связи присоединяются к тем, которые могут иметь файл и связь.
+
+`sheriff binding` проверяет каждый файл по той же схеме, прежде чем проверять что-либо.
+
+`sheriff reindex` проверяет каждый файл после того, как объединил каждый ключ, записанный дважды, и изменил то, что записал более ранний выпуск, как говорит §s-f5rz6b7dhxejjts. Он делает это прежде, чем что-либо вычислять. Из этой проверки он исключает только то, что пишет сам:
+
+- связи, указывающие на узел;
+- вне архива — sid, которого у узла нет, каждое расположение, оглавление разделов в заголовке, значения, собранные рядом с полем, и статус раздела и заголовка домена.
+
+Если схема отвергает файл или схема расширения отвергает расширение проекта, каждая из двух команд называет этот файл или расширение и каждый отказ в нём. После этого она больше ничего не проверяет, а `sheriff reindex` не пишет ни одного файла.
+
+Обоснование. Каждая команда написана для того вида файла, который задаёт схема. Только проверка по схеме называет, где файл отступает от этого вида и что там не так. `sheriff reindex` строит каждый файл из всех них, поэтому если записать лишь некоторые, файлы разойдутся друг с другом.
+
+Ключ, записанный дважды, объединяется первым, потому что файл, прочитанный без объединения, хранит только последнее значение. То, что записал более ранний выпуск, изменяется первым, потому что схема отвергает его старые имена. То, что `sheriff reindex` пишет сам, исключается, потому что в узле, написанном вручную, этого нет, пока команда не запущена.</pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate` validates each file with a JSON Schema validator against the base schema of the SpecSheriff guidelines, composed with the project's extension (§s-eferktypcj7njt5).
+
+The extension is validated first, against the schema of an extension. That schema lets an extension add only NodeKinds, properties of an existing NodeKind, and properties of a file or of a link.
+
+What the extension adds joins the base schema:
+
+- its NodeKinds join the NodeKinds a node may have;
+- its conditions join those every node is held to;
+- its properties of a file and of a link join those a file and a link may hold.
+
+`sheriff binding` validates each file against the same schema before it checks anything.
+
+`sheriff reindex` validates each file once it has merged each key written twice and changed what an earlier release wrote, as §s-f5rz6b7dhxejjts says. It does so before it computes anything. It leaves out of that validation only what it writes itself:
+
+- the links pointing at a node;
+- outside the archive, a sid a node lacks, every location, a header's index of its sections, the values gathered beside a field and the status of a section and of a domain's header.
+
+Where the schema refuses a file, or the schema of an extension refuses the project's extension, each of the two commands names that file or the extension and every refusal in it. It then checks nothing more. `sheriff reindex` then writes no file.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

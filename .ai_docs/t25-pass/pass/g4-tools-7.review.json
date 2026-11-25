@@ -1,0 +1,61 @@
+{
+  "s-7zqsstgnuc772ba": { "verdict": "same", "issues": [] },
+  "s-xzcw3hv4hmxz7h7": { "verdict": "same", "issues": [] },
+  "s-vke5hakwf3uyrjs": { "verdict": "same", "issues": [] },
+  "s-stxmhq3hgfndvn6": { "verdict": "same", "issues": [] },
+  "s-95w92rnjuv3sst8": {
+    "verdict": "same",
+    "issues": [
+      "Note (no meaning moved): the input's 'read as `sheriff reindex` would rewrite them' is now 'The approvals of the parent are read as …'. That is the only grammatical antecedent of the plural 'them', and it matches addedApprovals in skills/tools/src/approvals.ts, which reads the parent's lines together with the old confirmations."
+    ]
+  },
+  "s-j4webte36gkraju": { "verdict": "same", "issues": [] },
+  "s-qzyacnqwvaeaps4": { "verdict": "same", "issues": [] },
+  "s-pvnnr844f3y964m": { "verdict": "same", "issues": [] },
+  "s-agc6fb3vx46pc23": { "verdict": "same", "issues": [] },
+  "s-e2vdhfsndy5stq9": { "verdict": "same", "issues": [] },
+  "s-zhen42p6mnaxu7w": { "verdict": "same", "issues": [] },
+  "s-qvgzubkrafadqgf": { "verdict": "same", "issues": [] },
+  "s-vuujweu57sxsa58": { "verdict": "same", "issues": [] },
+  "s-ezq8csd433vj6fj": { "verdict": "same", "issues": [] },
+  "s-uxmkwbnpgtjzkgv": { "verdict": "same", "issues": [] },
+  "s-c2r9jndrjbtbsv6": { "verdict": "same", "issues": [] },
+  "s-3anv9qcmx8pwp2w": {
+    "verdict": "same",
+    "issues": [
+      "Note (no meaning moved), answering the rewriter's doubt: the input's 'the one it names as identifying it' is now 'the one the RecordType names as identifying it'. The reading is the right one. In specs/_schema/node.schema.json, `identifiedBy` stands on the RecordType and names 'the field, its own or inherited, that identifies it'. The RecordType is also the nearest antecedent of 'it' in the input."
+    ]
+  },
+  "s-5nf87c3e3jg9v7c": { "verdict": "same", "issues": [] },
+  "s-cdachayybfvg4na": { "verdict": "same", "issues": [] },
+  "s-6bmnsbskg6en4nf": { "verdict": "same", "issues": [] },
+  "s-yprj7d6tnvauggr": { "verdict": "same", "issues": [] },
+  "s-gvafe6bnstwab8b": { "verdict": "same", "issues": [] },
+  "s-7pk89t8z6wymmj9": { "verdict": "same", "issues": [] },
+  "s-2x58az67bm6cxq2": { "verdict": "same", "issues": [] },
+  "s-9rtrj24myzjvshu": { "verdict": "same", "issues": [] },
+  "s-j9r8z4xdrfkfs47": {
+    "verdict": "changed",
+    "issues": [
+      "Last paragraph. The input says the commit 'passes only where it adds to the approvals a withdrawal of that rule's approval, of whichever wording, whose `by` is one of the specification's owners as the commit holds them'. There the `by` clause restricts which withdrawal counts: the commit passes where at least one added withdrawal is by an owner. skills/tools/src/binding.ts:154 checks exactly that with `.some(… owners.includes(a.by))`. The output says it 'passes only where it adds to the approvals a withdrawal of that rule's approval, of whichever wording. The withdrawal's `by` must be one of the specification's owners, as the commit holds them.' The owner condition is no longer a condition of passing. It now stands as a separate requirement on 'the withdrawal', which reads as applying to every withdrawal the commit adds. With several withdrawals, a commit holding one by a non-owner and one by an owner passes under the input but not under the output. No other check catches a non-owner's withdrawal (validate.ts:109 skips withdrawn lines). A wording that keeps the meaning: '… passes only where it adds to the approvals a withdrawal of that rule's approval by one of the specification's owners, as the commit holds them, of whichever wording.' Or a list under 'passes only where it adds to the approvals a withdrawal of that rule's approval:'.",
+      "Note (no meaning moved), answering the rewriter's doubt: the input's 'and so is a test' is now 'a test that carries no SpecTag', and 'where the commit does not change it' now covers both list items. Both match the input, since 'so is' carries the whole predicate. They also match §s-utf4mbt7ref8g9c ('a test carrying no SpecTag that the commit does not change is reported by the test, not refused')."
+    ]
+  },
+  "s-utf4mbt7ref8g9c": { "verdict": "same", "issues": [] },
+  "s-t383grkn3q68dpf": { "verdict": "same", "issues": [] },
+  "s-5hb9k2e34dgn284": {
+    "verdict": "same",
+    "issues": [
+      "Note (no rename missed): keeping 'each list a node holds' rather than `TextRule.list` is right. RULES.md renames 'a rule's list', but this node says 'a node'. The tools read `list` on any node (skills/tools/src/binding.ts:251), so `TextRule.list` would narrow the node."
+    ]
+  },
+  "s-nh8b2hjvzasdxmd": { "verdict": "same", "issues": [] },
+  "s-dbk2vyeg8z5jxna": { "verdict": "same", "issues": [] },
+  "s-txbwsthdqhvyzd2": { "verdict": "same", "issues": [] },
+  "s-jgejd5rpd9d43pd": { "verdict": "same", "issues": [] },
+  "s-m8nmfsxkcfu7cjp": { "verdict": "same", "issues": [] },
+  "s-st6td4mua9uqt9z": { "verdict": "same", "issues": [] },
+  "s-qqs2svksmjct753": { "verdict": "same", "issues": [] },
+  "s-vp24dqydygztqbt": { "verdict": "same", "issues": [] },
+  "s-b6qdtghnyha3fhk": { "verdict": "same", "issues": [] }
+}

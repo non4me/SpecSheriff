@@ -1,0 +1,22 @@
+[
+  {
+    "group": "g6-tools-8-20-project", "sid": "s-zh2vcr3xjumppg5", "field": "text",
+    "from": "- writes what the user answers;\n- marks the setting asked (§s-xr5xxa9cxf2mq5u).",
+    "to": "- writes what the user answers.\n\nIt then marks the runner asked (§s-xr5xxa9cxf2mq5u)."
+  },
+  {
+    "group": "g6-tools-8-20-project", "sid": "s-2pdy9gw2jrjvfb4", "field": "text",
+    "from": "- writes what the user answers;\n- marks the setting asked (§s-xr5xxa9cxf2mq5u).",
+    "to": "- writes what the user answers.\n\nIt then marks the runner asked (§s-xr5xxa9cxf2mq5u)."
+  },
+  {
+    "group": "g6-tools-8-20-project", "sid": "s-v4qus7raqnwzneb", "field": "text",
+    "from": "Where no approval stands for any wording of the node, it appends nothing. Anyone may run it. It refuses:",
+    "to": "Where no approval stands for any wording of the node, it appends nothing. Anyone may withdraw an approval. `sheriff approve --withdraw` refuses:"
+  },
+  {
+    "group": "g6-tools-8-20-project", "sid": "s-4npdup7mjkva69y", "field": "reason",
+    "from": "keeps its type and passes the same check.",
+    "to": "keeps its type and passes the same RuntimeCheck."
+  }
+]

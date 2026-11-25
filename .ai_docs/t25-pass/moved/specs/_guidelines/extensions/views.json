@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines/extensions",
+  "section": "views",
+  "nodes": [
+    {
+      "location": "_guidelines/extensions/views/13",
+      "sid": "s-qgg6sfawtmwvrbb",
+      "kind": "section",
+      "title": "Views of the specification",
+      "status": "draft",
+      "text": "An extension of the guidelines: further documentation generated from the nodes, such as the readable export, the mindmap and the diagrams. Its rules say what each view shows. How the SpecSheriff tools build a view is described in the appendix of the tools.",
+      "refs": [],
+      "children": [
+        {
+          "location": "_guidelines/extensions/views/13.1",
+          "sid": "s-ce24ynwabt5yx8h",
+          "kind": "TextRule",
+          "title": "The human-readable export",
+          "status": "draft",
+          "text": "The human-readable export is the specification written for a person to read, for example in Markdown. It contains every node with every value that the node's file holds for that node. It shows each link with the node at the link's other end: that node's sid, location (§s-kag2m9tzdnduxdx) and title.\n\nThe export keeps the order and the nesting of the nodes: each node is followed by its children, nested under it.",
+          "refs": [
+            {
+              "type": "cites",
+              "to": "s-kag2m9tzdnduxdx"
+            }
+          ],
+          "reason": "The files that a schema checks are hard for a person to read. The export lets a person read everything those files hold, and see where each link leads, without opening them.",
+          "examples": [
+            "A person outside the team reads a rule in the export and sees its reason, the decisions taken on it, and the title of every node it links to, without opening the specification's files."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-17",
+                "problem": "Where the rule on what the human-readable export shows belongs, since only the appendix of the tools described the export.",
+                "ruling": "The owner accepted a plan under which an extension on the views of the specification states what the export shows. A node of the appendix of the tools states how the tools write it and implements this node.",
+                "type": "procedural"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/views/13.2",
+          "sid": "s-zu8ne3wq84zchc4",
+          "kind": "TextRule",
+          "title": "The map of the specification",
+          "status": "draft",
+          "text": "The map is the specification seen from above. It is drawn from the nodes and holds no facts of its own.\n\nThe map shows only the title and the approval status (§s-tgrnpagrb58tya7) of each node, nested as the nodes are nested in the specification. A branch of the map can be opened and closed, so that a reader goes to the part they came for while the whole stays in view around it.\n\nThe top-level branches of the map appear in this order: the guidelines, the appendix of the tools, the base specification and the technical appendix (§s-qmmzf9nksfsa3qp).",
+          "refs": [
+            {
+              "type": "cites",
+              "to": "s-tgrnpagrb58tya7"
+            },
+            {
+              "type": "cites",
+              "to": "s-qmmzf9nksfsa3qp"
+            }
+          ],
+          "reason": "A specification is read one rule at a time, yet it has to be understood as a whole. The full text is more than anyone can hold in mind at once, and a rule read on its own loses its place in the specification. Seen from above, the specification shows the shape of the whole and the detail of whatever is opened, together with the parts of it that still wait for their owners' approval.",
+          "examples": [
+            "Drawn as a mind map, the map opens with its top-level branches. A reader opens the branch of the base specification and one of its sections, and sees the titles of that section's rules, each with its approval status, while the other branches stay closed."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-06",
+                "problem": "The map showed the structure alone, so the state of the specification could not be seen at the level of its map.",
+                "ruling": "The owner: the map shows each node's status.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-17",
+                "problem": "An earlier restructuring had moved the rule on the map of the specification into the appendix of the tools.",
+                "ruling": "The owner accepted a plan under which the rule returns to the extension on the views of the specification and keeps its sid. The node of the appendix of the tools on building the map implements it.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The rewritten node opened by calling the map a mind map and dropped phrases from the approved wording: that the map holds no facts of its own, and why a branch opens and closes.",
+                "ruling": "The owner: the node keeps those phrases and again opens by calling the map the specification seen from above. A mind map is named only in the example.",
+                "type": "textual"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

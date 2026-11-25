@@ -1,0 +1,117 @@
+### s-stxmhq3hgfndvn6
+TRANSLATION: Название: Расположение, которое отличается от вычисленного. Текст: `sheriff validate` отклоняет каждый узел спецификации, чьё расположение (§s-kag2m9tzdnduxdx) отличается от вычисленного для него (§s-ygg5kpcxgzq3m7w, §s-tvxhtjbj7mmpmnx). Сообщение об отказе называет файл узла и sid, расположение, записанное в файле, и вычисленное расположение. `sheriff validate` проверяет каждый узел спецификации в файлах, которые хранит репозиторий, включая узел в ячейке TableRule (§s-5fewsp22mmdz7y6). Причина: расположение сообщает читателю, где находится узел, только пока оно вычисленное. `sheriff reindex` записывает каждое расположение после каждой правки, которую делает агент. Поэтому расположение, которое отличается, записано вручную или осталось после перемещения узла, за которым не последовал `sheriff reindex`.
+TWO READINGS:
+- "a move of the node that no `sheriff reindex` followed": (1) относительная часть относится к "move": после перемещения не запускали reindex (предпочтительно); (2) относится к "node": узел, за которым не следовал reindex. По смыслу близко, но грамматически возможны оба прочтения.
+- "a location that differs": не сказано, от чего оно отличается. Скорее всего, от вычисленного расположения.
+- "left by a move": расположение «осталось неизменным после перемещения» (устарело). Читатель мог бы понять и как «оставлено перемещением».
+LANGUAGE:
+- "refuses each node" → "rejects each node" — validator отклоняет (rejects) узел. Узел ни о чём не просят, поэтому "refuses" с узлом в роли объекта звучит не по-английски.
+- "the location computed" → "the location that was computed" (или "the computed one") — причастие без артикля и без связки звучит обрывисто.
+- "the files that the repository keeps" → "the files in the repository" — калька «хранит репозиторий». Если имеются в виду файлы под git, то "the files tracked in the repository" (в этом случае смысл не проверен).
+- "a location that differs" → "a location that differs from the computed one" — без дополнения фраза неполная.
+
+### new:tools-7-1-location
+TRANSLATION: Название: Как вычисляется расположение узла. Текст: инструменты SpecSheriff вычисляют расположение узла (§s-kag2m9tzdnduxdx) по пути его файла и по его месту в спецификации. Они вычисляют его для каждого узла спецификации в файлах, которые хранит репозиторий. Первый узел верхнего уровня в файле SpecSheriff guidelines, в файле описания инструментов SpecSheriff (§s-a4rbry4hsu34hy8) или в файле технического приложения (§s-tj38pvm38nepaf5) получает в качестве расположения путь этого файла внутри `specs/` без `.json` (§s-zefk589ykh37b8u). Примеры: `_guidelines/spec`, `_guidelines/extensions/domains`, `tech/stack`. Если проект выбрал расширение Domains (§s-tdm3rwsppnuh6dm), заголовок домена (§s-yggv9myedprnaa7) получает в качестве расположения имя домена. Расположение любого другого узла — одно из следующих, после которого идут косая черта и место узла: (1) в файле SpecSheriff guidelines, описания инструментов или технического приложения — расположение первого узла верхнего уровня этого файла, как в `_guidelines/spec/1.3.4`; (2) в базовой спецификации (§s-5x737t9nee4zgaa) — имя папки внутри `specs/`, где лежит файл узла, как в `base/3.2`, `contracts/1`, `requests/2`. Нумеруется каждый узел, кроме: термина (§s-khqsmy6mhejkrhg), чьё место — имя термина; первого узла верхнего уровня в файле SpecSheriff guidelines, описания инструментов или технического приложения; заголовка домена. Место нумерованного узла — его позиция среди нумерованных узлов под его родителем, считая с единицы. Если родитель тоже нумерован, перед позицией стоят место родителя и точка, как в `3.2`. Инструменты берут (обходят) нумерованные узлы под узлом в порядке его дочерних узлов. Под TableRule (§s-5fewsp22mmdz7y6) узлы в его ячейках идут после его дочерних узлов: строка за строкой по его группам, а внутри строки столбец за столбцом. В папке базовой спецификации узлы верхнего уровня её файлов и дочерние узлы заголовка домена считаются узлами под одним родителем. Инструменты обходят их файл за файлом, в порядке кодовых точек путей файлов. Узлы верхнего уровня одного файла идут в том порядке, в каком файл их перечисляет. Дочерние узлы заголовка домена занимают в этом порядке позицию заголовка. В файле SpecSheriff guidelines, описания инструментов или технического приложения каждый следующий узел верхнего уровня нумеруется под расположением первого узла, после его дочерних узлов. Причина: `sheriff reindex` записывает расположения, которые проверяет `sheriff validate` (§s-ztseyetus7np6br, §s-stxmhq3hgfndvn6). Поэтому обеим командам нужно одно вычисление, которое даёт каждому узлу своё расположение, одинаковое на любой машине. Пример: домен `requests` лежит в трёх файлах: заголовок в `00-requests.json`, одна секция в `intake.json`, другая в `review.json`. Расположение заголовка — `requests`, секций — `requests/1` и `requests/2`. Четвёртый узел второй секции — TableRule `requests/2.4`, в каждой строке которого один узел, так что узел в третьей строке — `requests/2.4.3`. Ближайшая ошибка — нумеровать каждый файл с единицы, тогда обе секции получат `requests/1`.
+TWO READINGS:
+- "place" (в "its place in the specification", "the node's place", "the parent's place", "take the header's place"): слово означает и общее положение узла в спецификации, и определённый последний сегмент расположения (номер или имя термина). Первое употребление ("its place in the specification") — общее. После "followed by a slash and the node's place" — определённый сегмент. В "take the header's place in that order" имеется в виду позиция в порядке обхода (предпочтительно), а не сегмент расположения: у заголовка домена по определению нет нумерованного места.
+- "The children of a domain's header take the header's place in that order": (1) дочерние узлы занимают в порядке обхода позицию, где стоит заголовок (предпочтительно); (2) дочерние узлы получают то же место, что и заголовок.
+- "row by row through its groups": "its" — скорее всего, TableRule; "groups" не определены в этом фрагменте, вероятно, группы строк таблицы.
+- "the nodes in its cells come after its children": "its" — TableRule; "come after" — в порядке нумерации.
+- "Both" в Reason: обе команды, `sheriff reindex` и `sheriff validate` (предпочтительно); не расположения.
+- "a location of its own": уникальное расположение (предпочтительно) либо расположение, вычисляемое из самого узла.
+- "Every other node's location is one of the following, followed by a slash and the node's place": "followed by" относится к выбранному пункту списка, а не ко всему списку (предпочтительно); пункты списка сами оканчиваются местом (`_guidelines/spec/1.3.4`).
+LANGUAGE:
+- "The first node at the top of a file" → "The first top-level node of a file" — «узел на верхнем уровне» передан калькой "at the top"; читатель может понять «первый узел в начале файла».
+- "the first node at the top of that file" → "the first top-level node of that file" — то же.
+- "the first node at the top of a file of the guidelines, of the appendix of the tools or of the technical appendix;" (в списке исключений) → "the first top-level node of a file of the guidelines, of the appendix of the tools or of the technical appendix;" — то же.
+- "the nodes at the top of its files" → "the top-level nodes of its files" — то же.
+- "The nodes at the top of one file" → "The top-level nodes of one file" — то же.
+- "each further node at the top of the file" → "each further top-level node of the file" — то же.
+- "the files that the repository keeps" → "the files in the repository" — калька «хранит репозиторий» (смысл «под git» не проверен).
+- "The SpecSheriff tools take the numbered nodes under a node in the order of the node's children" → "The SpecSheriff tools number the nodes under a node in the order of that node's children" — "take" здесь калька «брать»; не ясно, что инструменты делают с узлами. Замена предполагает, что речь о нумерации.
+- "The SpecSheriff tools take them file by file" → "The SpecSheriff tools go through them file by file" — то же.
+- "are considered nodes under one parent" → "are treated as nodes under one parent" — «считаются» передано как "are considered"; естественнее "are treated as".
+- "the sections are `requests/1` and `requests/2`" → "the sections' locations are `requests/1` and `requests/2`" — секции не равны расположениям.
+- "The closest mistake" → "The likeliest mistake" — "closest" калька «ближайшая ошибка»; точный смысл («та, в которую легче всего впасть») замена сохраняет, но проверьте.
+- "A domain `requests`" → "A domain named `requests`" — без "named" имя читается как приложение, а не как название.
+
+### s-95w92rnjuv3sst8
+TRANSLATION: Название: Одобренный узел без действующего одобрения. Текст: `sheriff validate` отклоняет каждый одобренный узел, для которого нет одобрения его текущей формулировки (§s-v4qus7raqnwzneb, §s-cey3k9xxjvkpyqz). Сообщение об отказе называет узел по файлу, sid и расположению (§s-kag2m9tzdnduxdx). `sheriff validate` проверяет каждый узел спецификации в файлах, которые хранит репозиторий, включая узел в ячейке TableRule (§s-5fewsp22mmdz7y6). Он не проверяет узлы, статус одобрения которых `sheriff reindex` выводит из других узлов (§s-ztseyetus7np6br): каждую секцию и каждый заголовок домена, если проект выбрал расширение Domains (§s-tdm3rwsppnuh6dm, §s-yccuyqbypzzx2gu). Причина: статус одобрения узла записан в его файле, где любой может вручную поставить `approved`. Само одобрение записано отдельно от узла, в `specs/_approvals.jsonl` (§s-v4qus7raqnwzneb). Сравнение двух находит статус одобрения, поставленный вручную, и статус, оставленный `approved` после изменения формулировки. Пример: человек правит вручную текст одобренного правила и коммитит изменение, не запустив `sheriff reindex`. `sheriff validate` отклоняет правило, так как для его новой формулировки нет действующего одобрения. Если бы `sheriff reindex` отработал, он сделал бы правило draft, и проверка прошла бы.
+TWO READINGS:
+- "standing approval" (в названии): (1) действующее, неотозванное одобрение (предпочтительно по тексту); (2) в английском "standing approval" обычно значит общее заранее данное разрешение.
+- "no approval stands for its new wording": (1) нет действующего одобрения новой формулировки (предпочтительно); (2) "stands for" читается как «означает, обозначает».
+- "the two": статус одобрения в файле и запись одобрения в `_approvals.jsonl` (предпочтительно).
+- "one left `approved`": "one" — статус одобрения (предпочтительно).
+LANGUAGE:
+- "refuses each approved node" → "rejects each approved node" — validator отклоняет (rejects) узел.
+- "`sheriff validate` refuses the rule" → "`sheriff validate` rejects the rule" — то же.
+- "no approval stands for its new wording" → "no approval is in force for its new wording" — "stands for" означает «обозначает, является аббревиатурой», а не «действует».
+- "for which no approval of its current wording stands" → "for which no approval of its current wording is in force" — "stands" в значении «действует» допустимо, но в документе рядом встречается и "stands for"; "in force" однозначнее.
+- "a standing approval" (в названии) → "a valid approval" — "standing approval" в английском значит «общее разрешение вперёд». Проверьте: «valid» подразумевает «не отозванное и относящееся к текущей формулировке».
+- "the files that the repository keeps" → "the files in the repository" — калька.
+
+### new:tools-7-1-approval-by
+TRANSLATION: Название: Кого называет добавленное одобрение. Текст: `sheriff validate` принимает одобрение (§s-v4qus7raqnwzneb), которое коммит добавляет в `specs/_approvals.jsonl`, только если выполнены оба условия: его узел находится в файлах, которые хранит репозиторий; оно называет ответственного за этот узел (§s-6sk8uet75dmq5qz) по состоянию на этот коммит (§s-acacahc8c9estmr). Любое другое одобрение, добавленное коммитом, `sheriff validate` отклоняет. Сообщение об отказе называет sid и адрес электронной почты, записанные в одобрении. Если узел есть в файлах репозитория, сообщение называет также файл узла, его расположение (§s-kag2m9tzdnduxdx) и его ответственных. Коммит добавляет одобрение, если после коммита в `specs/_approvals.jsonl` больше строк, равных этому одобрению, чем в родителе коммита. Для коммита слияния родитель — его первый родитель. `sheriff validate` читает одобрения родителя в той форме, в которую их переписал бы `sheriff reindex` (§s-gb8s9657a65hqmv). Ответственных узла `sheriff validate` определяет так, как их даёт модель спецификации (§s-w6gybeqn2ttydqx). Из строк, добавленных коммитом, он проверяет только одобрения. Причина: одобрять узел могут только его ответственные, а отозвать одобрение может любой (§s-67vekyup7y8smap, §s-fpq35tf3pehgk64). Ответственные за узел могут смениться от коммита к коммиту, поэтому каждое одобрение оценивается в коммите, который его добавляет. Тогда последующая смена ответственных оставляет в силе одобрения, данные до неё. Пример: ближайшая секция над правилом называет ответственным `a@example.com`. Коммит добавляет одобрение правила от `b@example.com`, и `sheriff validate` его отклоняет, называя оба адреса. Коммит, который заодно делает `b@example.com` ответственным за эту секцию, принимается. Ближайшая ошибка — оценивать одобрение по ответственным, которых держит родитель коммита: так был бы отклонён второй коммит.
+TWO READINGS:
+- "it names an owner of that node": одобрение содержит адрес ответственного, который его дал (предпочтительно); читатель может понять «одобрение назначает ответственного».
+- "A node's owners may change": возможность (предпочтительно), а не разрешение.
+- "Only a node's owners may approve it, while anyone may withdraw": "may" — разрешение.
+- "A later change of owners then leaves in force the approvals given before it": "it" — смена ответственных (предпочтительно). "then" — «в этом случае».
+- "an approval ... holds more lines equal to that approval after the commit than in the commit's parent": не ясно, что сравнивается во второй части. Вероятно, число таких строк в родителе.
+- "Of the lines that a commit adds, it checks only approvals": "it" — `sheriff validate`; из добавленных строк проверяются только одобрения (а не отзывы или иные строки).
+- "naming both addresses": адрес из одобрения (b) и адрес ответственного (a) (предпочтительно).
+- "which would refuse that second commit": "which" — оценка по ответственным родителя (предпочтительно).
+- "its owner" в примере: "its" — секции (предпочтительно) либо правила.
+LANGUAGE:
+- "refuses any other approval" → "rejects any other approval" — validator отклоняет (rejects).
+- "`sheriff validate` refuses it, naming both addresses" → "`sheriff validate` rejects it, naming both addresses" — то же.
+- "the files that the repository keeps" (в "its node is in the files that the repository keeps") → "the files in the repository" — калька.
+- "Where the files that the repository keeps hold the node" → "Where the files in the repository hold the node" — калька.
+- "holds more lines equal to that approval after the commit than in the commit's parent" → "holds more lines identical to that approval after the commit than it held in the commit's parent" — во второй части пропущены подлежащее и сказуемое. "equal to" в смысле «совпадающих» — "identical to".
+- "The closest mistake" → "The likeliest mistake" — калька «ближайшая ошибка»; смысл замены проверьте.
+- "as of that commit" — допустимо, но "at that commit" точнее по смыслу «в состоянии на коммит» (замена не обязательна; смысл сохраняет).
+
+### s-agc6fb3vx46pc23
+TRANSLATION: Название: Значения, построенные из других узлов. Текст: `sheriff validate` отклоняет каждый узел, в котором значение, построенное из других узлов, отличается от значения, которое записал бы `sheriff reindex` (§s-ztseyetus7np6br). Он вычисляет такие значения: связи, указывающие на каждый узел (§s-bpdqd9v72wg7vsz, §s-xdk44dt9uxdeb2b), сравниваются без учёта порядка; статус одобрения каждой секции (§s-9kfdycuq34beqvs, §s-k3hrk8u9uz9mpz7); если проект выбрал расширение Domains (§s-tdm3rwsppnuh6dm), статус одобрения каждого заголовка домена (§s-yccuyqbypzzx2gu, §s-bn8rvk6du2jkf2d); там же индекс секций в каждом заголовке домена (§s-2r59txnms5serdr, §s-6n2ab7escdtspwe); если проект выбрал расширение RecordType (§s-hzuzn8hbq6q9q4s), значения, собранные «рядом» с каждым полем с `enum` (§s-ju5vcanbjph7mgh, §s-93jpnb4c96qhwbu). `sheriff validate` проверяет каждый узел спецификации в файлах репозитория, включая узел в ячейке TableRule (§s-5fewsp22mmdz7y6). Сообщение об отказе называет узел по файлу, sid и расположению в спецификации (§s-kag2m9tzdnduxdx) и называет значение, которое отличается. Причина: после правки одного узла значение, построенное из него, остаётся устаревшим, пока не запустится `sheriff reindex`. Вычисление всех таких значений заново находит коммит, в котором есть устаревшее значение или значение, записанное вручную. Пример: секция содержит TableRule, в одной ячейке которого лежит узел draft, а все остальные узлы под секцией одобрены. `sheriff validate` вычисляет статус одобрения секции как draft и отклоняет секцию, если её файл помечает её approved. Ближайшая ошибка — считать только узлы в `children` узла: так узел в ячейке пропускается.
+TWO READINGS:
+- "the values gathered beside each field with `enum`": (1) значения, собранные для каждого поля, у которого есть `enum` (предпочтительно); (2) значения, собранные с помощью `enum`. Что значит "beside" (рядом, при поле), не ясно.
+- "a commit that holds an out-of-date value, or one written by hand": "one" — значение (предпочтительно), а не коммит.
+- "an index of sections in each domain's header": индекс секций, лежащий в заголовке домена (предпочтительно), а не секций, лежащих внутри.
+- "which leaves out the node in the cell": "which" — подсчёт только `children` (предпочтительно).
+- "Computing every such value anew": "such" — значение, построенное из узла.
+LANGUAGE:
+- "refuses each node" → "rejects each node" — validator отклоняет (rejects).
+- "refuses the section if its file marks it approved" → "rejects the section if its file marks it approved" — то же.
+- "the values gathered beside each field with `enum`" → "the values gathered alongside each field that has `enum`" — "beside" калька «рядом с»; "with `enum`" допускает два прочтения.
+- "The closest mistake" → "The likeliest mistake" — калька.
+- "the files that the repository keeps" → "the files in the repository" — калька.
+
+### new:tools-7-1-one-header
+TRANSLATION: Название: Один заголовок на каждый домен. Текст: если проект выбрал расширение Domains (§s-tdm3rwsppnuh6dm), `sheriff validate` принимает домен, только если файлы домена содержат ровно один заголовок (§s-yggv9myedprnaa7, §s-ctj5v22yn7wr7n4). Файлы домена — это файлы в его папке `specs/<domain>/` (§s-zefk589ykh37b8u). Любой другой домен `sheriff validate` отклоняет. Сообщение об отказе называет папку домена и для каждого заголовка в файлах домена — файл заголовка и sid. Причина: домен можно держать в нескольких файлах (§s-k73czmpkazcx7mu). Поэтому отсутствие заголовка или второй заголовок видны только при чтении всех файлов. Пример: домен `requests` лежит в `specs/requests/00-requests.json` и `specs/requests/intake.json`, и тот, кто его разделил, открыл второй файл тоже новым заголовком. `sheriff validate` отклоняет домен и называет оба заголовка. Когда второй файл содержит только секции, домен проходит проверку.
+TWO READINGS:
+- "A domain may be kept in several files": разрешено правилами (предпочтительно) либо возможно (бывает).
+- "a missing header or a second one": "one" — заголовок.
+- "opened the second file with a new header as well": «тоже» — так же, как первый файл (предпочтительно).
+LANGUAGE:
+- "refuses any other domain" → "rejects any other domain" — validator отклоняет (rejects).
+- "`sheriff validate` refuses the domain and names both headers" → "`sheriff validate` rejects the domain and names both headers" — то же.
+- "So only a reading of all of them shows" → "Therefore only reading all of them shows" — предложение, начатое с "So", звучит разговорно; "a reading of" — калька существительного вместо глагола.
+- "accepts a domain" → "accepts a domain's files" или "accepts a domain as valid" — «принимает домен» нейтрально для английского, но проверка относится к файлам домена. Смысл замены не проверен; можно оставить как есть.
+
+### new:tools-7-1-link-target
+TRANSLATION: Название: Цель связи. Текст: `sheriff validate` принимает связь, только если её цель — sid узла модели спецификации (§s-w6gybeqn2ttydqx, §s-x8usyy38qa56k6a). Любую другую связь, которую объявляет узел спецификации в файлах, хранимых репозиторием (включая узел в ячейке TableRule, §s-5fewsp22mmdz7y6), он отклоняет. Сообщение об отказе называет узел, объявляющий связь, по файлу, sid и расположению в спецификации (§s-kag2m9tzdnduxdx) и называет тип связи и её цель. Причина: проследить можно только связь, цель которой — узел спецификации. Только такая связь встраивается в этот узел среди связей, указывающих на него (§s-bpdqd9v72wg7vsz). Пример: правило хранит связь `refines` на правило, которое позднее коммит удалил и поместил в архив. `sheriff validate` отклоняет связь, так как ни один узел спецификации больше не имеет sid удалённого правила. Ближайшая ошибка — искать цель только среди узлов файлов, которые хранит репозиторий. Правило собственных guidelines проекта уточняет правило SpecSheriff guidelines, которые проект берёт из плагина SpecSheriff, и `sheriff validate` принимает эту связь.
+TWO READINGS:
+- "that node" в Reason: узел-цель (предпочтительно), так как узел, объявляющий связь, там не назван; "it" в "pointing at it" — тот же узел.
+- "which the project takes from the SpecSheriff plugin": "which" — SpecSheriff guidelines (предпочтительно), а не правило.
+- "a rule that a later commit removed and archived": "later" — позже, чем коммит, добавивший связь (предпочтительно).
+- "in the files that the repository keeps declares, a node in a cell of a `TableRule` included": "in the files that..." относится к узлу (предпочтительно) или к связи.
+LANGUAGE:
+- "refuses any other link" → "rejects any other link" — validator отклоняет (rejects).
+- "`sheriff validate` refuses the link" → "`sheriff validate` rejects the link" — то же.
+- "the files that the repository keeps" (в "the specification in the files that the repository keeps declares") → "the files in the repository" — калька.
+- "the nodes of the files that the repository keeps" → "the nodes of the files in the repository" — калька.
+- "is built into that node" → "is recorded in that node" — "built into" калька «встроена»; несущий смысл («reindex добавляет входящую связь в узел-цель») замена сохраняет. Замена не проверена по коду.
+- "A rule keeps a `refines` link" → "A rule has a `refines` link" — "keeps" калька «хранит».
+- "The closest mistake" → "The likeliest mistake" — калька.
+- "a node in a cell of a `TableRule` included" → "including a node in a cell of a `TableRule`" — абсолютная конструкция с "included" в конце длинного предложения читается тяжело; замена сохраняет смысл.
+- "any other link that a node of the specification in the files that the repository keeps declares" → "any other link declared by a node of the specification in the files in the repository" — глагол "declares" в конце длинной относительной клаузы затрудняет разбор.

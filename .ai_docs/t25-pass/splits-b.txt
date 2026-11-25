@@ -1,0 +1,122 @@
+
+=== 1.34 s-7vm323mhry2enx3 [TextRule] What the domains share is agreed in contracts
+  -> 3.1 split | What the domains share is agreed in contracts | Общее для доменов согласуется в contracts
+  -> 3.2 part | part of 1.34: What the domains share is agreed in contracts | уходит сюда: Термин определяется один раз, в contracts
+  -> 3.4 part | part of 1.34: What the domains share is agreed in contracts | уходит сюда: RecordType описывается в домене, который его предоставляет
+TEXT:
+Contracts agrees what the domains share and how they work together:
+
+- the terminology;
+- the conventions every domain's API follows;
+- the rules that bind more than one domain.
+
+Contracts is not a domain. It belongs to none of the domains. What only one domain needs, that domain holds itself.
+
+A domain coins no term of its own: a term it needs is added to contracts. A term is defined once: one term naming two things, or two terms naming one, is refused.
+
+A RecordType one domain provides to others is described in that domain, as part of its interface. Contracts describes a RecordType only where no single domain provides it, as a store more than one domain writes.
+REASON:
+Domains that coin their own words, or their own conventions for the same exchange, stop understanding one another. A reader then cannot tell whether two words mean one thing.
+
+Holding in contracts only what binds more than one domain keeps contracts from answering for what a single domain defines.
+
+Nobody answers for a RecordType described away from the domain that provides it: the provider changes what it gives while its description stands elsewhere.
+
+=== 1.38 s-yggv9myedprnaa7 [TextRule] A domain's specification opens with its header
+  -> 3.5 split | A domain's specification opens with its header | Спецификация домена открывается его заголовком
+  -> 3.6 part | part of 1.38: A domain's specification opens with its header | уходит сюда: Заголовок домена содержит построенный указатель его разделов
+TEXT:
+A domain's specification opens with its header. The header is a node stating:
+
+- what the domain does;
+- its owners, where it names them (§s-67vekyup7y8smap);
+- the level it stands at;
+- where its code is.
+
+The header's `consumes` links name the sections of other domains the domain uses.
+
+The header also carries the index of the domain's sections, built from the sections and never written by hand. For each section the index holds:
+
+- its sid, its title and its text, which states what the section is responsible for;
+- the domains that use it.
+REASON:
+Whoever works on one domain loads its header and learns from it alone, without loading the rest:
+
+- what the domain is responsible for;
+- who answers for its wording;
+- how it is divided;
+- what it takes from the others.
+
+The index is built rather than written, because a table of contents kept by hand is a second copy of the sections and drifts from them.
+
+=== 1.40 s-nkyty4dy9x2v2a4 [TextRule] Every domain stands at a level
+  -> 3.7 split | Every domain stands at a level | Каждый домен стоит на своём уровне
+  -> 3.8 part | part of 1.40: Every domain stands at a level | уходит сюда: Уровень показывается номером и названием
+TEXT:
+Every domain stands at one of the levels the specification's owners list in the project's own guidelines (§s-bsya3febm6u64ab). They are listed from the general to the particular: the smaller a domain's responsibility, the lower its level.
+
+A level is always shown as its number and its name together. Its number is its place in that list.
+REASON:
+The links between domains give an order but not a place. A domain that uses nothing may be where the others start, or stand apart from them. One that nothing uses may be where they end, or stand over them. The level says which.
+
+=== 2.1 s-bpdqd9v72wg7vsz [TextRule] Outgoing links are written, incoming links are built
+  -> 6.1 split | Outgoing links are written, incoming links are built | Исходящие связи пишутся, входящие строятся
+  -> 6.2 part | part of 2.1: Outgoing links are written, incoming links are built | уходит сюда: Входящие связи узла строятся из объявленных
+TEXT:
+A node declares the links it makes, each naming the node it points at. For every other node it cites, it declares at least one link naming that node. A citation is `§` followed by the cited node's sid. It counts in any of the node's properties, text quoted as code included, except these:
+- its links;
+- the nodes under it;
+- a header's index of its sections;
+- the values gathered beside a field.
+
+The links pointing at the node stand in the same list. Each names the node it comes from and is read from this node's end. They are rebuilt from the links the nodes declare: every such entry is removed first and built again. They are never written by hand.
+
+A node of the archive is held to neither: it holds no link pointing at it, and none it declares is built into another node.
+
+A node of the SpecSheriff guidelines holds only the links pointing at it from the SpecSheriff guidelines.
+REASON:
+A reverse link kept by hand survives the removal of its other end and then reads as a live relation. Rebuilt from scratch every time, the reverse direction is correct whatever was skipped before. Held in one list with the links the node makes, the links pointing at it show every relation of the node from where it stands. The end each entry names tells the direction.
+
+A citation relies on the node it names as a link does. With no link of its own, a citation is seen only where it is written. Whoever changes the node it names then misses it. Quoted as code, as in a diagram drawn there, a citation relies on the node it names all the same.
+
+A header's index and the values gathered beside a field copy what other nodes hold. The links stay with those nodes.
+
+A node of the archive is no longer part of the specification. A link built to or from it would read as a live relation.
+
+The SpecSheriff guidelines read the same in every project working by one release (§s-bsya3febm6u64ab). A list in them of the links one project makes to them would hold true of that project alone.
+
+=== 5.12 s-83ev4wwesbwnhnp [TextRule] Where an agent writes, the checks run at each of its edits
+  -> 12.11 split | Where an agent writes, the checks run at each of its edits | Где пишет агент, проверки запускаются при каждой его правке
+  -> 12.12 part | part of 5.12: Where an agent writes, the checks run at each of its edits | уходит сюда: Правка агента отклоняется до того, как сделана, в каждом из этих случаев
+TEXT:
+Where an agent writes the specification, the tests or the code, the checks of the specification and of the code run after each of its edits. What they refuse is reported to the agent.
+
+Before an edit is made, it is refused where it would do any of these:
+- leave a node approved over a wording for which no approval stands (§s-5ah25f6gy99panq), a section and a domain's header left out;
+- change the code written for a rule, or for a node of a project's own NodeKind that needs code (§s-vsh384ybt4w25a2), that no test carries the SpecTag of (§s-rah8b37kytb682y);
+- change the code of a project's own check or generator while no test carries the SpecTag of the rule listing it (§s-sfjka4zc4rhfu67);
+- change the approvals otherwise than through the procedure that records an approval or withdraws one.
+REASON:
+An agent told of a refusal at the edit that caused it mends it there, rather than at the commit among every other.
+
+A node is approved by one of its owners, or in that owner's name by the agent working for them where its change states nothing new (§s-67vekyup7y8smap). So an agent that could set a status, or write an approval itself, could approve what none of its owners agreed to. Every later check takes the approvals as given, so they can be held only where they are written.
+
+The procedure that records an approval takes the wording the node already holds. It refuses an approval by anyone who is none of the node's owners. A withdrawal only makes a node a draft.
+
+A commit holds a test and its code together whichever was written first, so the order of the work can be held only where the edits are made.
+
+=== 6.2 s-3dgt5c94jr55j3z [TextRule] A rule names its subject and states what must hold
+  -> 7.2 split | A rule names its subject and states what must hold | Правило называет свой субъект и говорит, что должно выполняться
+  -> 7.3 part | part of 6.2: A rule names its subject and states what must hold | уходит сюда: Свойство утверждается о том, что объявляет спецификация
+TEXT:
+A rule names the subject it binds and states what that subject must do. So not “credentials are kept encrypted”, which binds nobody, but “the store of secrets keeps every credential encrypted”.
+
+A property is stated over what the specification declares, never over what happens not to exist yet. So not “a timestamp needs no time zone while every user is in one”, but “a timestamp carries its time zone”.
+
+A rule of the technical debt names its subject the same way and states what that subject does while the problem stands (§s-2r7k2aeyusgy6fw).
+REASON:
+Such a sentence is true when it is written and silently false afterwards. Nothing breaks, no check can fire, and the next reader takes an observation for an obligation.
+
+Naming the subject is also what makes a rule gradeable at all, since a requirement with nobody to hold it is one nobody can be found to have broken.
+
+A rule of the technical debt describes on purpose, and is removed with its problem (§s-2r7k2aeyusgy6fw).

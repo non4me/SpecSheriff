@@ -1,0 +1,1230 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines/extensions",
+  "section": "recordtype",
+  "nodes": [
+    {
+      "location": "_guidelines/extensions/recordtype/12",
+      "sid": "s-hzuzn8hbq6q9q4s",
+      "kind": "section",
+      "title": "RecordType",
+      "status": "draft",
+      "text": "An extension of the guidelines: the format of the data that one part of the system passes to another or keeps in its store. It does not require domains, and its rules name none.",
+      "refs": [],
+      "children": [
+        {
+          "location": "_guidelines/extensions/recordtype/12.1",
+          "sid": "s-7vm323mhry2enx3",
+          "kind": "TextRule",
+          "title": "RecordType",
+          "status": "draft",
+          "text": "A RecordType (§s-6eb92ddch7shuvu) is the format of data that a part of the system outputs and keeps in its store. It belongs to the API of that part of the system. Other parts of the system may use that data in whole or in part.\n\nIn the specification, a part of the system is described by a top-level section of the base specification or by a domain. In the code, a part of the system is a module or a component.\n\nData in one format has one RecordType. It is declared in the only section of the base specification that describes where data in that format first appears. The exception is a fragment of a format, such as an address. Fragments are declared in the contracts section (§s-z6tq6a3btnvvwx7), and any section may reuse them. RecordType names are unique across the specification, regardless of letter case.",
+          "refs": [
+            {
+              "type": "cites",
+              "to": "s-6eb92ddch7shuvu"
+            },
+            {
+              "type": "cites",
+              "to": "s-z6tq6a3btnvvwx7"
+            }
+          ],
+          "reason": "Two descriptions of one format drift apart over time. The parts of the system that read the data then cannot tell which description is valid. A format declared once, under one name, by whoever changes it, has nothing to drift from.",
+          "examples": [
+            "In a base specification divided into domains, the domain of users declares the RecordType of a user. The domain of requests takes users' data and declares the RecordType of a request. Users and requests both hold an address, whose format is declared once, in the contracts section. A domain that masks users' personal data and offers the masked data to other domains keeps the RecordType of a user."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-05",
+                "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+                "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-19",
+                "problem": "What a part of the system is, a phrase that \"RecordType\" (s-7vm323mhry2enx3), \"Data records conform to their RecordType\" (s-wxcmpbvy9bzkfj9), \"Guaranteed fields\" (s-adhmw4gw6y82f44) and \"What a RecordType may refer to\" (s-8ht2hn88cu2qwz9) use without defining it.",
+                "ruling": "The owner: in an implementation, a part of the system is most often a module; in the specification, it is a section or a domain.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-19",
+                "problem": "How the definition of a part of the system names its two levels.",
+                "ruling": "The owner: in the specification, a part of the system is a section or a domain; in the code, it is a module or a component.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-19",
+                "problem": "Whether the definition of a part of the system, in a rule of the RecordType extension, may name a domain, since \"Independence of extensions\" (s-kujguh6ceu8pfwq) limits such a rule to the words that the guidelines or that extension define.",
+                "ruling": "The owner: \"section\", \"domain\", \"module\" and \"component\" are commonly accepted words, used here in their general sense and not as entities that the specification defines, so the definition may name them.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-09",
+                "problem": "The node \"An entity is declared once\" repeated what the rules on terms (\"A term is defined once, in the contracts section\" (s-ypa92gpcj3f5zj8) and \"What a term states\" (s-khqsmy6mhejkrhg)) say, apart from two sentences that were stated nowhere else.",
+                "ruling": "The owner: that node is removed, and this node replaces it, taking over those two sentences and the removed node's reason.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-09",
+                "problem": "It was unclear whether a RecordType describes only the data that a domain passes to others or also the data it stores, and whether a domain may have more than one RecordType for an entity.",
+                "ruling": "The owner: a RecordType describes both the data a domain outputs and the data it keeps in its store. A domain may store data in one structure and pass on data in another, so it is not limited to one RecordType for an entity.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-09",
+                "problem": "By the owner's earlier ruling of that day, each domain could declare its own RecordType for the same entity.",
+                "ruling": "The owner: a domain that takes data from another uses the RecordType of that data. It declares a RecordType of its own, with a different structure and a new name, only when it changes the structure of the data.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-14",
+                "problem": "The node tied a RecordType to an entity, which left unclear how many RecordTypes describe the same data and where each one is declared.",
+                "ruling": "The owner: data in one format has one RecordType, declared in the one domain where such data first appears. A fragment of a format, such as an address, is declared in the contracts section instead, so that any domain may reuse it.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The node spoke of domains, which another extension of the guidelines defines.",
+                "ruling": "The owner ruled on 2026-11-16 that a rule of an extension relies only on the guidelines and on its own extension (\"Independence of extensions\" (s-kujguh6ceu8pfwq)). So the node speaks of parts of the system and of sections of the base specification instead, and its example names domains only as one way of dividing the base specification.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The node did not say whether two RecordType names that differ only in letter case count as different names.",
+                "ruling": "In line with the owner's ruling of 2026-10-30, RecordType names are unique regardless of letter case.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.2",
+          "sid": "s-6eb92ddch7shuvu",
+          "kind": "TextRule",
+          "title": "What a RecordType contains",
+          "status": "draft",
+          "text": "A RecordType (§s-7vm323mhry2enx3) contains:\n\n- its name;\n- a description of what it is for;\n- each of its fields, with the field's type in terms that belong to no programming language, including any bounds on the field's value, whether the field's value is guaranteed and what the field means;\n- where another RecordType refers to it by an identifier, the field that identifies its data records.\n\nA condition that involves several fields is written not in the RecordType but as a rule of its own, linked to the RecordType.",
+          "refs": [
+            {
+              "type": "cites",
+              "to": "s-7vm323mhry2enx3"
+            }
+          ],
+          "reason": "A data format is part of what the system is, so it belongs in the specification rather than in the code. The bounds on a value are part of its type. An identifier of a data record has the type of the field that identifies it, so that field is named where its RecordType is described.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-14",
+                "problem": "The node defined RecordType a second time, and did not say where a condition that involves several fields is written.",
+                "ruling": "The owner: the node refers to the definition of RecordType and lists what a RecordType contains. A condition that involves several fields is written as a rule of its own, linked to the RecordType.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-15",
+                "problem": "The node said that a RecordType states whether each field is required.",
+                "ruling": "The owner: a RecordType states whether the field is guaranteed to have a value, since it describes what the part of the system that outputs the data can guarantee.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.3",
+          "sid": "s-e877bnfa559tvk9",
+          "kind": "TextRule",
+          "title": "Types and RuntimeChecks are generated from the RecordTypes",
+          "status": "draft",
+          "text": "The implementation's types and RuntimeChecks are generated from the RecordTypes (§s-6eb92ddch7shuvu) and never written by hand alongside them. Which mechanism performs the RuntimeChecks is described in the technical appendix.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-xqs2e24mx5253ye"
+            },
+            {
+              "type": "cites",
+              "to": "s-6eb92ddch7shuvu"
+            }
+          ],
+          "reason": "A type or a RuntimeCheck written by hand alongside a RecordType is a second copy of the same data format, and the two copies drift apart. Generated from the RecordType, a type and a RuntimeCheck cannot disagree with it.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-26",
+                "problem": "A data record node could not say which values a number field may take, so the bounds of a setting were stated by no node while two components each checked them by hand.",
+                "ruling": "The owner: the bounds go into the field's type, named as JSON Schema names them, and the check is generated from them, over writing them in the field's words or dropping them.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-25",
+                "problem": "The rule had every value choosing a form be a form, so a value carrying nothing got a form holding nothing, and it did not say when a field is required, so values that may not come were required; worded in one long rule, it was hard to read.",
+                "ruling": "The owner: base data, set beforehand or made by the system, is required; additional data is required where its case guarantees it and optional otherwise; a form exists only where a value carries fields of its own. The rule is divided: this one keeps what a data record node holds and that types are generated from it, and three rules of their own say when a field is required, when a value has a form, and where each value choosing a form is declared.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-07",
+                "problem": "No node could hold a data record's structure, and a data record whose body differs with its kind had no way to be described at all.",
+                "ruling": "The owner: a data record is described by a node of its own, with its fields; a data record whose fields depend on its kind holds the fields common to every kind and those its kind brings.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "Nothing said what type an identifier of a data record has, and nothing named the field that identifies a data record.",
+                "ruling": "The owner: an identifier has the type of the field that identifies the data record it names, which that data record's node names.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-01",
+                "problem": "A data record node could not say that a field of type list of always holds at least one member, so the bound would have been stated only in words and its check written by hand beside the data record.",
+                "ruling": "The owner: a field's type carries every bound on the field's value, a list's on how many members it holds among them, and this rule names no type, so that which type takes which bound is said where the types are listed.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-05",
+                "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+                "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.3a",
+          "sid": "s-ktfstpv8rurznrp",
+          "kind": "TextRule",
+          "title": "A RecordType is a rule",
+          "status": "draft",
+          "text": "A RecordType (§s-7vm323mhry2enx3) is a rule of the section that declares it. Its fields (§s-6eb92ddch7shuvu) state what it requires. Its description of what it is for serves as its reason (§s-dpe5kcz4eamv39g).\n\nThe code generated from it, such as its types and RuntimeChecks (§s-e877bnfa559tvk9), is bound to it by SpecTags (§s-8xw4mgvpexyvw5q). At least one test bound to it checks that a part of the system refuses to output or store a data record that violates it (§s-wxcmpbvy9bzkfj9).",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-dpe5kcz4eamv39g"
+            },
+            {
+              "type": "cites",
+              "to": "s-7vm323mhry2enx3"
+            },
+            {
+              "type": "cites",
+              "to": "s-6eb92ddch7shuvu"
+            },
+            {
+              "type": "cites",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-8xw4mgvpexyvw5q"
+            },
+            {
+              "type": "cites",
+              "to": "s-wxcmpbvy9bzkfj9"
+            },
+            {
+              "type": "cites",
+              "to": "s-6fw72j65jkqrfpf"
+            }
+          ],
+          "reason": "A RecordType states a requirement on the data that a part of the system outputs and stores, and the checks require only a rule to have bound code and a passing test (§s-6fw72j65jkqrfpf). Were a RecordType not a rule, nothing would reveal a generated RuntimeCheck that no part of the system calls. Its description of what it is for already says why its data must have the fields it lists, so a reason of its own would repeat that description.",
+          "examples": [
+            "The RecordType of a request is declared in the section that describes how a user submits a request to an operator. The types and the RuntimeCheck generated from it carry its SpecTag. A test that carries its SpecTag tries to store a request without the time at which it was submitted, and expects the part of the system that stores requests to refuse it. The code that stores requests carries the SpecTag of the rule on submitting a request.",
+            "The fragment of a format that describes an address is declared in the contracts section, and its field for the city is guaranteed. A test that carries the fragment's SpecTag tries to store a request whose address has no city, and expects the part of the system that stores requests to refuse it."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-21",
+                "problem": "The types and RuntimeChecks generated from a RecordType carry that RecordType's SpecTag, and row \"The system's implementing code (s-hheus6f395ynqvc) is bound by…\" (s-k6dzuajejrw4cej) of the main table of checks requires each SpecTag to name a rule. No rule said that a RecordType is a rule, and no rule of the SpecSheriff guidelines can say it, since they name no extension (s-chk5hnzmcpeqj25).",
+                "ruling": "The owner: a RecordType is a rule. Its title and text, which state what its data is for, and its format, which refines them, stay in one node. The code generated from it and a test carry its SpecTag. The other ways considered were a separate rule stating what the format is for, beside a RecordType that holds only the format, and a RecordType that is not a rule, whose generated code would carry the SpecTag of the rule that generates the types (s-e877bnfa559tvk9).",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.4",
+          "sid": "s-wxcmpbvy9bzkfj9",
+          "kind": "TextRule",
+          "title": "Data records conform to their RecordType",
+          "status": "draft",
+          "text": "A part of the system outputs and writes to its store only data records that conform to their RecordType. The RuntimeCheck generated from the RecordType (§s-e877bnfa559tvk9) refuses a nonconforming data record before that part of the system outputs it or writes it to its store.",
+          "refs": [
+            {
+              "type": "cites",
+              "to": "s-e877bnfa559tvk9"
+            }
+          ],
+          "reason": "The parts of the system that read another part's data rely on the format of that data. Without this rule, when that part renames a field in its code, the parts that read the data silently lose the field's value.",
+          "examples": [
+            "In a base specification divided into domains, the domain of users renames a user's field `phone`, whose value is not guaranteed, to `tel` in its code. A data record of a user with a phone number then has the field `tel`, which the RecordType of a user does not describe. The RuntimeCheck generated from that RecordType refuses the record."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-14",
+                "problem": "No rule required a part of the system to keep to its data format, so the RuntimeCheck generated from a RecordType had no rule to be based on.",
+                "ruling": "The owner: a part of the system outputs and stores only data records that conform to their RecordType. The RuntimeCheck generated from the RecordType enforces this rule.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-14",
+                "problem": "The node also said that a data record with a field that its RecordType does not describe is refused.",
+                "ruling": "The owner: the sentence is removed, since the word \"conform\" already implies it.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The node spoke of a domain, a concept of the Domains extension, although the node belongs to the RecordType extension.",
+                "ruling": "The owner: the node speaks of a part of the system, as the node defining RecordType does. Its example begins \"In a base specification divided into domains\".",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.5",
+          "sid": "s-adhmw4gw6y82f44",
+          "kind": "TextRule",
+          "title": "Guaranteed fields",
+          "status": "draft",
+          "text": "A RecordType (§s-7vm323mhry2enx3) marks a field as guaranteed only where at least one of these holds:\n\n- the part of the system that outputs the data sets the field's value when it creates a data record, and the field keeps a value from then on;\n- that part of the system itself computes or observes the field's value whenever it outputs or stores a data record;\n- that part of the system outputs or stores a data record only once it has the field's value, such as an identifier from an external system.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-7vm323mhry2enx3"
+            }
+          ],
+          "reason": "A guaranteed field tells the parts of the system that read the data what they can rely on. Where a field whose value may be missing is marked as guaranteed, the part of the system that outputs the data has to invent a value for it. If that part does not invent a value, the RuntimeCheck (§s-e877bnfa559tvk9) generated from the RecordType refuses a correct data record.",
+          "examples": [
+            "In a base specification divided into domains, the domain of requests puts the time of creation into every request it creates, so the field holding that time is guaranteed. Every closed request has a time of closing. A request still open has none, so the field holding that time is not guaranteed.",
+            "In a base specification divided into domains, the domain of users stores a user's data record only once an external sign-in service has given the user an identifier, so the field holding that identifier is guaranteed. That service's response may leave out the user's display name, so the field holding that name is not guaranteed."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-25",
+                "problem": "Nothing said when a field of a data record is required, so values that may not come were declared required, and a value carrying nothing was given a form holding nothing.",
+                "ruling": "The owner: formal fields, set beforehand or made by the system, are required; additional fields are required where their case guarantees them, as an identifier an external system gives a data record that cannot exist without it, and optional otherwise, as an external system's answer.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-05",
+                "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+                "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-15",
+                "problem": "The property \"required\" suggested that a RecordType decides what the parts of the system that read the data need.",
+                "ruling": "The owner: the property is renamed \"guaranteed\", since a RecordType states what the part of the system that outputs the data can guarantee.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-15",
+                "problem": "The node stated the conditions for a guaranteed field and then, in a separate sentence, that no other field is guaranteed.",
+                "ruling": "The owner: the first sentence says that a RecordType marks a field as guaranteed only where at least one of the conditions holds. The closing sentence is removed.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-15",
+                "problem": "It was not settled who decides whether a field is needed: the part of the system that outputs the data, or a part that reads it.",
+                "ruling": "The owner: the part of the system that reads the data decides whether it needs a field.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-11-16",
+                "problem": "The second condition said that the part of the system \"forms\" the field's value, which overlapped with \"sets\" in the first condition.",
+                "ruling": "The owner: the second condition says \"computes\", for a value obtained anew whenever a data record is output or stored. The first condition covers a value that is set once and then kept.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The node spoke of a domain and cited a node of the Domains extension, although the node belongs to the RecordType extension.",
+                "ruling": "The owner: the node speaks of the part of the system that outputs the data, and the citation of the node on domains is removed.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.6",
+          "sid": "s-z3dnru6qqdf9m6j",
+          "kind": "TextRule",
+          "title": "RecordType variants",
+          "status": "draft",
+          "text": "A RecordType variant declares the fields that a data record of a RecordType (§s-7vm323mhry2enx3) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.\n\nA RecordType variant is a RecordType that:\n- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (§s-z6tq6a3btnvvwx7);\n- has a `refines` link (§s-sn6au3vcr9uy5pm) to that RecordType;\n- names the values it corresponds to, one value for each field that selects a RecordType variant.\n\nA data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through `refines` from another RecordType.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-7vm323mhry2enx3"
+            },
+            {
+              "type": "cites",
+              "to": "s-z6tq6a3btnvvwx7"
+            },
+            {
+              "type": "cites",
+              "to": "s-sn6au3vcr9uy5pm"
+            }
+          ],
+          "reason": "Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (§s-7vm323mhry2enx3).",
+          "examples": [
+            "The RecordType of a notification names its field `channel` as the field that selects its RecordType variant. The value `email` adds the field `address`, so the RecordType variant for `email` declares `address`. A data record of an email notification holds `address` alongside `channel` and `text`. The value `app` adds no field, so it has no RecordType variant.",
+            "In a base specification divided into domains, the audit domain declares the RecordType of an audit log entry, whose field `domain` takes the names of the domains as its values. Entries about orders also hold the order number. The value `orders` comes from the orders domain, but its RecordType variant is declared in the audit domain."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-25",
+                "problem": "Every value choosing a data record's form had a form, so a value carrying nothing got a form holding nothing; and form, a general word, named both a data record's shape and what a user fills in on a page.",
+                "ruling": "The owner: a value carrying no field of its own has no form, which was a crutch; and the data record's form is named data record variant, a form staying what a user fills in.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "Nothing limited a data record to one field of type variant, and with two it is left unsaid which of them holds the fields of the chosen variant.",
+                "ruling": "The owner: a data record holds at most one field of type variant, which its schema checks. Fields that do not depend on the variant are the data record's own, or the fields its field of type variant holds whatever the variant; two independent choices are two data records, each choosing its own variant.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "A data record in contracts may name fields choosing its variant, and a value its field's own list declares is then declared in contracts, which is not a domain, so no variant could stand where this rule placed it.",
+                "ruling": "The owner: a variant stands in the part of the specification declaring its value, a domain or contracts, as the tools already held it.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-04",
+                "problem": "The part declaring a value was named as a domain or contracts, while a value now comes from a domain, a domain's list or a node.",
+                "ruling": "Following the owner's ruling on s-xfwuvd3funutmsw: the part declaring a value is the one that rule names.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-05",
+                "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+                "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-19",
+                "problem": "The fields of a RecordType variant were held in a nested field of type `variant`, a structure that JSON Schema does not have, although the SpecSheriff tools check both the nodes and the data records against schemas written in JSON Schema.",
+                "ruling": "The owner: everything about RecordType follows JSON Schema 2020-12. A data record holds the fields of its RecordType variant alongside the fields of its RecordType, as an `if`/`then` pair adds them in JSON Schema. The type `variant` is dropped, and with it the ruling of 2026-10-31 that a data record holds at most one field of that type. The other half of that ruling, that two independent choices are two data records, stands.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-16",
+                "problem": "By the ruling of 2026-10-31, a RecordType variant was declared in the part of the specification that declared the value selecting it. That part need not be the one that declared its RecordType.",
+                "ruling": "The owner: a RecordType variant is declared where the RecordType it is a variant of is declared. Each variant corresponds to one combination of values of the fields that select a variant, one value for each field.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The node spoke of domains, which another extension of the guidelines defines.",
+                "ruling": "The owner ruled on 2026-11-16 that a rule of an extension relies only on the guidelines and on its own extension (\"Independence of extensions\" (s-kujguh6ceu8pfwq)). So the node speaks of sections of the base specification and of parts of the system instead.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-19",
+                "problem": "Once a data record holds the fields of its RecordType variant alongside those of its RecordType, a field of the variant could have the same name as a field of the RecordType.",
+                "ruling": "The owner: the name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes from another RecordType through `refines`.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.7",
+          "sid": "s-xfu2gpzddjnmgks",
+          "kind": "TextRule",
+          "title": "One source for the values of a field with `enum`",
+          "status": "draft",
+          "text": "The values of a field with `enum` come from exactly one of the sources this rule's `TextRule.list` names. Each value is declared once.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-e877bnfa559tvk9"
+            },
+            {
+              "type": "cites",
+              "to": "s-z3dnru6qqdf9m6j"
+            }
+          ],
+          "reason": "Coming from one source, a field's values are found whole where its declaration points. They are found there by its reader, by the type generated for it (§s-e877bnfa559tvk9) and by the check comparing each variant with the values it names (§s-z3dnru6qqdf9m6j). Values coming from two sources would be read from one of them as if it held them all.\n\nA value declared twice could be removed in one place while it stays in the other.",
+          "list": {
+            "of": "the sources the values of a field with `enum` come from",
+            "members": [
+              "its own list",
+              "the names of the parts of the base specification",
+              "the sids of the nodes of one kind"
+            ]
+          },
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-10-25",
+                "problem": "The values choosing a data record's variant were read off its variants alone, so a value without one had to be given a variant holding nothing, and values declared in a sentence no tool can read were checked against no variant.",
+                "ruling": "The owner: each value is declared once, in a place a tool reads, whether or not a variant answers to it.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-04",
+                "problem": "The rule bound only a field choosing a data record variant, to two places of its values, while a project's fields take their values from the domains, from another field and from the nodes of a kind; and it held in one node the places, how a domain's list names its field and where a value is declared.",
+                "ruling": "The owner: the values of a field of type one of come from exactly one source, each value declared once; the sources are listed here, held as a list so the schema's declaration of them is checked against it, and each is described by a rule refining this one, every node holding one thought. A value with no variant needs no clause here, since §s-z3dnru6qqdf9m6j gives it none. A field takes nothing by itself, the owner holding that it contains the values its source gives, and a title names the node's matter rather than repeating its text.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-04",
+                "problem": "The sources listed let a field's values be those of another field, so that a set two fields share is declared once.",
+                "ruling": "The owner: no field's values are another field's, since the lists of two fields would then cross and tie the fields together; each list stands on its own.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-16",
+                "problem": "One of the sources of the values of a field with `enum` was the values that several domains add to one RecordType.",
+                "ruling": "The owner: the contracts section declares no RecordType except fragments of formats, so no RecordType gathers values from several domains. That source is removed, together with the two rules that governed it.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "One of the listed sources was the names of the domains, which another extension of the guidelines defines.",
+                "ruling": "The owner chose to make that source the names of the parts of the base specification, as in \"Names of the parts of the base specification as a field's values\" (s-gqavjzcmubg5pvk).",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.8",
+          "sid": "s-mt6auv3jz8m5gzh",
+          "kind": "TextRule",
+          "title": "Sids of the nodes of a project's own kind as a field's values",
+          "status": "draft",
+          "text": "The values of a field with `enum` may be the sids of the nodes of one of the project's own kinds of node (§s-vsh384ybt4w25a2) that are in the base specification (§s-qmmzf9nksfsa3qp), read from the specification. A node of that kind added or archived adds or removes a value.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-xfu2gpzddjnmgks"
+            },
+            {
+              "type": "cites",
+              "to": "s-vsh384ybt4w25a2"
+            },
+            {
+              "type": "cites",
+              "to": "s-qmmzf9nksfsa3qp"
+            },
+            {
+              "type": "cites",
+              "to": "s-tj38pvm38nepaf5"
+            }
+          ],
+          "reason": "The sids of the nodes of that kind are already held by the specification, so a field whose values they are declares none of them again and cannot fall behind it.\n\nThe technical appendix describes how the rules are implemented (§s-tj38pvm38nepaf5), so a value read from it would change whenever the implementation changed. The guidelines describe no system, so a value read from them would name nothing of the system.",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-04",
+                "problem": "A project's field naming a node of a kind of its own, as a step of a job, declared the nodes' sids again in a list kept by hand beside them.",
+                "ruling": "The owner: SpecSheriff knows nothing of a project's own things and gives a general source a project points at them, the sids of the nodes of one kind; read from the base specification alone, so that the values are the same in every instance and a variant answering to one stands where data records are described.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.9",
+          "sid": "s-ju5vcanbjph7mgh",
+          "kind": "TextRule",
+          "title": "Gathered values are written beside their field",
+          "status": "draft",
+          "text": "The values of a field with `enum` (§s-xfu2gpzddjnmgks) that come from elsewhere in the specification are written beside the field. Each is written with the node it comes from. The SpecSheriff tools gather them anew after every change to the specification. Only the SpecSheriff tools write them.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-xfu2gpzddjnmgks"
+            },
+            {
+              "type": "cites",
+              "to": "s-kh8qcd5kxgh9z3j"
+            }
+          ],
+          "reason": "A reader of the field finds all its values where the field is described, each with the node to ask about it, instead of searching the parts of the specification they come from. A list kept by hand would fall behind those parts (§s-kh8qcd5kxgh9z3j).",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-04",
+                "problem": "The values gathered for a field from the domains were held only in memory, by the checks and the generated types, so a reader of the field saw none of them where it is described.",
+                "ruling": "The owner: what a procedure gathers is written into one place at once, the procedure giving the current list at every run; the values a field gathers from elsewhere in the specification are written beside the field, each with the node it comes from, gathered anew after every change, never written by hand, and no part of the wording a confirmation covers, so a domain adding a value leaves a data record of contracts checked.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.10",
+          "sid": "s-8ht2hn88cu2qwz9",
+          "kind": "TextRule",
+          "title": "What a RecordType may refer to",
+          "status": "draft",
+          "text": "In the types of its fields, at any depth, and through `refines`, a RecordType refers only to the RecordTypes of the part of the system that outputs its data and to the fragments of a format that are declared in the contracts section (§s-7vm323mhry2enx3). A fragment of a format refers only to other fragments. The rules that describe one part of the system may cite a RecordType of another part.",
+          "refs": [
+            {
+              "type": "cites",
+              "to": "s-7vm323mhry2enx3"
+            }
+          ],
+          "reason": "A RecordType describes the data that its own part of the system outputs and stores, not what that part takes in from other parts or from outside the system. If it referred to another part's RecordType, it would change whenever that part changed that RecordType, though nothing in its own part had changed. A fragment that referred to a RecordType of a part of the system would tie every RecordType that uses the fragment to that part.",
+          "examples": [
+            "In a base specification divided into domains, a consuming domain may describe in its rules, especially in its technical appendix, what it does with the data of a given RecordType that it takes as input."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-14",
+                "problem": "The node did not say whether a RecordType may refer to a RecordType of another domain.",
+                "ruling": "The owner: a RecordType refers only to RecordTypes of its own part of the system and to fragments of a format declared in the contracts section. The rules that describe one part of the system may still cite a RecordType of another part.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-14",
+                "problem": "It seemed that a RecordType needs an exception to refer to a data record of another domain by its identifier.",
+                "ruling": "The owner: no exception is needed, since an identifier is stored as an ordinary value. RecordTypes of different domains are simply not linked.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The node spoke of a domain, a concept of the Domains extension, although the node belongs to the RecordType extension.",
+                "ruling": "The owner: the node speaks of the part of the system that outputs a RecordType's data, and of the rules that describe one part of the system.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.11",
+          "sid": "s-gqavjzcmubg5pvk",
+          "kind": "TextRule",
+          "title": "Names of the parts of the base specification as a field's values",
+          "status": "draft",
+          "text": "The values of a field with `enum` may be the names of the parts into which the base specification is divided (§s-qmmzf9nksfsa3qp), read from the specification. A part added or removed adds or removes a value.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-xfu2gpzddjnmgks"
+            },
+            {
+              "type": "cites",
+              "to": "s-qmmzf9nksfsa3qp"
+            }
+          ],
+          "reason": "The names of the parts are already held by the specification, so a field whose values they are declares none of them again and cannot fall behind it.",
+          "examples": [
+            "In a base specification divided into domains, the field `domain` of the RecordType of an audit log entry takes as its values the names of the domains and of the contracts section. A domain added to the specification adds its name to those values."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-04",
+                "problem": "A project's field naming a domain declared the domains' names in a list of its own, kept by hand beside the domains.",
+                "ruling": "The owner: a domain is an entity of the method, so the list of the domains is read from the specification itself, a domain added or removed adding or removing a value.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-18",
+                "problem": "The rule made the names of the domains the values of a field, although this extension must not rely on the extension that defines domains (\"Independence of extensions\" (s-kujguh6ceu8pfwq)).",
+                "ruling": "The owner chose to generalise the rule: a field's values may be the names of the parts into which the base specification is divided. A part added or removed adds or removes a value.",
+                "type": "textual"
+              }
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/recordtype/12.12",
+          "sid": "s-3k8mvhq2xbn5wpz",
+          "kind": "TableRule",
+          "title": "The table of checks of the RecordType extension",
+          "status": "draft",
+          "text": "This table contains the complete list of the checks of the RecordType extension (§s-7vm323mhry2enx3) that run after an edit to the specification or to the code, including its tests.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
+              "to": "s-7vm323mhry2enx3"
+            },
+            {
+              "type": "cites",
+              "to": "s-9ttvcwpqkehm58g"
+            },
+            {
+              "type": "cites",
+              "to": "s-chk5hnzmcpeqj25"
+            }
+          ],
+          "reason": "The checks of the RecordType extension bind only a project that has chosen the extension (§s-9ttvcwpqkehm58g). The main table of checks names no particular extension (§s-chk5hnzmcpeqj25), so these checks are listed here, beside the rules they enforce. In one table, every check of the extension can be seen at a glance, together with what its failure costs.",
+          "columns": [
+            {
+              "key": "check",
+              "heading": "What is checked",
+              "holds": "node"
+            },
+            {
+              "key": "cost",
+              "heading": "On failure",
+              "holds": "text"
+            }
+          ],
+          "groups": [
+            {
+              "heading": null,
+              "rows": [
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.1",
+                        "sid": "s-jh85u42agh5k73x",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "RecordType names are unique across the specification, regardless of letter case",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-7vm323mhry2enx3"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-10-30",
+                              "problem": "Whether two RecordType names that differ only in letter case count as the same name.",
+                              "ruling": "The owner: they do, so RecordType names are unique regardless of letter case.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.2",
+                        "sid": "s-qpdnkejr5xzc6j3",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "A field with `identifierOf` refers to a RecordType that names one of its own fields as the field identifying its data records",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-7vm323mhry2enx3"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-10-31",
+                              "problem": "What a field holding identifiers of other data records refers to.",
+                              "ruling": "The owner: such a field has the type of the field that identifies those data records. The RecordType of those records names that field as one of its own.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-19",
+                              "problem": "One approved row held two requirements, each of which can be met without the other.",
+                              "ruling": "The owner: the row is split in two. This row checks the RecordType that a field with `identifierOf` refers to, and another row checks that every chain of identifiers ends.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-19",
+                              "problem": "The row referred to a field of type `identifier of`, a type that the guidelines themselves defined.",
+                              "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12. JSON Schema has no references between records, so a field refers to one by `identifierOf`, a keyword of SpecSheriff.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.3",
+                        "sid": "s-cqys6wqrnfzu5ac",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "Every chain of identifiers, followed from one identifying field to the next, ends in a field without `identifierOf`",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-7vm323mhry2enx3"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-10-31",
+                              "problem": "Whether a chain of identifiers may return to a RecordType that it has already passed through.",
+                              "ruling": "The owner: it may not, since such a chain gives no type that an implementation can declare. Every chain therefore ends in a field without `identifierOf`.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-19",
+                              "problem": "One approved row held two requirements, each of which can be met without the other.",
+                              "ruling": "The owner: the row is split in two. This row checks that every chain of identifiers ends, and another row checks the RecordType that a field with `identifierOf` refers to.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-19",
+                              "problem": "The row referred to a field of a type other than `identifier of`, a type that the guidelines themselves defined.",
+                              "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so the row refers to a field without `identifierOf`.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.4",
+                        "sid": "s-bmyzn6zuds6czqm",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "A RecordType variant has a `refines` link to the RecordType to whose fields it adds its own",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-z3dnru6qqdf9m6j"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.5",
+                        "sid": "s-vtpxwqe7ncmn5bz",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "A RecordType variant is declared in the same section of the base specification as its RecordType",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-z3dnru6qqdf9m6j"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-19",
+                              "problem": "The row placed a RecordType variant in the part of the specification that declares the value that selects the variant.",
+                              "ruling": "The owner: in accordance with the rule on RecordType variants (s-z3dnru6qqdf9m6j), a variant is declared in the same section of the base specification as its RecordType.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.6",
+                        "sid": "s-47q37qk27yvt3pa",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "A RecordType variant declares at least one field",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-z3dnru6qqdf9m6j"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.7",
+                        "sid": "s-hrguxwcsdm57vxf",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through `refines` from another RecordType",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-z3dnru6qqdf9m6j"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-19",
+                              "problem": "Whether a field that a RecordType variant declares may have the same name as a field of its RecordType.",
+                              "ruling": "The owner: it may not, as the rule on RecordType variants (s-z3dnru6qqdf9m6j) says. No field of a variant shares its name with a field of its RecordType, including the fields taken through `refines`.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.8",
+                        "sid": "s-swturmy7hmhfvt4",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "A RecordType variant names values only for the fields that select a variant of its RecordType, exactly one value for each of those fields",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-z3dnru6qqdf9m6j"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.9",
+                        "sid": "s-27aycne77epeaq6",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "Each value that a RecordType variant names for a field is in the `enum` of that field",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-z3dnru6qqdf9m6j"
+                          },
+                          {
+                            "type": "checks",
+                            "to": "s-xfu2gpzddjnmgks"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-19",
+                              "problem": "The row required each value that a variant names to be one that the source of the selecting field declares. A field's values may come from several kinds of source.",
+                              "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so a field's values, from whatever source, are listed in its `enum`. Each value that a variant names for a field is in that field's `enum`.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.10",
+                        "sid": "s-5z8vjzmc3s983gk",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "Each variant of one RecordType corresponds to its own combination of values",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-z3dnru6qqdf9m6j"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.11",
+                        "sid": "s-upj45kydz8727be",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "Each value of a field with `enum` is declared once, not counting the values gathered beside the field",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-xfu2gpzddjnmgks"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-19",
+                              "problem": "The row referred to a field of type `one of`, a type that the guidelines themselves defined.",
+                              "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so the row refers to a field with `enum`.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.12",
+                        "sid": "s-buug8n5eh7tdnsv",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "Every field with `enum` holds at least one value from its source",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-xfu2gpzddjnmgks"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-19",
+                              "problem": "The row referred to a field of type `one of`, a type that the guidelines themselves defined.",
+                              "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so the row refers to a field with `enum`.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.13",
+                        "sid": "s-hcgmz4v5avbj3nt",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "A field whose values are sids of nodes of one of the project's own kinds names a kind that exists",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-mt6auv3jz8m5gzh"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.14",
+                        "sid": "s-93jpnb4c96qhwbu",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "The values gathered beside a field are exactly what their source produces",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-ju5vcanbjph7mgh"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.15",
+                        "sid": "s-rpkq8y79fwg5k92",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "In the types of its fields and through `refines`, a RecordType refers only to the RecordTypes of the part of the system that outputs its data and to the fragments of a format that are declared in the contracts section",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-8ht2hn88cu2qwz9"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "reported by the node's sid"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/recordtype/12.12.16",
+                        "sid": "s-hn9m9dhxaazjn3y",
+                        "kind": "TextRule",
+                        "status": "draft",
+                        "text": "A fragment of a format refers only to other fragments of a format",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-8ht2hn88cu2qwz9"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-19",
+                              "problem": "No check covered the requirement that a fragment of a format refers only to other fragments of a format.",
+                              "ruling": "The owner: a separate row checks that requirement of the rule on what a RecordType may refer to (s-8ht2hn88cu2qwz9).",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "reported by the node's sid"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-18",
+                "problem": "The checks of the RecordType extension were in the main table of checks, among the checks of the SpecSheriff guidelines.",
+                "ruling": "The owner: each extension has its own table of checks, with the same columns as the main table of checks. That table refines the main table.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-19",
+                "problem": "The tables of checks had no names that told the table of the SpecSheriff guidelines from the table of an extension.",
+                "ruling": "The owner: the table of the SpecSheriff guidelines is the main table of checks. The table of an extension is the table of checks of that extension.",
+                "type": "textual"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

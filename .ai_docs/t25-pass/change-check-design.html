@@ -1,0 +1,255 @@
+<title>Проверка изменения правила</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: the path of one commit through the checks, drawn as a ladder of questions; then the nine decisions of the
+     grilling with what each changes; then the decisions weighed against established practice as a matrix, with the
+     pluses and minuses of each beside it; then what is proposed next. One dark look, as on every page for the owner. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --ok: #5fbf86; --warn: #e8b75a; --bad: #e07a6a; --part: #8fb0cf; --rev: #5cb8d8;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 18px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+  header { display: grid; gap: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.15rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; max-width: 85ch; }
+  .muted { color: var(--muted); }
+  code { font-family: var(--mono); font-size: 0.88em; }
+  section { display: grid; gap: 12px; min-width: 0; }
+  .sub { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+
+  /* The ladder: each step a question with what happens on yes and on no. */
+  ol.ladder { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  ol.ladder > li { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr); gap: 10px; align-items: start; }
+  .step { font-family: var(--mono); color: var(--muted); text-align: right; padding-top: 10px; font-variant-numeric: tabular-nums; }
+  .box { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; display: grid; gap: 8px; min-width: 0; }
+  .q { font-weight: 700; }
+  .ways { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+  .way { border-left: 3px solid var(--rule); padding: 4px 10px; background: var(--panel-2); border-radius: 0 4px 4px 0; min-width: 0; }
+  .way b { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.03em; }
+  .way.ok { border-left-color: var(--ok); } .way.ok b { color: var(--ok); }
+  .way.bad { border-left-color: var(--bad); } .way.bad b { color: var(--bad); }
+  .way.warn { border-left-color: var(--warn); } .way.warn b { color: var(--warn); }
+  .way.rev { border-left-color: var(--rev); } .way.rev b { color: var(--rev); }
+  .way.next { border-left-color: var(--part); } .way.next b { color: var(--part); }
+
+  /* The decisions. */
+  ol.dec { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  ol.dec li { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr) minmax(0, 0.9fr); gap: 12px; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; align-items: baseline; }
+  @media (max-width: 720px) { ol.dec li { grid-template-columns: 2.4rem minmax(0, 1fr); } ol.dec li .then { grid-column: 2; } }
+  .id { font-family: var(--mono); color: var(--muted); }
+  .then { color: var(--muted); font-size: 0.9rem; }
+
+  /* The matrix. */
+  .scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
+  table.matrix { border-collapse: collapse; width: 100%; min-width: 960px; font-size: 0.88rem; }
+  table.matrix th, table.matrix td { border-bottom: 1px solid var(--rule); padding: 8px; text-align: center; vertical-align: top; }
+  table.matrix thead th { font-size: 0.8rem; color: var(--muted); background: var(--panel-2); font-weight: 700; }
+  table.matrix tbody th { text-align: left; font-weight: 400; min-width: 14rem; }
+  .mk { display: block; font-family: var(--mono); font-weight: 700; font-size: 0.95rem; }
+  .mk.ok { color: var(--ok); } .mk.bad { color: var(--bad); } .mk.part { color: var(--warn); } .mk.na { color: var(--rule); }
+  td .note { display: block; color: var(--muted); font-size: 0.78rem; line-height: 1.3; margin-top: 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--muted); }
+
+  /* Pluses and minuses. */
+  .pm { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
+  .pm > div { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; display: grid; gap: 6px; min-width: 0; align-content: start; }
+  .pm ul { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+  .plus li::marker { color: var(--ok); } .minus li::marker { color: var(--bad); }
+  .pm h3 { margin: 0; font-size: 0.95rem; }
+  .lab { font-family: var(--mono); font-size: 0.74rem; color: var(--muted); letter-spacing: 0.04em; }
+  ol.next { margin: 0; padding-left: 22px; display: grid; gap: 4px; }
+</style>
+<div class="wrap">
+  <header>
+    <h1>Проверка изменения правила</h1>
+    <div class="sub">T25 · итог опроса 19 ноября · строка 10.1.40 основной таблицы проверок</div>
+    <p>Как проверки SpecSheriff обходятся с коммитом, который меняет правило, его тесты или его код. Всё на странице — ваши решения из опроса. Формулировки правил, которые из них следуют, я предложу после этой страницы, по одной.</p>
+  </header>
+
+  <section aria-labelledby="flow-h">
+    <h2 id="flow-h">Путь одного коммита</h2>
+    <p class="muted">Проверка смотрит только правила, которые попали в коммит. Правила вне коммита она не трогает, поэтому коммит, который меняет одно лишь одобрение спецификации, проходит.</p>
+    <ol class="ladder">
+      <li><span class="step">1</span><div class="box">
+        <div class="q">Меняет ли коммит формулировку одобренного правила или тесты такого правила?</div>
+        <div class="ways">
+          <div class="way next"><b>ДА</b> — шаг 2, для каждого такого правила.</div>
+          <div class="way ok"><b>НЕТ</b> — проверке отставания здесь нечего делать.</div>
+        </div></div></li>
+      <li><span class="step">2</span><div class="box">
+        <div class="q">Изменились ли в коммите собственные тесты и символы кода этого правила?</div>
+        <p class="muted">Берутся только тесты и символы, привязанные к правилу через SpecTag, а не файлы целиком. Если сменилась формулировка, должны измениться тесты и код. Если сменились тесты, должен измениться код.</p>
+        <div class="ways">
+          <div class="way rev"><b>ДА</b> — коммит проходит. Изменённый код, как и сейчас, оценивает рецензент.</div>
+          <div class="way next"><b>НЕТ</b> — шаг 3.</div>
+        </div></div></li>
+      <li><span class="step">3</span><div class="box">
+        <div class="q">Есть ли в сообщении коммита трейлер «реализацию правила X менять не нужно»?</div>
+        <p class="muted">Один трейлер на оба случая: правку формулировки без смены смысла и тест, добавленный к уже работающему коду. Его читает хук сообщения коммита.</p>
+        <div class="ways">
+          <div class="way rev"><b>ДА</b> — коммит проходит. Рецензент проверяет, что код и тесты правила делают то, что говорит его формулировка.</div>
+          <div class="way next"><b>НЕТ</b> — шаг 4.</div>
+        </div></div></li>
+      <li><span class="step">4</span><div class="box">
+        <div class="q">Одобрена ли спецификация?</div>
+        <div class="ways">
+          <div class="way bad"><b>ДА</b> — коммит отклоняется. Отказ называет правило.</div>
+          <div class="way warn"><b>НЕТ, ЧЕРНОВИК</b> — коммит проходит с сообщением, которое называет правило.</div>
+        </div></div></li>
+    </ol>
+    <div class="box">
+      <div class="q">Узел технического приложения, который агент одобрил от вашего имени</div>
+      <p>Агент сам одобряет только узел технического приложения со связью <code>implements</code> к одобренному правилу базы. Такой узел приходит в коммите вместе со своим кодом. Рецензент проверяет каждый такой узел из коммита, кем бы тот ни был одобрен: что узел лишь раскрывает правило базы и ничему в базе не противоречит. Сообщение вам перечисляет эти узлы. Правила базы и узлы без такой связи по-прежнему одобряете только вы.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="dec-h">
+    <h2 id="dec-h">Девять решений опроса</h2>
+    <ol class="dec">
+      <li><span class="id">Р0</span><span>Отдельного документа изменения нет. Охват изменения вычисляют инструменты по связям узлов и по SpecTag.</span><span class="then">ваш ответ на первый вопрос</span></li>
+      <li><span class="id">Р1</span><span>Проверка отставания смотрит только правила, попавшие в коммит.</span><span class="then">правило «проверка не читает того, чего в коммите нет»</span></li>
+      <li><span class="id">Р2</span><span>Сверяются тесты и символы самого правила, а не файлы, в которых они лежат.</span><span class="then">ваше замечание; ошибка нынешнего скрипта</span></li>
+      <li><span class="id">Р3</span><span>Коммит, меняющий формулировку правила, приводит его тесты и код или несёт трейлер «реализацию менять не нужно».</span><span class="then">ваш замысел строки 10.1.40</span></li>
+      <li><span class="id">Р4</span><span>Трейлер проверяет независимый рецензент.</span><span class="then">меняется принцип о рецензенте</span></li>
+      <li><span class="id">Р5</span><span>Сравнение тестов с кодом остаётся. Если тест изменился, а код нет, нужен тот же трейлер.</span><span class="then">ваш выбор</span></li>
+      <li><span class="id">Р6</span><span>Пока спецификация черновик, такой коммит проходит с сообщением, которое называет правило.</span><span class="then">ваш выбор</span></li>
+      <li><span class="id">Р7</span><span>Узлы технического приложения, которые агент пишет при реализации, он одобряет от вашего имени и сообщает вам.</span><span class="then">меняется принцип «ничего неодобренного не реализуется»</span></li>
+      <li><span class="id">Р8</span><span>Такие узлы проверяет рецензент. Граница задана самим узлом: связь <code>implements</code> к одобренному правилу базы.</span><span class="then">ваш выбор</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="mx-h">
+    <h2 id="mx-h">Решения и устоявшаяся практика</h2>
+    <div class="legend"><span><span class="mk ok" style="display:inline">✓</span> следует практике</span><span><span class="mk part" style="display:inline">◐</span> следует частично</span><span><span class="mk bad" style="display:inline">✗</span> отступает</span><span><span class="mk na" style="display:inline">·</span> практика об этом не говорит</span></div>
+    <div class="scroll">
+      <table class="matrix">
+        <thead><tr>
+          <th scope="col">Решение</th>
+          <th scope="col">Трейлеры git<br><span class="note">ядро Linux: Fixes, Signed-off-by; Gerrit: Change-Id</span></th>
+          <th scope="col">Анализ влияния по трассировке<br><span class="note">ISO/IEC/IEEE 29148, DO-178C</span></th>
+          <th scope="col">Проверка только изменённого<br><span class="note">lint-staged, «affected» в Bazel и Nx</span></th>
+          <th scope="col">Разделение обязанностей<br><span class="note">ISO/IEC 27001 A.5.3, обязательное ревью</span></th>
+          <th scope="col">Управление изменениями<br><span class="note">IEEE 828, запрос на изменение в ITIL</span></th>
+          <th scope="col">TDD<br><span class="note">тест раньше кода</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><th scope="row">Р0 · документа изменения нет</th>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk ok">✓</span><span class="note">охват считают по связям</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk bad">✗</span><span class="note">нет отдельной записи изменения; её роль играют черновики и коммит</span></td>
+            <td><span class="mk na">·</span></td></tr>
+          <tr><th scope="row">Р1 · только правила из коммита</th>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk ok">✓</span><span class="note">проверяется только затронутое</span></td>
+            <td><span class="mk ok">✓</span><span class="note">тот же принцип</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td></tr>
+          <tr><th scope="row">Р2 · тесты и символы, а не файлы</th>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk ok">✓</span><span class="note">трассировка до элемента, а не до документа</span></td>
+            <td><span class="mk part">◐</span><span class="note">там граница — файл или модуль; здесь мельче</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td></tr>
+          <tr><th scope="row">Р3 · тесты и код в том же коммите или трейлер</th>
+            <td><span class="mk ok">✓</span><span class="note">заявление о коммите — в трейлере</span></td>
+            <td><span class="mk ok">✓</span><span class="note">изменение требования ведёт за собой тесты и код</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk part">◐</span><span class="note">изменение и реализация вместе, но без отдельного одобрения записи</span></td>
+            <td><span class="mk ok">✓</span><span class="note">тест идёт за правилом</span></td></tr>
+          <tr><th scope="row">Р4 · трейлер проверяет рецензент</th>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk ok">✓</span><span class="note">заявление автора проверяет не автор</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td></tr>
+          <tr><th scope="row">Р5 · тест без кода — тот же трейлер</th>
+            <td><span class="mk ok">✓</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk ok">✓</span><span class="note">заявление проверяет рецензент</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk part">◐</span><span class="note">в TDD новый тест сначала падает; регрессионный тест — признанное исключение</span></td></tr>
+          <tr><th scope="row">Р6 · черновик — проход с сообщением</th>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk ok">✓</span><span class="note">строгий контроль изменений начинается с базовой линии</span></td>
+            <td><span class="mk na">·</span></td></tr>
+          <tr><th scope="row">Р7 · агент одобряет свои узлы приложения</th>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk bad">✗</span><span class="note">автор одобряет своё; смягчено решением Р8</span></td>
+            <td><span class="mk bad">✗</span><span class="note">одобрение после реализации, не до неё</span></td>
+            <td><span class="mk na">·</span></td></tr>
+          <tr><th scope="row">Р8 · рецензент, граница по узлу</th>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk ok">✓</span><span class="note">связь <code>implements</code> — это трассировка к правилу базы</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk part">◐</span><span class="note">вторая пара глаз — при коммите, а не до работы</span></td>
+            <td><span class="mk na">·</span></td>
+            <td><span class="mk na">·</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="pm-h">
+    <h2 id="pm-h">Плюсы и минусы каждого решения</h2>
+    <div class="pm">
+      <div><h3>Р0 · документа изменения нет</h3>
+        <ul class="plus"><li>Нет второй копии того, что уже сказано в узлах.</li><li>Охват изменения не может разойтись с правдой: его считают инструменты.</li></ul>
+        <ul class="minus"><li>Нет одного места, где весь план изменения виден до начала работы.</li></ul></div>
+      <div><h3>Р1 · только правила из коммита</h3>
+        <ul class="plus"><li>Чужое отставание не останавливает работу.</li><li>Одобрение спецификации не зависит от реализации правил.</li></ul>
+        <ul class="minus"><li>Отставание, оставшееся в черновике, позже видно только в сообщениях и в отчёте при одобрении спецификации.</li></ul></div>
+      <div><h3>Р2 · тесты и символы, а не файлы</h3>
+        <ul class="plus"><li>Правка теста другого правила не скрывает отставания.</li><li>Проверка следует тому, как реализовано правило.</li></ul>
+        <ul class="minus"><li>Проход по истории дольше: нужно сопоставлять строки с символами в каждом коммите.</li></ul></div>
+      <div><h3>Р3 · тесты и код в том же коммите или трейлер</h3>
+        <ul class="plus"><li>Одобренное правило не уходит в историю без своей реализации.</li><li>Косметическая правка не заставляет трогать код без нужды.</li></ul>
+        <ul class="minus"><li>Одобрение новой формулировки и её реализация всегда идут одним коммитом.</li></ul></div>
+      <div><h3>Р4 · трейлер проверяет рецензент</h3>
+        <ul class="plus"><li>Заявление «смысл прежний» проверяет не тот, кто его сделал.</li></ul>
+        <ul class="minus"><li>Рецензент запускается и на коммиты, которые меняют только формулировку.</li><li>Меняется принцип о рецензенте.</li></ul></div>
+      <div><h3>Р5 · тест без кода — тот же трейлер</h3>
+        <ul class="plus"><li>Код, отставший от теста, не проходит незамеченным.</li></ul>
+        <ul class="minus"><li>Регрессионный тест требует трейлера, хотя код верен.</li></ul></div>
+      <div><h3>Р6 · черновик — проход с сообщением</h3>
+        <ul class="plus"><li>Работа над спецификацией не стоит.</li><li>Отставание видно в тот единственный момент, когда его можно увидеть.</li></ul>
+        <ul class="minus"><li>Сообщения могут копиться при большой переработке, как в T25.</li></ul></div>
+      <div><h3>Р7 · агент одобряет свои узлы приложения</h3>
+        <ul class="plus"><li>Реализация не ждёт вас ради подробностей, которые лишь раскрывают одобренное правило базы.</li></ul>
+        <ul class="minus"><li>Агент сам задаёт правило, по которому оценивают его код.</li><li>Меняется принцип «ничего неодобренного не реализуется».</li></ul></div>
+      <div><h3>Р8 · рецензент, граница по узлу</h3>
+        <ul class="plus"><li>Границу нельзя обойти, забыв пометку.</li><li>Лишних запусков рецензента нет: узел приходит с кодом.</li></ul>
+        <ul class="minus"><li>Узлы, которые вы одобрили сами, рецензент тоже смотрит.</li></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="next-h">
+    <h2 id="next-h">Что дальше</h2>
+    <p>Формулировки, которые следуют из решений, по одной:</p>
+    <ol class="next">
+      <li>строка 10.1.40 основной таблицы проверок — новая формулировка и её цена;</li>
+      <li>принцип о детерминированных проверках — рецензент и при коммите, меняющем формулировку правила с кодом;</li>
+      <li>принцип «ничего неодобренного не реализуется» — узлы приложения, которые одобряет агент;</li>
+      <li>1.3.6 — что агент одобряет от имени ответственного;</li>
+      <li>10.4 — что получает рецензент;</li>
+      <li>узел описания инструментов об отставании — на шаге правки описания инструментов.</li>
+    </ol>
+  </section>
+</div>

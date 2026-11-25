@@ -1,0 +1,270 @@
+<title>Узел описания инструментов: Что пишет `sheriff reindex`</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Что пишет `sheriff reindex` <span style="color:var(--muted);font-weight:400">· What `sheriff reindex` writes</span></h1>
+<div class="sub">tools 2.2 (new) · new:tools-2-reindex-writes · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>То, что инструменты SpecSheriff могут вычислить по спецификации, коду и тестам, они пишут сами, чтобы оно всегда сходилось с источниками и никто не тратил сил на его запись. Построенное заново целиком при каждом запуске, оно верно, что бы ни оставил прежний запуск (<span class="cite" data-sid="s-jsqxdx47wkkj7gp" title="A procedure that writes the specification is idempotent">§10.13</span>).</div>
+  <div><div class="label">Reason</div>What the SpecSheriff tools can compute from the specification, the code and the tests, the tools write themselves, so that it always agrees with its sources and nobody spends effort writing it. Because it is rebuilt in full on every run, it is correct regardless of what an earlier run left behind (<span class="cite" data-sid="s-jsqxdx47wkkj7gp" title="A procedure that writes the specification is idempotent">§10.13</span>).</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое: прежнее обоснование узла «The commands» говорило о слиянии ключей и о <code>sheriff types</code>.</p>
+
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="">
+  <td class="en"><p><code>sheriff reindex</code> writes into the files of the specification everything that the SpecSheriff tools compute from the specification, the code and the tests:</p></td>
+  <td class="ru"><p><code>sheriff reindex</code> записывает в файлы спецификации всё, что инструменты SpecSheriff вычисляют по спецификации, коду и тестам:</p></td>
+  <td class="change">Из узла «The commands». Было: «<code>sheriff reindex</code> запускается после каждого изменения спецификации. Он делает следующее…».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-9spq78kdwsxr759 s-5fewsp22mmdz7y6">
+  <td class="en"><div class="li">• a sid for each node that has none, including a node in a cell of a <code>TableRule</code> (<span class="cite" data-sid="s-9spq78kdwsxr759" title="A node is cited by its sid">§1.2.2</span>, <span class="cite" data-sid="s-5fewsp22mmdz7y6" title="A rule may be a table">§8.6</span>);</div></td>
+  <td class="ru"><div class="li">• sid каждому узлу, у которого его нет, в том числе узлу в ячейке <code>TableRule</code> (<span class="cite" data-sid="s-9spq78kdwsxr759" title="A node is cited by its sid">§1.2.2</span>, <span class="cite" data-sid="s-5fewsp22mmdz7y6" title="A rule may be a table">§8.6</span>);</div></td>
+  <td class="change">Новое: и узлу в ячейке.</td>
+  <td class="links"><span class="cite" data-sid="s-9spq78kdwsxr759">A node is cited by its sid</span><span class="cite" data-sid="s-5fewsp22mmdz7y6">A rule may be a table</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-kag2m9tzdnduxdx">
+  <td class="en"><div class="li">• the location of each node (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>);</div></td>
+  <td class="ru"><div class="li">• расположение каждого узла (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>);</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"><span class="cite" data-sid="s-kag2m9tzdnduxdx">A node's location</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="s-bpdqd9v72wg7vsz">
+  <td class="en"><div class="li">• the links pointing at each node, rebuilt from the links that the nodes declare (<span class="cite" data-sid="s-bpdqd9v72wg7vsz" title="Incoming links are built">§6.4</span>);</div></td>
+  <td class="ru"><div class="li">• связи, указывающие на каждый узел, заново построенные из связей, которые объявляют узлы (<span class="cite" data-sid="s-bpdqd9v72wg7vsz" title="Incoming links are built">§6.4</span>);</div></td>
+  <td class="change">Как было. Что у узла архива таких связей нет, говорит узел о записанном прежним выпуском: связи снимаются там до проверки архива.</td>
+  <td class="links"><span class="cite" data-sid="s-bpdqd9v72wg7vsz">Incoming links are built</span></td>
+</tr>
+<tr class="part" id="part-4" data-cites="s-rwqzepmrt77rv35">
+  <td class="en"><div class="li">• the lists <code>meta.code</code> and <code>meta.tests</code> of each node, built from the SpecTags that bind code and tests to the node (<span class="cite" data-sid="s-rwqzepmrt77rv35" title="A node's lists of its code and its tests">§9.7</span>): <code>meta.code</code> names each code file that holds a symbol bound by such a SpecTag, and <code>meta.tests</code> names each such test by its file and its name;</div></td>
+  <td class="ru"><div class="li">• списки <code>meta.code</code> и <code>meta.tests</code> каждого узла, построенные по SpecTag, которые связывают с узлом код и тесты (<span class="cite" data-sid="s-rwqzepmrt77rv35" title="A node's lists of its code and its tests">§9.7</span>): <code>meta.code</code> называет каждый файл кода, в котором есть символ, связанный таким SpecTag, а <code>meta.tests</code> — каждый такой тест по его файлу и имени;</div></td>
+  <td class="change">Новое: правило 9.7 требует, чтобы эти списки строили инструменты. Сейчас их пишут вручную, а <code>sheriff binding</code> сверяет. Сказано, что хранит запись списка.</td>
+  <td class="links"><span class="cite" data-sid="s-rwqzepmrt77rv35">A node's lists of its code and its tests</span></td>
+</tr>
+<tr class="part" id="part-5" data-cites="s-9kfdycuq34beqvs s-yggv9myedprnaa7">
+  <td class="en"><div class="li">• the approval status of each section (<span class="cite" data-sid="s-9kfdycuq34beqvs" title="How a section's approval status is determined">§1.3.8</span>) and of each domain's header (<span class="cite" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">§11.1.3</span>), each derived from the nodes under that section or header;</div></td>
+  <td class="ru"><div class="li">• статус одобрения каждого раздела (<span class="cite" data-sid="s-9kfdycuq34beqvs" title="How a section's approval status is determined">§1.3.8</span>) и каждого заголовка домена (<span class="cite" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">§11.1.3</span>), выведенный из узлов под этим разделом или заголовком;</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"><span class="cite" data-sid="s-9kfdycuq34beqvs">How a section's approval status is determined</span><span class="cite" data-sid="s-yggv9myedprnaa7">A domain's specification opens with its header</span></td>
+</tr>
+<tr class="part" id="part-6" data-cites="s-tdm3rwsppnuh6dm s-2r59txnms5serdr">
+  <td class="en"><div class="li">• where the project has chosen the Domains extension (<span class="cite" data-sid="s-tdm3rwsppnuh6dm" title="Domains">§11</span>), the index of the sections in each domain's header (<span class="cite" data-sid="s-2r59txnms5serdr" title="A domain's header carries the index built from its sections">§11.1.4</span>);</div></td>
+  <td class="ru"><div class="li">• если проект выбрал расширение Domains (<span class="cite" data-sid="s-tdm3rwsppnuh6dm" title="Domains">§11</span>), — оглавление разделов в каждом заголовке домена (<span class="cite" data-sid="s-2r59txnms5serdr" title="A domain's header carries the index built from its sections">§11.1.4</span>);</div></td>
+  <td class="change">Как было; теперь сказано, что только при выбранном расширении Domains.</td>
+  <td class="links"><span class="cite" data-sid="s-tdm3rwsppnuh6dm">Domains</span><span class="cite" data-sid="s-2r59txnms5serdr">A domain's header carries the index built from its sections</span></td>
+</tr>
+<tr class="part" id="part-7" data-cites="s-hzuzn8hbq6q9q4s s-ju5vcanbjph7mgh">
+  <td class="en"><div class="li">• where the project has chosen the RecordType extension (<span class="cite" data-sid="s-hzuzn8hbq6q9q4s" title="RecordType">§12</span>), the values gathered for each field that has an <code>enum</code> whose values come from elsewhere in the specification, in the field's <code>x-enumSource.gathered</code> (<span class="cite" data-sid="s-ju5vcanbjph7mgh" title="Gathered values are written beside their field">§12.9</span>).</div></td>
+  <td class="ru"><div class="li">• если проект выбрал расширение RecordType (<span class="cite" data-sid="s-hzuzn8hbq6q9q4s" title="RecordType">§12</span>), — значения, собранные для каждого поля с <code>enum</code>, значения которого берутся из другого места спецификации, в его <code>x-enumSource.gathered</code> (<span class="cite" data-sid="s-ju5vcanbjph7mgh" title="Gathered values are written beside their field">§12.9</span>).</div></td>
+  <td class="change">Было: «рядом с каждым полем типа <code>one of</code>». Теперь поле — с <code>enum</code>, а значения записываются в <code>x-enumSource.gathered</code>, как в подготовленной схеме расширения RecordType.</td>
+  <td class="links"><span class="cite" data-sid="s-hzuzn8hbq6q9q4s">RecordType</span><span class="cite" data-sid="s-ju5vcanbjph7mgh">Gathered values are written beside their field</span></td>
+</tr>
+<tr class="part" id="part-8" data-cites="s-v4qus7raqnwzneb">
+  <td class="en"><p>In the files that the repository keeps, an approved node whose approval status is set by approvals stays approved while an approval of its current wording stands (<span class="cite" data-sid="s-v4qus7raqnwzneb" title="How an approval is recorded">§tools 11</span>). <code>sheriff reindex</code> makes each remaining such node a draft and names it.</p></td>
+  <td class="ru"><p>В файлах, которые хранит репозиторий, одобренный узел, статус одобрения которого задаётся одобрениями, остаётся одобренным, пока в силе одобрение его нынешней формулировки (<span class="cite" data-sid="s-v4qus7raqnwzneb" title="How an approval is recorded">§tools 11</span>). Каждый остальной такой узел <code>sheriff reindex</code> делает черновиком и называет.</p></td>
+  <td class="change">Было: «делает черновиком каждый одобренный узел, у которого последняя строка для него и отпечатка его формулировки — не одобрение. Раздел, заголовок домена и SpecSheriff guidelines, которые берёт проект, в это не входят». Смысл тот же, сказано утвердительно, со ссылкой на узел о записи одобрения.</td>
+  <td class="links"><span class="cite" data-sid="s-v4qus7raqnwzneb">How an approval is recorded</span></td>
+</tr>
+<tr class="part" id="part-9" data-cites="">
+  <td class="en"><p><code>sheriff reindex</code> writes only the files that the repository keeps. It writes a file only when the text it would write differs from the file's text. It names each file that it writes.</p></td>
+  <td class="ru"><p><code>sheriff reindex</code> пишет только файлы, которые хранит репозиторий. Файл он пишет, только когда текст, который он записал бы, отличается от текста файла. Он называет каждый файл, который пишет.</p></td>
+  <td class="change">Новое в тексте: код уже так поступает. Так узлы SpecSheriff guidelines и выбранных расширений, которые проект берёт из плагина, в проекте не меняются.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-10" data-cites="">
+  <td class="en"><p><code>sheriff reindex</code> writes each file as <code>JSON.stringify</code> writes the file's data with an indent of two spaces, with a line feed at the end, with each node's <code>location</code> and <code>sid</code> first, and with all the other keys in the order that the file already has them.</p></td>
+  <td class="ru"><p><code>sheriff reindex</code> пишет каждый файл так, как <code>JSON.stringify</code> пишет данные файла с отступом в два пробела, с переводом строки в конце, ставя <code>location</code> и <code>sid</code> каждого узла первыми, а все остальные ключи — в том порядке, в каком они уже стоят в файле.</p></td>
+  <td class="change">Новое в тексте: код уже так пишет файлы, и тест узла это проверяет.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>«<code>sheriff reindex</code> добавляет правило, которое пишет <code>sheriff init</code>, как черновик…»: по согласованному правилу 10.6 статус одобрения спецификации хранят записи в <code>sheriff.config.json</code>.</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-9spq78kdwsxr759"><span class="loc">реализует · 1.2.2</span> <b>A node is cited by its sid</b><br><span class="rut">На узел ссылаются по его sid</span><br><span class="meta">guidelines · s-9spq78kdwsxr759</span></li>
+<li class="node" data-sid="s-kag2m9tzdnduxdx"><span class="loc">реализует · 8.5</span> <b>A node's location</b><br><span class="rut">Расположение узла</span><br><span class="meta">guidelines · s-kag2m9tzdnduxdx</span></li>
+<li class="node" data-sid="s-bpdqd9v72wg7vsz"><span class="loc">реализует · 6.4</span> <b>Incoming links are built</b><br><span class="rut">Входящие связи строятся</span><br><span class="meta">guidelines · s-bpdqd9v72wg7vsz</span></li>
+<li class="node" data-sid="s-rwqzepmrt77rv35"><span class="loc">реализует · 9.7</span> <b>A node's lists of its code and its tests</b><br><span class="rut">Списки кода и тестов узла</span><br><span class="meta">guidelines · s-rwqzepmrt77rv35</span></li>
+<li class="node" data-sid="s-9kfdycuq34beqvs"><span class="loc">реализует · 1.3.8</span> <b>How a section's approval status is determined</b><br><span class="rut">Как определяется статус одобрения раздела</span><br><span class="meta">guidelines · s-9kfdycuq34beqvs</span></li>
+<li class="node" data-sid="s-2r59txnms5serdr"><span class="loc">реализует · 11.1.4</span> <b>A domain's header carries the index built from its sections</b><br><span class="rut">Заголовок домена несёт построенный указатель его разделов</span><br><span class="meta">extension domains · s-2r59txnms5serdr</span></li>
+<li class="node" data-sid="s-ju5vcanbjph7mgh"><span class="loc">реализует · 12.9</span> <b>Gathered values are written beside their field</b><br><span class="meta">extension recordtype · s-ju5vcanbjph7mgh</span></li>
+<li class="node" data-sid="s-jsqxdx47wkkj7gp"><span class="loc">реализует · 10.13</span> <b>A procedure that writes the specification is idempotent</b><br><span class="rut">Процедура, которая пишет спецификацию, идемпотентна</span><br><span class="meta">guidelines · s-jsqxdx47wkkj7gp</span></li>
+<li class="node" data-sid="s-5fewsp22mmdz7y6"><span class="loc">ссылается · 8.6</span> <b>A rule may be a table</b><br><span class="rut">Правило может быть таблицей</span><br><span class="meta">guidelines · s-5fewsp22mmdz7y6</span></li>
+<li class="node" data-sid="s-yggv9myedprnaa7"><span class="loc">ссылается · 11.1.3</span> <b>A domain's specification opens with its header</b><br><span class="rut">Спецификация домена открывается его заголовком</span><br><span class="meta">extension domains · s-yggv9myedprnaa7</span></li>
+<li class="node" data-sid="s-tdm3rwsppnuh6dm"><span class="loc">ссылается · 11</span> <b>Domains</b><br><span class="meta">extension domains · s-tdm3rwsppnuh6dm</span></li>
+<li class="node" data-sid="s-hzuzn8hbq6q9q4s"><span class="loc">ссылается · 12</span> <b>RecordType</b><br><span class="meta">extension recordtype · s-hzuzn8hbq6q9q4s</span></li>
+<li class="node" data-sid="s-5ah25f6gy99panq"><span class="loc">реализует · 1.3.5</span> <b>What an approval covers</b><br><span class="rut">Что покрывает одобрение</span><br><span class="meta">guidelines · s-5ah25f6gy99panq</span></li>
+<li class="node" data-sid="s-v4qus7raqnwzneb"><span class="loc">ссылается · tools 11</span> <b>How an approval is recorded</b><br><span class="meta">appendix of the tools · s-v4qus7raqnwzneb</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «The commands»</h2>
+<ul class="plain">
+<li><code>sheriff reindex rewrites the files it changed and reports it</code><br><span class="meta">skills/tools/test/e2e/commands.test.ts</span></li>
+<li><code>gives a sid to a node that has none, its location and sid first</code><br><span class="meta">skills/tools/test/unit/reindex.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка узла «The commands», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the rules of §s-4kd2pave7vm4hmd describe them.
+
+`sheriff init` sets a repository up for the SpecSheriff tools (§s-7unxytshhc4md54). `sheriff remove` takes SpecSheriff out of it (§s-7unxytshhc4md54).
+
+`sheriff reindex` is run after every change to the specification. It does the following:
+
+- it gives a sid to every node that has none;
+- it computes every node's location from where it is;
+- it empties every incoming list and rebuilds it from the outgoing ones;
+- it rebuilds the index in every domain's header from the domain's sections;
+- beside each field of type `one of`, it writes the values gathered for it from elsewhere in the specification, each with the sid of the node it comes from (§s-ju5vcanbjph7mgh);
+- it makes a draft each approved node whose latest line for it and its wording's fingerprint is not an approval. It leaves out of this a section, a domain's header and the SpecSheriff guidelines the project takes.
+
+It then writes the status of each section and domain's header from the nodes under it (§s-9kfdycuq34beqvs).
+
+`sheriff reindex` adds the rule `sheriff init` writes, as a draft, at every run where `project.json` holds no rule refining §s-qzthyh7yqvfhsa2 (§s-7unxytshhc4md54).
+
+Before anything else, `sheriff reindex` renames each key and value an earlier release of the SpecSheriff tools wrote under another name. In every file of the specification and of its archive, it renames:
+
+- the key `id` to `location`;
+- the key `rationale` to `reason`;
+- the NodeKinds `record` and `recordType` to `RecordType`;
+- the NodeKind `rule` to `TextRule`;
+- the NodeKind `domain` to `header`;
+- a node's status `""` to `draft`;
+- a node's status `checked` to `approved`;
+- the key `owner` of a domain's header or a section, holding an email, to `owners`, holding a list holding that email.
+
+A renamed key keeps its place among the node's keys. `sheriff reindex` renames those NodeKinds also where a field's values are the sids of a NodeKind's nodes, and where the project's extension of the schema adds properties to a NodeKind.
+
+A field of type `one of` whose own list an earlier release wrote empty takes the values the domains add as its source instead. Under that release, the empty list stood for those values.
+
+`sheriff reindex` also renames `specs/_confirmations.jsonl` to `specs/_approvals.jsonl`. In each line of that file, it renames the key `owner` to `by`. Where `specs/_approvals.jsonl` already stands, it appends those lines to it and removes the old file.
+
+Then, in every file it rewrites, `sheriff reindex` merges the values an object holds under one key, each into those written before it:
+
+- two lists into one, holding the members of the first and then those of the second that the first does not hold;
+- two objects key by key in the same way, each key where it was first written;
+- two values JSON Schema holds equal into one.
+
+It names every key it merged, with the file and each value's line. It refuses any other two values under one key, naming the file, the key and each one's line and value. It then writes no file.
+
+`sheriff reindex` also rewrites each test that names its node by a bare sid, the form an earlier release of the SpecSheriff tools read. A bare sid is a word of the form of a sid that stands in one of these places:
+
+- it opens the test's name, followed by a space or the name's end;
+- it stands alone as the argument of the test's mark.
+
+In the files the settings name as the tests of the system's code or of a project's own check or generator, `sheriff reindex` puts `@spec ` before that sid. Each node's `meta.tests` then names the test by its new name. `sheriff reindex` names each file it rewrites.
+
+`sheriff approve` records an approval or its withdrawal (§s-v4qus7raqnwzneb).
+
+`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).
+
+`sheriff guide` prints the following:
+
+- every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says;
+- the figures counted off the model as it prints: how many nodes each part holds and how many of them are approved;
+- whether the specification is approved.
+
+`sheriff show` prints a node, found by its sid or its location, as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff model` prints as JSON the model of the specification where it runs. The model holds every node as its file holds it, with its location, the part and the file it stands in, and the owners named nearest above it. A project's own check or generator is handed the model on its standard input (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze).
+
+`sheriff todos` prints, as text, every item of `meta.todos` in the specification where it runs, the archive left out, and the SpecSheriff guidelines too where the project takes them. The items come the newest first, and those of one day in the order the specification reads. Each item comes with its date, who its author is, what is to be done, and the sid, location and title of its node (§s-t28j22vbdmmeqnh).
+
+`sheriff types` generates the following:
+
+- from the RecordTypes, the types and the RuntimeChecks of the system's code, where the technical appendix says they stand;
+- the files each generator the project's own guidelines add prints.
+
+A project's generator is run by the command the settings name for it, and is handed what `sheriff model` prints on its standard input. It prints as JSON each file's path, its content and the sids of the nodes the file is written from (§s-km4x4s26kv7pjze).
+
+`sheriff types` writes a file only where the file is missing or holds, line endings aside, anything other than what it generates. It names each file it writes.
+
+`sheriff types` names each refusal and writes no file where one of the following holds:
+
+- the check of generated copies refuses the list of the files it generates, or a RecordType (§s-dbk2vyeg8z5jxna);
+- a project's generator ends with an exit code other than zero.
+
+`sheriff types` writes a file only once every node that file is generated from is approved. It names each node it waits for:
+
+- the types and RuntimeChecks wait for every RecordType;
+- a file a project's generator prints waits for the nodes it is written from and for the rule listing that generator.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

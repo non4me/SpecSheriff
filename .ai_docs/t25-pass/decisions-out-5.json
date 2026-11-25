@@ -1,0 +1,50 @@
+{
+  "1.6.1": [
+    {
+      "date": "2026-11-20",
+      "problem": "The reason cited the current rule on the tests on a push while the specification is a draft (s-xhcmchcngykvn2k) for why no test has to pass while the specification is a draft. The new form drops that rule.",
+      "ruling": "The owner: the reason states the ground itself. While the specification is a draft, the work is focused on the specification itself, so no test has to pass.",
+      "type": "textual"
+    }
+  ],
+  "7.2.7": [
+    {
+      "date": "2026-11-20",
+      "problem": "The rule gave RecordType as its example of a name that means something only within the specification, and cited a node of the RecordType extension, which a rule of the SpecSheriff guidelines does not cite (s-chk5hnzmcpeqj25).",
+      "ruling": "The owner: the example is SpecTag, a name that the SpecSheriff guidelines define themselves.",
+      "type": "textual"
+    }
+  ],
+  "6.4": [
+    {
+      "date": "2026-11-20",
+      "problem": "Together with the rule that puts the appendix of the tools outside the guidelines (s-a4rbry4hsu34hy8), the rule kept the links from the appendix of the tools from being mirrored in the nodes of the guidelines. The reason for the rule that the appendix implements the guidelines (s-uxtyyen92jygth4) relies on those links.",
+      "ruling": "The owner: a node of the SpecSheriff guidelines, and a node of an extension that the project has chosen, also hold the links that point at it from the appendix of the tools. The appendix comes with the same release as the guidelines, so these links hold true in every project.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.39 of table-10-1": [
+    {
+      "date": "2026-11-20",
+      "problem": "The row used \"documents\" for the files of documentation outside the specification, while the rule that a part of the specification can be read on its own (s-k73czmpkazcx7mu) uses \"document\" for a file that holds a part of the specification.",
+      "ruling": "The owner: the row speaks of the documentation, so that \"document\" keeps only the meaning that rule gives it.",
+      "type": "textual"
+    }
+  ],
+  "12.3a": [
+    {
+      "date": "2026-11-21",
+      "problem": "The types and RuntimeChecks generated from a RecordType carry that RecordType's SpecTag, and row 10.1.26 of the main table of checks requires each SpecTag to name a rule. No rule said that a RecordType is a rule, and no rule of the SpecSheriff guidelines can say it, since they name no extension (s-chk5hnzmcpeqj25).",
+      "ruling": "The owner: a RecordType is a rule. Its title and text, which state what its data is for, and its format, which refines them, stay in one node. The code generated from it and a test carry its SpecTag. The other ways considered were a separate rule stating what the format is for, beside a RecordType that holds only the format, and a RecordType that is not a rule, whose generated code would carry the SpecTag of the rule that generates the types (s-e877bnfa559tvk9).",
+      "type": "textual"
+    }
+  ],
+  "2.6": [
+    {
+      "date": "2026-11-21",
+      "problem": "The rule required an archived node to name as its replacement only a node of the specification, and each archived node naming a replacement to name the replacement's own replacement once that was removed in turn. No check could hold every participant to it, since the git hooks do not run `sheriff reindex`, which was to pass the replacement on.",
+      "ruling": "The owner: that requirement is dropped («я бы вообще убрал это требование или сделал не обязательным - не вижу в нем особого профита»). An archived node may name, by its sid, the node that replaces it, and nothing keeps that sid current. Row 10.1.11 of the main table of checks stays as agreed.",
+      "type": "textual"
+    }
+  ]
+}

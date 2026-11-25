@@ -1,0 +1,196 @@
+<title>Свой статус у раздела</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: one column of short blocks; each case is a row of three variant cards that stack on a phone. */
+  /* One dark look, whatever the viewer's theme: the owner reads every page on a dark ground. */
+  :root {
+    --bg: #10181d;
+    --panel: #18242c;
+    --panel2: #1f2e38;
+    --fg: #eef1f3;
+    --muted: #a3b0b9;
+    --rule: #2f3f4a;
+    --approved: #5fbf86;
+    --draft: #e2a23b;
+    --strict: #5cb8d8;
+    --lenient: #e2a23b;
+    --bad: #e07a6a;
+    --display: "PT Serif", Georgia, serif;
+    --body: "PT Sans", "Segoe UI", Arial, sans-serif;
+    --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.45;
+    padding-block: 24px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 28px; }
+  h1 { font-family: var(--display); font-size: 1.7rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.2rem; margin: 0 0 10px; text-wrap: balance; }
+  h3 { font-size: 1rem; margin: 0; }
+  p { margin: 0; max-width: 75ch; }
+  .lead { color: var(--muted); }
+  section { display: grid; gap: 12px; }
+  code, .path { font-family: var(--mono); font-size: 0.86em; color: var(--muted); }
+
+  .table-scroll { overflow-x: auto; }
+  table { border-collapse: collapse; min-width: 560px; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--rule); }
+  th { font-weight: 700; color: var(--muted); font-size: 0.9rem; }
+
+  .variants { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 860px) { .variants { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .card.pick { border-color: var(--strict); }
+  .tag { font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  .card.pick .tag { color: var(--strict); }
+
+  .tree { display: grid; gap: 6px; }
+  .node { border-radius: 6px; padding: 6px 10px; background: var(--panel2); display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  .node.l1 { margin-left: 18px; }
+  .node.l2 { margin-left: 36px; }
+  .approved { border: 2px solid var(--approved); }
+  .draft { border: 2px dashed var(--draft); }
+  .inherit { border: 2px solid var(--rule); }
+  .st { font-size: 0.85rem; }
+  .st.a { color: var(--approved); } .st.d { color: var(--draft); } .st.i { color: var(--muted); }
+
+  .out { display: grid; gap: 4px; }
+  .chip { display: inline-block; font-size: 0.82rem; padding: 1px 8px; border-radius: 10px; border: 1px solid; margin-right: 6px; }
+  .chip.s { color: var(--strict); border-color: var(--strict); }
+  .chip.l { color: var(--lenient); border-color: var(--lenient); }
+  .minus { color: var(--bad); font-size: 0.92rem; }
+  .note { font-size: 0.92rem; color: var(--muted); }
+
+  .cost { display: grid; gap: 8px; padding-left: 20px; margin: 0; max-width: 85ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.9rem; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 22px; height: 12px; border-radius: 3px; display: inline-block; }
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:8px">
+    <h1>Свой статус у раздела</h1>
+    <p class="lead">Находка A. Как выглядят три варианта на двух примерах, и что в каждом происходит с проверками кода.</p>
+    <div class="legend">
+      <span><i class="sw approved"></i>статус «одобрена»</span>
+      <span><i class="sw draft"></i>статус «черновик»</span>
+      <span><i class="sw inherit"></i>своего статуса нет, действует статус выше</span>
+      <span><b class="chip s">строго</b><b class="chip l">мягко</b>как проверяется код этой части</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Что статус меняет в проверках</h2>
+    <div class="table-scroll">
+      <table>
+        <tr><th></th><th>Черновик — мягко</th><th>Одобрена — строго</th></tr>
+        <tr><td>Код и тесты без SpecTag, которых коммит не касается</td><td>только сообщение</td><td>коммит отклоняется</td></tr>
+        <tr><td>Тесты при push</td><td>не запускаются</td><td>запускаются; провал отклоняет push</td></tr>
+        <tr><td>Перевести в «одобрена»</td><td colspan="2">можно, только когда у всего кода и всех тестов есть SpecTag</td></tr>
+      </table>
+    </div>
+    <p class="note">Код и тесты, которые коммит добавляет или меняет, проверяются строго при любом статусе.</p>
+  </section>
+
+  <section>
+    <h2>Случай 1. Один репозиторий, два сервиса</h2>
+    <p class="lead">«Заказы» давно работают по методу: у всего кода есть SpecTag. «Склад» только переходит на метод: у половины его кода SpecTag ещё нет.</p>
+    <div class="variants">
+      <div class="card pick">
+        <div class="tag">Свой статус у раздела — рекомендую</div>
+        <div class="tree">
+          <div class="node approved"><h3>Спецификация</h3><span class="st a">одобрена</span></div>
+          <div class="node l1 inherit"><h3>Раздел «Заказы»</h3><span class="st i">своего нет → одобрена</span></div>
+          <div class="node l1 draft"><h3>Раздел «Склад»</h3><span class="st d">свой: черновик</span><span class="path">код: services/warehouse/**</span></div>
+        </div>
+        <div class="out">
+          <div><b class="chip s">строго</b>Заказы</div>
+          <div><b class="chip l">мягко</b>Склад</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tag">Отдельная спецификация на сервис</div>
+        <div class="tree">
+          <div class="node approved"><h3>Спецификация «Заказов»</h3><span class="st a">одобрена</span></div>
+          <div class="node draft"><h3>Спецификация «Склада»</h3><span class="st d">черновик</span></div>
+        </div>
+        <div class="out">
+          <div><b class="chip s">строго</b>Заказы</div>
+          <div><b class="chip l">мягко</b>Склад</div>
+        </div>
+        <p class="minus">Правило «Склада» не может сослаться на правило «Заказов»: ссылка ищет узел только в своей спецификации. Общие термины приходится держать в обеих.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Один статус, как сейчас</div>
+        <div class="tree">
+          <div class="node draft"><h3>Спецификация</h3><span class="st d">черновик</span></div>
+          <div class="node l1 inherit"><h3>Раздел «Заказы»</h3></div>
+          <div class="node l1 inherit"><h3>Раздел «Склад»</h3></div>
+        </div>
+        <div class="out">
+          <div><b class="chip l">мягко</b>Заказы</div>
+          <div><b class="chip l">мягко</b>Склад</div>
+        </div>
+        <p class="minus">Одобрить спецификацию нельзя, пока у кода «Склада» нет SpecTag. До тех пор «Заказы» тоже проверяются мягко, и их тесты при push не запускаются.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Случай 2. Один сервис переходит на метод по частям</h2>
+    <p class="lead">Модуль оплаты уже размечен, и его правила одобрены. Остальной код сервиса ещё без SpecTag.</p>
+    <div class="variants">
+      <div class="card pick">
+        <div class="tag">Свой статус у раздела — рекомендую</div>
+        <div class="tree">
+          <div class="node draft"><h3>Спецификация</h3><span class="st d">черновик</span></div>
+          <div class="node l1 approved"><h3>Раздел «Оплата»</h3><span class="st a">свой: одобрен</span><span class="path">код: src/payments/**</span></div>
+          <div class="node l2 inherit"><h3>Подраздел «Возвраты»</h3><span class="st i">своего нет → одобрен</span></div>
+          <div class="node l1 inherit"><h3>Остальные разделы</h3><span class="st i">своего нет → черновик</span></div>
+        </div>
+        <div class="out">
+          <div><b class="chip s">строго</b>Оплата и Возвраты</div>
+          <div><b class="chip l">мягко</b>остальной код</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tag">Отдельная спецификация на часть</div>
+        <p class="minus">Не помогает. Пришлось бы разрезать спецификацию одного сервиса на две, и правила оплаты потеряли бы ссылки на правила заказов, которые они используют.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Один статус, как сейчас</div>
+        <div class="tree">
+          <div class="node draft"><h3>Спецификация</h3><span class="st d">черновик</span></div>
+        </div>
+        <div class="out">
+          <div><b class="chip l">мягко</b>весь сервис, оплата тоже</div>
+        </div>
+        <p class="minus">Тесты оплаты при push не запускаются, пока не размечен весь сервис.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Какой статус действует для кода</h2>
+    <p>Как с ответственными: действует ближайший статус выше.</p>
+    <ul class="cost">
+      <li>Код с SpecTag проверяется по статусу, ближайшему выше правила, которое этот SpecTag называет.</li>
+      <li>Код без SpecTag не называет никакого правила. Поэтому раздел со своим статусом перечисляет пути к своему коду, и такой код проверяется по статусу раздела, в чьих путях он лежит. Код вне всех путей проверяется по статусу спецификации.</li>
+      <li>Раздел переводят в «одобрен» так же, как спецификацию: только когда у всего кода в его путях есть SpecTag.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Цена</h2>
+    <ul class="cost">
+      <li>У раздела станет два статуса. Один выводится из его правил: раздел одобрен, пока одобрены все правила в нём. Другой ставят ответственные раздела. Им нужны разные имена; выберем их вместе, если направление будет принято.</li>
+      <li>Инструменты SpecSheriff будут определять строгость отдельно для каждого раздела со своим статусом: чьи тесты запускать при push и где терпеть код без SpecTag.</li>
+      <li>Проект, где ни у одного раздела нет своего статуса, работает как сейчас.</li>
+    </ul>
+  </section>
+</div>

@@ -1,0 +1,91 @@
+<title>Перенос новой формы SpecSheriff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header, the flow drawn as a diagram, then the stages and the decisions as short lists. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --accent: #5cb8d8; --done: #5fbf86; --wait: #e2a23b;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+  .wrap { max-width: 980px; margin: 0 auto; padding-block: 20px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0 0 4px; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.15rem; margin: 28px 0 8px; color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 16px; }
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 18px; }
+  .diagram { overflow-x: auto; }
+  ol, ul { margin: 6px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .now { color: var(--wait); font-weight: 700; }
+  .done { color: var(--done); }
+  code { font-family: var(--mono); font-size: 0.9em; }
+  pre.mermaid { background: transparent; margin: 0; }
+</style>
+<div class="wrap">
+  <h1>Перенос новой формы спецификации в файлы</h1>
+  <p class="sub">T25 · шаг, который меняет инструменты SpecSheriff · 20 ноября 2026</p>
+
+  <div class="card diagram">
+<pre class="mermaid">
+flowchart LR
+  subgraph IN["Что есть сейчас (рабочие файлы)"]
+    A["Черновики правил<br>все согласованы"]
+    B["Три таблицы проверок:<br>основная, «Домены», «RecordType»"]
+    C["Новая структура базы:<br>разделы и порядок"]
+    D["Нынешние файлы<br>спецификации"]
+  end
+  subgraph BUILD["Сборка в рабочей папке"]
+    E["Узлы с sid, ссылками<br>и записями ваших решений"]
+  end
+  subgraph OUT["Что получится"]
+    F["База: разделы 1–10"]
+    G["Расширение «Домены»"]
+    H["Расширение «RecordType»"]
+    I["Расширение «Представления»"]
+    J["Схема узлов: таблица-правило,<br>узлы в ячейках, примеры,<br>JSON-схема у RecordType"]
+  end
+  A --> E
+  B --> E
+  C --> E
+  D --> E
+  E --> F
+  E --> G
+  E --> H
+  E --> I
+  E --> J
+</pre>
+  </div>
+
+  <h2>Порядок работы</h2>
+  <div class="card">
+    <ol>
+      <li class="now">Собрать новые файлы спецификации в рабочей папке и проверить сборку: каждый sid один раз, каждая ссылка ведёт на существующий узел, каждый согласованный текст перенесён слово в слово.</li>
+      <li>Описание инструментов SpecSheriff: пересмотреть его узлы под новую базу и согласовать с вами по одному.</li>
+      <li>Тесты, затем код инструментов: новая схема узлов, проверки из таблиц, генерация JSON-схемы из RecordType.</li>
+      <li>Положить собранные файлы на место, одобрить согласованные узлы командой <code>sheriff approve</code> от вашего имени и прогнать все проверки.</li>
+      <li>Skills и руководства привести к новой форме, выпустить версию с репетицией, обновить saloon.</li>
+    </ol>
+  </div>
+
+  <h2>Что я решаю сам (технические решения)</h2>
+  <div class="card">
+    <ul>
+      <li>Сборка идёт в рабочей папке. Нынешние файлы спецификации не трогаю, пока инструменты не примут новую форму. Иначе проверки при коммите отказали бы.</li>
+      <li>Каждый узел получает sid, уже присвоенный в черновике. Ссылки строятся из ссылок в тексте и из связей нынешних узлов.</li>
+      <li>Ваши решения по каждому узлу записываются в его записи решений по-английски, из списков изменений черновиков. Их английский прочитает EngStickler.</li>
+      <li>Узел, который был одобрен и в новой форме исчезает, уходит в архив с причиной и sid заменившего его узла. Так требует правило об удалении, потому что спецификация этого репозитория одобрена.</li>
+      <li>Одобрения ставлю только после того, как инструменты примут новую форму: отпечаток формулировки считают инструменты.</li>
+    </ul>
+  </div>
+
+  <h2>Что может потребовать вас</h2>
+  <div class="card">
+    <ul>
+      <li>Если при сборке найдётся противоречие между согласованными узлами. Такое я покажу вам как предложение, по одному узлу.</li>
+      <li>Узлы описания инструментов на втором этапе — их вы согласуете по одному.</li>
+    </ul>
+  </div>
+</div>

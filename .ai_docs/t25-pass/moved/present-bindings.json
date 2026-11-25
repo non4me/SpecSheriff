@@ -1,0 +1,243 @@
+{
+  "s-xqs2e24mx5253ye": {
+    "tests": [
+      "skills/tools/test/unit/binding.test.ts::@spec s-xqs2e24mx5253ye refuses a list its declaration in the code or in a schema does not match"
+    ]
+  },
+  "s-67vekyup7y8smap": {
+    "tests": [
+      "skills/tools/test/unit/approve.test.ts::@spec s-67vekyup7y8smap lets any one of a node's owners approve it, the line naming which",
+      "skills/tools/test/unit/approve.test.ts::@spec s-67vekyup7y8smap refuses a node none of whose owners is the one approving, naming its owners, and approves none of those named",
+      "skills/tools/test/unit/model.test.ts::@spec s-67vekyup7y8smap names no owner where the specification names none",
+      "skills/tools/test/unit/model.test.ts::@spec s-67vekyup7y8smap takes a node's owners from the nearest section or header naming them, else the specification's"
+    ]
+  },
+  "s-5ah25f6gy99panq": {
+    "tests": [
+      "skills/tools/test/unit/reindex.test.ts::@spec s-5ah25f6gy99panq keeps a node approved through a change of its owners and a move into a part with other owners",
+      "skills/tools/test/unit/reindex.test.ts::@spec s-5ah25f6gy99panq makes a draft an approved node no approval stands for, sections and headers left out, and names each"
+    ]
+  },
+  "s-9kfdycuq34beqvs": {
+    "tests": [
+      "skills/tools/test/unit/model.test.ts::@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it that are no section, and a domain's header's from every node of the domain",
+      "skills/tools/test/unit/reindex.test.ts::@spec s-9kfdycuq34beqvs writes the status of each section and domain's header from the nodes under it, after every change",
+      "skills/tools/test/unit/validate.test.ts::@spec s-9kfdycuq34beqvs refuses a section or a domain's header whose status is not the one the nodes under it produce"
+    ]
+  },
+  "s-rah8b37kytb682y": {
+    "tests": [
+      "skills/tools/test/unit/binding.test.ts::@spec s-rah8b37kytb682y counts as unchanged a test whose only change puts @spec before the bare sid it carried",
+      "skills/tools/test/unit/binding.test.ts::@spec s-rah8b37kytb682y refuses a rule whose code a commit adds or changes with no test carrying its sid",
+      "skills/tools/test/unit/binding.test.ts::@spec s-rah8b37kytb682y refuses a test carrying the sid of a node that is neither a rule nor a term"
+    ]
+  },
+  "s-kgbzk2ph9e6jfb4": {
+    "tests": [
+      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts a change to a tag as a change to the symbol's code",
+      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as changed a Python line moved out of its block by its indentation alone",
+      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as changed a line whose text after // or # stands inside a string",
+      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as changed a symbol where a name is replaced but the old one is still spelled",
+      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose lines differ only in a comment, a citation's sid or a name renamed throughout",
+      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose only change is a line inside a comment of several lines",
+      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 lets a symbol the commit leaves unchanged keep a tag naming a draft node"
+    ]
+  },
+  "s-bsya3febm6u64ab": {
+    "tests": [
+      "skills/tools/test/unit/reindex.test.ts::@spec s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written"
+    ]
+  },
+  "s-eferktypcj7njt5": {
+    "tests": [
+      "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 accepts ${what}",
+      "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 accepts a list whose members are objects naming the property that holds each one's value",
+      "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 accepts every file of the specification as it stands",
+      "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 names a field nobody declared, and a required field that is missing",
+      "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 names the field that is wrong",
+      "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 refuses ${what}",
+      "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 takes a field of type one of naming its source, with the values gathered beside it, and refuses one naming two sources"
+    ]
+  },
+  "s-bpdqd9v72wg7vsz": {
+    "tests": [
+      "skills/tools/test/unit/model.test.ts::@spec s-bpdqd9v72wg7vsz builds into a node of the SpecSheriff guidelines only the links the SpecSheriff guidelines make to it",
+      "skills/tools/test/unit/model.test.ts::@spec s-bpdqd9v72wg7vsz builds no link of a project into the SpecSheriff guidelines it takes, and links within the project both ways",
+      "skills/tools/test/unit/model.test.ts::@spec s-bpdqd9v72wg7vsz builds the incoming links of the SpecSheriff guidelines as they stand",
+      "skills/tools/test/unit/model.test.ts::@spec s-bpdqd9v72wg7vsz reads the citations of a node outside its links, the nodes under it and the values gathered beside a field, text quoted as code included",
+      "skills/tools/test/unit/reindex.test.ts::@spec s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from the outgoing links",
+      "skills/tools/test/unit/reindex.test.ts::@spec s-bpdqd9v72wg7vsz empties the incoming lists of the nodes of the archive, and builds none of their links into another node",
+      "skills/tools/test/unit/validate.test.ts::@spec s-bpdqd9v72wg7vsz refuses a node of the archive holding a link pointing at it"
+    ]
+  },
+  "s-xtqebaxjrqjsjwn": {
+    "tests": [
+      "skills/tools/test/unit/generated.test.ts::@spec s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines and the figures counted off the model as it prints"
+    ]
+  },
+  "s-m6upmfq64kw5h4r": {
+    "tests": [
+      "skills/tools/test/unit/validate.test.ts::@spec s-m6upmfq64kw5h4r refuses three words or more running in capitals, letters beyond ASCII included, two words left out"
+    ]
+  },
+  "s-vsh384ybt4w25a2": {
+    "tests": [
+      "skills/tools/test/unit/binding.test.ts::@spec s-vsh384ybt4w25a2 reports an approved node of a project's own kind that needs code and has none, but not one that needs no code, and lets a test carry its sid",
+      "skills/tools/test/unit/model.test.ts::@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among the rules of their section",
+      "skills/tools/test/unit/validate.test.ts::@spec s-vsh384ybt4w25a2 counts a node of a project's own kind as a rule of its section, and lets an exempts link reach it"
+    ]
+  },
+  "s-kag2m9tzdnduxdx": {
+    "tests": [
+      "skills/tools/test/unit/model.test.ts::@spec s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guidelines the location it is at",
+      "skills/tools/test/unit/model.test.ts::@spec s-kag2m9tzdnduxdx locates a domain's header by its name and numbers its sections straight through its files",
+      "skills/tools/test/unit/model.test.ts::@spec s-kag2m9tzdnduxdx locates the node at the top of a file of contracts by the part's name and the file's, and numbers the rest of contracts straight through its files",
+      "skills/tools/test/unit/reindex.test.ts::@spec s-kag2m9tzdnduxdx computes every node's location from where it is"
+    ]
+  },
+  "s-6fw72j65jkqrfpf": {
+    "tests": [
+      "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf counts a tag and a test of a rule implementing it, through rules implementing those in turn",
+      "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf leaves out a rule a node of the project's own guidelines exempts, by a link to it or to a section above it, and the guidelines and the technical debt",
+      "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf reports an approved rule no tagged symbol or no test that runs carries out, and refuses nothing for it"
+    ]
+  },
+  "s-ef93u6cnbs2sevr": {
+    "tests": [
+      "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr leaves out of what a message must name the tags on symbols in the tests",
+      "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr passes a message naming every node the tags on the changed symbols name",
+      "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr refuses a message leaving out a node a changed symbol's tag names",
+      "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr refuses a message naming a section or a node that does not exist, its comment lines left out"
+    ]
+  },
+  "s-rwqzepmrt77rv35": {
+    "tests": [
+      "skills/tools/test/unit/binding.test.ts::@spec s-rwqzepmrt77rv35 holds a node naming the symbols in a file to them",
+      "skills/tools/test/unit/binding.test.ts::@spec s-rwqzepmrt77rv35 refuses a node naming the symbols in a file that leaves out one its tag stands on",
+      "skills/tools/test/unit/binding.test.ts::@spec s-rwqzepmrt77rv35 refuses a node's lists of code and tests that the tags and the tests' sids do not produce"
+    ]
+  },
+  "s-jau82aq9juv9zzh": {
+    "tests": [
+      "skills/tools/test/e2e/commands.test.ts::@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node an approval was given for, read against the last commit",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh counts a test whose only change is its sid as a test the commit changes",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh passes code and tests that agree with the specification",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a node's location in a file outside the specification",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a node's location in any file the repository keeps outside the specification, a term's and a file's included",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a symbol of the system's code carrying no tag",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a tag naming no node, and a tag naming a draft node on a symbol a commit changes",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a tag that stands on no symbol",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying a draft node's sid",
+      "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh reports a rule whose text changed after its code, and refuses nothing for it",
+      "skills/tools/test/unit/gates.test.ts::@spec s-jau82aq9juv9zzh asks no review of a commit that changes no code",
+      "skills/tools/test/unit/gates.test.ts::@spec s-jau82aq9juv9zzh passes a message of a commit that changes no code",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh leaves the approvals of the SpecSheriff guidelines a project takes to where they are written",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes a specification that holds together",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes a value a domain declares for a RecordType of contracts, its variant standing in that domain",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes an exempts link from a node of the project's own guidelines to a rule or a section, and refuses one standing elsewhere or reaching anything else",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their approvals aside",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType holding two fields of type variant, the ones it inherits counted",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field declares in no list of values",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field does not declare, or declaring no field of its own",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant standing outside the domain whose RecordType declares the value it answers to",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant whose own fields only repeat those its RecordType's field of type variant holds",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a cites link beside a link of another type to the same node",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a consumes link that does not go from a header to a section of another domain",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a domain without a header, and a header whose index its sections do not produce",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a field of type one of holding no value, in its own list or in a list of a domain",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a file giving one field two values",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a file that does not match its schema",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a level the project's own guidelines do not list",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a link to no node, and a citation without a link or a cites link without a citation",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a list of values standing outside a domain, refining no RecordType of contracts, or naming a field whose values the domains do not add",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a location other than the one its place gives",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a node citing another by its location",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a node of the technical appendix outside the stack implementing no node of the base",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a removed node ever approved that is not in the archive, and one never approved that is",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a rule of the appendix of the tools implementing no node of the base of the guidelines",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a section of the technical appendix standing under a name no domain has, the stack's and the technical debt's aside",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a term node standing outside contracts",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a term-relation not binding two terms, and a link of another type binding two",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a value of a choosing field declared twice, or by a variant in another part than the one declaring it",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses an approved node no approval stands for",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses an approved node, and any section or header, setting three words or more running in capitals, two words and a quoted name left out",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses an identifier of a RecordType that names no field identifying it among its fields",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses domains using one another in a cycle",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses every section holding no rule, whatever its status",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses identifiers that lead, from one identifying field to the next, back to a RecordType already passed",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses incoming links the outgoing ones do not produce",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses two nodes sharing a sid, and two sharing a location",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses two term nodes naming one term, and two RecordTypes sharing a name",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses two term nodes, or two RecordTypes, whose names differ only in the case of their letters",
+      "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses, outside the repository the SpecSheriff guidelines are written in, a copy of them or of their schema"
+    ]
+  },
+  "s-83ev4wwesbwnhnp": {
+    "tests": [
+      "skills/tools/test/e2e/hooks.test.ts::@spec s-83ev4wwesbwnhnp after an agent's edit the checks run over the working tree, and what they refuse is handed to the agent",
+      "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside the repository's code, tests and specification",
+      "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp lets an edit change a node's owners, an approved node keeping its approval, and leaves a section's status to the reindex",
+      "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp lets an edit through where a test carries the sid of every rule whose code it changes, and an edit to a test",
+      "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp refuses before it is made an edit changing the code of a rule no test carries the sid of",
+      "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node approved over a wording for which no approval stands",
+      "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp refuses before it is made an edit of the approvals made with the agent's file tools"
+    ]
+  },
+  "s-nyh9yk22ba6g77q": {
+    "tests": [
+      "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes its message and tags name, and nothing else",
+      "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q gives the reviewer the whole change of the commit, its specification, documents and settings included",
+      "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q leaves the files generated from the specification out of the change the reviewer is given",
+      "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a RecordType requires as carried out by the types and runtime checks generated from it",
+      "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding",
+      "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q refuses a review that cannot be held, and says why"
+    ]
+  },
+  "s-qzthyh7yqvfhsa2": {
+    "tests": [
+      "skills/tools/test/unit/approve.test.ts::@spec s-qzthyh7yqvfhsa2 refuses to approve the rule that approves the specification, or to withdraw its approval, to anyone but the specification's owners",
+      "skills/tools/test/unit/binding.test.ts::@spec s-qzthyh7yqvfhsa2 refuses a commit putting the specification back to draft by an edit of its rule's wording or by its removal, and passes one recording an owner's withdrawal",
+      "skills/tools/test/unit/model.test.ts::@spec s-qzthyh7yqvfhsa2 holds the specification approved while the rule refining the base's rule on its status is approved, whatever its wording, and a draft otherwise"
+    ]
+  },
+  "s-jsqxdx47wkkj7gp": {
+    "tests": [
+      "skills/tools/test/e2e/init.test.ts::@spec s-jsqxdx47wkkj7gp run again, sheriff init changes nothing",
+      "skills/tools/test/unit/generated.test.ts::@spec s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no export of a file that is gone",
+      "skills/tools/test/unit/generated.test.ts::@spec s-jsqxdx47wkkj7gp the export and the map empty the folder they write into and keep the folder itself, which a running server may hold",
+      "skills/tools/test/unit/reindex.test.ts::@spec s-jsqxdx47wkkj7gp run again on what it left, the reindex changes nothing",
+      "skills/tools/test/unit/spec-files.test.ts::@spec s-jsqxdx47wkkj7gp keeps the order of keys, non-ASCII text as it is, and LF line endings",
+      "skills/tools/test/unit/spec-files.test.ts::@spec s-jsqxdx47wkkj7gp writes a file in the canonical formatting, so that writing what was read changes nothing"
+    ]
+  },
+  "s-kh8qcd5kxgh9z3j": {
+    "tests": [
+      "skills/tools/test/unit/generated.test.ts::@spec s-kh8qcd5kxgh9z3j exports every file of the specification to markdown, each node with its sid, text and reason",
+      "skills/tools/test/unit/types.test.ts::@spec s-kh8qcd5kxgh9z3j each generated file waits only for the nodes it is generated from: a generator's file for its nodes and its rule, the types for the RecordTypes"
+    ]
+  },
+  "s-yggv9myedprnaa7": {
+    "tests": [
+      "skills/tools/test/unit/reindex.test.ts::@spec s-yggv9myedprnaa7 names in a header's index the headers of the domains using a section",
+      "skills/tools/test/unit/reindex.test.ts::@spec s-yggv9myedprnaa7 rebuilds the index in a domain's header from the domain's sections"
+    ]
+  },
+  "s-uw9n84edf7cbe9n": {
+    "tests": [
+      "skills/tools/test/unit/generated.test.ts::@spec s-uw9n84edf7cbe9n orders the domains each after every domain it uses, the order of their names deciding a tie",
+      "skills/tools/test/unit/generated.test.ts::@spec s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it"
+    ]
+  },
+  "s-ju5vcanbjph7mgh": {
+    "tests": [
+      "skills/tools/test/unit/reindex.test.ts::@spec s-ju5vcanbjph7mgh writes beside a field the values gathered from its source, each with the node it comes from, and none beside a field holding its own list"
+    ]
+  },
+  "s-zu8ne3wq84zchc4": {
+    "tests": [
+      "skills/tools/test/unit/generated.test.ts::@spec s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last",
+      "skills/tools/test/unit/generated.test.ts::@spec s-zu8ne3wq84zchc4 the map shows the structure and each node's status only, nothing of a rule's text"
+    ]
+  }
+}

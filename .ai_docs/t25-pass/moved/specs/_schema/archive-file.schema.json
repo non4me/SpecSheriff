@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "archive-file.schema.json",
+  "title": "A file holding the archive of one part of the specification",
+  "$comment": "The archive holds the nodes that were ever approved and have since been removed (s-f2b5zvc565s242f). A node of the archive keeps the shape node.schema.json gives every node, so an archived node of a kind an extension adds is checked as the extension describes it. It differs in what the archive rule says: it has no sid of its own, it carries the reason for its removal, it holds no link pointing at it (s-bpdqd9v72wg7vsz), and it holds no nodes under it, since a section is never archived.",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "$comment": "The version of this structure the file was written in, as in a file of the specification.",
+      "const": 1
+    },
+    "scope": {
+      "$comment": "The part of the specification the archived nodes were removed from.",
+      "type": "string",
+      "minLength": 1
+    },
+    "section": {
+      "$comment": "The name of the file within the archive.",
+      "type": "string",
+      "minLength": 1
+    },
+    "nodes": {
+      "$comment": "The archived nodes, in the order they were archived.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/archivedNode"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "scope",
+    "section",
+    "nodes"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "archivedNode": {
+      "$comment": "A removed node as it last stood, with the reason for its removal. It keeps its location, its title where it had one, its wording, its links to other nodes and its metadata. It has no sid, so that nothing names it: a node may be deleted from the archive at any time.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "node.schema.json#/$defs/node"
+        },
+        {
+          "not": {
+            "required": [
+              "sid"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "children"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "refs": {
+          "$comment": "Only the links the node made: none points at it.",
+          "items": {
+            "not": {
+              "required": [
+                "from"
+              ]
+            }
+          }
+        },
+        "archived": {
+          "$comment": "When and why the node was removed, and, where the entry names one, the sid of the node that replaced it at the time of the removal (s-f2b5zvc565s242f). Nothing keeps that sid current.",
+          "type": "object",
+          "properties": {
+            "date": {
+              "$ref": "node.schema.json#/$defs/date"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            },
+            "replacedBy": {
+              "$ref": "node.schema.json#/$defs/sid"
+            }
+          },
+          "required": [
+            "date",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "archived"
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

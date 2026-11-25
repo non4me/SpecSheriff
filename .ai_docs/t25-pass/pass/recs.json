@@ -1,0 +1,1035 @@
+{
+  "splits": [
+    {
+      "sid": "s-eferktypcj7njt5",
+      "location": "_guidelines/spec/1.2",
+      "title": "The structure of the specification is defined by its schema",
+      "recommend": "split",
+      "reason": "Validating a file, limiting what an extension may add and explaining each part beside it are each carried out without the others, and all seven tests are on validation.",
+      "newNodes": [
+        "The structure of the specification is defined by its schema",
+        "A project's extension of the schema only adds",
+        "The schema says why each part of the structure is as it is"
+      ],
+      "tests": 7
+    },
+    {
+      "sid": "s-7445ahgjck2aefg",
+      "location": "_guidelines/spec/1.3",
+      "title": "A node is one rule, and a section holds rules",
+      "recommend": "split",
+      "reason": "What a node holds is applied whenever any node is written, while what a section holds and when it is deleted is applied and checked apart.",
+      "newNodes": [
+        "A node is one rule, with its paragraphs, tables and code blocks",
+        "A section holds rules and requires nothing"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-kag2m9tzdnduxdx",
+      "location": "_guidelines/spec/1.4",
+      "title": "A node is cited by its sid, and its location names where it is in the specification",
+      "recommend": "split",
+      "reason": "Citing by sid binds every writer and the citation checks, computing a location binds only the reindex, and all four tests are on locations.",
+      "newNodes": [
+        "A node is cited by its sid",
+        "A node's location is computed from where it stands"
+      ],
+      "tests": 4
+    },
+    {
+      "sid": "s-5ah25f6gy99panq",
+      "location": "_guidelines/spec/1.5",
+      "title": "What a node's status says",
+      "recommend": "split",
+      "reason": "Who may withdraw an approval is a permission `sheriff approve --withdraw` carries out without what keeps a status, and neither test is on it.",
+      "newNodes": [
+        "What a node's status says, and what keeps it",
+        "Who may withdraw an approval"
+      ],
+      "tests": 2
+    },
+    {
+      "sid": "s-67vekyup7y8smap",
+      "location": "_guidelines/spec/1.7",
+      "title": "Only its owners approve a node",
+      "recommend": "split",
+      "reason": "Who a node's owners are is resolved and cited apart from approving (s-yggv9myedprnaa7 cites it for that alone), and an agent approving in an owner's name is a skill's conduct, not a check.",
+      "newNodes": [
+        "The owners of the specification, a domain or a section",
+        "Only its owners approve a node",
+        "An agent approves in its owner's name a change that states nothing new"
+      ],
+      "tests": 4
+    },
+    {
+      "sid": "s-utvqbypzhmgndug",
+      "location": "_guidelines/spec/1.8",
+      "title": "A draft node is not implemented",
+      "recommend": "split",
+      "reason": "Reviewing a domain whole before its implementation is the owners' step, carried out apart from implementing only approved nodes, whose handling of a gap found stays with it as its qualification.",
+      "newNodes": [
+        "A draft node is not implemented, and a gap found is mended in the node at once",
+        "A domain is reviewed whole before its implementation begins"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-t28j22vbdmmeqnh",
+      "location": "_guidelines/spec/1.11",
+      "title": "Work put off lives on the node it concerns",
+      "recommend": "split",
+      "reason": "Keeping an item on its node binds whoever puts work off, while listing every item binds `sheriff todos`, which needs only what an item holds.",
+      "newNodes": [
+        "Work put off lives on the node it concerns",
+        "Every item of work put off is listed at once, the newest first"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-dpe5kcz4eamv39g",
+      "location": "_guidelines/spec/1.12",
+      "title": "A rule and its reason are held apart",
+      "recommend": "split",
+      "reason": "Holding the reason in a property of its own is the node's structure, while checking the reason first is a step of revising a rule, carried out without it.",
+      "newNodes": [
+        "A rule and its reason are held apart",
+        "A rule is revised from its reason first"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-vj7ercem526zd6v",
+      "location": "_guidelines/spec/1.19",
+      "title": "The technical appendix stands beside the base specification",
+      "recommend": "split",
+      "reason": "The appendix's place and sections, the duty of each appendix node to the base, and an instance's settings are carried out and checked apart, with no test to re-tag.",
+      "newNodes": [
+        "The technical appendix stands beside the base specification, with its sections",
+        "A node of the appendix implements nodes of the base in full detail and never contradicts them",
+        "An instance changes the appendix through settings with their defaults"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-a4rbry4hsu34hy8",
+      "location": "_guidelines/spec/1.21",
+      "title": "The guidelines hold their base and the appendix of their tools",
+      "recommend": "split",
+      "reason": "That each rule of the appendix of the tools implements a node of the base is checked by a row of its own, apart from how the guidelines are divided, as in the split proposed for the technical appendix.",
+      "newNodes": [
+        "The guidelines hold their base and the appendix of their tools",
+        "Each rule of the appendix of the tools implements a node of the base"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-bsya3febm6u64ab",
+      "location": "_guidelines/spec/1.22",
+      "title": "A project's own guidelines refine or implement the SpecSheriff guidelines",
+      "recommend": "split",
+      "reason": "Refining without contradicting and holding no copy are checked by rows of their own, and the one test, on the status of the guidelines a project takes, belongs to the second.",
+      "newNodes": [
+        "A project's own guidelines refine or implement the SpecSheriff guidelines",
+        "A project takes the SpecSheriff guidelines whole and holds no copy"
+      ],
+      "tests": 1
+    },
+    {
+      "sid": "s-vsh384ybt4w25a2",
+      "location": "_guidelines/spec/1.23",
+      "title": "A project's own NodeKind is numbered, counted and implemented as a rule is",
+      "recommend": "keep",
+      "reason": "The rule listing the NodeKinds is how the extension's declaration that they need no code is approved, so it qualifies the exemption in the main thought.",
+      "newNodes": [],
+      "tests": 3
+    },
+    {
+      "sid": "s-e877bnfa559tvk9",
+      "location": "_guidelines/spec/1.24",
+      "title": "Data structures are described in the specification",
+      "recommend": "split",
+      "reason": "Generating the types and RuntimeChecks is carried out by the generator and the check of generated copies without describing a RecordType, and other nodes cite this part alone.",
+      "newNodes": [
+        "A structure of data is described by a RecordType",
+        "The types and RuntimeChecks are generated from the RecordTypes"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-z3dnru6qqdf9m6j",
+      "location": "_guidelines/spec/1.26",
+      "title": "A RecordType variant exists only for a value carrying fields of its own",
+      "recommend": "keep",
+      "reason": "The fields choosing a variant and the variants themselves are two halves of one mechanism, and neither is written or checked rightly without the other.",
+      "newNodes": [],
+      "tests": 0
+    },
+    {
+      "sid": "s-7vm323mhry2enx3",
+      "location": "_guidelines/spec/1.34",
+      "title": "What the domains share is agreed in contracts",
+      "recommend": "split",
+      "reason": "Where a term is defined and where a RecordType is described are carried out and checked apart from what contracts is for, and the RecordType part overlaps s-ce9wbaut6edfuy8.",
+      "newNodes": [
+        "What the domains share is agreed in contracts",
+        "A term is defined once, in contracts",
+        "A RecordType is described in the domain that provides it"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-k73czmpkazcx7mu",
+      "location": "_guidelines/spec/1.36",
+      "title": "A part of the specification can be read alone",
+      "recommend": "keep",
+      "reason": "Dividing a large part into a file per section only qualifies how a part is held apart, on the one ground that a part is loaded alone.",
+      "newNodes": [],
+      "tests": 0
+    },
+    {
+      "sid": "s-ce9wbaut6edfuy8",
+      "location": "_guidelines/spec/1.37",
+      "title": "An entity is declared once",
+      "recommend": "keep",
+      "reason": "A name two RecordTypes share is how two declarations of one entity's data show, so the second sentence is the check of the first rather than a requirement of its own.",
+      "newNodes": [],
+      "tests": 0
+    },
+    {
+      "sid": "s-yggv9myedprnaa7",
+      "location": "_guidelines/spec/1.38",
+      "title": "A domain's specification opens with its header",
+      "recommend": "split",
+      "reason": "Building the index is the reindex's work, checked by a row of its own, both tests are on it, and the writer of a header carries out the rest.",
+      "newNodes": [
+        "A domain's specification opens with its header",
+        "A domain's header carries the index of its sections, built"
+      ],
+      "tests": 2
+    },
+    {
+      "sid": "s-nkyty4dy9x2v2a4",
+      "location": "_guidelines/spec/1.40",
+      "title": "Every domain stands at a level",
+      "recommend": "split",
+      "reason": "Showing a level by its number and name binds whatever shows a level, apart from placing a domain at a listed level.",
+      "newNodes": [
+        "Every domain stands at a level",
+        "A level is shown by its number and its name"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-uw9n84edf7cbe9n",
+      "location": "_guidelines/spec/1.41",
+      "title": "The order of the domains",
+      "recommend": "keep",
+      "reason": "The ban on cycles exists only so that the order exists, so it is a condition of the main thought, and both tests are on the order.",
+      "newNodes": [],
+      "tests": 2
+    },
+    {
+      "sid": "s-zefk589ykh37b8u",
+      "location": "_guidelines/tools/1",
+      "title": "Where the files are",
+      "recommend": "split",
+      "reason": "Each paragraph is carried out by a different part of the tools, so none of the 13 tests naming this node says which part it tests.",
+      "newNodes": [
+        "Where the parts of the specification are kept",
+        "Where the schema and a project's extension are kept",
+        "Where the approvals, the archive, the map and the export are kept",
+        "How `sheriff` is run and the plugin for pytest installed",
+        "The settings in `sheriff.config.json` and in the user's git configuration",
+        "What the documents and the tools of the specification are",
+        "What the tools read from `project.json`"
+      ],
+      "tests": 13
+    },
+    {
+      "sid": "s-f5rz6b7dhxejjts",
+      "location": "_guidelines/tools/2",
+      "title": "The commands",
+      "recommend": "split",
+      "reason": "Each command, and each pass of the reindex, is carried out by its own code and tested apart, so the 32 tests naming this node do not say which they test.",
+      "newNodes": [
+        "The commands of the checks",
+        "`sheriff reindex` rebuilds what is built",
+        "`sheriff reindex` adds the rule approving the specification",
+        "`sheriff reindex` renames what an earlier release wrote",
+        "`sheriff reindex` merges a key written twice",
+        "`sheriff reindex` rewrites a test naming its node by a bare sid",
+        "`sheriff export`",
+        "`sheriff render`",
+        "`sheriff guide`",
+        "`sheriff show`",
+        "`sheriff model`",
+        "`sheriff todos`",
+        "`sheriff types`",
+        "(the one-line pointers to `sheriff init`, `sheriff remove` and `sheriff approve` join the nodes they cite)"
+      ],
+      "tests": 32
+    },
+    {
+      "sid": "s-7unxytshhc4md54",
+      "location": "_guidelines/tools/3",
+      "title": "Setting a repository up and taking SpecSheriff out of it",
+      "recommend": "split",
+      "reason": "Writing the hooks, declaring for an agent, the union merge, starting the settings, replacing what an earlier release wrote, naming old hooks and `sheriff remove` are separate code paths with separate tests.",
+      "newNodes": [
+        "`sheriff init` writes, stages and turns on the git hooks",
+        "`sheriff init` declares the plugin or writes the agent's hooks for the agent named",
+        "`sheriff init` has git merge the approvals by union",
+        "`sheriff init` starts the settings and the project's guidelines",
+        "`sheriff init` replaces only what an earlier release wrote",
+        "`sheriff init` names the hooks that ran from elsewhere",
+        "`sheriff remove` takes out what `sheriff init` writes"
+      ],
+      "tests": 22
+    },
+    {
+      "sid": "s-477gtdrkw34dzxw",
+      "location": "_guidelines/tools/6",
+      "title": "The hooks",
+      "recommend": "split",
+      "reason": "The git hooks, the session start, the reviewer's settings, the order at a commit, the comparison before a push and the agent's hooks are carried out by different scripts, and 23 tests now name one node for all of them.",
+      "newNodes": [
+        "The git hooks and the commands each runs",
+        "The session start turns the git hooks on and names a hook that is not executable",
+        "The session start writes and asks for the reviewer's settings",
+        "At a commit, the checks read what is staged and `sheriff types` runs after them",
+        "Before a push, the working tree is compared with each commit sent",
+        "The agent's hooks before and after an edit"
+      ],
+      "tests": 23
+    },
+    {
+      "sid": "s-xzcw3hv4hmxz7h7",
+      "location": "_guidelines/tools/7.1.2",
+      "title": "The schema and a project's extension",
+      "recommend": "keep",
+      "reason": "The reindex's order and what it leaves out are a condition and exceptions of the one validation every command makes, which 6.4 counts with it.",
+      "newNodes": [],
+      "tests": 11
+    },
+    {
+      "sid": "s-vke5hakwf3uyrjs",
+      "location": "_guidelines/tools/7.1.3",
+      "title": "Sids, locations, terms and names of RecordTypes, counted",
+      "recommend": "split",
+      "reason": "Looking up the part a term node stands in serves the check that every term stands in contracts, not the counts, and no test names the node.",
+      "newNodes": [
+        "Sids, locations, terms and names of RecordTypes, counted",
+        "The part each term node stands in, looked up"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-95w92rnjuv3sst8",
+      "location": "_guidelines/tools/7.1.5",
+      "title": "An approved node's approval",
+      "recommend": "split",
+      "reason": "The two paragraphs implement two rows of the table of checks by different code, and the one test is on the second.",
+      "newNodes": [
+        "An approved node's approval stands",
+        "An approval a commit records is by one of its node's owners"
+      ],
+      "tests": 1
+    },
+    {
+      "sid": "s-qzyacnqwvaeaps4",
+      "location": "_guidelines/tools/7.1.7",
+      "title": "Outgoing links and citations",
+      "recommend": "split",
+      "reason": "Resolving link targets and reading citations implement separate rows of the table of checks, and the reason serves only the citations.",
+      "newNodes": [
+        "Every outgoing link names a node",
+        "Citations read against the links"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-qvgzubkrafadqgf",
+      "location": "_guidelines/tools/7.1.12",
+      "title": "`consumes` and `exempts` links",
+      "recommend": "keep",
+      "reason": "Both items are cases of one check, that a link's ends are what its type allows, set as a list as 6.3 asks.",
+      "newNodes": [],
+      "tests": 0
+    },
+    {
+      "sid": "s-j9r8z4xdrfkfs47",
+      "location": "_guidelines/tools/7.2.3",
+      "title": "From a draft to an approved specification, and back",
+      "recommend": "keep",
+      "reason": "The draft-mode reporting and the withdrawal check both need how the status before and after a commit is taken, so a split would part that from both.",
+      "newNodes": [],
+      "tests": 5
+    },
+    {
+      "sid": "s-utf4mbt7ref8g9c",
+      "location": "_guidelines/tools/7.2.4",
+      "title": "The SpecTags the tests carry",
+      "recommend": "split",
+      "reason": "Resolving a test's SpecTag, requiring a test for changed code, and holding a project's own tools to the tests of their rule are separate rows of the table of checks.",
+      "newNodes": [
+        "The SpecTag each test carries, resolved",
+        "A changed symbol's node has a test",
+        "A project's own check or generator and the tests of the rule listing it"
+      ],
+      "tests": 4
+    },
+    {
+      "sid": "s-st6td4mua9uqt9z",
+      "location": "_guidelines/tools/7.3.2",
+      "title": "An edit judged before it is made",
+      "recommend": "keep",
+      "reason": "The items are the cases in which the guard refuses an edit, the qualifications of one requirement, as the base rule it implements lists them.",
+      "newNodes": [],
+      "tests": 2
+    },
+    {
+      "sid": "s-bpdqd9v72wg7vsz",
+      "location": "_guidelines/spec/2.1",
+      "title": "Outgoing links are written, incoming links are built",
+      "recommend": "split",
+      "reason": "Declaring a link for each citation binds the writer and the citation check, building the incoming links binds the reindex, and six of the seven tests are on building.",
+      "newNodes": [
+        "A node declares a link to every node it cites",
+        "The links pointing at a node are built from those the nodes declare"
+      ],
+      "tests": 7
+    },
+    {
+      "sid": "s-rah8b37kytb682y",
+      "location": "_guidelines/spec/3.4",
+      "title": "The test comes before the code",
+      "recommend": "split",
+      "reason": "Writing the test first and owing a test for changed code are held together by the guard, while every test carrying its node's SpecTag is checked apart, so two nodes rather than three.",
+      "newNodes": [
+        "The test comes before the code, and changed code has a test",
+        "Every test carries the SpecTag of the node it is written from"
+      ],
+      "tests": 3
+    },
+    {
+      "sid": "s-83ev4wwesbwnhnp",
+      "location": "_guidelines/spec/5.12",
+      "title": "Where an agent writes, the checks run at each of its edits",
+      "recommend": "split",
+      "reason": "Running the checks after an edit and refusing an edit before it is made are done by different hooks, and six of the seven tests are on the refusal.",
+      "newNodes": [
+        "The checks run after each of an agent's edits",
+        "An agent's edit is refused before it is made in each of these cases"
+      ],
+      "tests": 7
+    },
+    {
+      "sid": "s-3dgt5c94jr55j3z",
+      "location": "_guidelines/spec/6.2",
+      "title": "A rule names its subject and states what must hold",
+      "recommend": "split",
+      "reason": "A rule can name its subject and still state a property over what happens not to exist yet, so each is applied and judged alone, and the reason's first ground serves only the second.",
+      "newNodes": [
+        "A rule names the subject it binds",
+        "A property is stated over what the specification declares"
+      ],
+      "tests": 0
+    },
+    {
+      "sid": "s-2jcmb9xe9d64t2t",
+      "location": "_guidelines/spec/6.12",
+      "title": "What no rule requires is not done",
+      "recommend": "keep",
+      "reason": "Writing the exception into the rule is how a rule is narrowed once a separate prohibition is ruled out, so a writer applies the two together.",
+      "newNodes": [],
+      "tests": 0
+    },
+    {
+      "sid": "s-5z5gnu7pahr82xp",
+      "location": "_guidelines/tools/8",
+      "title": "The SpecTag, and how a symbol carries it",
+      "recommend": "split",
+      "reason": "The SpecTag's form and place bind every writer and are cited by the nodes on tests and on generated types, while how the tools find it is the parser's alone.",
+      "newNodes": [
+        "The SpecTag, and where a symbol carries it",
+        "How the tools find a SpecTag and the symbol under it"
+      ],
+      "tests": 7
+    },
+    {
+      "sid": "s-zrsc6asgmhv8tnc",
+      "location": "_guidelines/tools/9",
+      "title": "How a test declares the node it is written from",
+      "recommend": "split",
+      "reason": "The plugin for pytest is a package of its own, holding five of the seven tests, carried out apart from how the tools read a test's SpecTag.",
+      "newNodes": [
+        "How a test declares its SpecTag",
+        "The plugin for pytest registers the mark and reports the SpecTag"
+      ],
+      "tests": 7
+    },
+    {
+      "sid": "s-xr5xxa9cxf2mq5u",
+      "location": "_guidelines/tools/10",
+      "title": "Who runs the reviewer",
+      "recommend": "split",
+      "reason": "The verdict, the start of a runner, each runner, the user's settings and the project's settings are separate code paths with separate tests, and other nodes cite this one only for the settings.",
+      "newNodes": [
+        "The verdict and how `sheriff review` reads it",
+        "How a runner is started, and its environment",
+        "The runner `claude`",
+        "The runner `codex`",
+        "The reviewer's settings in the user's git configuration, and their defaults",
+        "The reviewer's settings in `sheriff.config.json`"
+      ],
+      "tests": 12
+    },
+    {
+      "sid": "s-v4qus7raqnwzneb",
+      "location": "_guidelines/tools/11",
+      "title": "How an approval is recorded",
+      "recommend": "split",
+      "reason": "Approving, withdrawing and fingerprinting a wording are carried out apart, and the fingerprint and the latest line are read by `sheriff validate` and `sheriff guard` as well.",
+      "newNodes": [
+        "`sheriff approve` records an approval",
+        "`sheriff approve --withdraw` withdraws an approval",
+        "When an approval stands, and the fingerprint of a wording"
+      ],
+      "tests": 15
+    },
+    {
+      "sid": "s-4mej6ccn7xu3d3p",
+      "location": "_guidelines/tools/12",
+      "title": "A git hook runs the SpecSheriff tools a plugin keeps on the machine",
+      "recommend": "split",
+      "reason": "Where each plugin keeps its tools is used beyond the hooks, as a terminal runs them from there, the hook's lookup and fallback are code of its own, and naming old hooks is the session start's.",
+      "newNodes": [
+        "Where each plugin keeps the SpecSheriff tools",
+        "A git hook finds the SpecSheriff tools and runs them, or lets the commit through",
+        "The session start names the hooks an earlier release wrote"
+      ],
+      "tests": 7
+    },
+    {
+      "sid": "s-zh2vcr3xjumppg5",
+      "location": "_guidelines/tools/14",
+      "title": "The plugin for Claude Code carries everything its work needs",
+      "recommend": "split",
+      "reason": "What the plugin carries, its options, its marketplace, its skills' commands and their model setting are carried out in different files, each tested apart.",
+      "newNodes": [
+        "The plugin for Claude Code carries the skills, the guidelines and the tools, and declares its hooks",
+        "The plugin's options for the runner `claude`",
+        "The marketplace and the plugin declared in the project",
+        "The skills run `sheriff`, and what `spec-init` and `spec-remove` do",
+        "The skills set no model and no reasoning effort"
+      ],
+      "tests": 7
+    },
+    {
+      "sid": "s-2pdy9gw2jrjvfb4",
+      "location": "_guidelines/tools/15",
+      "title": "The plugin for Codex CLI carries everything its work needs",
+      "recommend": "split",
+      "reason": "What the plugin carries, its marketplace and install commands, its skills' commands and their model setting are carried out in different files, each tested apart.",
+      "newNodes": [
+        "The plugin for Codex CLI carries the skills, the guidelines and the tools, and no hooks",
+        "The marketplace for Codex and the commands that install the plugin",
+        "The skills run `sheriff` from the tools beside them, and what `spec-init` and `spec-remove` do",
+        "The skills set no model and no reasoning effort"
+      ],
+      "tests": 5
+    },
+    {
+      "sid": "s-n76wt2bkqdmh78x",
+      "location": "_guidelines/tools/16",
+      "title": "The agent's hooks for Codex CLI",
+      "recommend": "split",
+      "reason": "The hooks in `.codex/hooks.json` and the guard's judging of a patch are separate code, each with its own tests.",
+      "newNodes": [
+        "The agent's hooks for Codex stand in the project",
+        "`sheriff guard` judges a patch of `apply_patch` file by file"
+      ],
+      "tests": 8
+    },
+    {
+      "sid": "s-pvzms7d8kxb8dk2",
+      "location": "_guidelines/tools/17",
+      "title": "Where the types and RuntimeChecks generated from the RecordTypes are written",
+      "recommend": "split",
+      "reason": "Where the types are written is the work of `sheriff types`, the validator asserting `format` binds a project's appendix and code, and reading a file of types as code is the work of `sheriff binding`.",
+      "newNodes": [
+        "Where the types and RuntimeChecks are written",
+        "The RuntimeChecks are run by a validator asserting `format`",
+        "`sheriff binding` reads a file of types as the system's code"
+      ],
+      "tests": 5
+    },
+    {
+      "sid": "s-suv42g8r3ra2h6b",
+      "location": "_guidelines/tools/18",
+      "title": "What a RecordType generates",
+      "recommend": "keep",
+      "reason": "The refusal of a name that cannot be generated is the exception to naming each type after its RecordType, so it qualifies the generation.",
+      "newNodes": [],
+      "tests": 5
+    }
+  ],
+  "doubts": [
+    {
+      "sid": "s-kh8qcd5kxgh9z3j",
+      "location": "_guidelines/spec/1.1",
+      "class": "informational",
+      "doubt": "Both lists set off by dashes (what is generated; what is generated into the code) are kept as dashes, so as not to decide whether they are examples or the whole set.",
+      "recommend": "Keep. The rule binds whatever is generated from the nodes, so the dash lists narrow nothing whether read as examples or as the whole set."
+    },
+    {
+      "sid": "s-eferktypcj7njt5",
+      "location": "_guidelines/spec/1.2",
+      "class": "confirm",
+      "doubt": "\"the field that is wrong\" became \"the property that is wrong\", taken as a field of the node schema; if it meant a field of a RecordType, it should go back.",
+      "recommend": "Confirm \"property\": the refusal names the JSON property where the file departs from the schema (schema.ts:94 prints its instancePath), which may lie in a node, a file or a RecordType's field."
+    },
+    {
+      "sid": "s-5ah25f6gy99panq",
+      "location": "_guidelines/spec/1.5",
+      "class": "confirm",
+      "doubt": "\"Anyone may withdraw the approval of a node outside the SpecSheriff guidelines a project takes, but that of the rule that approves the specification\" was read as two exceptions to \"anyone may\" and written as a list; the reason supports that reading.",
+      "recommend": "Confirm: nobody withdraws the approval of a node of the SpecSheriff guidelines a project takes, only the specification's owners withdraw that of the rule approving the specification (s-qzthyh7yqvfhsa2), and anyone may withdraw any other, as `sheriff approve --withdraw` does (s-v4qus7raqnwzneb)."
+    },
+    {
+      "sid": "s-67vekyup7y8smap",
+      "location": "_guidelines/spec/1.7",
+      "class": "confirm",
+      "doubt": "\"spend the owners' attention on no decision\" became \"on no choice\", taking \"decision\" in its ordinary sense.",
+      "recommend": "Confirm the ordinary sense: showing such a node again gives the owners nothing to decide, and no item of `meta.decisions` is meant. \"On no choice\" reads oddly; \"on nothing to decide\" says it plainly."
+    },
+    {
+      "sid": "s-f2b5zvc565s242f",
+      "location": "_guidelines/spec/1.9",
+      "class": "ambiguity",
+      "doubt": "\"a record for the decisions taken\" kept: it is unclear whether it means the decisions of `meta.decisions` or choices in the ordinary sense, which would become \"choices\".",
+      "recommend": "Readings: (A) a record of the decisions taken on the rule, which an archived node keeps in `meta.decisions`; (B) a record that later choices draw on. Recommend B, since the colon explains it by what later work has to understand and take into account. Write it as \"a record for the choices later work makes\"."
+    },
+    {
+      "sid": "s-f2b5zvc565s242f",
+      "location": "_guidelines/spec/1.9",
+      "class": "ambiguity",
+      "doubt": "\"breaks when the node is deleted, and the checks refuse it until it is removed\" kept in one sentence: it is unclear whether the checks refuse such a link from the archiving on or only once the node is deleted.",
+      "recommend": "Readings: (A) a link or citation naming an archived node is refused from the archiving on; (B) it is refused only once the node is deleted from the archive. The code settles it: only a `supersedes` link may name an archived node (validate.ts:137), and that link breaks once the node is deleted, while any other link is refused at once. Recommend B for this sentence: \"…breaks when the node is deleted from the archive. From then on the checks refuse it until it is removed.\""
+    },
+    {
+      "sid": "s-v7vd4ydrwexsgsj",
+      "location": "_guidelines/spec/1.15",
+      "class": "informational",
+      "doubt": "\"the property the list names\" kept as words: it is the list's own part `property`, which RULES.md does not name among the parts of `TextRule.list`.",
+      "recommend": "Keep. It is the list's part `property` (node.schema.json, $defs/list), which the notation of RULES.md does not name. The owner may write `property` in backticks later."
+    },
+    {
+      "sid": "s-vj7ercem526zd6v",
+      "location": "_guidelines/spec/1.19",
+      "class": "informational",
+      "doubt": "\"A node bound to the rule it implements is found when that rule changes and is read beside it\" kept: it is unclear which of the two is read beside the other.",
+      "recommend": "Keep. Either reading says the implementing node and the rule it implements are read together, so nothing needs settling."
+    },
+    {
+      "sid": "s-vj7ercem526zd6v",
+      "location": "_guidelines/spec/1.19",
+      "class": "confirm",
+      "doubt": "\"in enough detail to be read only one way — exact values, examples and the edge cases of that implementation —\" became a colon; the three are still read as what that detail is.",
+      "recommend": "Confirm: exact values, examples and edge cases are what that detail consists of, as the dashes said."
+    },
+    {
+      "sid": "s-2r7k2aeyusgy6fw",
+      "location": "_guidelines/spec/1.20",
+      "class": "confirm",
+      "doubt": "\"the decision to set the problem aside\" became \"the choice\", taking it in its ordinary sense; \"no decision records it\" stays, being an item of `meta.decisions`.",
+      "recommend": "Confirm: setting the problem aside is a choice in the ordinary sense, and \"no decision records that choice\" means no item of `meta.decisions`."
+    },
+    {
+      "sid": "s-vsh384ybt4w25a2",
+      "location": "_guidelines/spec/1.23",
+      "class": "informational",
+      "doubt": "\"as a rule is\" and \"as rules are\" kept as the ordinary word rule; they may mean the NodeKind `TextRule`, which the rules of the pass forbid me to choose.",
+      "recommend": "Keep. RULES.md section 4 keeps \"rule\" as the ordinary word, and nothing moved."
+    },
+    {
+      "sid": "s-vsh384ybt4w25a2",
+      "location": "_guidelines/spec/1.23",
+      "class": "confirm",
+      "doubt": "\"the list names the extension as its declaration\" written as \"Its `TextRule.list` names the extension as its declaration, in `declaredIn`\": the property part named, the meaning taken to be the same.",
+      "recommend": "Confirm: the list's `declaredIn` names the extension (`specs/_schema/project.schema.json`), and `sheriff binding` compares the members with it (binding.ts:251), as s-5hb9k2e34dgn284 says."
+    },
+    {
+      "sid": "s-e877bnfa559tvk9",
+      "location": "_guidelines/spec/1.24",
+      "class": "confirm",
+      "doubt": "In the reason \"a type or a check\" became \"a type or a RuntimeCheck\": the check meant is the implementation's check of data at runtime, not the method's check.",
+      "recommend": "Confirm: \"a check\" there is the implementation's check of data at runtime, paired with \"a type\", not the method's check."
+    },
+    {
+      "sid": "s-e877bnfa559tvk9",
+      "location": "_guidelines/spec/1.24",
+      "class": "informational",
+      "doubt": "The reason's sentences reordered so that it opens with its main ground (a structure belongs in the specification); no sentence lost.",
+      "recommend": "Keep. Opening the reason with its ground is the point of the pass, and no sentence was lost."
+    },
+    {
+      "sid": "s-adhmw4gw6y82f44",
+      "location": "_guidelines/spec/1.25",
+      "class": "informational",
+      "doubt": "Both lists keep the original colon and its \"or\", so whether they name every case or examples of it stays as open as in the original.",
+      "recommend": "Keep. The main thought (every record that can hold the field has its value) decides either way, so the lists stay as open as before."
+    },
+    {
+      "sid": "s-xfwuvd3funutmsw",
+      "location": "_guidelines/spec/1.32",
+      "class": "informational",
+      "doubt": "\"the list ... it comes from\" kept as a word: it may be the field's own list or a domain rule's `TextRule.list`, and naming either would choose.",
+      "recommend": "Keep the plain word. The field's own list stands in its RecordType's part and a domain's list in that domain's part, so either list is in the part where the value is declared."
+    },
+    {
+      "sid": "s-7vm323mhry2enx3",
+      "location": "_guidelines/spec/1.34",
+      "class": "confirm",
+      "doubt": "Reason: \"keeps it from owning\" became \"keeps contracts from answering for\", and \"has no owner\" became \"Nobody answers for\", the wording 1.28 uses for a domain's duty to its values.",
+      "recommend": "Confirm: \"owning\" meant being the place that answers for what a domain defines, and \"nobody answers for\" follows the wording of 1.28."
+    },
+    {
+      "sid": "s-ce9wbaut6edfuy8",
+      "location": "_guidelines/spec/1.37",
+      "class": "informational",
+      "doubt": "\"the domain that provides it\" kept with \"it\", which may be the RecordType or the entity, as in the original.",
+      "recommend": "Keep. The domain providing an entity's data is the domain providing its RecordType, so \"it\" names the same domain either way."
+    },
+    {
+      "sid": "s-ce9wbaut6edfuy8",
+      "location": "_guidelines/spec/1.37",
+      "class": "confirm",
+      "doubt": "Reason: \"two owners of it, and two owners change it apart\" became \"held by two parties, and the two change it apart\".",
+      "recommend": "The doubt is stale: the reviewer's fix replaced \"held by two parties\". The output now reads \"two places that each answer for it, and the two are changed apart\", keeping the definitions as the subject. Confirm that wording."
+    },
+    {
+      "sid": "s-5yvpn4zhuqmv5bq",
+      "location": "_guidelines/spec/1.39",
+      "class": "informational",
+      "doubt": "The text's first sentence, over 25 words, kept whole: it states one thought, and splitting off \"in a field's type or as the RecordType it refines\" would choose whether those two ways of naming are all of them.",
+      "recommend": "Keep. The sentence states one thought, and splitting it would decide whether the two ways of naming are all of them."
+    },
+    {
+      "sid": "s-nkyty4dy9x2v2a4",
+      "location": "_guidelines/spec/1.40",
+      "class": "informational",
+      "doubt": "\"that list\" of levels kept as a word: whether the levels stand in a `TextRule.list` the original does not say.",
+      "recommend": "Keep the plain word in the base. The appendix (s-zefk589ykh37b8u) says a list in `project.json` carries the levels."
+    },
+    {
+      "sid": "s-zefk589ykh37b8u",
+      "location": "_guidelines/tools/1",
+      "class": "ambiguity",
+      "doubt": "\"Among them\" (the settings) is written \"Among the settings\", which holds whether \"them\" meant the shared settings or all settings; the code keeps the glob patterns and the commands in `sheriff.config.json`.",
+      "recommend": "Readings: (A) the settings a project shares, in `sheriff.config.json`; (B) every setting, the user's git configuration included. config.ts:61-79 reads the code and test globs, `checks`, `generators` and `testCommand` from `sheriff.config.json` alone. Recommend A: write \"Among the settings in `sheriff.config.json`\"."
+    },
+    {
+      "sid": "s-f5rz6b7dhxejjts",
+      "location": "_guidelines/tools/2",
+      "class": "ambiguity",
+      "doubt": "`sheriff todos`: \"the archive left out, and the SpecSheriff guidelines too where the project takes them\" kept as written, since it reads either as \"those guidelines are left out too\" or as \"those guidelines are included too\"; the code (`show.ts`, `todos` over `loadSpecification`) includes them, so the owner may want \"It includes the SpecSheriff guidelines where the project takes them, and leaves out the archive.\"",
+      "recommend": "Readings: (A) the SpecSheriff guidelines a project takes are left out, like the archive; (B) they are included. The code includes them: `todos` runs over `loadSpecification`, whose `withTaken` adds the guidelines taken (spec-files.ts:82-102). Recommend B, in the rewriter's wording: \"It includes the SpecSheriff guidelines where the project takes them, and leaves out the archive.\""
+    },
+    {
+      "sid": "s-f5rz6b7dhxejjts",
+      "location": "_guidelines/tools/2",
+      "class": "confirm",
+      "doubt": "`sheriff types`: \"refuses the list of those files\" is written \"refuses the list of the files it generates\", since the restructured text left \"those files\" without its antecedent; it covers both lists §s-dbk2vyeg8z5jxna refuses, the appendix's list of files for the types and RuntimeChecks and a path a project's generator prints.",
+      "recommend": "Confirm: a refusal of either list stops every write. That covers the appendix's list of files for the types and RuntimeChecks and a path a project's generator prints (types.ts:389). The wording \"the list of the files it generates\" reads as one list, so name both: \"refuses the list of files for the types and RuntimeChecks, a path a project's generator prints, or a RecordType\"."
+    },
+    {
+      "sid": "s-f5rz6b7dhxejjts",
+      "location": "_guidelines/tools/2",
+      "class": "informational",
+      "doubt": "The renames keep the old values `record`, `recordType`, `rule` and `domain` in backticks, since they name what earlier releases wrote; only \"kind\" around them became \"NodeKind\", and \"adds fields to a kind\" became \"adds properties to a NodeKind\".",
+      "recommend": "Keep. The old values name what earlier releases wrote and must stay letter for letter."
+    },
+    {
+      "sid": "s-7unxytshhc4md54",
+      "location": "_guidelines/tools/3",
+      "class": "confirm",
+      "doubt": "\"naming the two it takes\" and \"for both agents\" are kept: they count the agents the option takes, not anything the specification holds.",
+      "recommend": "Do not confirm. The agents `--agent` takes are members of a declaration in the code (`AGENTS`, init.ts:10), and 6.8 forbids counting members. A third agent would leave \"two\" and \"both\" stale. Write \"naming the agents it takes\" and \"for every agent `sheriff init` writes for\"."
+    },
+    {
+      "sid": "s-k4nqjr96ux7a5m7",
+      "location": "_guidelines/tools/5",
+      "class": "informational",
+      "doubt": "\"under its key as JSON, but for two\" drops the count \"two\": the sentence ends \"These values are written otherwise:\" and the two exceptions follow as a list.",
+      "recommend": "Keep. The count was removed as 6.8 asks, and the same two exceptions stand as the list after \"These values are written otherwise:\"."
+    },
+    {
+      "sid": "s-477gtdrkw34dzxw",
+      "location": "_guidelines/tools/6",
+      "class": "informational",
+      "doubt": "The reason's \"the reindex, the export, the map and the types are made from `specs/` and `sheriff.config.json` alone\" is narrower than the text, which also runs them where the code of a project's own generator differs; kept as written, since widening it would change the reason.",
+      "recommend": "Keep it for this pass, but follow it up: the reason is narrower than its rule (6.6), and \"alone\" is false where a project's own generator's code changes. In a change of its own, widen it to \"from `specs/`, `sheriff.config.json` and the code of a project's own generators\"."
+    },
+    {
+      "sid": "s-477gtdrkw34dzxw",
+      "location": "_guidelines/tools/6",
+      "class": "informational",
+      "doubt": "\"marks it asked\" is kept: \"it\" may be the runner or the question, and the marks, one for each runner, are the same either way.",
+      "recommend": "Keep. The marks, one for each runner, are the same whether \"it\" is the runner or the question. The fixed s-zh2vcr3xjumppg5 and s-2pdy9gw2jrjvfb4 now say \"marks the runner asked\", so \"marks the runner asked\" here would match them."
+    },
+    {
+      "sid": "s-xzcw3hv4hmxz7h7",
+      "location": "_guidelines/tools/7.1.2",
+      "class": "ambiguity",
+      "doubt": "'each of the two commands' kept: it most likely means `sheriff binding` and `sheriff reindex`, but naming them (and so removing the count in prose) would choose a reading, since `sheriff validate` is named in the node too.",
+      "recommend": "Readings: (A) `sheriff binding` and `sheriff reindex`, the two named just before; (B) `sheriff validate` and `sheriff binding`. binding.ts:122 and reindex.ts:206 both stop on `schemaRefusals`, and the reindex then writes nothing. Recommend A, naming the commands, which also removes the count: \"`sheriff binding` and `sheriff reindex` each name that file…\". validate.ts:48-64 names every refusal and stops too, if the owner wants all three named."
+    },
+    {
+      "sid": "s-3anv9qcmx8pwp2w",
+      "location": "_guidelines/tools/7.1.17",
+      "class": "confirm",
+      "doubt": "'the one it names as identifying it' resolved to the RecordType naming its identifying field, as the schema's `identifiedBy` on a RecordType says; please confirm.",
+      "recommend": "Confirm: the RecordType names its identifying field by `identifiedBy`, which validate.ts:415-423 looks up."
+    },
+    {
+      "sid": "s-3anv9qcmx8pwp2w",
+      "location": "_guidelines/tools/7.1.17",
+      "class": "informational",
+      "doubt": "'that RecordType's fields' kept as words, not `RecordType.fields`: the identifying field may be inherited (the schema says 'its own or inherited'), so the property would narrow it.",
+      "recommend": "Keep the words. validate.ts:415 looks up the identifying field along the refines chain, so `RecordType.fields` would narrow it to the node's own fields."
+    },
+    {
+      "sid": "s-j9r8z4xdrfkfs47",
+      "location": "_guidelines/tools/7.2.3",
+      "class": "confirm",
+      "doubt": "'and so is a test' written out as 'a test that carries no SpecTag', as §s-utf4mbt7ref8g9c states it; please confirm.",
+      "recommend": "Confirm: \"so is a test\" means a test carrying no SpecTag that the commit does not change (binding.ts:187), as s-utf4mbt7ref8g9c states."
+    },
+    {
+      "sid": "s-5hb9k2e34dgn284",
+      "location": "_guidelines/tools/7.2.6",
+      "class": "informational",
+      "doubt": "'each list a node holds' kept rather than `TextRule.list`: only a TextRule holds a list in the base schema, but the node says 'a node', and the tools read a list on any node.",
+      "recommend": "Keep. binding.ts:251 reads `node.list` on any node, so `TextRule.list` would narrow the check."
+    },
+    {
+      "sid": "s-nh8b2hjvzasdxmd",
+      "location": "_guidelines/tools/7.2.7",
+      "class": "ambiguity",
+      "doubt": "The apposition 'a rule, a term or a node of a project's own NodeKind' kept in place: moving it would choose whether it restricts which nodes are meant or only illustrates them; a section, a header and a RecordType are not named in it.",
+      "recommend": "Readings: (A) restrictive, so only rules, terms and nodes of a project's own NodeKind are cited by sid; (B) illustrative, so every node is. binding.ts:410-427 refuses the location of any node, sections and headers included, and s-kag2m9tzdnduxdx says nothing cites a node by its location. Recommend B: write \"Wherever a node is cited, such as a rule, a term or a node of a project's own NodeKind, …\"."
+    },
+    {
+      "sid": "s-dbk2vyeg8z5jxna",
+      "location": "_guidelines/tools/7.2.8",
+      "class": "ambiguity",
+      "doubt": "'Each copy is compared with what the last commit holds instead' kept: whether the committed file or the generated copy is set against the last commit is not said, and rewording would choose.",
+      "recommend": "Readings: (A) the file the commit holds is compared with what the last commit holds; (B) the copy generated in memory is. The code compares the file the commit holds with the last commit's (binding.ts:319-323, 346-347). Recommend A: \"While a node a copy waits for is a draft, the file the commit holds at the copy's path is compared with what the last commit holds there, instead of with the copy.\""
+    },
+    {
+      "sid": "s-bpdqd9v72wg7vsz",
+      "location": "_guidelines/spec/2.1",
+      "class": "ambiguity",
+      "doubt": "Kept 'A node of the archive is held to neither: ...' as it stood: 'neither' may mean the two paragraphs above it or the two directions of a built link, and a rewrite would choose one.",
+      "recommend": "Readings: (A) neither of the requirements above, the link owed for each citation and the rebuilt incoming links; (B) neither direction of a built link. The citation and incoming-link checks run only over `spec.nodes`, which leaves the archive out (validate.ts:131-157, spec-files.ts:34). The reindex empties the archive's incoming lists (reindex.ts:228-230). So A holds, and B with it. Recommend A: \"A node of the archive is held to neither requirement: …\". This also follows if the node is split."
+    },
+    {
+      "sid": "s-ef93u6cnbs2sevr",
+      "location": "_guidelines/spec/3.2",
+      "class": "ambiguity",
+      "doubt": "The original does not say whether the cases 'one whose text has just changed, or an existing one the code contradicted' are the only ones; the list is introduced by 'This covers' to leave that open.",
+      "recommend": "Readings: (A) the two cases are all the nodes meant; (B) they are examples. message.ts:11 requires every node the SpecTags on the changed symbols name, a refactoring included, which neither case covers. Recommend B: introduce the cases with \"such as\"."
+    },
+    {
+      "sid": "s-rwqzepmrt77rv35",
+      "location": "_guidelines/spec/3.3",
+      "class": "confirm",
+      "doubt": "Kept 'three records' and 'All three' in the title and the text: they count the method's own records, not what a specification holds, so the rule on counts in prose seems not to reach them.",
+      "recommend": "Confirm. The count is of the records the node lists right beside it, a part of the method itself rather than what a specification or registry holds, so 6.8 does not reach it."
+    },
+    {
+      "sid": "s-rah8b37kytb682y",
+      "location": "_guidelines/spec/3.4",
+      "class": "informational",
+      "doubt": "Kept 'Counted as a change, it would refuse, at the commit rewriting it, every test whose node is under revision' as it stood: what 'refuses' is not named, and naming it would choose a reading.",
+      "recommend": "Keep. \"It\" is the rewrite counted as a change, and the refusal is the check's; only that reading makes sense."
+    },
+    {
+      "sid": "s-rah8b37kytb682y",
+      "location": "_guidelines/spec/3.4",
+      "class": "informational",
+      "doubt": "The reason's first paragraph is reordered so that it opens with the ground of the main thought (a test written first tests the rule); no sentence's content changed.",
+      "recommend": "Keep. Opening the reason with its ground is the point of the pass, and no sentence changed."
+    },
+    {
+      "sid": "s-kgbzk2ph9e6jfb4",
+      "location": "_guidelines/spec/3.5",
+      "class": "informational",
+      "doubt": "Kept the first sentence with its enumeration '— a function, a class or a member of one, a type, a constant, a component —' as it stood: moving it into a sentence of its own would have to say whether it lists every sort of symbol or gives examples.",
+      "recommend": "Keep. The rule binds every symbol of the system's code, so the dash list illustrates and narrows nothing."
+    },
+    {
+      "sid": "s-6fw72j65jkqrfpf",
+      "location": "_guidelines/spec/3.6",
+      "class": "ambiguity",
+      "doubt": "Kept 'a problem set aside, which is not required of the system and goes once it is solved' as it stood: 'which' and 'it' may stand for the problem or for the rule, and a split would choose one.",
+      "recommend": "Readings: (A) the rule of the technical debt requires nothing of the system and goes once its problem is solved; (B) solving the problem is not required, and the problem goes once solved. s-2r7k2aeyusgy6fw says the change that solves the problem removes the rule. Recommend A: \"Such a rule requires nothing of the system and is removed once its problem is solved.\""
+    },
+    {
+      "sid": "s-6fw72j65jkqrfpf",
+      "location": "_guidelines/spec/3.6",
+      "class": "ambiguity",
+      "doubt": "'only both together show it by a check' is written out as 'show by a check that the code carries the rule out'; please confirm that is what 'it' stood for.",
+      "recommend": "The doubt is stale: the reviewer's fix made the output read \"that the code does what the rule says\" (A). The rewriter had read it as \"that the code carries the rule out\" (B). Under A, the clause just before already says a passing test shows exactly that. Recommend B: \"Only both together show by a check that the system's code carries the rule out.\""
+    },
+    {
+      "sid": "s-jau82aq9juv9zzh",
+      "location": "_guidelines/spec/5.1",
+      "class": "confirm",
+      "doubt": "First row: \"gives one field two values\" became \"one property\", since the field there is a key of a JSON object, not a field of a RecordType. Revert it if a RecordType's field was meant.",
+      "recommend": "Confirm: the row is the key of a JSON object written twice (s-7zqsstgnuc772ba, keysTwice in validate.ts), so \"property\" is right."
+    },
+    {
+      "sid": "s-jau82aq9juv9zzh",
+      "location": "_guidelines/spec/5.1",
+      "class": "informational",
+      "doubt": "The rows on the list of values a domain adds keep the plain word \"list\", not `TextRule.list`, because they speak of the values and say in which rule the list stands.",
+      "recommend": "Keep. The rows say in which rule the list stands, so the plain word loses nothing."
+    },
+    {
+      "sid": "s-jau82aq9juv9zzh",
+      "location": "_guidelines/spec/5.1",
+      "class": "confirm",
+      "doubt": "The opening \"Two things are checked mechanically\" is kept although it is a count: it counts the parts of the method's own table, not what the specification or a registry holds.",
+      "recommend": "Confirm. It counts the node's own two tables, which stand right below it, not what a specification or registry holds."
+    },
+    {
+      "sid": "s-qzthyh7yqvfhsa2",
+      "location": "_guidelines/spec/5.4",
+      "class": "informational",
+      "doubt": "The text still opens with the sentence on the rule that states the specification approved, not with the status itself: moving the status first would decide whether the project's own guidelines must hold that rule.",
+      "recommend": "Keep. The opening sentence is the main thought, since the project's guidelines must hold that rule, which the reindex writes where it is missing (s-f5rz6b7dhxejjts)."
+    },
+    {
+      "sid": "s-nyh9yk22ba6g77q",
+      "location": "_guidelines/spec/5.10",
+      "class": "confirm",
+      "doubt": "\"a node of a project's own kind with those its kind declares\": \"those\" read as the properties its NodeKind declares (7.3.4 of the tools says \"the values its kind declares\"), so written \"properties\".",
+      "recommend": "Confirm: the reviewer is given the values of a node's properties beyond the standard ones (review.ts:97-99)."
+    },
+    {
+      "sid": "s-nyh9yk22ba6g77q",
+      "location": "_guidelines/spec/5.10",
+      "class": "ambiguity",
+      "doubt": "The clause \"which the check of the generated copies compares with what the nodes produce\" stays attached to what each left-out file is named as holding: the original leaves open whether the reviewer is told of that check.",
+      "recommend": "Readings: (A) the reviewer is told that the check of the generated copies compares those files; (B) the clause only describes that check. review.ts:61 and :117 tell the reviewer so, and the reason supports A: a file whose content the reviewer is not told is held elsewhere reads to it as missing. Recommend A, stated outright: \"Each file left out is named to the reviewer, with what it holds and that the check of the generated copies compares it with what the nodes produce:\"."
+    },
+    {
+      "sid": "s-nyh9yk22ba6g77q",
+      "location": "_guidelines/spec/5.10",
+      "class": "informational",
+      "doubt": "The dashes listing why a review cannot be held are kept as written: the original does not say whether they are every case or examples.",
+      "recommend": "Keep. The main thought binds every review that cannot be held, so the cases narrow nothing."
+    },
+    {
+      "sid": "s-3dgt5c94jr55j3z",
+      "location": "_guidelines/spec/6.2",
+      "class": "ambiguity",
+      "doubt": "The reason still opens with \"Such a sentence\", which may point to either example of the text. Its place is kept so as not to choose which.",
+      "recommend": "Readings: (A) the second example, a property stated over what happens not to exist yet; (B) the first, a rule naming no subject. Only A is \"true when it is written and silently false afterwards\", and the reason's second paragraph gives the ground of the first example. Recommend A: \"A property stated over what happens not to exist yet is true when it is written and silently false afterwards.\" This also suits the split."
+    },
+    {
+      "sid": "s-hwnzhgw5b683fc7",
+      "location": "_guidelines/spec/6.6",
+      "class": "ambiguity",
+      "doubt": "\"A reviewer cannot defend what the node never said\" is kept: it may mean the independent reviewer or anyone checking the change, so turning it into \"a reader\" would choose.",
+      "recommend": "Readings: (A) the independent reviewer of a commit (s-nyh9yk22ba6g77q); (B) whoever reviews the change, an owner included. The sentence speaks of a change checked against the stated reason, which either may make. Recommend B, which covers A: \"Whoever reviews the change cannot defend what the node never said.\""
+    },
+    {
+      "sid": "s-ydzyh9nqm3x64h4",
+      "location": "_guidelines/spec/6.7",
+      "class": "ambiguity",
+      "doubt": "\"as a rule in its first sentence\" is kept: \"as a rule\" may mean \"usually\" or that the ground is stated as a rule.",
+      "recommend": "Readings: (A) the idiom \"usually\"; (B) the ground stands in the first sentence, always. This pass applied B to every reason (RULES.md section 2). Recommend B, dropping the idiom, which puts \"rule\" where it is not the method's word: \"A reason states, in its first sentence, the ground its rule rests on.\""
+    },
+    {
+      "sid": "s-me9k7g34jqb4rzn",
+      "location": "_guidelines/spec/6.10",
+      "class": "confirm",
+      "doubt": "The example \"a kind of request ... a kind of error\" keeps the ordinary word \"kind\", as the examples of section 6 are kept exactly; elsewhere it would become \"sort\".",
+      "recommend": "The doubt is stale: a later fix (fixes-3.json) made the output's reason read \"a sort of request … a sort of error\", not \"kind\". Recommend confirming \"sort\": the example is not a quotation, and RULES.md section 4 turns the ordinary \"kind\" into \"sort\"."
+    },
+    {
+      "sid": "s-xr5xxa9cxf2mq5u",
+      "location": "_guidelines/tools/10",
+      "class": "informational",
+      "doubt": "Reason: kept \"An agent sets variables of its own for the session it runs, and a new release may add more.\" as one sentence, since splitting it would have to say whose release adds them (most likely the agent's).",
+      "recommend": "Keep. Only a new release of the agent makes a list of what to strip fall behind, so only that reading grounds the sentence. \"A new release of the agent\" would say so outright."
+    },
+    {
+      "sid": "s-xr5xxa9cxf2mq5u",
+      "location": "_guidelines/tools/10",
+      "class": "confirm",
+      "doubt": "Reason: the first paragraph now opens with its ground (\"A runner judges the code against the nodes alone\") instead of ending with it as a purpose (\"so that it judges...\"); the owner may prefer the original order.",
+      "recommend": "Confirm the order. The output now states as a fact what the original gave as an aim: \"A runner judges the code against the nodes alone\". To keep it an aim, write \"A runner is to judge the code against the nodes alone\"."
+    },
+    {
+      "sid": "s-v4qus7raqnwzneb",
+      "location": "_guidelines/tools/11",
+      "class": "informational",
+      "doubt": "Text: \"It makes the node a draft\" and reason \"make a draft every node\" kept as the ordinary noun, not the status value `draft`.",
+      "recommend": "Keep. It is the ordinary noun for the result, and the status value is not quoted."
+    },
+    {
+      "sid": "s-v4qus7raqnwzneb",
+      "location": "_guidelines/tools/11",
+      "class": "informational",
+      "doubt": "Text: \"An owner is named by an email.\" now stands in a paragraph of its own; its words are unchanged.",
+      "recommend": "Keep. Only the paragraph changed, and the words did not."
+    },
+    {
+      "sid": "s-n4m5zvh96yb299p",
+      "location": "_guidelines/tools/13",
+      "class": "informational",
+      "doubt": "Text: kept the first item of the list of how each tool runs whole, since splitting it would have to choose which of the root, the interpreter or git's environment \"so it reads the working tree and git's index\" follows from.",
+      "recommend": "Keep. The item states one thought, how each tool runs."
+    },
+    {
+      "sid": "s-n4m5zvh96yb299p",
+      "location": "_guidelines/tools/13",
+      "class": "confirm",
+      "doubt": "Text: the hook naming \"each such tool\" and naming the tool that changed the staged files are now one sentence: \"The hook names each of the project's tools that makes it fail.\"",
+      "recommend": "Confirm: the hook names every project tool that ends with an exit code other than zero or changes the staged files or the message. It names no tool where only the checks refuse, as the original's two \"naming\" clauses did."
+    },
+    {
+      "sid": "s-n76wt2bkqdmh78x",
+      "location": "_guidelines/tools/16",
+      "class": "informational",
+      "doubt": "Text: the three script names kept as one list after \"a call to the plugin's script for that hook\", not paired with each hook, as in the original.",
+      "recommend": "Keep. The original did not pair the scripts with the hooks, and pairing them would add a mapping."
+    },
+    {
+      "sid": "s-pvzms7d8kxb8dk2",
+      "location": "_guidelines/tools/17",
+      "class": "ambiguity",
+      "doubt": "Text: \"as the rule on data structures requires (§s-e877bnfa559tvk9)\" kept right after the rule that describes the generation, as in the original; it may be read as requiring that rule or the list itself.",
+      "recommend": "Readings: (A) the rule on data structures requires the rule describing how the types are generated; (B) it requires the list of files. s-e877bnfa559tvk9 requires that the technical appendix describes the mechanism and says nothing of a list. Recommend A: \"…in the rule that describes how the system generates its types and RuntimeChecks, a rule the rule on data structures requires (s-e877bnfa559tvk9).\""
+    },
+    {
+      "sid": "s-suv42g8r3ra2h6b",
+      "location": "_guidelines/tools/18",
+      "class": "confirm",
+      "doubt": "Text: in \"...given a type of its own, named by the type it stands in ..., and carries a SpecTag with the same sid\" I took the subject of \"carries\" to be that type of its own, as skills/tools/src/types.ts:308 does (it tags that type with the RecordType's sid); the owner should confirm this reading.",
+      "recommend": "Confirm: the variant field's own type carries a SpecTag with its RecordType's sid, as types.ts:308 writes it."
+    },
+    {
+      "sid": "s-4npdup7mjkva69y",
+      "location": "_guidelines/tools/20",
+      "class": "informational",
+      "doubt": "Text: the table kept as it stands; its first column names the field types without backticks, as before.",
+      "recommend": "Keep. The table stays as it was, and backticks on the field types may follow in a change of its own, for consistency with the text."
+    }
+  ]
+}

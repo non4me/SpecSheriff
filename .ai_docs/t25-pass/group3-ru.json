@@ -1,0 +1,236 @@
+{
+  "stage3": {
+    "s-j9r8z4xdrfkfs47": {
+      "en": "binding.ts:138-162 reads the rule of project.json that approves the specification (model.ts: approvalRule, statusNow, APPROVAL_RULE) and refuses a commit that puts it back to draft without a withdrawal of that rule's approval. It is to compare instead, for the approval status, the strict flag and the chosen extensions, the entries in sheriff.config.json with those of the commit's first parent, read as sheriff reindex would rewrite them: the parent's entries are to be, unchanged and in the same order, the first entries for each setting, and each later entry is to name an owner of the specification as project.json names the owners after the commit. config.ts (KEYS) is to accept these entries, and config.schema.json, still to be added to moved/specs/_schema/, is to describe them. The branch on APPROVAL_RULE in approvals.ts:97 goes. The tests at binding.test.ts:500 and :513 are rewritten first for the entries and carry s-j9r8z4xdrfkfs47. The tests at :464 and :596 go: approving the specification while code carries no SpecTag is settled by sheriff settings (s-chsfpkgpmfk4fft) and rule 10.6. The test at :444 went to s-3xx2eukc8gtd2tx with group 2.",
+      "ru": "binding.ts:138-162 читает правило project.json, которое одобряет спецификацию (model.ts: approvalRule, statusNow, APPROVAL_RULE), и отвергает коммит, который возвращает спецификацию в черновик без отзыва одобрения этого правила. Вместо этого он должен сравнивать записи в sheriff.config.json о статусе одобрения, о режиме strict и о выбранных расширениях с записями первого родителя коммита, прочитанными так, как их переписал бы sheriff reindex. Записи родителя должны без изменений и в том же порядке идти первыми для каждой настройки, а каждая следующая запись должна называть ответственного за спецификацию так, как ответственных называет project.json после коммита. config.ts (KEYS) должен принимать эти записи, а описывать их должен config.schema.json, который ещё предстоит добавить в moved/specs/_schema/. Ветка APPROVAL_RULE в approvals.ts:97 убирается. Тесты в binding.test.ts:500 и :513 сначала переписываются для записей, и у них будет SpecTag s-j9r8z4xdrfkfs47. Тесты в :464 и :596 убираются: одобрение спецификации, пока у кода нет SpecTag, решают sheriff settings (s-chsfpkgpmfk4fft) и правило 10.6. Тест в :444 перешёл к s-3xx2eukc8gtd2tx вместе с группой 2."
+    },
+    "new:tools-7-1-extensions-delivered": {
+      "en": "No code reads the extensions that a project has chosen. Each command that reads them is to check first that the file of each chosen extension is at its path in the folder of the SpecSheriff tools (guidelines/extensions/<name>.json), or, in the repository where the SpecSheriff guidelines are written, at specs/_guidelines/extensions/<name>.json; otherwise it is to name each missing extension and the version that sheriff --version prints, and to exit with a refusal, sheriff reindex writing nothing. Its tests are written first. sheriff guard (guard.ts) loads the model too, so it is to refuse every edit while a chosen extension is missing.",
+      "ru": "Выбранные проектом расширения не читает никакой код. Каждая команда, которая их читает, должна сначала проверить, что файл каждого выбранного расширения лежит по своему пути в папке инструментов SpecSheriff (guidelines/extensions/<name>.json), а в репозитории, где пишутся SpecSheriff guidelines, — по пути specs/_guidelines/extensions/<name>.json. Иначе команда должна назвать каждое недостающее расширение и версию, которую печатает sheriff --version, и завершиться отказом; sheriff reindex при этом ничего не записывает. Тесты пишутся первыми. sheriff guard (guard.ts) тоже загружает модель, поэтому он должен отвергать любую правку, пока какого-либо выбранного расширения нет."
+    },
+    "s-2x58az67bm6cxq2": {
+      "en": "binding.ts:68-102 (readCommit) counts a line holding `@spec` as changed (diff.ts:146 and :160) and maps a removed line to the symbol of the same name. It is to compare two versions of a symbol, a test or a file by their syntax trees, as s-u6mj5yv8ngnz79v says, and to count a change to the SpecTags of a symbol, a file or a test only where their texts differ, so that reformatting a comment around an unchanged SpecTag changes nothing. It is to read the files bound as a whole (SpecTags at the start, entries of sheriff.bindings.json), comparing two versions of such a file as s-u6mj5yv8ngnz79v says, and counting a change to an entry's SpecTags as a change to its file. It is to tell what a commit removes, for s-w93jfnqynfa47pf and for row 10.1.41. The tests at binding.test.ts:89 and :108 are to carry s-2x58az67bm6cxq2. New tests for a file bound as a whole, an entry of the bindings file, deleted lines and a reformatted comment around a SpecTag are written first. At the move, the decisions of 2026-11-06 stay on the node.",
+      "ru": "binding.ts:68-102 (readCommit) считает изменённой каждую строку с `@spec` (diff.ts:146 и :160) и относит удалённую строку к символу с тем же именем. Он должен сравнивать две версии символа, теста или файла по их синтаксическим деревьям, как говорит s-u6mj5yv8ngnz79v, и считать SpecTag символа, файла или теста изменённым, только если различаются их тексты, чтобы переформатирование комментария вокруг неизменного SpecTag ничего не меняло. Он должен читать файлы, привязанные целиком (SpecTag в начале файла, записи sheriff.bindings.json), сравнивая две версии такого файла, как говорит s-u6mj5yv8ngnz79v, и засчитывая изменение SpecTag записи как изменение её файла. Он должен определять, что коммит удаляет, — для s-w93jfnqynfa47pf и для строки 10.1.41. У тестов в binding.test.ts:89 и :108 должен быть SpecTag s-2x58az67bm6cxq2. Сначала пишутся новые тесты: для файла, привязанного целиком, для записи файла привязок, для удалённых строк и для переформатированного комментария вокруг SpecTag. При переносе решения от 2026-11-06 остаются в узле."
+    },
+    "new:tools-7-2-changed-line": {
+      "en": "diff.ts:130-190 (codeChanges) pairs the removed lines of a file with its added lines and forgives a name renamed throughout (diff.ts:176-188); both go. diff.ts:146 and :160 count every line holding `@spec` as changed; they go, since s-2x58az67bm6cxq2 counts a change to a SpecTag by its text. binding.ts:42-51 (testLines) counts any line of a test as changed; it goes. normalize (diff.ts:78) strips `//`, `/*…*/` and `#` in a file that no description covers; it goes. The SpecSheriff tools are to parse both versions of each symbol, test and file bound as a whole with tree-sitter (the grammars of TypeScript, JavaScript and Python, and of YAML, CSS, SQL, Bash and JSON for a file bound as a whole with the matching extension) and to compare the trees with comments, other than a first line opening with `#!`, and a test's name other than its SpecTag left out. In any other file, the text is compared. The tests at binding.test.ts:42, :49, :56, :69 and :79 are to carry s-u6mj5yv8ngnz79v. Tests for a re-wrapped call, a renamed test, a re-indented YAML key, a reworded CSS comment, `a:hover` against `a :hover` in CSS, `x=1` against `x = 1` in Bash and a changed shebang are written first.",
+      "ru": "diff.ts:130-190 (codeChanges) сопоставляет удалённые строки файла с добавленными и не засчитывает имя, переименованное повсюду (diff.ts:176-188); и то и другое убирается. diff.ts:146 и :160 считают изменённой каждую строку с `@spec`; они убираются, потому что s-2x58az67bm6cxq2 засчитывает изменение SpecTag по его тексту. binding.ts:42-51 (testLines) считает изменённой любую строку теста; он убирается. normalize (diff.ts:78) вырезает `//`, `/*…*/` и `#` в файле, язык которого не охватывает ни одно описание; он убирается. Инструменты SpecSheriff должны разбирать обе версии каждого символа, теста и файла, привязанного целиком, через tree-sitter (грамматиками TypeScript, JavaScript и Python, а для файла, привязанного целиком, с подходящим расширением — грамматиками YAML, CSS, SQL, Bash и JSON) и сравнивать деревья без комментариев, кроме первой строки, начинающейся с `#!`, и без названия теста, кроме его SpecTag. В любом другом файле сравнивается текст. У тестов в binding.test.ts:42, :49, :56, :69 и :79 должен быть SpecTag s-u6mj5yv8ngnz79v. Сначала пишутся тесты для перенесённого вызова, переименованного теста, ключа YAML с новым отступом, переформулированного комментария CSS, `a:hover` против `a :hover` в CSS, `x=1` против `x = 1` в Bash и изменённого шебанга."
+    },
+    "new:tools-7-2-draft-rule": {
+      "en": "binding.ts:180 and :205 refuse the SpecTag of a draft node on a changed symbol or test, as the commit leaves the code only. They are to read the SpecTags of the commit's parent too, to count what the commit removes (s-2x58az67bm6cxq2), to count files bound as a whole and the entries of the bindings file, and to refuse only where the node is a rule of a kind that s-5z5gnu7pahr82xp lists and is a draft as the commit leaves the specification. The draft parts of the tests at binding.test.ts:29 and :101, and the test at :36, are to carry s-w93jfnqynfa47pf. Tests for a deleted symbol and for a SpecTag moved off a draft rule are written first.",
+      "ru": "binding.ts:180 и :205 отвергают SpecTag узла-черновика у изменённого символа или теста, глядя только на код, каким его оставляет коммит. Они должны читать и SpecTag родителя коммита, засчитывать то, что коммит удаляет (s-2x58az67bm6cxq2), засчитывать файлы, привязанные целиком, и записи файла привязок. Отвергать коммит они должны, только если узел — правило того типа узлов, который перечисляет s-5z5gnu7pahr82xp, и черновик в спецификации, какой её оставляет коммит. У частей тестов в binding.test.ts:29 и :101, которые касаются черновика, и у теста в :36 должен быть SpecTag s-w93jfnqynfa47pf. Сначала пишутся тесты для удалённого символа и для SpecTag, снятого с правила-черновика."
+    },
+    "s-t383grkn3q68dpf": {
+      "en": "Today neither command builds the lists from all the SpecTags: reindex.ts builds neither list, since reindex.ts:283-330 only rename tests inside meta.tests, and binding.ts:215-254 builds them only from the SpecTags above symbols and compares the symbols that an entry of meta.code names (binding.ts:240-249). binding.ts:72-73 reads only the files that the code and tests globs match. Both commands are to read also the files of each of the project's own checks and generators, the SpecTags at the start of a file and the entries of sheriff.bindings.json, and to build the lists as proposal:s-ztseyetus7np6br-g3 defines them; the comparison of symbols goes, and node.schema.json drops `symbols` from meta.code. binding.ts is to judge the nodes of the files that the repository keeps, including those in cells; judgedHere reads writesSpecSheriffGuidelines, which goes. The test at binding.test.ts:125 is to carry s-t383grkn3q68dpf; the tests at :132 and :138 go with the comparison of symbols.",
+      "ru": "Сейчас ни одна из двух команд не строит списки из всех SpecTag. reindex.ts не строит ни одного списка: reindex.ts:283-330 только переименовывают тесты внутри meta.tests. binding.ts:215-254 строит списки только из SpecTag над символами и сравнивает символы, которые называет запись meta.code (binding.ts:240-249). binding.ts:72-73 читает только файлы, которые соответствуют glob-шаблонам кода и тестов. Обе команды должны читать также файлы каждой собственной проверки и каждого генератора проекта, SpecTag в начале файла и записи sheriff.bindings.json и строить списки так, как их определяет новая формулировка «What `sheriff reindex` writes» (s-ztseyetus7np6br). Сравнение символов убирается, а node.schema.json убирает `symbols` из meta.code. binding.ts должен судить узлы файлов, которые хранит репозиторий, включая узлы в ячейках; judgedHere читает writesSpecSheriffGuidelines, и это убирается. У теста в binding.test.ts:125 должен быть SpecTag s-t383grkn3q68dpf; тесты в :132 и :138 убираются вместе со сравнением символов."
+    },
+    "proposal:s-ztseyetus7np6br-g3": {
+      "en": "Today reindex.ts builds neither list: reindex.ts:283-330 only rename tests inside meta.tests. It is to build meta.code and meta.tests as this node defines them, from the SpecTags in every file that the SpecSheriff tools read for SpecTags, those of the project's own checks and generators included, from the SpecTags at the start of a file and from the entries of sheriff.bindings.json, an entry of meta.code naming only the file. Its tests are written first.",
+      "ru": "Сейчас reindex.ts не строит ни одного из двух списков: reindex.ts:283-330 только переименовывают тесты внутри meta.tests. Он должен строить meta.code и meta.tests так, как их определяет этот узел. Источники — SpecTag в каждом файле, в котором инструменты SpecSheriff ищут SpecTag, включая файлы собственных проверок и генераторов проекта, SpecTag в начале файла и записи sheriff.bindings.json; запись meta.code называет только файл. Тесты пишутся первыми."
+    },
+    "proposal:new-tools-1-settings-g3": {
+      "en": "config.ts and binding.ts read SpecTags only from the files that the code and tests globs match and from the files of the generated types; no code reads sheriff.bindings.json yet (s-trwczfskj5zmuft). They are to read its entries as the SpecTags of their files.",
+      "ru": "config.ts и binding.ts читают SpecTag только из файлов, которые соответствуют glob-шаблонам кода и тестов, и из файлов сгенерированных типов; sheriff.bindings.json пока не читает никакой код (s-trwczfskj5zmuft). Они должны читать каждую запись этого файла как SpecTag того файла, который запись называет."
+    },
+    "s-5hb9k2e34dgn284": {
+      "en": "binding.ts:255-262 and the function declaration (binding.ts:391-407) read TextRule.list.declaredIn and compare the members as text with an enum, an array or the keys of an object. They are to read jsonSchema and valueList, which node.schema.json is to define (the todo of row 10.1.35). Each value is to be validated with Ajv 2020 against the schema at the pointer, with the file's references resolved, and a value of an enum there, reached directly or through $ref, that the list does not hold is to be refused. The string literals of the symbol that valueList names are to be compared with the values as text. A list with a member that is an object and lacks its property is to be left unchecked, for s-cdachayybfvg4na to refuse. Only the nodes of the files that the repository keeps are to be judged, including those in cells. The comparison with the keys of an object goes. The tests at binding.test.ts:144 (now s-xqs2e24mx5253ye) and :406 are rewritten first for jsonSchema and valueList and carry s-5hb9k2e34dgn284.",
+      "ru": "binding.ts:255-262 и функция declaration (binding.ts:391-407) читают TextRule.list.declaredIn и сравнивают элементы как текст с enum, массивом или ключами объекта. Они должны читать jsonSchema и valueList, которые должен определить node.schema.json (todo строки 10.1.35). Каждое значение должно проверяться через Ajv 2020 по схеме, на которую указывает указатель, с разрешёнными ссылками файла. Если в этом месте, напрямую или через $ref, есть enum, его значение, которого нет в списке, должно отвергаться. Строковые литералы символа, который называет valueList, должны сравниваться со значениями как текст. Список, у которого есть элемент-объект без своего свойства, должен оставаться непроверенным: такой элемент отвергает s-cdachayybfvg4na. Судить нужно только узлы файлов, которые хранит репозиторий, включая узлы в ячейках. Сравнение с ключами объекта убирается. Тесты в binding.test.ts:144 (сейчас s-xqs2e24mx5253ye) и :406 сначала переписываются для jsonSchema и valueList, и у них будет SpecTag s-5hb9k2e34dgn284."
+    },
+    "new:tools-7-2-own-kinds": {
+      "en": "No check compares a project's own kinds: binding.ts:255-262 compares, through declaredIn, the names that the extension declares in `kinds` with a list's members, and never needsCode. It is to compare the members of the lists of the rules of project.json that refine s-vsh384ybt4w25a2, taken together and only there, with the kinds of specs/_schema/project.schema.json, name by name and needsCode by needsCode, to refuse a kind that no member lists, and to accept a kind listed twice with the same needsCode. Its tests are written first. A member that is an object and lacks its property is left to s-cdachayybfvg4na, so that the list is not compared. The node implements row 10.1.35a (proposal:row-10-1-35a), which impl.json is to map to it.",
+      "ru": "Собственные типы узлов проекта не сравнивает ни одна проверка: binding.ts:255-262 через declaredIn сравнивает с элементами списка имена, которые расширение объявляет в `kinds`, а needsCode не сравнивает никогда. Он должен сравнивать элементы списков тех правил project.json, которые уточняют s-vsh384ybt4w25a2, взятые вместе и только там, с типами узлов из specs/_schema/project.schema.json: имя с именем и needsCode с needsCode. Он должен отвергать тип узлов, который не перечисляет ни один элемент, и принимать тип узлов, перечисленный дважды с одним и тем же needsCode. Тесты пишутся первыми. Элемент-объект без своего свойства оставлен s-cdachayybfvg4na, и тогда список не сравнивается. Узел реализует строку 10.1.35a (proposal:row-10-1-35a), которую impl.json должен вести к нему."
+    },
+    "proposal:s-gb8s9657a65hqmv-g3": {
+      "en": "reindex.ts is to remove a TextRule.list.declaredIn that points to the field `kinds` of specs/_schema/project.schema.json, and to rewrite any other declaredIn as the agreed node says. Its tests are written first.",
+      "ru": "reindex.ts должен удалять TextRule.list.declaredIn, который указывает на поле `kinds` в specs/_schema/project.schema.json, и переписывать любой другой declaredIn так, как говорит согласованный узел. Тесты пишутся первыми."
+    },
+    "s-cdachayybfvg4na": {
+      "en": "validate.ts:298-307 (objectsInLists) refuses as this node says, but judges every node of spec.nodes, the nodes taken from the plugin included and the nodes in the cells of a TableRule left out; its comment cites s-v7vd4ydrwexsgsj, a dropped rule. It is to judge the nodes of the files that the repository keeps, including those in cells, and to cite s-cdachayybfvg4na. The test at validate.test.ts:501 keeps its SpecTag.",
+      "ru": "validate.ts:298-307 (objectsInLists) отвергает так, как говорит этот узел, но судит каждый узел spec.nodes: узлы, взятые из плагина, он судит, а узлы в ячейках TableRule пропускает. Его комментарий ссылается на s-v7vd4ydrwexsgsj, убранное правило. Он должен судить узлы файлов, которые хранит репозиторий, включая узлы в ячейках, и ссылаться на s-cdachayybfvg4na. Тест в validate.test.ts:501 сохраняет свой SpecTag."
+    },
+    "proposal:new-tools-10-verdict": {
+      "en": "The schema of the verdict is to let a finding name the judgement on comments. review.ts is to read a verdict that passes the commit and lists findings on comments only, and to refuse to read one that passes it with any other finding.",
+      "ru": "Схема вердикта должна позволять замечанию называть суждение о комментариях. review.ts должен читать вердикт, который пропускает коммит и перечисляет только замечания о комментариях, и не читать вердикт, который пропускает коммит с любым другим замечанием."
+    },
+    "new:tools-7-3-review-comments": {
+      "en": "No code asks the reviewer about comments. review.ts is to ask for a verdict on every commit that adds or changes a comment in the system's code other than the files that `sheriff types` writes, where a commit changes a comment as this node says: in a file whose syntax trees the SpecSheriff tools build, a comment left out of the trees; in any other file, every changed line, for the reviewer to tell comment from code. It is to give the reviewer the code that each such comment describes, as this node lists it, and to report each finding on a comment as a warning without refusing the commit. Its tests are written first.",
+      "ru": "Никакой код не спрашивает рецензента о комментариях. review.ts должен запрашивать вердикт на каждом коммите, который добавляет или меняет комментарий в коде системы, кроме файлов, которые записывает `sheriff types`. Комментарий меняется так, как говорит этот узел: в файле, деревья которого строят инструменты SpecSheriff, — комментарий, не включённый в деревья; в любом другом файле — каждая изменённая строка, а комментарий от кода отличает рецензент. review.ts должен передавать рецензенту код, который описывает каждый такой комментарий, как его перечисляет этот узел, и сообщать каждое замечание о комментарии как предупреждение, не отклоняя коммит. Тесты пишутся первыми."
+    }
+  },
+  "removed": {
+    "s-j9r8z4xdrfkfs47": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements rows 10.1.27, 10.1.27a and 10.1.27b.",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строки 10.1.27, 10.1.27a и 10.1.27b."
+      },
+      {
+        "en": "The `implements` link to “The specification's approval status” (s-qzthyh7yqvfhsa2): the node implements row 10.1.27, which checks that rule, and cites the rule.",
+        "ru": "Связь `implements` с «The specification's approval status» (s-qzthyh7yqvfhsa2): узел реализует строку 10.1.27, которая проверяет это правило, и ссылается на правило."
+      },
+      {
+        "en": "The `implements` link to “Code and tests without a SpecTag” (s-kkbqcb9xrpaepwn) and the paragraphs on a symbol and a test that carry no SpecTag: they moved to “Code and tests outside the commit that no SpecTag binds” (s-3xx2eukc8gtd2tx), agreed with group 2.",
+        "ru": "Связь `implements` с «Code and tests without a SpecTag» (s-kkbqcb9xrpaepwn) и абзацы о символе и тесте без SpecTag: они перешли в «Code and tests outside the commit that no SpecTag binds» (s-3xx2eukc8gtd2tx), согласованный с группой 2."
+      },
+      {
+        "en": "The rule that approves the specification in `project.json`, and the withdrawal of that rule's approval: the owner replaced both with entries in `sheriff.config.json` on 2026-11-13 (rule 10.6, row 10.1.27).",
+        "ru": "Правило в `project.json`, которое одобряет спецификацию, и отзыв одобрения этого правила: 2026-11-13 вы заменили и то и другое записями в `sheriff.config.json` (правило 10.6, строка 10.1.27)."
+      },
+      {
+        "en": "The citation of “The commands” (s-f5rz6b7dhxejjts): the node cites “What `sheriff reindex` changes in what an earlier release wrote” (s-gb8s9657a65hqmv) instead, as the continuation file records.",
+        "ru": "Ссылка на «The commands» (s-f5rz6b7dhxejjts): вместо неё узел ссылается на «What `sheriff reindex` changes in what an earlier release wrote» (s-gb8s9657a65hqmv), как записано в файле продолжения."
+      },
+      {
+        "en": "“Where the commit has no parent, it takes the specification before the commit as a draft”: a commit with no parent holds no entry of a parent, so each of its entries is one that follows them.",
+        "ru": "«Where the commit has no parent, it takes the specification before the commit as a draft»: у коммита без родителя нет записей родителя, так что каждая его запись относится к тем, что идут после них."
+      }
+    ],
+    "s-2x58az67bm6cxq2": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements rules 9.4 and 1.5.2, and row 10.1.28a is implemented by “The code and the tests of a draft rule” (s-w93jfnqynfa47pf).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует правила 9.4 и 1.5.2, а строку 10.1.28a реализует «The code and the tests of a draft rule» (s-w93jfnqynfa47pf)."
+      },
+      {
+        "en": "“A line holding a SpecTag, before the commit or after it, counts for the symbol the SpecTag marks”: a SpecTag now counts by its text (rule 9.4 and its ruling of 2026-11-10), so a reformatted comment around an unchanged SpecTag changes nothing.",
+        "ru": "«A line holding a SpecTag, before the commit or after it, counts for the symbol the SpecTag marks»: теперь SpecTag засчитывается по своему тексту (правило 9.4 и решение по нему от 2026-11-10), так что переформатированный комментарий вокруг неизменного SpecTag ничего не меняет."
+      },
+      {
+        "en": "The exemption of a line that differs only “in an identifier the commit renames throughout”: the owner removed that exemption from rule 9.4 on 2026-11-11.",
+        "ru": "Исключение для строки, которая отличается только «in an identifier the commit renames throughout»: 2026-11-11 вы убрали это исключение из правила 9.4."
+      },
+      {
+        "en": "The exemption of a line that differs only “in a comment” and “in the sid a citation names”: “How two versions of code are compared” (s-u6mj5yv8ngnz79v) leaves out comments, and a cited sid is part of a comment.",
+        "ru": "Исключение для строки, которая отличается только «in a comment» и «in the sid a citation names»: «How two versions of code are compared» (s-u6mj5yv8ngnz79v) не учитывает комментарии, а sid в ссылке — часть комментария."
+      },
+      {
+        "en": "“of the system's code outside its tests”: the node covers the tests too, and the phrase is not used (.claude/vt/rules.md).",
+        "ru": "«of the system's code outside its tests»: узел охватывает и тесты, а этот оборот не используется (.claude/vt/rules.md)."
+      }
+    ],
+    "s-t383grkn3q68dpf": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.34.",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.34."
+      },
+      {
+        "en": "The comparison of the symbols that an entry of `meta.code` names: `meta.code` names files (row 10.1.34; “What `sheriff reindex` writes”).",
+        "ru": "Сравнение символов, которые называет запись `meta.code`: `meta.code` называет файлы (строка 10.1.34; «What `sheriff reindex` writes»)."
+      }
+    ],
+    "s-5hb9k2e34dgn284": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.35.",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.35."
+      },
+      {
+        "en": "The `implements` link to the dropped “A member of `TextRule.list` may be an object” (s-v7vd4ydrwexsgsj), which the archive replaces by s-eferktypcj7njt5: the node implements row 10.1.35, which checks that rule, and cites it.",
+        "ru": "Связь `implements` с убранным «A member of `TextRule.list` may be an object» (s-v7vd4ydrwexsgsj), который в архиве заменён на s-eferktypcj7njt5: узел реализует строку 10.1.35, которая проверяет это правило, и ссылается на него."
+      },
+      {
+        "en": "“the declaration the list names in the code, the schema or the settings”: `TextRule.list.declaredIn` is replaced by `TextRule.list.jsonSchema` and `TextRule.list.valueList` (the owner's rulings of 2026-11-13 on row 10.1.35), and the comparison with the keys of a JSON object goes (the row's todo).",
+        "ru": "«the declaration the list names in the code, the schema or the settings»: `TextRule.list.declaredIn` заменён на `TextRule.list.jsonSchema` и `TextRule.list.valueList` (ваши решения от 2026-11-13 по строке 10.1.35), а сравнение с ключами объекта JSON убирается (todo этой строки)."
+      }
+    ],
+    "proposal:s-hhnahzmhahf8jht": [
+      {
+        "en": "“That rule's `TextRule.list.declaredIn` refers to the field `kinds` of the JSON Schema”: the owner replaced `declaredIn` on 2026-11-13 (row 10.1.35), the field `kinds` holds no schema for a kind's name, and the SpecSheriff tools find the list by its `refines` link (s-czxaqvaesmu3gru).",
+        "ru": "«That rule's `TextRule.list.declaredIn` refers to the field `kinds` of the JSON Schema»: 2026-11-13 вы заменили `declaredIn` (строка 10.1.35), в поле `kinds` нет схемы для имени типа узлов, а инструменты SpecSheriff находят список по связи `refines` (s-czxaqvaesmu3gru)."
+      }
+    ],
+    "s-cdachayybfvg4na": [
+      {
+        "en": "The `implements` links to the main table of checks (s-jau82aq9juv9zzh) and to the dropped “A member of `TextRule.list` may be an object” (s-v7vd4ydrwexsgsj): the node implements row 10.1.36.",
+        "ru": "Связи `implements` с основной таблицей проверок (s-jau82aq9juv9zzh) и с убранным «A member of `TextRule.list` may be an object» (s-v7vd4ydrwexsgsj): узел реализует строку 10.1.36."
+      }
+    ]
+  },
+  "location": {
+    "new:tools-7-1-extensions-delivered": {
+      "en": "tools 7.1.2a (new, after \"How the schema of the specification is composed\")",
+      "ru": "tools 7.1.2a (новый, после «How the schema of the specification is composed»)"
+    },
+    "new:tools-7-2-changed-line": {
+      "en": "tools 7.2.1a (new, after \"What a commit adds, changes and removes in the code and the tests\")",
+      "ru": "tools 7.2.1a (новый, после «What a commit adds, changes and removes in the code and the tests»)"
+    },
+    "new:tools-7-2-draft-rule": {
+      "en": "tools 7.2.2c (new, after \"Code and tests outside the commit that no SpecTag binds\")",
+      "ru": "tools 7.2.2c (новый, после «Code and tests outside the commit that no SpecTag binds»)"
+    },
+    "new:tools-7-2-own-kinds": {
+      "en": "tools 7.2.6a (new, after \"A list and its declaration\")",
+      "ru": "tools 7.2.6a (новый, после «A list and its declaration»)"
+    },
+    "proposal:s-ztseyetus7np6br-g3": {
+      "en": "tools 2.2 (new)",
+      "ru": "tools 2.2 (новый)"
+    },
+    "proposal:new-tools-1-settings-g3": {
+      "en": "tools 2 (new, after \"Where the files are\")",
+      "ru": "tools 2 (новый, после «Where the files are»)"
+    },
+    "proposal:s-gb8s9657a65hqmv-g3": {
+      "en": "tools 2.3 (new)",
+      "ru": "tools 2.3 (новый)"
+    },
+    "proposal:row-10-1-35a": {
+      "en": "spec 10.1.35a (new row of the main table of checks, after row 10.1.35)",
+      "ru": "spec 10.1.35a (новая строка основной таблицы проверок, после строки 10.1.35)"
+    },
+    "proposal:new-spec-1-6-checks": {
+      "en": "spec 1.6.1 (new, split from rule 1.6.1, before it)",
+      "ru": "spec 1.6.1 (новый, выделен из правила 1.6.1, перед ним)"
+    },
+    "proposal:new-spec-1-6-tests": {
+      "en": "spec 1.6.4 (new, split from rule 1.6.1)",
+      "ru": "spec 1.6.4 (новый, выделен из правила 1.6.1)"
+    },
+    "proposal:s-m4h279nbaqkpa3t": {
+      "en": "spec 1.6.2 (in rule 1.6.1's place, after the new rule on what the checks enforce)",
+      "ru": "spec 1.6.2 (на месте правила 1.6.1, после нового правила о том, что держат проверки)"
+    },
+    "proposal:row-10-1-43b": {
+      "en": "spec 10.1.43b (new row of the main table of checks, after row 10.1.43a)",
+      "ru": "spec 10.1.43b (новая строка основной таблицы проверок, после строки 10.1.43a)"
+    },
+    "new:tools-7-3-review-comments": {
+      "en": "tools 7.3.4d (new, after \"The judgement on a node of the technical appendix that a commit approves\")",
+      "ru": "tools 7.3.4d (новый, после «The judgement on a node of the technical appendix that a commit approves»)"
+    },
+    "proposal:new-tools-7-3-review-code": {
+      "en": "tools 7.3.4a (new, after \"The review of a commit\")",
+      "ru": "tools 7.3.4a (после «The review of a commit»)"
+    }
+  },
+  "approved": {
+    "s-j9r8z4xdrfkfs47": {
+      "title": "From a draft to an approved specification, and back",
+      "en": "`sheriff binding` holds the specification's passage from a draft to approved and back (§s-qzthyh7yqvfhsa2). It reads the rule that approves the specification in `project.json`.\n\nIt takes the specification before a commit as the commit's first parent holds it, read as `sheriff reindex` would rewrite it (§s-f5rz6b7dhxejjts). Where the commit has no parent, it takes the specification before the commit as a draft.\n\nWhile the commit leaves the specification a draft, `sheriff binding` reports each of these rather than refusing it, where the commit does not change it (§s-kkbqcb9xrpaepwn):\n\n- a symbol of the system's code outside its tests that carries no SpecTag;\n- a test that carries no SpecTag.\n\nWhile the commit leaves the specification approved, both are refused.\n\nA commit that puts the specification back to draft passes only where it adds to the approvals a withdrawal of that rule's approval, of whichever wording, by one of the specification's owners as the commit holds them.",
+      "ruTitle": "От черновика к одобренной спецификации и обратно",
+      "ru": "`sheriff binding` следит за переходом спецификации от черновика к одобренной и обратно (§s-qzthyh7yqvfhsa2). Правило, которое одобряет спецификацию, он читает в `project.json`.\n\nСпецификацию до коммита он берёт в том виде, в каком её содержит первый родитель коммита, прочитанной так, как её переписал бы `sheriff reindex` (§s-f5rz6b7dhxejjts). Если у коммита нет родителя, спецификацию до коммита он считает черновиком.\n\nПока коммит оставляет спецификацию черновиком, `sheriff binding` сообщает о каждом из следующего, а не отвергает его, если коммит это не меняет (§s-kkbqcb9xrpaepwn):\n\n- символ кода системы помимо тестов, у которого нет SpecTag;\n- тест, у которого нет SpecTag.\n\nПока коммит оставляет спецификацию одобренной, и то и другое отвергается.\n\nКоммит, который возвращает спецификацию в черновик, проходит, только если добавляет в одобрения отзыв одобрения этого правила, какой бы ни была его формулировка, одним из ответственных за спецификацию в том виде, в каком их содержит коммит."
+    },
+    "s-2x58az67bm6cxq2": {
+      "title": "The symbols a commit changes",
+      "en": "`sheriff binding` finds which symbols of the system's code outside its tests the commit changes.\n\n- A changed line counts for the symbol it stands in. A change anywhere in a symbol is a change of the whole symbol.\n- A line holding a SpecTag, before the commit or after it, counts for the symbol the SpecTag marks, even where it stands outside the symbol's body.\n\nA symbol does not count as changed where each of its changed lines:\n\n- is not a line holding a SpecTag;\n- differs from the line it replaces only in a comment, in the sid a citation names, or in an identifier the commit renames throughout.",
+      "ruTitle": "Символы, которые меняет коммит",
+      "ru": "`sheriff binding` определяет, какие символы кода системы вне его тестов меняет коммит.\n\n- Изменённая строка засчитывается символу, в котором она стоит. Изменение в любом месте символа — изменение всего символа.\n- Строка с SpecTag, до коммита или после него, засчитывается символу, который этот SpecTag помечает, даже если она стоит вне тела символа.\n\nСимвол не считается изменённым, если каждая из его изменённых строк:\n\n- не является строкой с SpecTag;\n- отличается от строки, которую заменяет, только комментарием, sid, который называет ссылка, или идентификатором, который коммит переименовывает повсюду."
+    },
+    "s-t383grkn3q68dpf": {
+      "title": "A node's `meta.code` and `meta.tests`",
+      "en": "`sheriff binding` collects the SpecTags on the code and on the tests across the repository, and compares them with each node's `meta.code` and `meta.tests`.",
+      "ruTitle": "`meta.code` и `meta.tests` узла",
+      "ru": "`sheriff binding` собирает SpecTag на коде и на тестах по всему репозиторию и сравнивает их с `meta.code` и `meta.tests` каждого узла."
+    },
+    "s-5hb9k2e34dgn284": {
+      "title": "A list and its declaration",
+      "en": "`sheriff binding` compares the members of each list a node holds with the declaration the list names in the code, the schema or the settings. A member that is an object is compared by the property the list names.",
+      "ruTitle": "Список и его объявление",
+      "ru": "`sheriff binding` сравнивает элементы каждого списка узла с объявлением, которое список называет в коде, схеме или настройках. Элемент-объект сравнивается по свойству, которое называет список."
+    },
+    "s-cdachayybfvg4na": {
+      "title": "An object in a list",
+      "en": "`sheriff validate` reads each member of a `TextRule.list` that is an object for the property the list names (§s-v7vd4ydrwexsgsj). A member lacking it is refused.",
+      "ruTitle": "Объект в списке",
+      "ru": "`sheriff validate` ищет в каждом элементе `TextRule.list`, который является объектом, свойство, которое называет список (§s-v7vd4ydrwexsgsj). Элемент без этого свойства отвергается."
+    }
+  }
+}

@@ -1,0 +1,275 @@
+<title>Узел описания инструментов: Настройки, которые меняет только ответственный за спецификацию</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Настройки, которые меняет только ответственный за спецификацию <span style="color:var(--muted);font-weight:400">· The settings that only an owner of the specification changes</span></h1>
+<div class="sub">tools 2.10 (new) · new:tools-2-settings · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Агент может записать изменение статуса одобрения спецификации, её флага <code>strict</code> или выбранных расширений только через процедуру (<span class="cite" data-sid="s-83ev4wwesbwnhnp" title="An agent's edit is checked before it is made">§10.3</span>). <code>sheriff settings</code> — эта процедура, одна и для ответственного в терминале, и для агента, работающего на этого ответственного.</div>
+  <div><div class="label">Reason</div>An agent may record a change to the specification's approval status, its <code>strict</code> flag or its chosen extensions only through a procedure (<span class="cite" data-sid="s-83ev4wwesbwnhnp" title="An agent's edit is checked before it is made">§10.3</span>). <code>sheriff settings</code> is that procedure, for an owner at a terminal and for an agent working for that owner alike.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое, предложено рецензентом.</p>
+
+<div class="reason">
+  <div><div class="label">Пример</div>Агент запускает <code>sheriff settings status approved</code>. Проверки находят два символа без SpecTag; команда печатает их и ничего не записывает. Ответственный соглашается, и агент запускает <code>sheriff settings status approved --confirm</code>. Но не так: одобрение записывается уже при первом запуске.</div>
+  <div><div class="label">Example</div>The agent runs <code>sheriff settings status approved</code>. The checks find two symbols without a SpecTag, and the command prints them and records nothing. The owner agrees, and the agent runs <code>sheriff settings status approved --confirm</code>. But not: the first run records the approval.</div>
+</div>
+<p class="hint" style="margin-top:8px"></p>
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-qzthyh7yqvfhsa2 s-q3pfzyaxvpr2zj2 s-9ttvcwpqkehm58g">
+  <td class="en"><p><code>sheriff settings</code> shows and changes the settings that only an owner of the specification changes: the specification's approval status (<span class="cite" data-sid="s-qzthyh7yqvfhsa2" title="The specification's approval status">§10.6</span>), its <code>strict</code> flag (<span class="cite" data-sid="s-q3pfzyaxvpr2zj2" title="The specification's strict flag">§10.7</span>), and the extensions of the guidelines that the project has chosen (<span class="cite" data-sid="s-9ttvcwpqkehm58g" title="Configuring extensions">§1.7.5</span>).</p></td>
+  <td class="ru"><p><code>sheriff settings</code> показывает и меняет настройки, которые меняет только ответственный за спецификацию: статус одобрения спецификации (<span class="cite" data-sid="s-qzthyh7yqvfhsa2" title="The specification's approval status">§10.6</span>), её флаг <code>strict</code> (<span class="cite" data-sid="s-q3pfzyaxvpr2zj2" title="The specification's strict flag">§10.7</span>) и выбранные проектом расширения guidelines (<span class="cite" data-sid="s-9ttvcwpqkehm58g" title="Configuring extensions">§1.7.5</span>).</p></td>
+  <td class="change">Новое: по вашему решению от 18 ноября эти настройки меняет программа в терминале.</td>
+  <td class="links"><span class="cite" data-sid="s-qzthyh7yqvfhsa2">The specification's approval status</span><span class="cite" data-sid="s-q3pfzyaxvpr2zj2">The specification's strict flag</span><span class="cite" data-sid="s-9ttvcwpqkehm58g">Configuring extensions</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="">
+  <td class="en"><p>Run in a terminal with no arguments, <code>sheriff settings</code> shows the settings that only an owner changes, and every extension that the plugin delivers. It then lets the person who runs it change each of them. Run with no terminal attached and with no arguments, it prints them.</p></td>
+  <td class="ru"><p>Запущенная в терминале без аргументов, <code>sheriff settings</code> показывает настройки, которые меняет только ответственный, и каждое расширение, которое поставляет плагин. Затем она даёт тому, кто её запустил, изменить каждую из них. Запущенная без терминала и без аргументов, она их печатает.</p></td>
+  <td class="change">Новое. Печать без терминала — чтобы агент мог прочитать настройки.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-2" data-cites="">
+  <td class="en"><p>Run with one of the following sets of arguments, <code>sheriff settings</code> makes that one change:</p></td>
+  <td class="ru"><p>Запущенная с одним из следующих аргументов, <code>sheriff settings</code> делает только это изменение:</p></td>
+  <td class="change">Новое.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-3" data-cites="">
+  <td class="en"><div class="li">• <code>status approved</code> or <code>status draft</code>, for the specification's approval status;</div></td>
+  <td class="ru"><div class="li">• <code>status approved</code> или <code>status draft</code> — для статуса одобрения спецификации;</div></td>
+  <td class="change">Новое: каждый аргумент — настройка и её значение, как предложил рецензент.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-4" data-cites="">
+  <td class="en"><div class="li">• <code>strict on</code> or <code>strict off</code>, for the <code>strict</code> flag;</div></td>
+  <td class="ru"><div class="li">• <code>strict on</code> или <code>strict off</code> — для флага <code>strict</code>;</div></td>
+  <td class="change">Новое.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-5" data-cites="">
+  <td class="en"><div class="li">• <code>extension &lt;name&gt; on</code> or <code>extension &lt;name&gt; off</code>, for the choice of an extension.</div></td>
+  <td class="ru"><div class="li">• <code>extension &lt;имя&gt; on</code> или <code>extension &lt;имя&gt; off</code> — для выбора расширения.</div></td>
+  <td class="change">Новое.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-6" data-cites="s-6sk8uet75dmq5qz">
+  <td class="en"><p><code>sheriff settings</code> records each change as an entry in <code>sheriff.config.json</code> that names the person who made the change, by the email address set in git's configuration. It records a change only when that person is an owner of the specification (<span class="cite" data-sid="s-6sk8uet75dmq5qz" title="The owners">§1.1.6</span>), and refuses it otherwise.</p></td>
+  <td class="ru"><p>Каждое изменение <code>sheriff settings</code> записывает в <code>sheriff.config.json</code> записью, которая называет того, кто сделал изменение, по адресу электронной почты, заданному в git. Она записывает изменение, только если этот человек — ответственный за спецификацию (<span class="cite" data-sid="s-6sk8uet75dmq5qz" title="The owners">§1.1.6</span>), а иначе отвергает его.</p></td>
+  <td class="change">Новое: так требуют правила 10.6, 10.7 и 1.7.5.</td>
+  <td class="links"><span class="cite" data-sid="s-6sk8uet75dmq5qz">The owners</span></td>
+</tr>
+<tr class="part" id="part-7" data-cites="s-qzthyh7yqvfhsa2 s-q3pfzyaxvpr2zj2 s-j8y62pa9hzz6nwx">
+  <td class="en"><p><code>sheriff settings</code> records or refuses each change as required by the rules on the approval status, on the <code>strict</code> flag and on withdrawing an extension (<span class="cite" data-sid="s-qzthyh7yqvfhsa2" title="The specification's approval status">§10.6</span>, <span class="cite" data-sid="s-q3pfzyaxvpr2zj2" title="The specification's strict flag">§10.7</span>, <span class="cite" data-sid="s-j8y62pa9hzz6nwx" title="An extension that a node depends on stays chosen">§1.7.6</span>). Where those rules require the owner to confirm an approval and no terminal is attached, the owner confirms it by adding <code>--confirm</code> to <code>status approved</code>, personally or through an agent working for that owner.</p></td>
+  <td class="ru"><p><code>sheriff settings</code> записывает или отвергает каждое изменение так, как требуют правила о статусе одобрения, о флаге <code>strict</code> и об отзыве расширения (<span class="cite" data-sid="s-qzthyh7yqvfhsa2" title="The specification's approval status">§10.6</span>, <span class="cite" data-sid="s-q3pfzyaxvpr2zj2" title="The specification's strict flag">§10.7</span>, <span class="cite" data-sid="s-j8y62pa9hzz6nwx" title="An extension that a node depends on stays chosen">§1.7.6</span>). Где эти правила требуют, чтобы ответственный подтвердил одобрение, без терминала он подтверждает его, добавив <code>--confirm</code> к <code>status approved</code>.</p></td>
+  <td class="change">Новое: заменяет три абзаца, которые пересказывали правила 10.6, 10.7 и 1.7.6.</td>
+  <td class="links"><span class="cite" data-sid="s-qzthyh7yqvfhsa2">The specification's approval status</span><span class="cite" data-sid="s-q3pfzyaxvpr2zj2">The specification's strict flag</span><span class="cite" data-sid="s-j8y62pa9hzz6nwx">An extension that a node depends on stays chosen</span></td>
+</tr>
+<tr class="part" id="part-8" data-cites="s-j5qmmdq4m26mdvw">
+  <td class="en"><p><code>sheriff settings</code> records the choice of an extension only where the plugin delivers that extension (<span class="cite" data-sid="s-j5qmmdq4m26mdvw" title="The installed release of the SpecSheriff plugin delivers every extension that the project has chosen">§10.1.27c</span>).</p></td>
+  <td class="ru"><p>Выбор расширения <code>sheriff settings</code> записывает, только если плагин поставляет это расширение (<span class="cite" data-sid="s-j5qmmdq4m26mdvw" title="The installed release of the SpecSheriff plugin delivers every extension that the project has chosen">§10.1.27c</span>).</p></td>
+  <td class="change">Новое: так требует строка 10.1.27c.</td>
+  <td class="links"><span class="cite" data-sid="s-j5qmmdq4m26mdvw">The installed release of the SpecSheriff plugin delivers every extension that the project has chosen</span></td>
+</tr>
+<tr class="part" id="part-9" data-cites="">
+  <td class="en"><p>A refusal caused by the <code>strict</code> flag names, for each check that would refuse, the command that lists what that check finds:</p></td>
+  <td class="ru"><p>Отказ из-за флага <code>strict</code> называет для каждой проверки, которая отвергла бы изменение, команду, перечисляющую то, что эта проверка находит:</p></td>
+  <td class="change">Новое: так требует правило 10.7.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-10" data-cites="s-weuyx98r7c923ab">
+  <td class="en"><div class="li">• <code>sheriff untagged</code>, for the check for code without a SpecTag (<span class="cite" data-sid="s-weuyx98r7c923ab" title="The list of code that carries no SpecTag">§tools 2.11 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff untagged</code> — для проверки кода без SpecTag (<span class="cite" data-sid="s-weuyx98r7c923ab" title="The list of code that carries no SpecTag">§tools 2.11 (new)</span>);</div></td>
+  <td class="change">Новое.</td>
+  <td class="links"><span class="cite" data-sid="s-weuyx98r7c923ab">The list of code that carries no SpecTag</span></td>
+</tr>
+<tr class="part" id="part-11" data-cites="s-7pk89t8z6wymmj9">
+  <td class="en"><div class="li">• <code>sheriff validate --strict</code>, for a project's own checks: it runs the project's own checks as if the specification were approved and its <code>strict</code> flag were on (<span class="cite" data-sid="s-7pk89t8z6wymmj9" title="How a project's own check is run">§tools 7.1.23</span>).</div></td>
+  <td class="ru"><div class="li">• <code>sheriff validate --strict</code> — для собственной проверки проекта: она запускает собственные проверки проекта так, как если бы спецификация была одобрена и её флаг <code>strict</code> включён (<span class="cite" data-sid="s-7pk89t8z6wymmj9" title="How a project's own check is run">§tools 7.1.23</span>).</div></td>
+  <td class="change">Новое, предложено рецензентом: правило 10.7 требует команду инструментов SpecSheriff, а собственная проверка, получая модель, видит флаг <code>strict</code> таким, какой он сейчас.</td>
+  <td class="links"><span class="cite" data-sid="s-7pk89t8z6wymmj9">How a project's own check is run</span></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-qzthyh7yqvfhsa2"><span class="loc">реализует · 10.6</span> <b>The specification's approval status</b><br><span class="rut">Статус одобрения спецификации</span><br><span class="meta">guidelines · s-qzthyh7yqvfhsa2</span></li>
+<li class="node" data-sid="s-q3pfzyaxvpr2zj2"><span class="loc">реализует · 10.7</span> <b>The specification's strict flag</b><br><span class="rut">Флаг strict спецификации</span><br><span class="meta">guidelines · s-q3pfzyaxvpr2zj2</span></li>
+<li class="node" data-sid="s-9ttvcwpqkehm58g"><span class="loc">реализует · 1.7.5</span> <b>Configuring extensions</b><br><span class="rut">Настройка расширений</span><br><span class="meta">guidelines · s-9ttvcwpqkehm58g</span></li>
+<li class="node" data-sid="s-j8y62pa9hzz6nwx"><span class="loc">реализует · 1.7.6</span> <b>An extension that a node depends on stays chosen</b><br><span class="rut">Расширение, от которого зависит узел, остаётся выбранным</span><br><span class="meta">guidelines · s-j8y62pa9hzz6nwx</span></li>
+<li class="node" data-sid="s-6sk8uet75dmq5qz"><span class="loc">ссылается · 1.1.6</span> <b>The owners</b><br><span class="rut">Ответственные</span><br><span class="meta">guidelines · s-6sk8uet75dmq5qz</span></li>
+<li class="node" data-sid="s-j5qmmdq4m26mdvw"><span class="loc">ссылается · 10.1.27c</span> <b>The installed release of the SpecSheriff plugin delivers every extension that the project has chosen</b><br><span class="meta">guidelines · s-j5qmmdq4m26mdvw</span></li>
+<li class="node" data-sid="s-weuyx98r7c923ab"><span class="loc">ссылается · tools 2.11 (new)</span> <b>The list of code that carries no SpecTag</b><br><span class="rut">Перечень кода без SpecTag</span><br><span class="meta">draft of the appendix of the tools · s-weuyx98r7c923ab</span></li>
+<li class="node" data-sid="s-7pk89t8z6wymmj9"><span class="loc">ссылается · tools 7.1.23</span> <b>How a project's own check is run</b><br><span class="meta">appendix of the tools · s-7pk89t8z6wymmj9</span></li>
+<li class="node" data-sid="s-83ev4wwesbwnhnp"><span class="loc">ссылается · 10.3</span> <b>An agent's edit is checked before it is made</b><br><span class="rut">Правку агента проверяют до того, как она сделана</span><br><span class="meta">guidelines · s-83ev4wwesbwnhnp</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «The commands»</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Одобренная формулировка узла «The commands», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the rules of §s-4kd2pave7vm4hmd describe them.
+
+`sheriff init` sets a repository up for the SpecSheriff tools (§s-7unxytshhc4md54). `sheriff remove` takes SpecSheriff out of it (§s-7unxytshhc4md54).
+
+`sheriff reindex` is run after every change to the specification. It does the following:
+
+- it gives a sid to every node that has none;
+- it computes every node's location from where it is;
+- it empties every incoming list and rebuilds it from the outgoing ones;
+- it rebuilds the index in every domain's header from the domain's sections;
+- beside each field of type `one of`, it writes the values gathered for it from elsewhere in the specification, each with the sid of the node it comes from (§s-ju5vcanbjph7mgh);
+- it makes a draft each approved node whose latest line for it and its wording's fingerprint is not an approval. It leaves out of this a section, a domain's header and the SpecSheriff guidelines the project takes.
+
+It then writes the status of each section and domain's header from the nodes under it (§s-9kfdycuq34beqvs).
+
+`sheriff reindex` adds the rule `sheriff init` writes, as a draft, at every run where `project.json` holds no rule refining §s-qzthyh7yqvfhsa2 (§s-7unxytshhc4md54).
+
+Before anything else, `sheriff reindex` renames each key and value an earlier release of the SpecSheriff tools wrote under another name. In every file of the specification and of its archive, it renames:
+
+- the key `id` to `location`;
+- the key `rationale` to `reason`;
+- the NodeKinds `record` and `recordType` to `RecordType`;
+- the NodeKind `rule` to `TextRule`;
+- the NodeKind `domain` to `header`;
+- a node's status `""` to `draft`;
+- a node's status `checked` to `approved`;
+- the key `owner` of a domain's header or a section, holding an email, to `owners`, holding a list holding that email.
+
+A renamed key keeps its place among the node's keys. `sheriff reindex` renames those NodeKinds also where a field's values are the sids of a NodeKind's nodes, and where the project's extension of the schema adds properties to a NodeKind.
+
+A field of type `one of` whose own list an earlier release wrote empty takes the values the domains add as its source instead. Under that release, the empty list stood for those values.
+
+`sheriff reindex` also renames `specs/_confirmations.jsonl` to `specs/_approvals.jsonl`. In each line of that file, it renames the key `owner` to `by`. Where `specs/_approvals.jsonl` already stands, it appends those lines to it and removes the old file.
+
+Then, in every file it rewrites, `sheriff reindex` merges the values an object holds under one key, each into those written before it:
+
+- two lists into one, holding the members of the first and then those of the second that the first does not hold;
+- two objects key by key in the same way, each key where it was first written;
+- two values JSON Schema holds equal into one.
+
+It names every key it merged, with the file and each value's line. It refuses any other two values under one key, naming the file, the key and each one's line and value. It then writes no file.
+
+`sheriff reindex` also rewrites each test that names its node by a bare sid, the form an earlier release of the SpecSheriff tools read. A bare sid is a word of the form of a sid that stands in one of these places:
+
+- it opens the test's name, followed by a space or the name's end;
+- it stands alone as the argument of the test's mark.
+
+In the files the settings name as the tests of the system's code or of a project's own check or generator, `sheriff reindex` puts `@spec ` before that sid. Each node's `meta.tests` then names the test by its new name. `sheriff reindex` names each file it rewrites.
+
+`sheriff approve` records an approval or its withdrawal (§s-v4qus7raqnwzneb).
+
+`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).
+
+`sheriff guide` prints the following:
+
+- every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says;
+- the figures counted off the model as it prints: how many nodes each part holds and how many of them are approved;
+- whether the specification is approved.
+
+`sheriff show` prints a node, found by its sid or its location, as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff model` prints as JSON the model of the specification where it runs. The model holds every node as its file holds it, with its location, the part and the file it stands in, and the owners named nearest above it. A project's own check or generator is handed the model on its standard input (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze).
+
+`sheriff todos` prints, as text, every item of `meta.todos` in the specification where it runs, the archive left out, and the SpecSheriff guidelines too where the project takes them. The items come the newest first, and those of one day in the order the specification reads. Each item comes with its date, who its author is, what is to be done, and the sid, location and title of its node (§s-t28j22vbdmmeqnh).
+
+`sheriff types` generates the following:
+
+- from the RecordTypes, the types and the RuntimeChecks of the system's code, where the technical appendix says they stand;
+- the files each generator the project's own guidelines add prints.
+
+A project's generator is run by the command the settings name for it, and is handed what `sheriff model` prints on its standard input. It prints as JSON each file's path, its content and the sids of the nodes the file is written from (§s-km4x4s26kv7pjze).
+
+`sheriff types` writes a file only where the file is missing or holds, line endings aside, anything other than what it generates. It names each file it writes.
+
+`sheriff types` names each refusal and writes no file where one of the following holds:
+
+- the check of generated copies refuses the list of the files it generates, or a RecordType (§s-dbk2vyeg8z5jxna);
+- a project's generator ends with an exit code other than zero.
+
+`sheriff types` writes a file only once every node that file is generated from is approved. It names each node it waits for:
+
+- the types and RuntimeChecks wait for every RecordType;
+- a file a project's generator prints waits for the nodes it is written from and for the rule listing that generator.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

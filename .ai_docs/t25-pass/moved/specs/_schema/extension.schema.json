@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "extension.schema.json",
+  "title": "An extension of the schema of the SpecSheriff guidelines",
+  "$comment": "What an extension of the guidelines adds to the structure of the specification, kept in _schema/extensions/<name>.schema.json, and what a project's own guidelines add, kept in specs/_schema/project.schema.json (s-eferktypcj7njt5, s-xm8rz4uupb73gu5). The tools compose the schema of the guidelines with the schema of each extension the project has chosen, then with the project's: each kind joins the kinds a node may have and its schema holds where a node is of that kind, each type of link joins the types a link may have, each definition joins those the composed schema holds, and the properties of a file and of a link join theirs. Each addition is a condition beside those already composed, so nothing loosens a condition, and a name already composed is refused, so nothing redefines one. A reference in an added schema to #/$defs/<name> names a definition of the composed node schema.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$comment": {
+      "type": "string"
+    },
+    "kinds": {
+      "$comment": "The kinds of node it adds, each by its name: whether its nodes need code, and the JSON Schema of the fields its nodes hold beside those every node holds (s-hhnahzmhahf8jht). A kind the SpecSheriff guidelines define cannot be declared, nor a name an earlier release gave one of them, which the reindex renames: record, recordType, rule and domain. A kind an extension already composed adds is refused at the composition.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9]*$",
+        "not": {
+          "enum": [
+            "section",
+            "TextRule",
+            "TableRule",
+            "term",
+            "domain",
+            "rule",
+            "recordType",
+            "record"
+          ]
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "needsCode": {
+            "$comment": "false where the nodes of the kind are carried out by tools or people rather than code, which exempts them from being implemented.",
+            "type": "boolean"
+          },
+          "schema": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "needsCode",
+          "schema"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "linkTypes": {
+      "$comment": "The types of link it adds (s-sn6au3vcr9uy5pm), each by its name; the rule that defines a type states its meaning. A type already composed is refused at the composition.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z-]*$"
+      }
+    },
+    "fields": {
+      "$comment": "The fields added to a kind that is already composed, as a JSON Schema of their properties, by the kind's name. A kind not composed is refused at the composition. The nodes of the SpecSheriff guidelines and of its extensions need not hold them.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9]*$"
+      },
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "file": {
+      "$comment": "The properties added to a file of the specification and of its archive, as a JSON Schema of them.",
+      "type": "object"
+    },
+    "link": {
+      "$comment": "The properties added to a link, as a JSON Schema of them.",
+      "type": "object"
+    },
+    "$defs": {
+      "$comment": "Definitions its schemas refer to as #/$defs/<name>, joining those of the composed node schema. A name already composed is refused at the composition.",
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "object",
+          "boolean"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

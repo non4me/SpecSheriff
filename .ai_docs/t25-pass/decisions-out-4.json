@@ -1,0 +1,436 @@
+{
+  "row 10.1.26 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "Whether this row checks the SpecTags of the tests as well as those of the code, and which row checks where a SpecTag is placed.",
+      "ruling": "The owner: this row checks only the system's code that implements rules, including where its SpecTags are placed. The tests are checked by a row of their own.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "For code that the commit leaves unchanged, the cost of a failure differed from the cost that the rule on code and tests without a SpecTag sets (s-kkbqcb9xrpaepwn).",
+      "ruling": "The owner: for such code, the result is what that rule says.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The row spoke of symbols, but code is also bound by SpecTags at the start of a file or by an entry in the bindings file.",
+      "ruling": "The owner: the row speaks of the code that a SpecTag binds, not of a symbol. This follows the rule on how code is bound to its rules (s-kgbzk2ph9e6jfb4).",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.26a of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "Which row checks the SpecTags of the tests, and where a test's SpecTag is placed.",
+      "ruling": "The owner: a row of its own checks the tests. A test's SpecTag is placed where the appendix of the tools prescribes for the language of the test.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-13",
+      "problem": "Whether the check covers every test, the tests of a project's own checks included.",
+      "ruling": "The owner: the check covers only the tests of the system's code. A project's own checks are not part of the system's code, and only the system's code and its tests carry SpecTags.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "For a test that the commit leaves unchanged, the cost of a failure differed from the cost that the rule on code and tests without a SpecTag sets (s-kkbqcb9xrpaepwn).",
+      "ruling": "The owner: for such a test, the result is what that rule says.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.26b of table-10-1": [
+    {
+      "date": "2026-11-17",
+      "problem": "An entry in the bindings file could go on naming a file that had been moved or renamed.",
+      "ruling": "The owner: on every commit, the checks make sure that each file named in the bindings file exists. So a moved or renamed file is caught.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.27 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The row checked a commit that withdrew the approval of a rule approving the specification. The specification's approval status is now recorded in entries made by its owners, and no such rule exists (s-qzthyh7yqvfhsa2).",
+      "ruling": "The owner: each new entry recording the approval status names one of the specification's owners, and no commit removes or changes such an entry. So nobody can change the status by deleting or editing the latest entry.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.27a of table-10-1": [
+    {
+      "date": "2026-11-17",
+      "problem": "Nothing checked who records the entries that set the specification's `strict` flag (s-q3pfzyaxvpr2zj2).",
+      "ruling": "The owner: these entries are checked in the same way as the entries recording the specification's approval status.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.27b of table-10-1": [
+    {
+      "date": "2026-11-18",
+      "problem": "Nothing checked who records the choice of an extension of the guidelines, or the withdrawal of that choice (s-9ttvcwpqkehm58g).",
+      "ruling": "The owner: these entries are checked in the same way as the entries that set the specification's `strict` flag.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.27c of table-10-1": [
+    {
+      "date": "2026-11-18",
+      "problem": "A project could choose an extension that the installed release of the SpecSheriff plugin does not deliver.",
+      "ruling": "The owner: a project chooses only among the extensions that the SpecSheriff plugin delivers (s-mbmnsnxenmavu3z). The checks make sure that the installed release delivers every extension the project has chosen.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.28 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The row checked both that every SpecTag names a node that exists and that a SpecTag on changed code names an approved node.",
+      "ruling": "The owner: the check is split. This row checks only that the rule a SpecTag names exists, and a row of its own checks that a draft rule is not implemented.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.28a of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "No row checked, starting from the rule, that a draft rule is not implemented. Other rows covered only parts of that requirement.",
+      "ruling": "The owner: a row of its own checks that no commit adds or changes code or a test bound to a draft rule. The rule on what a draft means (s-utvqbypzhmgndug) requires this.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The row spoke of symbols, but code is also bound by SpecTags at the start of a file or by an entry in the bindings file.",
+      "ruling": "The owner: the row speaks of the code that a SpecTag binds, not of a symbol. This follows the rule on how code is bound to its rules (s-kgbzk2ph9e6jfb4).",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.31 of table-10-1": [],
+  "row 10.1.34 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The row said only that `meta.code` and `meta.tests` are what the SpecTags produce, without saying what these lists hold.",
+      "ruling": "The owner: `meta.code` lists every code file that a SpecTag naming the node binds. `meta.tests` refers to every test file holding a test with such a SpecTag, and neither list contains any other file.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The row spoke of symbols, but code is also bound by SpecTags at the start of a file or by an entry in the bindings file.",
+      "ruling": "The owner: the row speaks of the code that a SpecTag binds, not of a symbol. This follows the rule on how code is bound to its rules (s-kgbzk2ph9e6jfb4).",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.35 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "A single property, `declaredIn`, named the place where a list's values are declared, whether in code, in a schema or in the settings.",
+      "ruling": "The owner: `declaredIn` is replaced by two properties of the list, `jsonSchema` and `valueList`.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-13",
+      "problem": "A JSON Schema describes the format of values rather than listing them, so it cannot be matched with a list value by value.",
+      "ruling": "The owner: the check goes from the list to the schema. Each listed value must be valid against the schema, and an `enum` in the schema lists nothing beyond the rule's list.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.36 of table-10-1": [],
+  "row 10.1.37 of table-10-1": [],
+  "row 10.1.38 of table-10-1": [],
+  "row 10.1.39 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "Whether a citation by sid means only the form `§<sid>` or also a SpecTag.",
+      "ruling": "The owner: both a SpecTag and `§<sid>` name a node by its sid, and the row covers both forms.",
+      "type": "procedural"
+    }
+  ],
+  "row (unnumbered) of table-10-1": [
+    {
+      "date": "2026-11-17",
+      "problem": "Whether the row stays in the main table of checks, since generating code from the nodes was to be taken out of the SpecSheriff guidelines.",
+      "ruling": "The owner: generating code from the nodes returns to the SpecSheriff guidelines, so the row stays in the main table of checks.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The row was worded in terms of what the nodes produce at present and of generated code that waits for a draft node to be approved.",
+      "ruling": "The owner: the row follows the rule that code is generated only from the nodes' approved wordings (s-qyjw8xez6t6adc3). Nothing is generated from a node that has never been approved.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.40 of table-10-1": [
+    {
+      "date": "2026-11-19",
+      "problem": "The row reported any rule whose tests or code lagged behind its text anywhere in the history of the repository.",
+      "ruling": "The owner: the check looks only at the approved rules that change in a commit. Where a rule's wording changes, its tests and code change in the same commit, and where its tests change, its code does.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "A change to a rule's wording does not always need a change to its tests or its code.",
+      "ruling": "The owner: instead of those changes, the commit message may state that the rule's implementation needs no change.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "A lag behind an approved rule was only reported, never refused.",
+      "ruling": "The owner: while the specification is approved, the check refuses such a commit and names the rule.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-20",
+      "problem": "Whether a lag behind an approved rule is reported while the specification is a draft.",
+      "ruling": "The owner: while the specification is a draft, the checks that new code is bound to its rules still run. Every check of whether the implementation is complete stays silent, so this row passes.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.41 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "A proposed wording dropped a provision of the approved wording: code or a test bound to a rule implementing the approved rule counts toward it.",
+      "ruling": "The owner: the provision stays, as in the approved wording and in the rule on the implementation of an approved rule (s-6fw72j65jkqrfpf).",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The row spoke of symbols, but code is also bound by SpecTags at the start of a file or by an entry in the bindings file.",
+      "ruling": "The owner: the row speaks of the code that a SpecTag binds, not of a symbol. This follows the rule on how code is bound to its rules (s-kgbzk2ph9e6jfb4).",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-20",
+      "problem": "The reason proposed for the row said that an approved rule lacking its test or its code is only reported.",
+      "ruling": "The owner: while the specification is approved, a commit that includes such a rule is refused, and the refusal names the rule. While the specification is a draft, the commit passes and nothing is reported.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-20",
+      "problem": "Whether the row keeps its proviso that the test is not marked as skipped.",
+      "ruling": "The owner: the proviso stays and also covers a test marked as expected to fail. The row's reason explains it: a test run never counts such a test as failed.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-20",
+      "problem": "The row did not say in which direction an `implements` link makes code or a test count toward the approved rule.",
+      "ruling": "The owner: code or a test counts toward the approved rule if it is bound to a node with an `implements` link to that rule. A chain of such links counts as well, but nothing counts in the opposite direction.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-20",
+      "problem": "The row applied to every approved rule, whatever a commit changed.",
+      "ruling": "The owner: the check applies only to the approved rules that a commit includes. The row lists the changes that make a commit include a rule.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.42 of table-10-1": [
+    {
+      "date": "2026-11-17",
+      "problem": "The row spoke of symbols, but code is also bound by SpecTags at the start of a file or by an entry in the bindings file.",
+      "ruling": "The owner: the row speaks of the code that a SpecTag binds, not of a symbol. This follows the rule on how code is bound to its rules (s-kgbzk2ph9e6jfb4).",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.43 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "Whether the row should also say how the review of the changed code is made.",
+      "ruling": "The owner: the row says only what is checked. How the SpecSheriff tools make the check is stated in the appendix of the tools (s-vp24dqydygztqbt).",
+      "type": "procedural"
+    }
+  ],
+  "row 10.1.43a of table-10-1": [
+    {
+      "date": "2026-11-20",
+      "problem": "A commit could leave a rule's tests and code behind its new wording merely by stating that the rule's implementation needs no change.",
+      "ruling": "The owner: the reviewer judges whether that statement is true. A false statement costs what the lag it hides would cost, since the statement replaces the changes that would otherwise be required.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-20",
+      "problem": "Whether a false statement is reported while the specification is a draft.",
+      "ruling": "The owner: while the specification is a draft, the checks that new code is bound to its rules still run. Every check of whether the implementation is complete stays silent, so this row passes.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.44 of table-10-1": [
+    {
+      "date": "2026-11-17",
+      "problem": "The row refused a push whose tests failed while the specification was approved, whether or not the project runs its tests at a push.",
+      "ruling": "The owner: a push is refused only where the project's own guidelines name a push as the moment at which the tests run (s-m4h279nbaqkpa3t).",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "Whether the row still covers the tests of a project's own generators.",
+      "ruling": "The owner: the SpecSheriff guidelines again provide for a project's own code generators (s-km4x4s26kv7pjze), so the row covers their tests.",
+      "type": "textual"
+    }
+  ],
+  "head of table-11-3": [
+    {
+      "date": "2026-11-18",
+      "problem": "The checks of the Domains extension were in the main table of checks, among the checks of the SpecSheriff guidelines.",
+      "ruling": "The owner: each extension has its own table of checks, with the same columns as the main table of checks. That table refines the main table.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "The tables of checks had no names that told the table of the SpecSheriff guidelines from the table of an extension.",
+      "ruling": "The owner: the table of the SpecSheriff guidelines is the main table of checks. The table of an extension is the table of checks of that extension.",
+      "type": "textual"
+    }
+  ],
+  "row 11.3.1 of table-11-3": [
+    {
+      "date": "2026-11-18",
+      "problem": "One approved row required both that every domain has a header and that the header's index is what the domain's sections produce. Each requirement can hold without the other.",
+      "ruling": "The owner: the row is split in two. This row checks the header, and another row checks the index.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "A header copied into another document of a domain split across several documents passed the check.",
+      "ruling": "The owner: every domain has exactly one header.",
+      "type": "textual"
+    }
+  ],
+  "row 11.3.2 of table-11-3": [
+    {
+      "date": "2026-11-18",
+      "problem": "One approved row required both that every domain has a header and that the header's index is what the domain's sections produce. Each requirement can hold without the other.",
+      "ruling": "The owner: the row is split in two. This row checks the index, and another row checks that every domain has a header.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "Whether the requirement that a domain with sections carries their index is stated in this row or in the rule on a domain's header.",
+      "ruling": "The owner: the rule on a domain's header (s-yggv9myedprnaa7) states the requirement, and this row only checks it. The rows of the main table of checks do the same.",
+      "type": "procedural"
+    }
+  ],
+  "row 11.3.3 of table-11-3": [],
+  "row 11.3.4 of table-11-3": [
+    {
+      "date": "2026-10-30",
+      "problem": "It was not settled through which links the domains use one another in a cycle.",
+      "ruling": "The owner: only through the `consumes` links of the domains' headers. The links between rules cross the boundaries of domains freely and do not count.",
+      "type": "textual"
+    }
+  ],
+  "row 11.3.5 of table-11-3": [],
+  "row 11.3.6 of table-11-3": [],
+  "head of table-12-12": [
+    {
+      "date": "2026-11-18",
+      "problem": "The checks of the RecordType extension were in the main table of checks, among the checks of the SpecSheriff guidelines.",
+      "ruling": "The owner: each extension has its own table of checks, with the same columns as the main table of checks. That table refines the main table.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "The tables of checks had no names that told the table of the SpecSheriff guidelines from the table of an extension.",
+      "ruling": "The owner: the table of the SpecSheriff guidelines is the main table of checks. The table of an extension is the table of checks of that extension.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.1 of table-12-12": [
+    {
+      "date": "2026-10-30",
+      "problem": "Whether two RecordType names that differ only in letter case count as the same name.",
+      "ruling": "The owner: they do, so RecordType names are unique regardless of letter case.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.2 of table-12-12": [
+    {
+      "date": "2026-10-31",
+      "problem": "What a field holding identifiers of other data records refers to.",
+      "ruling": "The owner: such a field has the type of the field that identifies those data records. The RecordType of those records names that field as one of its own.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "One approved row held two requirements, each of which can be met without the other.",
+      "ruling": "The owner: the row is split in two. This row checks the RecordType that a field with `identifierOf` refers to, and another row checks that every chain of identifiers ends.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "The row referred to a field of type `identifier of`, a type that the guidelines themselves defined.",
+      "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12. JSON Schema has no references between records, so a field refers to one by `identifierOf`, a keyword of SpecSheriff.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.3 of table-12-12": [
+    {
+      "date": "2026-10-31",
+      "problem": "Whether a chain of identifiers may return to a RecordType that it has already passed through.",
+      "ruling": "The owner: it may not, since such a chain gives no type that an implementation can declare. Every chain therefore ends in a field without `identifierOf`.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "One approved row held two requirements, each of which can be met without the other.",
+      "ruling": "The owner: the row is split in two. This row checks that every chain of identifiers ends, and another row checks the RecordType that a field with `identifierOf` refers to.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "The row referred to a field of a type other than `identifier of`, a type that the guidelines themselves defined.",
+      "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so the row refers to a field without `identifierOf`.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.4 of table-12-12": [],
+  "row 12.12.5 of table-12-12": [
+    {
+      "date": "2026-11-19",
+      "problem": "The row placed a RecordType variant in the part of the specification that declares the value that selects the variant.",
+      "ruling": "The owner: in accordance with the rule on RecordType variants (s-z3dnru6qqdf9m6j), a variant is declared in the same section of the base specification as its RecordType.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.6 of table-12-12": [],
+  "row 12.12.7 of table-12-12": [
+    {
+      "date": "2026-11-19",
+      "problem": "Whether a field that a RecordType variant declares may have the same name as a field of its RecordType.",
+      "ruling": "The owner: it may not, as the rule on RecordType variants (s-z3dnru6qqdf9m6j) says. No field of a variant shares its name with a field of its RecordType, including the fields taken through `refines`.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.8 of table-12-12": [],
+  "row 12.12.9 of table-12-12": [
+    {
+      "date": "2026-11-19",
+      "problem": "The row required each value that a variant names to be one that the source of the selecting field declares. A field's values may come from several kinds of source.",
+      "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so a field's values, from whatever source, are listed in its `enum`. Each value that a variant names for a field is in that field's `enum`.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.10 of table-12-12": [],
+  "row 12.12.11 of table-12-12": [
+    {
+      "date": "2026-11-19",
+      "problem": "The row referred to a field of type `one of`, a type that the guidelines themselves defined.",
+      "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so the row refers to a field with `enum`.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.12 of table-12-12": [
+    {
+      "date": "2026-11-19",
+      "problem": "The row referred to a field of type `one of`, a type that the guidelines themselves defined.",
+      "ruling": "The owner: everything that concerns RecordTypes follows JSON Schema 2020-12, so the row refers to a field with `enum`.",
+      "type": "textual"
+    }
+  ],
+  "row 12.12.13 of table-12-12": [],
+  "row 12.12.14 of table-12-12": [],
+  "row 12.12.15 of table-12-12": [],
+  "row 12.12.16 of table-12-12": [
+    {
+      "date": "2026-11-19",
+      "problem": "No check covered the requirement that a fragment of a format refers only to other fragments of a format.",
+      "ruling": "The owner: a separate row checks that requirement of the rule on what a RecordType may refer to (s-8ht2hn88cu2qwz9).",
+      "type": "textual"
+    }
+  ]
+}

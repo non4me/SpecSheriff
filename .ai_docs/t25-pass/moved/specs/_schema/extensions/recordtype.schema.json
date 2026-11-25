@@ -1,0 +1,210 @@
+{
+  "$comment": "What the RecordType extension of the guidelines adds to the schema of the guidelines: the RecordType, the format of data that a part of the system outputs and keeps in its store (s-7vm323mhry2enx3), written as a JSON Schema 2020-12 object.",
+  "kinds": {
+    "RecordType": {
+      "needsCode": true,
+      "schema": {
+        "$comment": "A RecordType is a rule of the section that declares it (s-ktfstpv8rurznrp), and is numbered among its rules; its title is the RecordType's name and its text what the RecordType is for (s-6eb92ddch7shuvu). The implementation's types and runtime checks are generated from it and never written beside it (s-e877bnfa559tvk9). A RecordType that refines another RecordType node is a variant of it where it carries answersTo (s-z3dnru6qqdf9m6j).",
+        "properties": {
+          "schema": {
+            "$comment": "The format itself, as a JSON Schema 2020-12 object: each field a property, with its type, its bounds, whether its value is guaranteed (required) and what it means (description). The fields of the RecordType's variants are added to a data record as an if/then pair adds them in JSON Schema.",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "https://json-schema.org/draft/2020-12/schema"
+              },
+              {
+                "$ref": "#/$defs/recordFormat"
+              }
+            ]
+          },
+          "chosenBy": {
+            "$comment": "On a RecordType some of whose fields' values decide which other fields a data record holds: those fields, its own or inherited, which select its variant (s-z3dnru6qqdf9m6j).",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/fieldName"
+            }
+          },
+          "answersTo": {
+            "$comment": "On a RecordType variant: the value it corresponds to of each field selecting the variant, its keys exactly the fields the nearest RecordType up its chain of refines names as selecting it (s-z3dnru6qqdf9m6j).",
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+              "$ref": "#/$defs/fieldName"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "identifiedBy": {
+            "$comment": "Where another RecordType refers to this one by an identifier: the field, its own or inherited, that identifies its data records, whose type an identifier of it takes (s-6eb92ddch7shuvu).",
+            "$ref": "#/$defs/fieldName"
+          }
+        },
+        "required": [
+          "schema"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "fieldName": {
+      "$comment": "A field's name as the code spells it: an identifier in camelCase, so the generated types use it as it stands.",
+      "type": "string",
+      "pattern": "^[a-z][A-Za-z0-9]*$"
+    },
+    "recordFormat": {
+      "$comment": "What the RecordType extension requires of every schema within a RecordType's schema, at any depth: a field's values come from one source only (s-xfu2gpzddjnmgks). Its own list is the field's enum, each value in it once. The names of the parts of the base specification (s-gqavjzcmubg5pvk) and the sids of the nodes of one kind (s-mt6auv3jz8m5gzh) are named by x-enumSource, which also holds the values gathered for the field (s-ju5vcanbjph7mgh). A field never has both.",
+      "properties": {
+        "enum": {
+          "uniqueItems": true
+        },
+        "x-enumSource": {
+          "$ref": "#/$defs/enumSource"
+        },
+        "properties": {
+          "additionalProperties": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "patternProperties": {
+          "additionalProperties": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "dependentSchemas": {
+          "additionalProperties": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "$defs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "prefixItems": {
+          "items": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "allOf": {
+          "items": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "anyOf": {
+          "items": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "oneOf": {
+          "items": {
+            "$ref": "#/$defs/recordFormat"
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "unevaluatedProperties": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "propertyNames": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "items": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "contains": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "unevaluatedItems": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "not": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "if": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "then": {
+          "$ref": "#/$defs/recordFormat"
+        },
+        "else": {
+          "$ref": "#/$defs/recordFormat"
+        }
+      },
+      "not": {
+        "type": "object",
+        "required": [
+          "enum",
+          "x-enumSource"
+        ]
+      }
+    },
+    "enumSource": {
+      "$comment": "Where a field's values come from when they are not its own list, and the values gathered from there. from parts: the names of the parts into which the base specification is divided, read from the specification (s-gqavjzcmubg5pvk). from kind: the sids of the nodes of the project's own kind that kind names and that are in the base specification (s-mt6auv3jz8m5gzh). gathered: each value with the sid of the node it comes from, gathered anew by the SpecSheriff tools after every change to the specification and written by them alone (s-ju5vcanbjph7mgh). The types and runtime checks generated from the RecordType take the gathered values as the field's enum.",
+      "type": "object",
+      "properties": {
+        "from": {
+          "enum": [
+            "parts",
+            "kind"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$"
+        },
+        "gathered": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sid": {
+                "$ref": "#/$defs/sid"
+              }
+            },
+            "required": [
+              "value",
+              "sid"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "from": {
+            "const": "kind"
+          }
+        },
+        "required": [
+          "from"
+        ]
+      },
+      "then": {
+        "required": [
+          "kind"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "kind"
+          ]
+        }
+      }
+    }
+  }
+}

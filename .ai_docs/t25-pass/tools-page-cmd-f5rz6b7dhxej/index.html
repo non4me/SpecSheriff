@@ -1,0 +1,334 @@
+<title>Узел описания инструментов: Команды, которые принимает `sheriff`</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Команды, которые принимает `sheriff` <span style="color:var(--muted);font-weight:400">· The commands that `sheriff` accepts</span></h1>
+<div class="sub">tools 2.1 · s-f5rz6b7dhxejjts · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Читатель, который знает, что нужно сделать, или название команды, находит здесь команду для этой задачи и узлы, которые описывают всё, что команда делает.</div>
+  <div><div class="label">Reason</div>A reader who knows what has to be done, or the name of a command, finds here the command for the task and the nodes that describe everything the command does.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое: по вашему замечанию узел помогает найти и нужную команду, а не только узел, который её описывает.</p>
+
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="">
+  <td class="en"><p>The SpecSheriff tools are run as <code>sheriff &lt;command&gt;</code> and accept only the following commands. Each command is listed with its purpose and the nodes that describe it:</p></td>
+  <td class="ru"><p>Инструменты SpecSheriff запускаются как <code>sheriff &lt;команда&gt;</code> и принимают только следующие команды. У каждой команды сказано, для чего она, и названы узлы, которые её описывают:</p></td>
+  <td class="change">Новое: узел стал перечнем команд. По вашему замечанию у каждой команды одним предложением сказано, для чего она, чтобы агент сразу понял, какая ему нужна. Всё остальное о <code>sheriff reindex</code>, <code>sheriff types</code>, <code>sheriff model</code>, <code>sheriff todos</code> и <code>sheriff guide</code> перешло в узлы этого раздела.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-4kd2pave7vm4hmd">
+  <td class="en"><div class="li">• <code>sheriff validate</code>: checks that the specification holds together and that each change to it follows the guidelines (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff validate</code> — проверяет, что спецификация согласована и что каждое её изменение следует guidelines (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-4kd2pave7vm4hmd">How each check is made</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-4kd2pave7vm4hmd">
+  <td class="en"><div class="li">• <code>sheriff binding</code>: checks the specification against the code and the tests that are bound to it (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff binding</code> — проверяет спецификацию по связанным с ней коду и тестам (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-4kd2pave7vm4hmd">How each check is made</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="s-4kd2pave7vm4hmd">
+  <td class="en"><div class="li">• <code>sheriff citations</code>: checks that each sid cited in the code, the tests and the documentation names a node of the specification (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff citations</code> — проверяет, что каждый sid, который цитируют код, тесты и документация, называет узел спецификации (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-4kd2pave7vm4hmd">How each check is made</span></td>
+</tr>
+<tr class="part" id="part-4" data-cites="s-4kd2pave7vm4hmd">
+  <td class="en"><div class="li">• <code>sheriff guard</code>: checks an agent's edit before it is made, and refuses an edit that the SpecSheriff guidelines forbid (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff guard</code> — оценивает правку агента до того, как она сделана, и отвергает правку, которую запрещают SpecSheriff guidelines (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-4kd2pave7vm4hmd">How each check is made</span></td>
+</tr>
+<tr class="part" id="part-5" data-cites="s-4kd2pave7vm4hmd">
+  <td class="en"><div class="li">• <code>sheriff commit-message</code>: checks a commit's message against the code that the commit changes (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff commit-message</code> — проверяет сообщение коммита по коду, который коммит меняет (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию. Было имя <code>sheriff message</code>; по вашему решению команда называется <code>sheriff commit-message</code>, чтобы имя говорило, что она делает.</td>
+  <td class="links"><span class="cite" data-sid="s-4kd2pave7vm4hmd">How each check is made</span></td>
+</tr>
+<tr class="part" id="part-6" data-cites="s-4kd2pave7vm4hmd">
+  <td class="en"><div class="li">• <code>sheriff review</code>: asks the independent reviewer for its verdict on a commit (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff review</code> — запрашивает вердикт независимого рецензента по коммиту (<span class="cite" data-sid="s-4kd2pave7vm4hmd" title="How each check is made">§tools 7</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-4kd2pave7vm4hmd">How each check is made</span></td>
+</tr>
+<tr class="part" id="part-7" data-cites="s-7unxytshhc4md54">
+  <td class="en"><div class="li">• <code>sheriff init</code>: sets a repository up for SpecSheriff (<span class="cite" data-sid="s-7unxytshhc4md54" title="Setting a repository up and taking SpecSheriff out of it">§tools 3</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff init</code> — готовит репозиторий к работе по SpecSheriff (<span class="cite" data-sid="s-7unxytshhc4md54" title="Setting a repository up and taking SpecSheriff out of it">§tools 3</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-7unxytshhc4md54">Setting a repository up and taking SpecSheriff out of it</span></td>
+</tr>
+<tr class="part" id="part-8" data-cites="s-7unxytshhc4md54">
+  <td class="en"><div class="li">• <code>sheriff remove</code>: removes SpecSheriff from a repository and leaves the repository's specification as it is (<span class="cite" data-sid="s-7unxytshhc4md54" title="Setting a repository up and taking SpecSheriff out of it">§tools 3</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff remove</code> — убирает SpecSheriff из репозитория и оставляет его спецификацию как есть (<span class="cite" data-sid="s-7unxytshhc4md54" title="Setting a repository up and taking SpecSheriff out of it">§tools 3</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-7unxytshhc4md54">Setting a repository up and taking SpecSheriff out of it</span></td>
+</tr>
+<tr class="part" id="part-9" data-cites="s-v4qus7raqnwzneb">
+  <td class="en"><div class="li">• <code>sheriff approve</code>: records an owner's approval of a node, or the withdrawal of that approval (<span class="cite" data-sid="s-v4qus7raqnwzneb" title="How an approval is recorded">§tools 11</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff approve</code> — записывает одобрение узла ответственным или отзыв этого одобрения (<span class="cite" data-sid="s-v4qus7raqnwzneb" title="How an approval is recorded">§tools 11</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-v4qus7raqnwzneb">How an approval is recorded</span></td>
+</tr>
+<tr class="part" id="part-10" data-cites="s-ztseyetus7np6br s-gb8s9657a65hqmv s-w5wg69pvvhedsws">
+  <td class="en"><div class="li">• <code>sheriff reindex</code>: writes into the specification what the SpecSheriff tools compute from it, and rewrites in its own form what an earlier release wrote (<span class="cite" data-sid="s-ztseyetus7np6br" title="What `sheriff reindex` writes">§tools 2.2 (new)</span>, <span class="cite" data-sid="s-gb8s9657a65hqmv" title="What `sheriff reindex` changes in what an earlier release wrote">§tools 2.3 (new)</span>, <span class="cite" data-sid="s-w5wg69pvvhedsws" title="Keys written more than once">§tools 2.4 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff reindex</code> — записывает в спецификацию то, что инструменты SpecSheriff по ней вычисляют, и переписывает в своём виде то, что записал прежний выпуск (<span class="cite" data-sid="s-ztseyetus7np6br" title="What `sheriff reindex` writes">§tools 2.2 (new)</span>, <span class="cite" data-sid="s-gb8s9657a65hqmv" title="What `sheriff reindex` changes in what an earlier release wrote">§tools 2.3 (new)</span>, <span class="cite" data-sid="s-w5wg69pvvhedsws" title="Keys written more than once">§tools 2.4 (new)</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-ztseyetus7np6br">What `sheriff reindex` writes</span><span class="cite" data-sid="s-gb8s9657a65hqmv">What `sheriff reindex` changes in what an earlier release wrote</span><span class="cite" data-sid="s-w5wg69pvvhedsws">Keys written more than once</span></td>
+</tr>
+<tr class="part" id="part-11" data-cites="s-a8fn72xa782wvbk">
+  <td class="en"><div class="li">• <code>sheriff types</code>: generates parts of the system's code from the approved wordings of the nodes, for example the types and RuntimeChecks for the RecordTypes (<span class="cite" data-sid="s-a8fn72xa782wvbk" title="What `sheriff types` generates">§tools 2.5 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff types</code> — порождает части кода системы из одобренных формулировок узлов, например типы и RuntimeChecks для RecordType (<span class="cite" data-sid="s-a8fn72xa782wvbk" title="What `sheriff types` generates">§tools 2.5 (new)</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-a8fn72xa782wvbk">What `sheriff types` generates</span></td>
+</tr>
+<tr class="part" id="part-12" data-cites="s-w6gybeqn2ttydqx">
+  <td class="en"><div class="li">• <code>sheriff json</code>: prints as JSON the model of the specification, which a project's own check or generator reads (<span class="cite" data-sid="s-w6gybeqn2ttydqx" title="The model of the specification">§tools 2.6 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff json</code> — печатает в JSON модель спецификации, которую читает собственная проверка или генератор проекта (<span class="cite" data-sid="s-w6gybeqn2ttydqx" title="The model of the specification">§tools 2.6 (new)</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию. Было имя <code>sheriff model</code>; по вашему решению команда называется <code>sheriff json</code>, чтобы имя говорило, что она делает.</td>
+  <td class="links"><span class="cite" data-sid="s-w6gybeqn2ttydqx">The model of the specification</span></td>
+</tr>
+<tr class="part" id="part-13" data-cites="s-fprt8xysafzjqv9">
+  <td class="en"><div class="li">• <code>sheriff todos</code>: prints every todo of the specification together with its node (<span class="cite" data-sid="s-fprt8xysafzjqv9" title="The list of the todos">§tools 2.7 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff todos</code> — печатает каждый todo из спецификации вместе с её узлом (<span class="cite" data-sid="s-fprt8xysafzjqv9" title="The list of the todos">§tools 2.7 (new)</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-fprt8xysafzjqv9">The list of the todos</span></td>
+</tr>
+<tr class="part" id="part-14" data-cites="s-jk8v3srrved7ram">
+  <td class="en"><div class="li">• <code>sheriff guide</code>: prints the guidelines that the project follows, which an agent reads before it works on the specification (<span class="cite" data-sid="s-jk8v3srrved7ram" title="The guidelines that a project follows, printed in one place">§tools 2.8 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff guide</code> — печатает guidelines, которым следует проект; агент читает их, прежде чем работать со спецификацией (<span class="cite" data-sid="s-jk8v3srrved7ram" title="The guidelines that a project follows, printed in one place">§tools 2.8 (new)</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-jk8v3srrved7ram">The guidelines that a project follows, printed in one place</span></td>
+</tr>
+<tr class="part" id="part-15" data-cites="s-chsfpkgpmfk4fft">
+  <td class="en"><div class="li">• <code>sheriff settings</code>: shows and changes the specification's approval status, its <code>strict</code> flag and the extensions of the guidelines that the project has chosen (<span class="cite" data-sid="s-chsfpkgpmfk4fft" title="The settings that only an owner of the specification changes">§tools 2.9 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff settings</code> — показывает и меняет статус одобрения спецификации, её флаг <code>strict</code> и выбранные проектом расширения guidelines (<span class="cite" data-sid="s-chsfpkgpmfk4fft" title="The settings that only an owner of the specification changes">§tools 2.9 (new)</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-chsfpkgpmfk4fft">The settings that only an owner of the specification changes</span></td>
+</tr>
+<tr class="part" id="part-16" data-cites="s-weuyx98r7c923ab">
+  <td class="en"><div class="li">• <code>sheriff untagged</code>: lists the symbols of the system's code that have no SpecTag, each with its file (<span class="cite" data-sid="s-weuyx98r7c923ab" title="The list of the code that carries no SpecTag">§tools 2.11 (new)</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff untagged</code> — перечисляет символы кода системы, у которых нет SpecTag, каждый с его файлом (<span class="cite" data-sid="s-weuyx98r7c923ab" title="The list of the code that carries no SpecTag">§tools 2.11 (new)</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-weuyx98r7c923ab">The list of the code that carries no SpecTag</span></td>
+</tr>
+<tr class="part" id="part-17" data-cites="s-k4nqjr96ux7a5m7">
+  <td class="en"><div class="li">• <code>sheriff show</code>: prints one node, found by its sid or its location (<span class="cite" data-sid="s-k4nqjr96ux7a5m7" title="What the export, the guide and `sheriff show` write of a node">§tools 5</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff show</code> — печатает один узел, найденный по его sid или по расположению (<span class="cite" data-sid="s-k4nqjr96ux7a5m7" title="What the export, the guide and `sheriff show` write of a node">§tools 5</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию.</td>
+  <td class="links"><span class="cite" data-sid="s-k4nqjr96ux7a5m7">What the export, the guide and `sheriff show` write of a node</span></td>
+</tr>
+<tr class="part" id="part-18" data-cites="s-k4nqjr96ux7a5m7">
+  <td class="en"><div class="li">• <code>sheriff markdown</code>: writes a human-readable export of the specification as Markdown (<span class="cite" data-sid="s-k4nqjr96ux7a5m7" title="What the export, the guide and `sheriff show` write of a node">§tools 5</span>);</div></td>
+  <td class="ru"><div class="li">• <code>sheriff markdown</code> — пишет читаемый экспорт спецификации в Markdown (<span class="cite" data-sid="s-k4nqjr96ux7a5m7" title="What the export, the guide and `sheriff show` write of a node">§tools 5</span>);</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию. Было имя <code>sheriff export</code>; по вашему решению команда называется <code>sheriff markdown</code>, чтобы имя говорило, что она делает.</td>
+  <td class="links"><span class="cite" data-sid="s-k4nqjr96ux7a5m7">What the export, the guide and `sheriff show` write of a node</span></td>
+</tr>
+<tr class="part" id="part-19" data-cites="s-rpv4fkdqqguptqd">
+  <td class="en"><div class="li">• <code>sheriff map</code>: writes a map of the specification's structure (<span class="cite" data-sid="s-rpv4fkdqqguptqd" title="Building the map">§tools 4</span>).</div></td>
+  <td class="ru"><div class="li">• <code>sheriff map</code> — пишет карту структуры спецификации (<span class="cite" data-sid="s-rpv4fkdqqguptqd" title="Building the map">§tools 4</span>).</div></td>
+  <td class="change">Новое: назначение команды одним предложением, по вашему замечанию. Было имя <code>sheriff render</code>; по вашему решению команда называется <code>sheriff map</code>, чтобы имя говорило, что она делает.</td>
+  <td class="links"><span class="cite" data-sid="s-rpv4fkdqqguptqd">Building the map</span></td>
+</tr>
+<tr class="part" id="part-20" data-cites="">
+  <td class="en"><p><code>sheriff</code> with no command prints the list of the commands. <code>sheriff --version</code> prints the version number of the SpecSheriff tools. <code>sheriff</code> with any other word in place of a command reports that word as unknown, prints the list of the commands and exits with code 2.</p></td>
+  <td class="ru"><p><code>sheriff</code> без команды печатает перечень команд. <code>sheriff --version</code> печатает номер версии инструментов SpecSheriff. <code>sheriff</code> с любым другим словом вместо команды сообщает, что такого слова не знает, печатает перечень команд и завершается с кодом 2.</p></td>
+  <td class="change">Новое в тексте: код уже так поступает, и три теста узла это проверяют.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>Всё о <code>sheriff reindex</code>, <code>sheriff types</code>, <code>sheriff model</code> (теперь <code>sheriff json</code>), <code>sheriff todos</code> и <code>sheriff guide</code>: это теперь узлы этого раздела.</li>
+<li>Добавление правила, одобряющего спецификацию, в <code>project.json</code>: по согласованному правилу 10.6 статус одобрения спецификации хранят записи в <code>sheriff.config.json</code>.</li>
+<li>Что экспорт пишет по файлу на каждый файл спецификации: это перейдёт в узел <span class="cite" data-sid="s-k4nqjr96ux7a5m7" title="What the export, the guide and `sheriff show` write of a node">§tools 5</span>, который описывает экспорт.</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-a4rbry4hsu34hy8"><span class="loc">реализует · 2.1</span> <b>The guidelines and the appendix of the tools</b><br><span class="rut">Guidelines и описание инструментов</span><br><span class="meta">guidelines · s-a4rbry4hsu34hy8</span></li>
+<li class="node" data-sid="s-4kd2pave7vm4hmd"><span class="loc">ссылается · tools 7</span> <b>How each check is made</b><br><span class="meta">appendix of the tools · s-4kd2pave7vm4hmd</span></li>
+<li class="node" data-sid="s-7unxytshhc4md54"><span class="loc">ссылается · tools 3</span> <b>Setting a repository up and taking SpecSheriff out of it</b><br><span class="meta">appendix of the tools · s-7unxytshhc4md54</span></li>
+<li class="node" data-sid="s-v4qus7raqnwzneb"><span class="loc">ссылается · tools 11</span> <b>How an approval is recorded</b><br><span class="meta">appendix of the tools · s-v4qus7raqnwzneb</span></li>
+<li class="node" data-sid="s-ztseyetus7np6br"><span class="loc">ссылается · tools 2.2 (new)</span> <b>What `sheriff reindex` writes</b><br><span class="rut">Что пишет `sheriff reindex`</span><br><span class="meta">draft of the appendix of the tools · s-ztseyetus7np6br</span></li>
+<li class="node" data-sid="s-gb8s9657a65hqmv"><span class="loc">ссылается · tools 2.3 (new)</span> <b>What `sheriff reindex` changes in what an earlier release wrote</b><br><span class="rut">Что `sheriff reindex` меняет в записанном прежним выпуском</span><br><span class="meta">draft of the appendix of the tools · s-gb8s9657a65hqmv</span></li>
+<li class="node" data-sid="s-w5wg69pvvhedsws"><span class="loc">ссылается · tools 2.4 (new)</span> <b>Keys written more than once</b><br><span class="rut">Ключи, записанные больше одного раза</span><br><span class="meta">draft of the appendix of the tools · s-w5wg69pvvhedsws</span></li>
+<li class="node" data-sid="s-a8fn72xa782wvbk"><span class="loc">ссылается · tools 2.5 (new)</span> <b>What `sheriff types` generates</b><br><span class="rut">Что порождает `sheriff types`</span><br><span class="meta">draft of the appendix of the tools · s-a8fn72xa782wvbk</span></li>
+<li class="node" data-sid="s-w6gybeqn2ttydqx"><span class="loc">ссылается · tools 2.6 (new)</span> <b>The model of the specification</b><br><span class="rut">Модель спецификации</span><br><span class="meta">draft of the appendix of the tools · s-w6gybeqn2ttydqx</span></li>
+<li class="node" data-sid="s-fprt8xysafzjqv9"><span class="loc">ссылается · tools 2.7 (new)</span> <b>The list of the todos</b><br><span class="rut">Перечень todo</span><br><span class="meta">draft of the appendix of the tools · s-fprt8xysafzjqv9</span></li>
+<li class="node" data-sid="s-jk8v3srrved7ram"><span class="loc">ссылается · tools 2.8 (new)</span> <b>The guidelines that a project follows, printed in one place</b><br><span class="rut">Guidelines, которым следует проект, напечатанные в одном месте</span><br><span class="meta">draft of the appendix of the tools · s-jk8v3srrved7ram</span></li>
+<li class="node" data-sid="s-chsfpkgpmfk4fft"><span class="loc">ссылается · tools 2.9 (new)</span> <b>The settings that only an owner of the specification changes</b><br><span class="rut">Настройки, которые меняет только ответственный за спецификацию</span><br><span class="meta">draft of the appendix of the tools · s-chsfpkgpmfk4fft</span></li>
+<li class="node" data-sid="s-k4nqjr96ux7a5m7"><span class="loc">ссылается · tools 5</span> <b>What the export, the guide and `sheriff show` write of a node</b><br><span class="meta">appendix of the tools · s-k4nqjr96ux7a5m7</span></li>
+<li class="node" data-sid="s-rpv4fkdqqguptqd"><span class="loc">ссылается · tools 4</span> <b>Building the map</b><br><span class="meta">appendix of the tools · s-rpv4fkdqqguptqd</span></li>
+<li class="node" data-sid="s-weuyx98r7c923ab"><span class="loc">ссылается · tools 2.11 (new)</span> <b>The list of the code that carries no SpecTag</b><br><span class="rut">Перечень кода без SpecTag</span><br><span class="meta">draft of the appendix of the tools · s-weuyx98r7c923ab</span></li>
+</ul>
+
+<h2>Тесты, привязанные к узлу сейчас</h2>
+<ul class="plain">
+<li><code>an unknown command is refused, naming it</code><br><span class="meta">skills/tools/test/e2e/cli.test.ts</span></li>
+<li><code>sheriff --version prints the version of the SpecSheriff tools</code><br><span class="meta">skills/tools/test/e2e/cli.test.ts</span></li>
+<li><code>sheriff with no command lists the commands</code><br><span class="meta">skills/tools/test/e2e/cli.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка</h2>
+<p class="hint">Пока вы не согласились с предложением, текстом узла остаётся одобренная формулировка.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the rules of §s-4kd2pave7vm4hmd describe them.
+
+`sheriff init` sets a repository up for the SpecSheriff tools (§s-7unxytshhc4md54). `sheriff remove` takes SpecSheriff out of it (§s-7unxytshhc4md54).
+
+`sheriff reindex` is run after every change to the specification. It does the following:
+
+- it gives a sid to every node that has none;
+- it computes every node's location from where it is;
+- it empties every incoming list and rebuilds it from the outgoing ones;
+- it rebuilds the index in every domain's header from the domain's sections;
+- beside each field of type `one of`, it writes the values gathered for it from elsewhere in the specification, each with the sid of the node it comes from (§s-ju5vcanbjph7mgh);
+- it makes a draft each approved node whose latest line for it and its wording's fingerprint is not an approval. It leaves out of this a section, a domain's header and the SpecSheriff guidelines the project takes.
+
+It then writes the status of each section and domain's header from the nodes under it (§s-9kfdycuq34beqvs).
+
+`sheriff reindex` adds the rule `sheriff init` writes, as a draft, at every run where `project.json` holds no rule refining §s-qzthyh7yqvfhsa2 (§s-7unxytshhc4md54).
+
+Before anything else, `sheriff reindex` renames each key and value an earlier release of the SpecSheriff tools wrote under another name. In every file of the specification and of its archive, it renames:
+
+- the key `id` to `location`;
+- the key `rationale` to `reason`;
+- the NodeKinds `record` and `recordType` to `RecordType`;
+- the NodeKind `rule` to `TextRule`;
+- the NodeKind `domain` to `header`;
+- a node's status `""` to `draft`;
+- a node's status `checked` to `approved`;
+- the key `owner` of a domain's header or a section, holding an email, to `owners`, holding a list holding that email.
+
+A renamed key keeps its place among the node's keys. `sheriff reindex` renames those NodeKinds also where a field's values are the sids of a NodeKind's nodes, and where the project's extension of the schema adds properties to a NodeKind.
+
+A field of type `one of` whose own list an earlier release wrote empty takes the values the domains add as its source instead. Under that release, the empty list stood for those values.
+
+`sheriff reindex` also renames `specs/_confirmations.jsonl` to `specs/_approvals.jsonl`. In each line of that file, it renames the key `owner` to `by`. Where `specs/_approvals.jsonl` already stands, it appends those lines to it and removes the old file.
+
+Then, in every file it rewrites, `sheriff reindex` merges the values an object holds under one key, each into those written before it:
+
+- two lists into one, holding the members of the first and then those of the second that the first does not hold;
+- two objects key by key in the same way, each key where it was first written;
+- two values JSON Schema holds equal into one.
+
+It names every key it merged, with the file and each value's line. It refuses any other two values under one key, naming the file, the key and each one's line and value. It then writes no file.
+
+`sheriff reindex` also rewrites each test that names its node by a bare sid, the form an earlier release of the SpecSheriff tools read. A bare sid is a word of the form of a sid that stands in one of these places:
+
+- it opens the test's name, followed by a space or the name's end;
+- it stands alone as the argument of the test's mark.
+
+In the files the settings name as the tests of the system's code or of a project's own check or generator, `sheriff reindex` puts `@spec ` before that sid. Each node's `meta.tests` then names the test by its new name. `sheriff reindex` names each file it rewrites.
+
+`sheriff approve` records an approval or its withdrawal (§s-v4qus7raqnwzneb).
+
+`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).
+
+`sheriff guide` prints the following:
+
+- every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says;
+- the figures counted off the model as it prints: how many nodes each part holds and how many of them are approved;
+- whether the specification is approved.
+
+`sheriff show` prints a node, found by its sid or its location, as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff model` prints as JSON the model of the specification where it runs. The model holds every node as its file holds it, with its location, the part and the file it stands in, and the owners named nearest above it. A project's own check or generator is handed the model on its standard input (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze).
+
+`sheriff todos` prints, as text, every item of `meta.todos` in the specification where it runs, the archive left out, and the SpecSheriff guidelines too where the project takes them. The items come the newest first, and those of one day in the order the specification reads. Each item comes with its date, who its author is, what is to be done, and the sid, location and title of its node (§s-t28j22vbdmmeqnh).
+
+`sheriff types` generates the following:
+
+- from the RecordTypes, the types and the RuntimeChecks of the system's code, where the technical appendix says they stand;
+- the files each generator the project's own guidelines add prints.
+
+A project's generator is run by the command the settings name for it, and is handed what `sheriff model` prints on its standard input. It prints as JSON each file's path, its content and the sids of the nodes the file is written from (§s-km4x4s26kv7pjze).
+
+`sheriff types` writes a file only where the file is missing or holds, line endings aside, anything other than what it generates. It names each file it writes.
+
+`sheriff types` names each refusal and writes no file where one of the following holds:
+
+- the check of generated copies refuses the list of the files it generates, or a RecordType (§s-dbk2vyeg8z5jxna);
+- a project's generator ends with an exit code other than zero.
+
+`sheriff types` writes a file only once every node that file is generated from is approved. It names each node it waits for:
+
+- the types and RuntimeChecks wait for every RecordType;
+- a file a project's generator prints waits for the nodes it is written from and for the rule listing that generator.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

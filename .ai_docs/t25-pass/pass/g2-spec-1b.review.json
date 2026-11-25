@@ -1,0 +1,28 @@
+{
+  "s-a4rbry4hsu34hy8": { "verdict": "same", "issues": [] },
+  "s-bsya3febm6u64ab": { "verdict": "same", "issues": [] },
+  "s-vsh384ybt4w25a2": { "verdict": "same", "issues": [] },
+  "s-e877bnfa559tvk9": { "verdict": "same", "issues": [] },
+  "s-adhmw4gw6y82f44": { "verdict": "same", "issues": [] },
+  "s-z3dnru6qqdf9m6j": { "verdict": "same", "issues": [] },
+  "s-xfu2gpzddjnmgks": { "verdict": "same", "issues": [] },
+  "s-96df5fcfqsvex9d": { "verdict": "same", "issues": [] },
+  "s-gzfq3x8hesj227e": { "verdict": "same", "issues": [] },
+  "s-gqavjzcmubg5pvk": { "verdict": "same", "issues": [] },
+  "s-mt6auv3jz8m5gzh": { "verdict": "same", "issues": [] },
+  "s-xfwuvd3funutmsw": { "verdict": "same", "issues": [] },
+  "s-ju5vcanbjph7mgh": { "verdict": "same", "issues": [] },
+  "s-7vm323mhry2enx3": { "verdict": "same", "issues": [] },
+  "s-h6h25ctd3yryudh": { "verdict": "same", "issues": [] },
+  "s-k73czmpkazcx7mu": { "verdict": "same", "issues": [] },
+  "s-ce9wbaut6edfuy8": {
+    "verdict": "changed",
+    "issues": [
+      "Reason, first sentence. The input says \"Two definitions of one entity are two owners of it, and two owners change it apart\": each definition is itself an owner of the entity, so a duplicate definition makes a second owner. The output says \"Two definitions of one entity are held by two parties, and the two change it apart\". Three things move. First, what changes the entity apart is no longer the definitions but \"two parties\" who hold them, actors the input does not name. Second, the ground \"a duplicate makes a second owner\" becomes a presupposition that two holders already exist, which is false where one domain writes both definitions. Third, \"held\" is the method's own word for what is checked. A rewording without \"owner\" that keeps the definitions as the subject: \"Two definitions of one entity are two places that each answer for it, and the two are changed apart.\""
+    ]
+  },
+  "s-yggv9myedprnaa7": { "verdict": "same", "issues": [] },
+  "s-5yvpn4zhuqmv5bq": { "verdict": "same", "issues": [] },
+  "s-nkyty4dy9x2v2a4": { "verdict": "same", "issues": [] },
+  "s-uw9n84edf7cbe9n": { "verdict": "same", "issues": [] }
+}

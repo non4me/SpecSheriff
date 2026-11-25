@@ -1,0 +1,275 @@
+<title>Узел описания инструментов: Как составляется схема спецификации</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Как составляется схема спецификации <span style="color:var(--muted);font-weight:400">· How the schema of the specification is composed</span></h1>
+<div class="sub">tools 7.1.2 · s-xzcw3hv4hmxz7h7 · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Расширения схемы добавляются в заданном порядке, чтобы составленная схема и каждый отказ были одинаковы на любой машине. Расширение добавляет только новые имена, чтобы каждое определение SpecSheriff guidelines и выбранного расширения оставалось таким, каким его определяют SpecSheriff guidelines или выбранное расширение (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>). Собственное расширение проекта добавляется последним, потому что его <code>fields</code> могут задавать условия для типа, который добавляет выбранное расширение. Инструменты останавливаются на отвергнутом расширении, потому что следующие за ним могут опираться на то, что добавило бы оно.</div>
+  <div><div class="label">Reason</div>The extensions of the schema are added in a fixed order, so that the composed schema and every refusal are the same on every machine. An extension adds only new names, so that every definition of the SpecSheriff guidelines and of a chosen extension stays as the SpecSheriff guidelines or the chosen extension define it (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>). The project's own extension is added last, since its <code>fields</code> may set conditions for a kind that a chosen extension adds. The tools stop at a refused extension, since the extensions after it may rely on what it would have added.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое: прежнее обоснование говорило о командах и перешло в новый узел. Это обоснование объясняет порядок, требование нового имени, место расширения проекта и остановку после отказа. Второе и четвёртое предложения теперь без отрицания, по вашему замечанию.</p>
+
+<div class="reason">
+  <div><div class="label">Пример</div>Проект, выбравший расширение guidelines RecordType, объявляет <code>RecordType</code> в <code>kinds</code> своего расширения схемы. Инструменты SpecSheriff отвергают это расширение, потому что схема расширения RecordType уже определяет этот тип узла. Чтобы дать каждому RecordType ещё одно поле, проект объявляет это поле в <code>fields</code>, под ключом <code>RecordType</code>.</div>
+  <div><div class="label">Example</div>A project that has chosen the RecordType extension of the guidelines declares <code>RecordType</code> in the <code>kinds</code> of its own extension of the schema. The SpecSheriff tools refuse that extension, since the schema of the RecordType extension already defines that kind of node. To add a field to every RecordType, the project declares that field in <code>fields</code>, under <code>RecordType</code>.</div>
+</div>
+<p class="hint" style="margin-top:8px">Предложил рецензент. Пример показывает, что расширение проекта не может объявить заново тип узла из выбранного расширения guidelines и как дать такому типу ещё одно поле. Он хранится в <code>examples</code>, отдельно от текста.</p>
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-eferktypcj7njt5">
+  <td class="en"><p>The SpecSheriff tools compose the schema of the specification (<span class="cite" data-sid="s-eferktypcj7njt5" title="The structure of the specification is defined by its machine-readable schema">§5.1</span>). They start from the schema of the SpecSheriff guidelines and add the following extensions of the schema to the composed schema one at a time, in this order:</p></td>
+  <td class="ru"><p>Инструменты SpecSheriff составляют схему спецификации (<span class="cite" data-sid="s-eferktypcj7njt5" title="The structure of the specification is defined by its machine-readable schema">§5.1</span>). Они начинают со схемы SpecSheriff guidelines и добавляют к составляемой схеме по одному следующие расширения схемы в таком порядке:</p></td>
+  <td class="change">Было: «<code>sheriff validate</code> проверяет каждый файл валидатором JSON Schema по базовой схеме SpecSheriff guidelines, составленной с расширением проекта». Теперь этот узел говорит только о том, как составляется схема. Когда команды проверяют по ней файлы, говорит новый узел, который идёт сразу после этого.</td>
+  <td class="links"><span class="cite" data-sid="s-eferktypcj7njt5">The structure of the specification is defined by its machine-readable schema</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-mbmnsnxenmavu3z s-9ttvcwpqkehm58g">
+  <td class="en"><div class="li">• the schema of each extension of the guidelines (<span class="cite" data-sid="s-mbmnsnxenmavu3z" title="What an extension of the guidelines is">§1.7.1</span>) that the project has chosen (<span class="cite" data-sid="s-9ttvcwpqkehm58g" title="Configuring extensions">§1.7.5</span>), if that extension has a schema, in the bytewise order of the extensions' names;</div></td>
+  <td class="ru"><div class="li">• схему каждого расширения guidelines (<span class="cite" data-sid="s-mbmnsnxenmavu3z" title="What an extension of the guidelines is">§1.7.1</span>), которое выбрал проект (<span class="cite" data-sid="s-9ttvcwpqkehm58g" title="Configuring extensions">§1.7.5</span>), если у этого расширения есть схема, в побайтовом порядке имён расширений;</div></td>
+  <td class="change">Новое: правило 5.1 добавляет схему каждого выбранного расширения guidelines. Сейчас схема есть у расширений Domains и RecordType, у расширения Views её нет. Порядок задан, чтобы схема и каждый отказ были одинаковы на любой машине. Порядок имён, а не записей в <code>sheriff.config.json</code>, потому что там может быть по записи на каждый выбор и каждый отказ от расширения.</td>
+  <td class="links"><span class="cite" data-sid="s-mbmnsnxenmavu3z">What an extension of the guidelines is</span><span class="cite" data-sid="s-9ttvcwpqkehm58g">Configuring extensions</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-xm8rz4uupb73gu5">
+  <td class="en"><div class="li">• the project's own extension of the schema (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>), if the project has one.</div></td>
+  <td class="ru"><div class="li">• собственное расширение схемы проекта (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>), если оно у проекта есть.</div></td>
+  <td class="change">Как было; теперь сказано, что оно добавляется последним.</td>
+  <td class="links"><span class="cite" data-sid="s-xm8rz4uupb73gu5">How a project may extend the schema</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="">
+  <td class="en"><p>Each extension of the schema adds:</p></td>
+  <td class="ru"><p>Каждое расширение схемы добавляет:</p></td>
+  <td class="change">Было: «То, что добавляет расширение, присоединяется к базовой схеме».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-4" data-cites="">
+  <td class="en"><div class="li">• each of its kinds of node to the kinds that a node may have, together with the conditions in that kind's <code>schema</code>;</div></td>
+  <td class="ru"><div class="li">• каждый свой тип узла — к типам, которые может иметь узел, вместе с условиями из <code>schema</code> этого типа;</div></td>
+  <td class="change">Было: «его NodeKinds присоединяются к NodeKinds, которые может иметь узел».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-5" data-cites="">
+  <td class="en"><div class="li">• the conditions that its <code>fields</code> set for a kind of node to the conditions on every node of that kind;</div></td>
+  <td class="ru"><div class="li">• условия, которые его <code>fields</code> задают для типа узла, — к условиям для каждого узла этого типа;</div></td>
+  <td class="change">Было: «его условия присоединяются к тем, которым подчиняется каждый узел». Теперь сказано, что условие из <code>fields</code> действует для узлов одного типа, как и делает код.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-6" data-cites="s-sn6au3vcr9uy5pm">
+  <td class="en"><div class="li">• each of its types of link to the types that a link may have (<span class="cite" data-sid="s-sn6au3vcr9uy5pm" title="What a link is">§6.1</span>);</div></td>
+  <td class="ru"><div class="li">• каждый свой тип связи — к типам, которые может иметь связь (<span class="cite" data-sid="s-sn6au3vcr9uy5pm" title="What a link is">§6.1</span>);</div></td>
+  <td class="change">Новое: по правилу 6.1 расширение guidelines или собственные guidelines проекта могут определить свои типы связей. Так расширение Domains добавляет связь <code>consumes</code>.</td>
+  <td class="links"><span class="cite" data-sid="s-sn6au3vcr9uy5pm">What a link is</span></td>
+</tr>
+<tr class="part" id="part-7" data-cites="">
+  <td class="en"><div class="li">• each of its definitions to those of <code>node.schema.json</code>, so that a reference <code>#/$defs/&lt;name&gt;</code> in any extension of the schema resolves to that definition;</div></td>
+  <td class="ru"><div class="li">• каждое своё определение — к определениям <code>node.schema.json</code>, так что ссылка <code>#/$defs/&lt;name&gt;</code> из любого расширения схемы указывает на это определение;</div></td>
+  <td class="change">Новое: расширение может добавить определения, на которые ссылаются его типы узлов и другие расширения.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-8" data-cites="">
+  <td class="en"><div class="li">• the properties that it defines for a file, to those that a file of a part of the specification may hold;</div></td>
+  <td class="ru"><div class="li">• свойства, которые оно задаёт для файла, — к свойствам, которые может иметь файл части спецификации;</div></td>
+  <td class="change">Было: «его свойства файла и связи присоединяются к тем, которые могут иметь файл и связь».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-9" data-cites="">
+  <td class="en"><div class="li">• the properties that it defines for a link, to those that a link may hold.</div></td>
+  <td class="ru"><div class="li">• свойства, которые оно задаёт для связи, — к свойствам, которые может иметь связь.</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-10" data-cites="s-5fewsp22mmdz7y6">
+  <td class="en"><p>The conditions set for a kind of node apply to every node of that kind, including a node in a cell of a <code>TableRule</code> (<span class="cite" data-sid="s-5fewsp22mmdz7y6" title="A rule may be a table">§8.6</span>).</p></td>
+  <td class="ru"><p>Условия, заданные для типа узла, действуют для каждого узла этого типа, в том числе для узла в ячейке <code>TableRule</code> (<span class="cite" data-sid="s-5fewsp22mmdz7y6" title="A rule may be a table">§8.6</span>).</p></td>
+  <td class="change">Новое: сейчас код добавляет эти условия только к узлу части спецификации, и узел в ячейке их обходит.</td>
+  <td class="links"><span class="cite" data-sid="s-5fewsp22mmdz7y6">A rule may be a table</span></td>
+</tr>
+<tr class="part" id="part-11" data-cites="">
+  <td class="en"><p>The tools accept an extension of the schema only if, when that extension is added:</p></td>
+  <td class="ru"><p>Инструменты принимают расширение схемы, только если в момент его добавления:</p></td>
+  <td class="change">Было: «Сначала расширение проверяется по схеме расширения. Эта схема позволяет расширению добавлять только NodeKinds, свойства существующего NodeKind и свойства файла или связи». Теперь перечислено, что нужно, чтобы расширение приняли: расширение, принятое по ошибке, никто бы не заметил.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-12" data-cites="">
+  <td class="en"><div class="li">• it is valid JSON;</div></td>
+  <td class="ru"><div class="li">• оно является допустимым JSON;</div></td>
+  <td class="change">Новое в тексте: код уже отвергает расширение, которое не является JSON, и тест это проверяет.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-13" data-cites="s-zefk589ykh37b8u">
+  <td class="en"><div class="li">• it conforms to <code>extension.schema.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>);</div></td>
+  <td class="ru"><div class="li">• оно соответствует <code>extension.schema.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>);</div></td>
+  <td class="change">Как было: проверка по схеме расширения.</td>
+  <td class="links"><span class="cite" data-sid="s-zefk589ykh37b8u">Where the files are</span></td>
+</tr>
+<tr class="part" id="part-14" data-cites="">
+  <td class="en"><div class="li">• each kind of node, type of link and definition that it adds has a new name, unique in the schema;</div></td>
+  <td class="ru"><div class="li">• у каждого типа узла, типа связи и определения, которые оно добавляет, новое уникальное имя;</div></td>
+  <td class="change">Новое: так ни одно расширение не меняет определение, которое дали SpecSheriff guidelines или расширение, добавленное раньше (правило 5.2). По вашему замечанию — без отрицания: было «имя, которого схема ещё не определяет».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-15" data-cites="">
+  <td class="en"><div class="li">• each property that it adds to a kind of node, a file or a link is new to that kind, that file or that link;</div></td>
+  <td class="ru"><div class="li">• каждое свойство, которое оно добавляет типу узла, файлу или связи, для них новое;</div></td>
+  <td class="change">Сейчас код проверяет только это. Новое: сказано, у какого объекта свойство должно быть новым. По вашему замечанию — без отрицания: было «у них ещё нет».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-16" data-cites="">
+  <td class="en"><div class="li">• each kind of node for which its <code>fields</code> set conditions is one that the schema already defines;</div></td>
+  <td class="ru"><div class="li">• каждый тип узла, для которого его <code>fields</code> задают условия, схема уже определяет;</div></td>
+  <td class="change">Новое: так <code>fields</code> не задаёт условий для типа, которого нет, или для типа из расширения, которое проект не выбрал.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-17" data-cites="">
+  <td class="en"><div class="li">• the schema composed with it is a valid JSON Schema.</div></td>
+  <td class="ru"><div class="li">• схема, составленная вместе с ним, — допустимая JSON Schema.</div></td>
+  <td class="change">Новое в тексте: код уже так поступает, и тест это проверяет.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-18" data-cites="">
+  <td class="en"><p>The tools refuse any other extension of the schema. They stop composing the schema at the first extension that they refuse.</p></td>
+  <td class="ru"><p>Любое другое расширение схемы инструменты отвергают. На первом отвергнутом расширении они прекращают составлять схему.</p></td>
+  <td class="change">Новое: следующее расширение может опираться на то, что добавило бы отвергнутое.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>«валидатором JSON Schema»: проверка по JSON Schema и так делается валидатором.</li>
+<li>«Эта схема позволяет расширению добавлять только NodeKinds, свойства существующего NodeKind и свойства файла или связи.» Что расширение может добавить, теперь говорит список «Каждое расширение схемы добавляет», а допустимую форму расширения задаёт <code>extension.schema.json</code>.</li>
+<li>Абзацы о том, когда <code>sheriff validate</code>, <code>sheriff binding</code> и <code>sheriff reindex</code> проверяют файлы по схеме, что <code>sheriff reindex</code> исключает из проверки и что команды делают при отказе, вместе с их обоснованием. Они перешли в новый узел «Проверка по схеме до работы команды».</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-emrfpzw2d5bgb6x"><span class="loc">реализует · 10.1.2</span> <b>Every file of the specification complies with its JSON Schema</b><br><span class="meta">guidelines · s-emrfpzw2d5bgb6x</span></li>
+<li class="node" data-sid="s-eferktypcj7njt5"><span class="loc">реализует · 5.1</span> <b>The structure of the specification is defined by its machine-readable schema</b><br><span class="rut">Структуру спецификации задаёт её машиночитаемая схема</span><br><span class="meta">guidelines · s-eferktypcj7njt5</span></li>
+<li class="node" data-sid="s-xm8rz4uupb73gu5"><span class="loc">реализует · 5.2</span> <b>How a project may extend the schema</b><br><span class="rut">Как проект может расширить схему</span><br><span class="meta">guidelines · s-xm8rz4uupb73gu5</span></li>
+<li class="node" data-sid="s-mbmnsnxenmavu3z"><span class="loc">ссылается · 1.7.1</span> <b>What an extension of the guidelines is</b><br><span class="rut">Что такое расширение guidelines</span><br><span class="meta">guidelines · s-mbmnsnxenmavu3z</span></li>
+<li class="node" data-sid="s-9ttvcwpqkehm58g"><span class="loc">ссылается · 1.7.5</span> <b>Configuring extensions</b><br><span class="rut">Настройка расширений</span><br><span class="meta">guidelines · s-9ttvcwpqkehm58g</span></li>
+<li class="node" data-sid="s-sn6au3vcr9uy5pm"><span class="loc">ссылается · 6.1</span> <b>What a link is</b><br><span class="rut">Что такое связь</span><br><span class="meta">guidelines · s-sn6au3vcr9uy5pm</span></li>
+<li class="node" data-sid="s-5fewsp22mmdz7y6"><span class="loc">ссылается · 8.6</span> <b>A rule may be a table</b><br><span class="rut">Правило может быть таблицей</span><br><span class="meta">guidelines · s-5fewsp22mmdz7y6</span></li>
+<li class="node" data-sid="s-zefk589ykh37b8u"><span class="loc">ссылается · tools 1</span> <b>Where the files are</b><br><span class="meta">appendix of the tools · s-zefk589ykh37b8u</span></li>
+</ul>
+
+<h2>Тесты, привязанные к узлу сейчас</h2>
+<ul class="plain">
+<li><code>composes a project's extension with the schema: its kinds, the fields it adds to a kind, the properties of a file and of a link</code><br><span class="meta">skills/tools/test/unit/schema.test.ts</span></li>
+<li><code>refuses an extension that does more than add, and then composes nothing</code><br><span class="meta">skills/tools/test/unit/schema.test.ts</span></li>
+<li><code>refuses an extension that is no JSON, or whose kind's schema is no JSON Schema, naming it rather than failing on it</code><br><span class="meta">skills/tools/test/unit/validate.test.ts</span></li>
+<li><code>refuses an extension the schema of an extension refuses, naming it, and takes a project's extension as no copy of the schema</code><br><span class="meta">skills/tools/test/unit/validate.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка</h2>
+<p class="hint">Пока вы не согласились с предложением, текстом узла остаётся одобренная формулировка.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre>`sheriff validate` проверяет каждый файл валидатором JSON Schema по базовой схеме SpecSheriff guidelines, составленной с расширением проекта (§s-eferktypcj7njt5).
+
+Сначала расширение проверяется по схеме расширения. Эта схема позволяет расширению добавлять только NodeKinds, свойства существующего NodeKind и свойства файла или связи.
+
+То, что добавляет расширение, присоединяется к базовой схеме:
+
+- его NodeKinds присоединяются к NodeKinds, которые может иметь узел;
+- его условия присоединяются к тем, которым подчиняется каждый узел;
+- его свойства файла и связи присоединяются к тем, которые могут иметь файл и связь.
+
+`sheriff binding` проверяет каждый файл по той же схеме, прежде чем проверять что-либо.
+
+`sheriff reindex` проверяет каждый файл после того, как объединил каждый ключ, записанный дважды, и изменил то, что записал более ранний выпуск, как говорит §s-f5rz6b7dhxejjts. Он делает это прежде, чем что-либо вычислять. Из этой проверки он исключает только то, что пишет сам:
+
+- связи, указывающие на узел;
+- вне архива — sid, которого у узла нет, каждое расположение, оглавление разделов в заголовке, значения, собранные рядом с полем, и статус раздела и заголовка домена.
+
+Если схема отвергает файл или схема расширения отвергает расширение проекта, каждая из двух команд называет этот файл или расширение и каждый отказ в нём. После этого она больше ничего не проверяет, а `sheriff reindex` не пишет ни одного файла.
+
+Обоснование. Каждая команда написана для того вида файла, который задаёт схема. Только проверка по схеме называет, где файл отступает от этого вида и что там не так. `sheriff reindex` строит каждый файл из всех них, поэтому если записать лишь некоторые, файлы разойдутся друг с другом.
+
+Ключ, записанный дважды, объединяется первым, потому что файл, прочитанный без объединения, хранит только последнее значение. То, что записал более ранний выпуск, изменяется первым, потому что схема отвергает его старые имена. То, что `sheriff reindex` пишет сам, исключается, потому что в узле, написанном вручную, этого нет, пока команда не запущена.</pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate` validates each file with a JSON Schema validator against the base schema of the SpecSheriff guidelines, composed with the project's extension (§s-eferktypcj7njt5).
+
+The extension is validated first, against the schema of an extension. That schema lets an extension add only NodeKinds, properties of an existing NodeKind, and properties of a file or of a link.
+
+What the extension adds joins the base schema:
+
+- its NodeKinds join the NodeKinds a node may have;
+- its conditions join those every node is held to;
+- its properties of a file and of a link join those a file and a link may hold.
+
+`sheriff binding` validates each file against the same schema before it checks anything.
+
+`sheriff reindex` validates each file once it has merged each key written twice and changed what an earlier release wrote, as §s-f5rz6b7dhxejjts says. It does so before it computes anything. It leaves out of that validation only what it writes itself:
+
+- the links pointing at a node;
+- outside the archive, a sid a node lacks, every location, a header's index of its sections, the values gathered beside a field and the status of a section and of a domain's header.
+
+Where the schema refuses a file, or the schema of an extension refuses the project's extension, each of the two commands names that file or the extension and every refusal in it. It then checks nothing more. `sheriff reindex` then writes no file.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

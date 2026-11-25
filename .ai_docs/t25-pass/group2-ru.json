@@ -1,0 +1,446 @@
+{
+  "stage3": {
+    "s-vp24dqydygztqbt": {
+      "en": "review.ts:68-73 (changesCode) and review.ts:306 run the review only on a commit that changes code. It is to run on every commit for which one of the judgements is due: also on a commit whose message holds an `Implementation-Needs-No-Change` trailer (s-7gab4ptjt2khfr5), and on one that adds an approval of a node of the technical appendix with an implements link to a rule of the base specification. review.ts:106-108 leaves out only typeFiles(spec).paths; it is to leave out every file that sheriff types writes, those of the project's own generators included, and review.ts:115-118 is to name only those of them that the commit changes. review.ts:319 is to give each finding as s-68ds99w8wd67aae describes it, and, where the commit leaves the specification a draft, to disregard the findings of the judgement on a statement that a rule's implementation needs no change (the rulings of 2026-11-19 on rule 1.6.1 and of 2026-11-20 on rule 10.2 and row 10.1.43a), and then to refuse the commit only where the verdict lists at least one other finding. The tests at gates.test.ts:227, :240, :256 and :273 are to carry s-vp24dqydygztqbt. At the move, the decisions of 2026-11-05 on judging a symbol whole go to s-rd9nftptjuz6bwv.",
+      "ru": "review.ts:68-73 (changesCode) и review.ts:306 запускают ревью только для коммита, который меняет код. Ревью должно идти при каждом коммите, для которого нужно одно из суждений: и при коммите, сообщение которого содержит trailer `Implementation-Needs-No-Change` (s-7gab4ptjt2khfr5), и при коммите, который добавляет одобрение узла технического приложения со связью implements с правилом базовой спецификации. review.ts:106-108 исключает только typeFiles(spec).paths; исключаться должен каждый файл, который пишет sheriff types, в том числе файлы собственных генераторов проекта, а review.ts:115-118 должен называть только те из них, которые меняет коммит. review.ts:319 должен передавать каждое замечание так, как его описывает s-68ds99w8wd67aae, а если коммит оставляет спецификацию черновиком, — не учитывать замечаний суждения об утверждении, что реализацию правила менять не нужно (решения от 2026-11-19 по правилу 1.6.1 и от 2026-11-20 по правилу 10.2 и строке 10.1.43a), а затем отклонять коммит, только если вердикт перечисляет хотя бы одно другое замечание. Тесты в gates.test.ts:227, :240, :256 и :273 должны получить s-vp24dqydygztqbt. При переносе решения от 2026-11-05 о том, что символ судится целиком, переходят в s-rd9nftptjuz6bwv."
+    },
+    "new:tools-7-3-review-code": {
+      "en": "review.ts:83-90 gives the runner only the changed symbols of files read as code, and gives the changed symbols of the generated type files whole, because binding.ts:62-64 reads those files as code; it is to leave out every file that sheriff types writes. It is to give also each changed file bound as a whole and each changed test, whole, with its file, its lines and its SpecTag; the wording of the rule that a changed test's SpecTag names comes with rule 10.4 as proposed. review.ts:52-65 (SYSTEM_PROMPT) is to name the refusals of this node, the changed test and the text after `@spec none` included, and to call the SpecTag that names no node `@spec none`. The tests at gates.test.ts:384 and :397 are to carry s-rd9nftptjuz6bwv, and the test at :397 is to expect the changed tests in the input.",
+      "ru": "review.ts:83-90 передаёт runner только изменённые символы файлов, которые читаются как код, и передаёт целиком изменённые символы сгенерированных файлов типов, потому что binding.ts:62-64 читает эти файлы как код; исключаться должен каждый файл, который пишет sheriff types. Передаваться должны и каждый изменённый файл, привязанный целиком, и каждый изменённый тест, целиком, с файлом, строками и SpecTag; формулировка правила, которое называет SpecTag изменённого теста, приходит с правилом 10.4 в предложенном виде. review.ts:52-65 (SYSTEM_PROMPT) должен назвать отказы этого узла, включая изменённый тест и текст после `@spec none`, и называть `@spec none` этим именем, а не «SpecTag, который не называет ни одного узла». Тесты в gates.test.ts:384 и :397 должны получить s-rd9nftptjuz6bwv, а тест в :397 должен ожидать во входных данных изменённые тесты."
+    },
+    "new:tools-7-3-review-statement": {
+      "en": "review.ts makes no judgement on such a statement. reviewInput is to give, for each rule that an `Implementation-Needs-No-Change` trailer names, the rule's wording before and after the commit and every test and piece of code bound to the rule, directly or through implements links, whole as the commit leaves them. SYSTEM_PROMPT is to ask for the judgement, and the findings of this judgement are to refuse no commit that leaves the specification a draft (the rulings of 2026-11-19 on rule 1.6.1 and of 2026-11-20 on rule 10.2 and row 10.1.43a). Its tests are written first.",
+      "ru": "review.ts не выносит суждения о таком утверждении. reviewInput должен передавать для каждого правила, которое называет trailer `Implementation-Needs-No-Change`, формулировку правила до коммита и после него и каждый тест и фрагмент кода, привязанные к правилу напрямую или через связи implements, целиком в том виде, в каком их оставляет коммит. SYSTEM_PROMPT должен запрашивать это суждение, а замечания этого суждения не должны отклонять коммит, который оставляет спецификацию черновиком (решения от 2026-11-19 по правилу 1.6.1 и от 2026-11-20 по правилу 10.2 и строке 10.1.43a). Его тесты пишутся первыми."
+    },
+    "new:tools-7-3-review-appendix": {
+      "en": "review.ts makes no judgement on such a node. reviewInput is to find, among the approvals that the commit adds (addedApprovals in approvals.ts), each node of the technical appendix with an implements link to a rule of the base specification, and to give its wording and the rules that s-nyh9yk22ba6g77q lists for it; the top-level section is taken from the location, and a rule in no section takes the other rules of its part that are in no section either. SYSTEM_PROMPT is to ask for the judgement. Its tests are written first. At the move, what a rule in no section takes, which follows from the ruling of 2026-11-20 on rule 10.4, is recorded in this node's meta.decisions.",
+      "ru": "review.ts не выносит суждения о таком узле. reviewInput должен находить среди одобрений, которые добавляет коммит (addedApprovals в approvals.ts), каждый узел технического приложения со связью implements с правилом базовой спецификации и передавать его формулировку и правила, которые перечисляет для него s-nyh9yk22ba6g77q; раздел верхнего уровня берётся из расположения, а правило вне раздела получает другие правила своей части, которые тоже не входят ни в один раздел. SYSTEM_PROMPT должен запрашивать это суждение. Его тесты пишутся первыми. При переносе в meta.decisions этого узла записывается, что получает правило вне раздела: это следует из решения от 2026-11-20 по правилу 10.4."
+    },
+    "new:tools-9-no-change-trailer": {
+      "en": "No code reads such a trailer. message.ts is to read the trailers of a message as git interpret-trailers --parse does, and to compare the key exactly; the judgement on such a statement (s-kgqxg4gunzynwsv) and the check of tests and code that lag behind a rule (s-txbwsthdqhvyzd2, item 37) are to read this one. Its tests are written first.",
+      "ru": "Ни один код не читает такой trailer. message.ts должен читать trailer сообщения так, как это делает git interpret-trailers --parse, и сравнивать ключ в точности; суждение о таком утверждении (s-kgqxg4gunzynwsv) и проверка тестов и кода, которые отстают от правила (s-txbwsthdqhvyzd2, пункт 37), должны читать именно его. Его тесты пишутся первыми."
+    },
+    "s-xr5xxa9cxf2mq5u": {
+      "en": "No change to the code. The tests at codex.test.ts:73 and config.test.ts:45 keep s-xr5xxa9cxf2mq5u; the part of config.test.ts:27 on review.minutes is to carry s-wgedv32rdaqca9k. The owner's todo of 2026-10-27 (other runners) stays on this node; the agent's todo of 2026-11-06 (the tree of processes) moves to s-wgedv32rdaqca9k at the move. The node's decisions go at the move to the nodes they concern: 2026-10-27, 2026-10-31 and 2026-11-02 (the runner codex) stay here; 2026-11-02 (the user's consent to what a run costs) goes to s-tnz9zgqx8c629a7; 2026-11-05 goes to s-avvnasjhsfkgajh and s-68ds99w8wd67aae.",
+      "ru": "Код не меняется. Тесты в codex.test.ts:73 и config.test.ts:45 сохраняют s-xr5xxa9cxf2mq5u; часть config.test.ts:27 о review.minutes должна получить s-wgedv32rdaqca9k. Ваш todo от 2026-10-27 (другие runner) остаётся на этом узле; todo агента от 2026-11-06 (дерево процессов) при переносе переходит в s-wgedv32rdaqca9k. Решения узла при переносе переходят к узлам, которых они касаются: решения от 2026-10-27, 2026-10-31 и 2026-11-02 (runner codex) остаются здесь; решение от 2026-11-02 (согласие пользователя на стоимость прогона) переходит в s-tnz9zgqx8c629a7; решение от 2026-11-05 — в s-avvnasjhsfkgajh и s-68ds99w8wd67aae."
+    },
+    "new:tools-10-verdict": {
+      "en": "review.ts:208-224 (VERDICT_SCHEMA) is to give each finding `nodes`, a list of sids, and `problem`, with `judgement`, the judgement that the finding belongs to (the rulings of 2026-11-19 on rule 1.6.1 and of 2026-11-20 on rule 10.2 and row 10.1.43a), and with `file` and `line` null where the finding concerns no code or no line; Codex's --output-schema requires every property, so each is required and may be null. readVerdict (review.ts:286-302) and the refusal (review.ts:319) follow it. The tests at gates.test.ts:264, :357 and :362 are to carry s-68ds99w8wd67aae.",
+      "ru": "review.ts:208-224 (VERDICT_SCHEMA) должен давать каждому замечанию `nodes`, список sid, и `problem`, а также `judgement` — суждение, к которому относится замечание (решения от 2026-11-19 по правилу 1.6.1 и от 2026-11-20 по правилу 10.2 и строке 10.1.43a), и `file` и `line`, равные null, если замечание не касается кода или строки; --output-schema у Codex требует каждого свойства, поэтому каждое обязательно и может быть null. readVerdict (review.ts:286-302) и отказ (review.ts:319) следуют этой схеме. Тесты в gates.test.ts:264, :357 и :362 должны получить s-68ds99w8wd67aae."
+    },
+    "new:tools-10-start": {
+      "en": "No change to the code beyond the list's valueList (row 10.1.35's todo). The tests at gates.test.ts:371 and :377 are to carry s-avvnasjhsfkgajh. The test written from this node is to show that nothing from what the runner's CLI keeps for the user, other than the credentials, reaches the run; for `claude`, the code passes `--setting-sources \"\"`, `--strict-mcp-config` and `--disable-slash-commands`, and whether those are enough is to be checked by that test.",
+      "ru": "Код не меняется, кроме valueList списка (todo строки 10.1.35). Тесты в gates.test.ts:371 и :377 должны получить s-avvnasjhsfkgajh. Тест, написанный из этого узла, должен показать, что из того, что CLI runner хранит для пользователя, в прогон не попадает ничего, кроме данных входа; для `claude` код передаёт `--setting-sources \"\"`, `--strict-mcp-config` и `--disable-slash-commands`, и хватает ли их, проверит этот тест."
+    },
+    "new:tools-10-limit": {
+      "en": "review.ts:179-191 (runCli) ends only the process that spawnSync started. On Windows an npm-installed Codex CLI starts the native Codex as a child, which outlives the limit (the agent's todo of 2026-11-06 on s-xr5xxa9cxf2mq5u). runCli is to end the whole tree of processes that the runner started; its test is written first and seen failing, and the todo is removed once the test passes.",
+      "ru": "review.ts:179-191 (runCli) завершает только процесс, который запустил spawnSync. В Windows Codex CLI, установленный через npm, запускает настоящий Codex дочерним процессом, и тот продолжает работать после предела времени (todo агента от 2026-11-06 на s-xr5xxa9cxf2mq5u). runCli должен завершать всё дерево процессов, которое запустил runner; его тест пишется первым и сначала падает, а todo удаляется, когда тест проходит."
+    },
+    "new:tools-10-claude": {
+      "en": "No change to the code. The test at gates.test.ts:281 is to carry s-3wh8uhgn9jr2k74.",
+      "ru": "Код не меняется. Тест в gates.test.ts:281 должен получить s-3wh8uhgn9jr2k74."
+    },
+    "new:tools-10-codex": {
+      "en": "No change to the code. The tests at gates.test.ts:293 and :317 are to carry s-u2n5hwwqkb6zk4z.",
+      "ru": "Код не меняется. Тесты в gates.test.ts:293 и :317 должны получить s-u2n5hwwqkb6zk4z."
+    },
+    "new:tools-10-settings": {
+      "en": "review.ts:125-127 and :240 are to pass no flag for an empty setting, where they now pass `--model \"\"`, `--fallback-model \"\"`, `--effort \"\"` and `model_reasoning_effort=''`. The tests at gates.test.ts:169 and :186 are to carry s-tnz9zgqx8c629a7.",
+      "ru": "review.ts:125-127 и :240 не должны передавать флаг для пустой настройки, а сейчас передают `--model \"\"`, `--fallback-model \"\"`, `--effort \"\"` и `model_reasoning_effort=''`. Тесты в gates.test.ts:169 и :186 должны получить s-tnz9zgqx8c629a7."
+    },
+    "s-5z5gnu7pahr82xp": {
+      "en": "code.ts:63 (TAG) accepts any text after `@spec none`, and the reviewer judges whether it says what the technology requires (s-rd9nftptjuz6bwv). A text that opens with `@spec` and has neither form, such as `@spec none` with no text, is to be refused with a message that names the forms (s-9rtrj24myzjvshu). Each SpecTag on code carrying `@spec none` beside another SpecTag is to be refused (s-9rtrj24myzjvshu). binding.ts:136 (coded) and :202 are to accept as a rule a project's own kind only where its `needsCode` is true. At the move, this node's decisions of 2026-09-22, 2026-10-08 and 2026-10-27 go to s-33fw3ga4ctd94dq, and the decision of 2026-10-27 of the former 3.3 is recorded here and in s-zrsc6asgmhv8tnc, as the continuation file says.",
+      "ru": "code.ts:63 (TAG) принимает любой текст после `@spec none`, а рецензент судит, говорит ли он, чего требует технология (s-rd9nftptjuz6bwv). Текст, который начинается с `@spec` и не имеет ни одной из форм, например `@spec none` без текста, должен отвергаться с сообщением, которое называет формы (s-9rtrj24myzjvshu). Каждый SpecTag кода, у которого есть `@spec none` рядом с другим SpecTag, должен отвергаться (s-9rtrj24myzjvshu). binding.ts:136 (coded) и :202 должны принимать собственный тип проекта как правило, только если его `needsCode` истинно. При переносе решения этого узла от 2026-09-22, 2026-10-08 и 2026-10-27 переходят в s-33fw3ga4ctd94dq, а решение от 2026-10-27 прежнего 3.3 записывается здесь и в s-zrsc6asgmhv8tnc, как говорит файл продолжения."
+    },
+    "new:tools-8-symbol": {
+      "en": "code.ts:195-208 applies the SpecTags of the first re-export of a run to the later re-exports that carry none, whatever those SpecTags are; it is to do so only for `@spec none`, as the decision of 2026-10-08 says. The tests at code.test.ts:9-47 are to carry s-33fw3ga4ctd94dq.",
+      "ru": "code.ts:195-208 применяет SpecTag первого реэкспорта ряда к последующим реэкспортам, у которых SpecTag нет, каким бы ни был этот SpecTag; он должен делать это только для `@spec none`, как говорит решение от 2026-10-08. Тесты в code.test.ts:9-47 должны получить s-33fw3ga4ctd94dq."
+    },
+    "new:tools-8-file-start": {
+      "en": "code.ts:122-125 (readCode) reads nothing of a file in a language that no description covers, and binding.ts reads no such file. They are to read the SpecTags at the start of each such file that the glob patterns for code match and whose format allows comments, the first line skipped only where it opens with `#!` or `<?`. The test at code.test.ts:78 is to expect those SpecTags and to carry s-5qdjyf6t898rsd4; the other tests are written first.",
+      "ru": "code.ts:122-125 (readCode) ничего не читает в файле на языке, для которого нет описания, и binding.ts такие файлы не читает. Они должны читать SpecTag в начале каждого такого файла, которому соответствуют glob-шаблоны кода и формат которого допускает комментарии, пропуская первую строку, только если она начинается с `#!` или `<?`. Тест в code.test.ts:78 должен ожидать эти SpecTag и получить s-5qdjyf6t898rsd4; остальные тесты пишутся первыми."
+    },
+    "s-9rtrj24myzjvshu": {
+      "en": "binding.ts:167-184 refuses a top-level symbol without a SpecTag in any commit, and code.ts reports a misplaced SpecTag in any file. It is to refuse only what the commit adds or changes in the system's code or in the bindings file, a SpecTag added outside any symbol included (the owner's rulings of 2026-11-17 on rows 10.1.26 and 10.1.26a): a symbol or a file to be bound as a whole that no SpecTag binds, a misplaced SpecTag, a text opening with `@spec` that has neither form, an entry in the bindings file for a file that is not code other than tests or whose format allows comments, a SpecTag whose node is of no kind listed in s-5z5gnu7pahr82xp, and each SpecTag on code carrying `@spec none` beside another SpecTag. Unchanged code with any of these goes to s-3xx2eukc8gtd2tx. binding.ts:171-173 (the draft report) moves to s-3xx2eukc8gtd2tx, and binding.ts:180 (a draft node on a changed symbol) to row 10.1.28a (s-2x58az67bm6cxq2). The tests at binding.test.ts:23 and :95 are to carry s-9rtrj24myzjvshu; the tests of the new refusals are written first.",
+      "ru": "binding.ts:167-184 отвергает символ верхнего уровня без SpecTag при любом коммите, а code.ts сообщает о SpecTag не на месте в любом файле. Отвергаться должно только то, что коммит добавляет или меняет в коде системы или в файле привязок, включая SpecTag, добавленный не над символом (ваши решения от 2026-11-17 по строкам 10.1.26 и 10.1.26a): символ или файл, который должен быть привязан целиком, но который не привязывает ни один SpecTag; SpecTag не на месте; текст, который начинается с `@spec`, но не имеет ни одной из форм; запись в файле привязок для файла, который не относится к коду помимо тестов или формат которого допускает комментарии; SpecTag, узел которого не относится ни к одному типу из s-5z5gnu7pahr82xp; каждый SpecTag кода, у которого есть `@spec none` рядом с другим SpecTag. Неизменённый код с любым из этого обрабатывает s-3xx2eukc8gtd2tx. binding.ts:171-173 (сообщение в черновике) переходит в s-3xx2eukc8gtd2tx, а binding.ts:180 (узел-черновик на изменённом символе) — в строку 10.1.28a (s-2x58az67bm6cxq2). Тесты в binding.test.ts:23 и :95 должны получить s-9rtrj24myzjvshu; тесты новых отказов пишутся первыми."
+    },
+    "new:tools-7-2-no-node": {
+      "en": "binding.ts:179 and :201 refuse a SpecTag naming no node on code and on tests; the entries of the bindings file are to be read too. The check of citations outside the specification (binding.ts:519-537, s-m8nmfsxkcfu7cjp) also refuses such a sid. It is to leave to this node only the SpecTags in the system's code, its tests and the bindings file, so that one SpecTag is refused once, and it keeps the SpecTags in the repository's own tools (rule 10.10; item 35). The part of binding.test.ts:29 on a SpecTag naming no node is to carry s-36x8amvunmv2kp5; its part on a draft node goes to row 10.1.28a.",
+      "ru": "binding.ts:179 и :201 отвергают SpecTag, который не называет ни одного узла, в коде и в тестах; читаться должны и записи файла привязок. Проверка ссылок вне спецификации (binding.ts:519-537, s-m8nmfsxkcfu7cjp) тоже отвергает такой sid. Она должна оставить этому узлу только SpecTag в коде системы, его тестах и файле привязок, чтобы один SpecTag отвергался один раз, и сохранить за собой SpecTag в собственных инструментах репозитория (правило 10.10; пункт 35). Часть binding.test.ts:29 о SpecTag, который не называет ни одного узла, должна получить s-36x8amvunmv2kp5; её часть об узле-черновике переходит к строке 10.1.28a."
+    },
+    "new:tools-7-2-outside": {
+      "en": "binding.ts:171-173 and :190-197 report each such symbol and test while the specification is a draft and refuse them while it is approved. They are to pass silently while it is a draft, to give one warning for all of them while it is approved and the strict flag is off, naming sheriff untagged (s-weuyx98r7c923ab), and to refuse while the flag is on. By the owner's rulings of 2026-11-17 on rows 10.1.26 and 10.1.26a, the same holds for unchanged code whose SpecTags bind nothing and for an unchanged test whose SpecTag names no rule. The status and the flag are to be read from the entries in sheriff.config.json, not from the rule in project.json (binding.ts:138-162). The tests at binding.test.ts:444 and :574 are rewritten first for this node and carry s-3xx2eukc8gtd2tx.",
+      "ru": "binding.ts:171-173 и :190-197 сообщают о каждом таком символе и тесте, пока спецификация — черновик, и отвергают их, пока она одобрена. Пока спецификация — черновик, они должны пропускать их молча; пока она одобрена и флаг strict выключен, — давать одно предупреждение на все, называя sheriff untagged (s-weuyx98r7c923ab); при включённом флаге — отвергать. По вашим решениям от 2026-11-17 по строкам 10.1.26 и 10.1.26a то же относится к неизменённому коду, SpecTag которого ничего не привязывают, и к неизменённому тесту, SpecTag которого называет не правило. Статус и флаг должны читаться из записей в sheriff.config.json, а не из правила в project.json (binding.ts:138-162). Тесты в binding.test.ts:444 и :574 сначала переписываются для этого узла и получают s-3xx2eukc8gtd2tx."
+    },
+    "proposal:s-weuyx98r7c923ab": {
+      "en": "sheriff untagged does not exist yet (item 6 of the commands). It is to list each symbol, each file to be bound as a whole and each test that no SpecTag binds, as s-3xx2eukc8gtd2tx counts them, whether or not the commit changes them.",
+      "ru": "sheriff untagged ещё не существует (пункт 6 команд). Он должен перечислять каждый символ, каждый файл, который должен быть привязан целиком, и каждый тест, которые не привязывает ни один SpecTag, так, как их считает s-3xx2eukc8gtd2tx, независимо от того, меняет ли их коммит."
+    },
+    "s-zrsc6asgmhv8tnc": {
+      "en": "No change to the code. The tests of the plugin in test_plugin.py carry no SpecTag in their mark; they are to carry s-zrsc6asgmhv8tnc. The decision of 2026-10-27 of the former 3.3 is recorded here at the move.",
+      "ru": "Код не меняется. У тестов плагина в test_plugin.py нет SpecTag в их пометке; они должны получить s-zrsc6asgmhv8tnc. Решение от 2026-10-27 прежнего 3.3 при переносе записывается здесь."
+    },
+    "s-utf4mbt7ref8g9c": {
+      "en": "binding.ts:202 accepts a test naming a term and refuses one naming a TableRule or a RecordType; it is to accept only the kinds listed in s-5z5gnu7pahr82xp, and to refuse only a test that the commit adds or changes (the owner's ruling of 2026-11-17 on row 10.1.26a), leaving an unchanged one to s-3xx2eukc8gtd2tx. binding.ts:42-51 (testLines) and code.ts:277 (onlySpecTagged) are to stop counting a test whose only change puts `@spec ` before a bare sid as unchanged (s-9j2mmnuuwmx5ksn), and binding.test.ts:561 is rewritten first. binding.ts:363-384 (projectToolTests) is removed with binding.test.ts:426, since the ruling of 2026-11-13 on s-sfjka4zc4rhfu67 removed those requirements. binding.ts:190-197 (the draft report) moves to s-3xx2eukc8gtd2tx. The tests at binding.test.ts:101, :253 and :554 and code.test.ts:56 carry s-utf4mbt7ref8g9c, the first two rewritten for the kinds of this node.",
+      "ru": "binding.ts:202 принимает тест, который называет термин, и отвергает тест, который называет TableRule или RecordType; он должен принимать только типы, перечисленные в s-5z5gnu7pahr82xp, и отвергать только тест, который коммит добавляет или меняет (ваше решение от 2026-11-17 по строке 10.1.26a), оставляя неизменённый тест узлу s-3xx2eukc8gtd2tx. binding.ts:42-51 (testLines) и code.ts:277 (onlySpecTagged) должны перестать считать неизменённым тест, единственное изменение которого ставит `@spec ` перед голым sid (s-9j2mmnuuwmx5ksn), и binding.test.ts:561 переписывается первым. binding.ts:363-384 (projectToolTests) удаляется вместе с binding.test.ts:426, потому что решение от 2026-11-13 по s-sfjka4zc4rhfu67 сняло эти требования. binding.ts:190-197 (сообщение в черновике) переходит в s-3xx2eukc8gtd2tx. Тесты в binding.test.ts:101, :253 и :554 и code.test.ts:56 получают s-utf4mbt7ref8g9c, а первые два переписываются для типов этого узла."
+    },
+    "new:tools-7-2-rule-test": {
+      "en": "binding.ts:181 counts a changed symbol's SpecTag only for a TextRule or a project's own kind that needs code (coded). It is to count every kind listed in s-5z5gnu7pahr82xp, files bound as a whole and the entries of the bindings file; binding.ts:210-212 then refuses as now, a skipped test or one expected to fail counting. The test at binding.test.ts:116 is to carry s-8wp7xm7g3u8gscq.",
+      "ru": "binding.ts:181 учитывает SpecTag изменённого символа только для TextRule или собственного типа проекта, которому нужен код (coded). Он должен учитывать каждый тип, перечисленный в s-5z5gnu7pahr82xp, файлы, привязанные целиком, и записи файла привязок; затем binding.ts:210-212 отвергает, как сейчас, засчитывая и пропускаемый тест, и тест, который ожидаемо падает. Тест в binding.test.ts:116 должен получить s-8wp7xm7g3u8gscq."
+    },
+    "new:tools-8-bindings": {
+      "en": "No code reads sheriff.bindings.json. binding.ts, reindex.ts (which builds meta.code from the SpecTags, s-rwqzepmrt77rv35) and message.ts (s-ef93u6cnbs2sevr) are to read its entries as the SpecTags of their files. sheriff binding is to refuse an entry whose path names no file, and a file that is not valid JSON or does not hold an object of this form. Its tests are written first.",
+      "ru": "Ни один код не читает sheriff.bindings.json. binding.ts, reindex.ts (который строит meta.code из SpecTag, s-rwqzepmrt77rv35) и message.ts (s-ef93u6cnbs2sevr) должны читать его записи как SpecTag их файлов. sheriff binding должен отвергать запись, путь которой не называет ни одного файла, и файл, который не является корректным JSON или не содержит объекта такой формы. Его тесты пишутся первыми."
+    }
+  },
+  "removed": {
+    "s-vp24dqydygztqbt": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): each judgement's node implements its row (10.1.43, 10.1.43a, 10.1.25a).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел каждого суждения реализует свою строку (10.1.43, 10.1.43a, 10.1.25a)."
+      },
+      {
+        "en": "The `implements` link to “How code is bound to its rules” (s-kgbzk2ph9e6jfb4) and the citations of “The symbols a commit changes” (s-2x58az67bm6cxq2) and “What is considered the system's code” (s-hheus6f395ynqvc): they moved with the judgement on the code to s-rd9nftptjuz6bwv.",
+        "ru": "Связь `implements` с «How code is bound to its rules» (s-kgbzk2ph9e6jfb4) и ссылки на «The symbols a commit changes» (s-2x58az67bm6cxq2) и «What is considered the system's code» (s-hheus6f395ynqvc): они перешли вместе с суждением о коде в s-rd9nftptjuz6bwv."
+      },
+      {
+        "en": "The citation of “Who runs the reviewer” (s-xr5xxa9cxf2mq5u): the verdict is described by “The reviewer's verdict” (s-68ds99w8wd67aae), in the new section “Who runs the reviewer” (s-v36s7dm8s3yewtr).",
+        "ru": "Ссылка на «Who runs the reviewer» (s-xr5xxa9cxf2mq5u): вердикт описывает «The reviewer's verdict» (s-68ds99w8wd67aae) в новом разделе «Who runs the reviewer» (s-v36s7dm8s3yewtr)."
+      },
+      {
+        "en": "`RecordType.fields` and the values of a project's own NodeKind: the wording that the reviewer is given is now defined by s-nyh9yk22ba6g77q, a RecordType's `schema` included as a field its kind adds.",
+        "ru": "`RecordType.fields` и значения собственного NodeKind проекта: формулировку, которую получает рецензент, теперь определяет s-nyh9yk22ba6g77q, включая `schema` у RecordType как поле, которое добавляет его тип."
+      }
+    ],
+    "s-xr5xxa9cxf2mq5u": [
+      {
+        "en": "The `implements` link to “What the reviewer is given” (s-nyh9yk22ba6g77q): “How a runner is started” (s-avvnasjhsfkgajh) now implements it, since that node keeps the session that made the change from the runner. This node still cites the rule.",
+        "ru": "Связь `implements` с «What the reviewer is given» (s-nyh9yk22ba6g77q): теперь её имеет «How a runner is started» (s-avvnasjhsfkgajh), потому что этот узел отделяет runner от сессии, в которой сделано изменение. Этот узел по-прежнему ссылается на правило."
+      },
+      {
+        "en": "The citation of “What the reviewer is given” (s-nyh9yk22ba6g77q) for an answer that cannot be read: “The reviewer's verdict” (s-68ds99w8wd67aae) implements “A commit whose review cannot be carried out is refused” (s-94k7b6r5kf65udf), which now states it.",
+        "ru": "Ссылка на «What the reviewer is given» (s-nyh9yk22ba6g77q) об ответе, который нельзя прочитать: «The reviewer's verdict» (s-68ds99w8wd67aae) реализует «A commit whose review cannot be carried out is refused» (s-94k7b6r5kf65udf), где это теперь сказано."
+      },
+      {
+        "en": "The citations of “The hooks” (s-477gtdrkw34dzxw) and of the plugins (s-zh2vcr3xjumppg5, s-2pdy9gw2jrjvfb4) for when a setting is asked for: they moved with the settings to “The settings of each runner” (s-tnz9zgqx8c629a7).",
+        "ru": "Ссылки на «The hooks» (s-477gtdrkw34dzxw) и на плагины (s-zh2vcr3xjumppg5, s-2pdy9gw2jrjvfb4) о том, когда спрашивается настройка: они перешли вместе с настройками в «The settings of each runner» (s-tnz9zgqx8c629a7)."
+      },
+      {
+        "en": "The list of the variables of a runner's environment: it moved to “How a runner is started” (s-avvnasjhsfkgajh).",
+        "ru": "Список переменных окружения runner: он перешёл в «How a runner is started» (s-avvnasjhsfkgajh)."
+      }
+    ],
+    "s-5z5gnu7pahr82xp": [
+      {
+        "en": "The `implements` link to “A node's lists of its code and its tests” (s-rwqzepmrt77rv35): it is retargeted to “The SpecTag” (s-8xw4mgvpexyvw5q), which now defines what a SpecTag is, as the continuation file says.",
+        "ru": "Связь `implements` с «A node's lists of its code and its tests» (s-rwqzepmrt77rv35): она перенаправлена на «The SpecTag» (s-8xw4mgvpexyvw5q), который теперь определяет, что такое SpecTag, как говорит файл продолжения."
+      },
+      {
+        "en": "The citation of the main table of checks (s-jau82aq9juv9zzh) and of “How a test declares the node it is written from” (s-zrsc6asgmhv8tnc): the paragraphs that cited them moved to “How a symbol carries its SpecTags” (s-33fw3ga4ctd94dq), and the test's SpecTag is its own node of the new section.",
+        "ru": "Ссылки на основную таблицу проверок (s-jau82aq9juv9zzh) и на «How a test declares the node it is written from» (s-zrsc6asgmhv8tnc): абзацы, которые на них ссылались, перешли в «How a symbol carries its SpecTags» (s-33fw3ga4ctd94dq), а SpecTag теста — отдельный узел нового раздела."
+      },
+      {
+        "en": "How a symbol carries its SpecTags, the parser and the descriptions of the languages: they moved to “How a symbol carries its SpecTags” (s-33fw3ga4ctd94dq).",
+        "ru": "Где у символа стоят его SpecTag, парсер и описания языков: это перешло в «How a symbol carries its SpecTags» (s-33fw3ga4ctd94dq)."
+      }
+    ],
+    "s-9rtrj24myzjvshu": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.26 (s-k6dzuajejrw4cej).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.26 (s-k6dzuajejrw4cej)."
+      },
+      {
+        "en": "The `implements` link to “Code and tests without a SpecTag” (s-kkbqcb9xrpaepwn) and the citation of “From a draft to an approved specification, and back” (s-j9r8z4xdrfkfs47): code outside the commit is now handled by “Code and tests outside the commit that no SpecTag binds” (s-3xx2eukc8gtd2tx).",
+        "ru": "Связь `implements` с «Code and tests without a SpecTag» (s-kkbqcb9xrpaepwn) и ссылка на «From a draft to an approved specification, and back» (s-j9r8z4xdrfkfs47): код за пределами коммита теперь обрабатывает «Code and tests outside the commit that no SpecTag binds» (s-3xx2eukc8gtd2tx)."
+      },
+      {
+        "en": "The `implements` link to “What is considered the system's code” (s-hheus6f395ynqvc): the node relies on that rule and cites it.",
+        "ru": "Связь `implements` с «What is considered the system's code» (s-hheus6f395ynqvc): узел опирается на это правило и ссылается на него."
+      },
+      {
+        "en": "The citation of “How a test declares the node it is written from” (s-zrsc6asgmhv8tnc) and the sentence on the tests: the tests are checked by “The SpecTags the tests carry” (s-utf4mbt7ref8g9c).",
+        "ru": "Ссылка на «How a test declares the node it is written from» (s-zrsc6asgmhv8tnc) и предложение о тестах: тесты проверяет «The SpecTags the tests carry» (s-utf4mbt7ref8g9c)."
+      },
+      {
+        "en": "“The sid of a SpecTag is looked up among the nodes”: it moved to “A SpecTag that names no node” (s-36x8amvunmv2kp5), which implements row 10.1.28.",
+        "ru": "Предложение «sid SpecTag ищется среди узлов»: оно перешло в «A SpecTag that names no node» (s-36x8amvunmv2kp5), который реализует строку 10.1.28."
+      },
+      {
+        "en": "“That of a SpecTag on a changed symbol is looked up among the approved ones”: it is row 10.1.28a (s-wpadgy2budcxa3v), which item 29, “The symbols a commit changes” (s-2x58az67bm6cxq2), takes up for code and tests alike.",
+        "ru": "Предложение «sid SpecTag на изменённом символе ищется среди одобренных»: это строка 10.1.28a (s-wpadgy2budcxa3v), которую пункт 29, «The symbols a commit changes» (s-2x58az67bm6cxq2), берёт на себя и для кода, и для тестов."
+      },
+      {
+        "en": "“The repository's configuration, its own tools and their tests are not the system's code”: rule 9.1 (s-hheus6f395ynqvc) states it, and the agreed node “Project-wide settings” says which files the SpecSheriff tools read for SpecTags.",
+        "ru": "Предложение «Конфигурация репозитория, его собственные инструменты и их тесты не являются кодом системы»: это говорит правило 9.1 (s-hheus6f395ynqvc), а согласованный узел «Project-wide settings» говорит, в каких файлах инструменты SpecSheriff читают SpecTag."
+      }
+    ],
+    "s-zrsc6asgmhv8tnc": [
+      {
+        "en": "The `implements` links to “A node's lists of its code and its tests” (s-rwqzepmrt77rv35) and “The test comes before the code” (s-rah8b37kytb682y): they are retargeted to “A test's reference to its rule” (s-nrjxfvpkq3m8hzm) and “The SpecTag” (s-8xw4mgvpexyvw5q), which now require where a test's reference stands, as the inventory says.",
+        "ru": "Связи `implements` с «A node's lists of its code and its tests» (s-rwqzepmrt77rv35) и «The test comes before the code» (s-rah8b37kytb682y): они перенаправлены на «A test's reference to its rule» (s-nrjxfvpkq3m8hzm) и «The SpecTag» (s-8xw4mgvpexyvw5q), которые теперь требуют, где стоит ссылка теста, как говорит инвентарь."
+      }
+    ],
+    "s-utf4mbt7ref8g9c": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.26a (s-ay6wntm2dxcgpnp).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.26a (s-ay6wntm2dxcgpnp)."
+      },
+      {
+        "en": "The `implements` link to “Where a SpecTag may appear” (s-sfjka4zc4rhfu67) and the two items on the tests of a project's own checks and generators: the owner removed those requirements on 2026-11-13, and that rule no longer requires them.",
+        "ru": "Связь `implements` с «Where a SpecTag may appear» (s-sfjka4zc4rhfu67) и два пункта о тестах собственных проверок и генераторов проекта: вы сняли эти требования 2026-11-13, и это правило их больше не требует."
+      },
+      {
+        "en": "The `implements` link to “A node's lists of its code and its tests” (s-rwqzepmrt77rv35): the lists are checked by “A node's `meta.code` and `meta.tests`” (s-t383grkn3q68dpf), item 30.",
+        "ru": "Связь `implements` с «A node's lists of its code and its tests» (s-rwqzepmrt77rv35): списки проверяет «A node's `meta.code` and `meta.tests`» (s-t383grkn3q68dpf), пункт 30."
+      },
+      {
+        "en": "The `implements` link to “Code and tests without a SpecTag” (s-kkbqcb9xrpaepwn) and the citation of “From a draft to an approved specification, and back” (s-j9r8z4xdrfkfs47): a test outside the commit is handled by s-3xx2eukc8gtd2tx.",
+        "ru": "Связь `implements` с «Code and tests without a SpecTag» (s-kkbqcb9xrpaepwn) и ссылка на «From a draft to an approved specification, and back» (s-j9r8z4xdrfkfs47): тест за пределами коммита обрабатывает s-3xx2eukc8gtd2tx."
+      },
+      {
+        "en": "The citations of “The test comes before the code” (s-rah8b37kytb682y) and “The commands” (s-f5rz6b7dhxejjts), with the item that exempted a test whose only change puts `@spec ` before a bare sid: under rule 9.4 (s-9j2mmnuuwmx5ksn) such a change is a change to the test.",
+        "ru": "Ссылки на «The test comes before the code» (s-rah8b37kytb682y) и «The commands» (s-f5rz6b7dhxejjts) вместе с пунктом, который освобождал тест, единственное изменение которого ставит `@spec ` перед голым sid: по правилу 9.4 (s-9j2mmnuuwmx5ksn) такое изменение — изменение теста."
+      },
+      {
+        "en": "The item on the SpecTags of the changed symbols looked up among the tests: it is row 10.1.31, which “A test for each rule whose code a commit changes” (s-8wp7xm7g3u8gscq) implements.",
+        "ru": "Пункт о том, что SpecTag изменённых символов ищутся среди тестов: это строка 10.1.31, которую реализует «A test for each rule whose code a commit changes» (s-8wp7xm7g3u8gscq)."
+      },
+      {
+        "en": "“That of a test whose text the commit changes is resolved against the approved ones”: it is row 10.1.28a (s-wpadgy2budcxa3v), item 29.",
+        "ru": "Предложение «SpecTag теста, текст которого меняет коммит, сверяется с одобренными узлами»: это строка 10.1.28a (s-wpadgy2budcxa3v), пункт 29."
+      },
+      {
+        "en": "The name NodeKind, which the owner removed on 2026-11-10 (s-vsh384ybt4w25a2).",
+        "ru": "Имя NodeKind, которое вы убрали 2026-11-10 (s-vsh384ybt4w25a2)."
+      }
+    ]
+  },
+  "location": {
+    "new:tools-7-3-review-code": {
+      "en": "tools 7.3.4a (new, after \"The review of a commit\")",
+      "ru": "tools 7.3.4a (новый, после «The review of a commit»)"
+    },
+    "new:tools-7-3-review-statement": {
+      "en": "tools 7.3.4b (new, after \"The judgement on the code that a commit changes\")",
+      "ru": "tools 7.3.4b (новый, после «The judgement on the code that a commit changes»)"
+    },
+    "new:tools-7-3-review-appendix": {
+      "en": "tools 7.3.4c (new, after \"The judgement on a statement that a rule's implementation needs no change\")",
+      "ru": "tools 7.3.4c (новый, после «The judgement on a statement that a rule's implementation needs no change»)"
+    },
+    "new:tools-9-no-change-trailer": {
+      "en": "tools 9 (new, after the new section \"SpecTags in the code and the tests\")",
+      "ru": "tools 9 (новый, после нового раздела «SpecTags in the code and the tests»)"
+    },
+    "new:tools-10-section": {
+      "en": "tools 10 (new section, in place of the node \"Who runs the reviewer\")",
+      "ru": "tools 10 (новый раздел, вместо узла «Who runs the reviewer»)"
+    },
+    "new:tools-10-verdict": {
+      "en": "tools 10.2 (new)",
+      "ru": "tools 10.2 (новый)"
+    },
+    "new:tools-10-start": {
+      "en": "tools 10.3 (new)",
+      "ru": "tools 10.3 (новый)"
+    },
+    "new:tools-10-limit": {
+      "en": "tools 10.4 (new)",
+      "ru": "tools 10.4 (новый)"
+    },
+    "new:tools-10-claude": {
+      "en": "tools 10.5 (new)",
+      "ru": "tools 10.5 (новый)"
+    },
+    "new:tools-10-codex": {
+      "en": "tools 10.6 (new)",
+      "ru": "tools 10.6 (новый)"
+    },
+    "new:tools-10-settings": {
+      "en": "tools 10.7 (new)",
+      "ru": "tools 10.7 (новый)"
+    },
+    "new:tools-8-section": {
+      "en": "tools 8 (new section, in place of the node \"The SpecTag, and how a symbol carries it\")",
+      "ru": "tools 8 (новый раздел, вместо узла «The SpecTag, and how a symbol carries it»)"
+    },
+    "new:tools-8-symbol": {
+      "en": "tools 8.2 (new)",
+      "ru": "tools 8.2 (новый)"
+    },
+    "new:tools-8-file-start": {
+      "en": "tools 8.3 (new)",
+      "ru": "tools 8.3 (новый)"
+    },
+    "new:tools-8-bindings": {
+      "en": "tools 8.4 (new)",
+      "ru": "tools 8.4 (новый)"
+    },
+    "new:tools-7-2-no-node": {
+      "en": "tools 7.2.2a (new, after \"SpecTags on the system's code other than tests\")",
+      "ru": "tools 7.2.2a (новый, после «SpecTags on the system's code other than tests»)"
+    },
+    "new:tools-7-2-outside": {
+      "en": "tools 7.2.2b (new, after \"A SpecTag that names no node\")",
+      "ru": "tools 7.2.2b (новый, после «A SpecTag that names no node»)"
+    },
+    "s-zrsc6asgmhv8tnc": {
+      "en": "tools 8.5 (moved from tools 9 into the new section)",
+      "ru": "tools 8.5 (перенесён из tools 9 в новый раздел)"
+    },
+    "new:tools-7-2-rule-test": {
+      "en": "tools 7.2.4a (new, after \"The SpecTags the tests carry\")",
+      "ru": "tools 7.2.4a (новый, после «The SpecTags the tests carry»)"
+    }
+  },
+  "verdict": {
+    "s-vp24dqydygztqbt": {
+      "en": "not ready — ready after the author's three fixes, which round d applied word for word",
+      "ru": "три правки рецензента внесены дословно"
+    },
+    "new:tools-7-3-review-code": {
+      "en": "not ready — ready after the author's two fixes, which round d applied word for word",
+      "ru": "две правки рецензента внесены дословно"
+    },
+    "new:tools-7-3-review-statement": {
+      "en": "not ready — ready after the author's fix, which round d applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "new:tools-7-3-review-appendix": {
+      "en": "not ready (Russian only) — ready after the author's fix to the Russian title, which round d applied word for word",
+      "ru": "правка рецензента к русскому заголовку внесена дословно"
+    },
+    "new:tools-9-no-change-trailer": {
+      "en": "not ready (one fix) — ready after the author's fix, which round c applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "new:tools-10-section": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "s-xr5xxa9cxf2mq5u": {
+      "en": "not ready — ready after the author's two fixes, which round c applied word for word",
+      "ru": "две правки рецензента внесены дословно"
+    },
+    "new:tools-10-verdict": {
+      "en": "not ready — ready after the author's fix, which round d applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "new:tools-10-start": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "new:tools-10-limit": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "new:tools-10-claude": {
+      "en": "not ready — ready after the author's fix to the Russian, which round c applied word for word",
+      "ru": "правка рецензента к русскому тексту внесена дословно"
+    },
+    "new:tools-10-codex": {
+      "en": "not ready — ready after the author's cut, which round d applied word for word",
+      "ru": "вырезка, предложенная рецензентом, внесена дословно"
+    },
+    "new:tools-10-settings": {
+      "en": "not ready — ready after the author's fix, which round d applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "new:tools-8-section": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "s-5z5gnu7pahr82xp": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "new:tools-8-symbol": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "new:tools-8-file-start": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "new:tools-8-bindings": {
+      "en": "not ready — ready after the author's fix, which round c applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "s-zrsc6asgmhv8tnc": {
+      "en": "not ready — ready after the author's fix, which round c applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "s-9rtrj24myzjvshu": {
+      "en": "not ready — ready after the author's fix to the DOUBT, which round d applied word for word",
+      "ru": "правка рецензента по его сомнению внесена дословно"
+    },
+    "new:tools-7-2-no-node": {
+      "en": "not ready — ready after the author's fix, which round c applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "new:tools-7-2-outside": {
+      "en": "not ready — ready after the author's two fixes, which round c applied word for word; the change to s-weuyx98r7c923ab is shown as a proposal of the group",
+      "ru": "две правки рецензента внесены дословно; изменение узла «The list of code that carries no SpecTag» показано как предложение этой группы"
+    },
+    "s-utf4mbt7ref8g9c": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "new:tools-7-2-rule-test": {
+      "en": "not ready — ready after the author's fix, which round d applied word for word",
+      "ru": "правка рецензента внесена дословно"
+    },
+    "proposal:s-nyh9yk22ba6g77q": {
+      "en": "ready",
+      "ru": "узел готов"
+    },
+    "proposal:s-weuyx98r7c923ab": {
+      "en": "not ready — ready after the author's fixes and the example, which round d applied word for word",
+      "ru": "правки рецензента и предложенный им пример внесены дословно"
+    }
+  },
+  "approved": {
+    "s-vp24dqydygztqbt": {
+      "title": "The review of a commit",
+      "en": "`sheriff review` has a runner judge every commit that changes the system's code. A runner is an agent's CLI, started apart from the session that wrote the code (§s-xr5xxa9cxf2mq5u). The runner is given:\n\n- the commit's message;\n- the commit's change, less the files generated from the nodes, each of which is named to it with what it holds;\n- each node the message or a changed symbol's SpecTag names, with its text and its reason. A RecordType is given with its `RecordType.fields`, and a node of a project's own NodeKind with the values its NodeKind declares;\n- each symbol of the system's code outside its tests the commit changes, whole as the commit leaves it, with its file, its lines and its SpecTags.\n\nThe symbols are those `sheriff binding` finds changed (§s-2x58az67bm6cxq2). A symbol's SpecTags are its own or those of the symbol it stands in.\n\nThe runner judges the commit against the nodes. It judges each changed symbol, whole, against the nodes its SpecTags name.\n\nIt refuses the commit where the code:\n\n- does something no named node states in its text;\n- leaves out what a named node requires.\n\nIt also refuses the commit where a changed symbol:\n\n- does something no node its SpecTags name states in its text;\n- carries a SpecTag naming a node it does not implement;\n- carries the SpecTag that names no node while it implements the system's logic.\n\nA finding of the last sort names as its node the rule that every symbol carries a SpecTag (§s-kgbzk2ph9e6jfb4).",
+      "ruTitle": "Ревью коммита",
+      "ru": "`sheriff review` даёт runner судить каждый коммит, который меняет код системы. Runner — это CLI агента, запущенный отдельно от сессии, в которой написан код (§s-xr5xxa9cxf2mq5u). Runner получает:\n\n- сообщение коммита;\n- изменение коммита, кроме файлов, сгенерированных из узлов, каждый из которых ему назван вместе с тем, что он содержит;\n- каждый узел, который называет сообщение или SpecTag изменённого символа, с его текстом и обоснованием. RecordType передаётся со своими `RecordType.fields`, а узел собственного NodeKind проекта — со значениями, которые объявляет его NodeKind;\n- каждый символ кода системы помимо тестов, который меняет коммит, целиком в том виде, в каком его оставляет коммит, с его файлом, строками и SpecTag.\n\nЭто символы, которые `sheriff binding` находит изменёнными (§s-2x58az67bm6cxq2). SpecTag символа — его собственные или SpecTag символа, внутри которого он стоит.\n\nRunner судит коммит по узлам. Каждый изменённый символ он судит целиком по узлам, которые называют его SpecTag.\n\nОн отклоняет коммит, если код:\n\n- делает то, чего не утверждает в своём тексте ни один названный узел;\n- упускает то, чего требует названный узел.\n\nОн отклоняет коммит и тогда, когда изменённый символ:\n\n- делает то, чего не утверждает в своём тексте ни один узел, который называют его SpecTag;\n- имеет SpecTag, который называет узел, который символ не реализует;\n- имеет SpecTag, который не называет никакого узла, хотя символ реализует логику системы.\n\nЗамечание последнего вида называет своим узлом правило о том, что у каждого символа есть SpecTag (§s-kgbzk2ph9e6jfb4)."
+    },
+    "s-xr5xxa9cxf2mq5u": {
+      "title": "Who runs the reviewer",
+      "en": "`sheriff review` hands the reviewer's input to a runner. The runner's CLI is given the schema of the verdict. It answers in JSON held to that schema.\n\nThe verdict passes or refuses the commit. It names the findings, each with its node, file, line and problem. `sheriff review` reads as an answer that cannot be read (§s-nyh9yk22ba6g77q):\n\n- an answer that passes the commit with a finding;\n- an answer that refuses the commit with none.\n\nA runner is started:\n\n- with none of the user's settings, memory or hooks;\n- with a system prompt of its own;\n- in an empty working directory;\n- with every tool its command line can turn off turned off;\n- as a program, never through a shell.\n\nA CLI installed as a command script, as npm installs it on Windows, is started as the program and the arguments the script names.\n\nA runner's environment holds only the variables that name:\n\n- the search path of programs, the folders of the operating system and of the user, and the user's name;\n- the locale;\n- a proxy, the hosts it skips and the certificates to trust;\n- where the runner's CLI keeps its sign-in, the sign-in itself, and the provider serving the model.\n\nThe runner `claude` is the Claude Code CLI in print mode. It asks for the model and the reasoning effort the settings below give. Where that model is overloaded or not offered, it falls back to the fallback model they give.\n\nThe runner `codex` is the Codex CLI in `codex exec`, with a Codex home of its own. That home is made in a temporary directory for the run and deleted after it. It holds a copy of the user's sign-in and nothing else.\n\nThe runner `codex` runs with:\n\n- its sandbox read-only;\n- its session not kept;\n- no skill offered.\n\nThe runner `codex` asks for the model and the reasoning effort the settings below give. Where the model is empty, it asks for no model.\n\n`sheriff review` reads the settings of each runner from the git configuration of the user who commits:\n\n- `specsheriff.review.claudeModel`, `specsheriff.review.claudeFallbackModel` and `specsheriff.review.claudeEffort` for the runner `claude`;\n- `specsheriff.review.codexModel` and `specsheriff.review.codexEffort` for the runner `codex`.\n\nAn empty `codexModel` stands for the model Codex chooses for the signed-in account.\n\nA setting the configuration holds, empty or not, is confirmed. The hooks and the skills of either plugin ask for no setting the configuration holds.\n\nThe hooks and the skills write a setting only as the user whose configuration it is answers. Where the user answers with the default, they write it as any other value. The session start (§s-477gtdrkw34dzxw) and the skill `spec-init` (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4) say when each setting is asked for.\n\nThe defaults are:\n\n- for the runner `claude`, the model `opus` at the reasoning effort `high`, falling back to `sonnet`;\n- for the runner `codex`, the model Codex chooses, at the reasoning effort `high`.\n\nWhere the configuration lacks a setting of the runner that runs, `sheriff review` takes that setting's default. With every review held so, it names each setting it took a default for and how the user confirms it.\n\nThe settings of the reviewer in `sheriff.config.json` are `review.runner` and `review.minutes`. `sheriff review` takes no model and no effort from that file.\n\n`review.minutes` is the time after which a run is ended. Unless set, it is twenty minutes.\n\nUnless `review.runner` is set, the runner is that of the plugin whose tools run `sheriff review`. The `agent` file the build writes beside `release` names that runner:\n\n- `claude` for the plugin for Claude Code;\n- `codex` for the plugin for Codex CLI.\n\nTools holding no such file take `claude`.",
+      "ruTitle": "Кто запускает рецензента",
+      "ru": "`sheriff review` передаёт входные данные рецензента runner. CLI runner получает схему вердикта. Он отвечает в JSON, который соответствует этой схеме.\n\nВердикт пропускает или отклоняет коммит. Он называет замечания, каждое с его узлом, файлом, строкой и проблемой. `sheriff review` считает ответом, который нельзя прочитать (§s-nyh9yk22ba6g77q):\n\n- ответ, который пропускает коммит с замечанием;\n- ответ, который отклоняет коммит без замечаний.\n\nRunner запускается:\n\n- без настроек, памяти и хуков пользователя;\n- со своим системным промптом;\n- в пустом рабочем каталоге;\n- с выключенным каждым инструментом, который можно выключить из его командной строки;\n- как программа, никогда — через shell.\n\nCLI, установленный как командный скрипт, как его устанавливает npm в Windows, запускается как программа с аргументами, которые называет скрипт.\n\nОкружение runner содержит только переменные, которые задают:\n\n- путь поиска программ, папки операционной системы и пользователя и имя пользователя;\n- локаль;\n- прокси, хосты, к которым обращаются в обход него, и сертификаты, которым следует доверять;\n- где CLI runner хранит данные входа, сами данные входа и провайдера, который обслуживает модель.\n\nRunner `claude` — это Claude Code CLI в режиме print. Он запрашивает модель и effort, которые задают настройки ниже. Если эта модель перегружена или недоступна, он переходит на резервную модель, которую они задают.\n\nRunner `codex` — это Codex CLI в режиме `codex exec` со своим домашним каталогом Codex. Этот каталог создаётся во временной папке на время прогона и удаляется после него. В нём есть копия данных входа пользователя, и больше ничего.\n\nRunner `codex` работает:\n\n- с песочницей только для чтения;\n- без сохранения сессии;\n- без предложенных skill.\n\nRunner `codex` запрашивает модель и effort, которые задают настройки ниже. Если модель пуста, он не запрашивает модели.\n\n`sheriff review` читает настройки каждого runner из конфигурации git пользователя, который делает коммит:\n\n- `specsheriff.review.claudeModel`, `specsheriff.review.claudeFallbackModel` и `specsheriff.review.claudeEffort` — для runner `claude`;\n- `specsheriff.review.codexModel` и `specsheriff.review.codexEffort` — для runner `codex`.\n\nПустой `codexModel` означает модель, которую Codex выбирает для учётной записи, под которой выполнен вход.\n\nНастройка, которая есть в конфигурации, пустая или нет, считается подтверждённой. Хуки и skill обоих плагинов не спрашивают ни о какой настройке, которая есть в конфигурации.\n\nХуки и skill записывают настройку только так, как ответил пользователь, чья это конфигурация. Если пользователь отвечает значением по умолчанию, они записывают его как любое другое значение. Когда спрашивается каждая настройка, говорят начало сессии (§s-477gtdrkw34dzxw) и skill `spec-init` (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4).\n\nЗначения по умолчанию:\n\n- для runner `claude` — модель `opus` с effort `high` и переходом на `sonnet`;\n- для runner `codex` — модель, которую выбирает Codex, с effort `high`.\n\nЕсли в конфигурации нет настройки runner, который запускается, `sheriff review` берёт значение этой настройки по умолчанию. При каждом таком ревью он называет каждую настройку, для которой взял значение по умолчанию, и то, как пользователь её подтверждает.\n\nНастройки рецензента в `sheriff.config.json` — `review.runner` и `review.minutes`. Ни модели, ни effort `sheriff review` из этого файла не берёт.\n\n`review.minutes` — время, после которого прогон завершается. Если оно не задано, это двадцать минут.\n\nЕсли `review.runner` не задан, runner — тот, что у плагина, инструменты которого запускают `sheriff review`. Файл `agent`, который сборка пишет рядом с `release`, называет этот runner:\n\n- `claude` — для плагина для Claude Code;\n- `codex` — для плагина для Codex CLI.\n\nИнструменты, у которых нет такого файла, берут `claude`."
+    },
+    "s-5z5gnu7pahr82xp": {
+      "title": "The SpecTag, and how a symbol carries it",
+      "en": "A SpecTag is the text `@spec <sid>`, or `@spec none` followed by its reason. The form `@spec none` stands on a symbol only.\n\nA symbol carries its SpecTag as a line of the comment directly above it, above its decorators where it has any. That comment is:\n\n- in TypeScript and JavaScript, the symbol's doc comment;\n- in Python, a comment line.\n\nA symbol implementing several rules carries several SpecTags. A test carries its SpecTag in its name or in a mark on it (§s-zrsc6asgmhv8tnc).\n\nA symbol that implements no rule says so with `@spec none`, followed by the reason it carries none. Where such a symbol stands first in a run of re-exports, with no blank line between them, it says so for the whole run.\n\nOn a symbol, only the delimiters of the comment may share a SpecTag's line, so that a scan finds a SpecTag's text in any language.\n\nWhich symbol a SpecTag stands on is found by parsing the file with tree-sitter and the grammar of the file's language. The parser is used alone, with no program and no type checker.\n\nA description of each language names what counts in it as a declaration and as a test. TypeScript, JavaScript and Python are described.",
+      "ruTitle": "SpecTag и то, где он стоит у символа",
+      "ru": "SpecTag — это текст `@spec <sid>` или `@spec none` с последующим обоснованием. Форма `@spec none` стоит только у символа.\n\nSpecTag символа — строка комментария непосредственно над ним, над его декораторами, если они есть. Этот комментарий:\n\n- в TypeScript и JavaScript — doc-комментарий символа;\n- в Python — строка комментария.\n\nУ символа, который реализует несколько правил, несколько SpecTag. У теста SpecTag стоит в его названии или в пометке на нём (§s-zrsc6asgmhv8tnc).\n\nСимвол, который не реализует никакого правила, говорит об этом `@spec none` с последующей причиной, по которой у него нет SpecTag правила. Если такой символ стоит первым в ряду реэкспортов без пустой строки между ними, он говорит это за весь ряд.\n\nУ символа строку SpecTag могут делить с ним только ограничители комментария, чтобы сканирование находило текст SpecTag в любом языке.\n\nУ какого символа стоит SpecTag, находится разбором файла с помощью tree-sitter и грамматики языка файла. Парсер используется сам по себе, без программы и без проверки типов.\n\nОписание каждого языка называет, что в нём считается объявлением и что — тестом. Описаны TypeScript, JavaScript и Python."
+    },
+    "s-zrsc6asgmhv8tnc": {
+      "title": "How a test declares the node it is written from",
+      "en": "A test declares its SpecTag:\n\n- in TypeScript and JavaScript, by opening its name with it: `test(\"@spec s-… what it checks\", …)`;\n- in Python, by a mark on the test, `@pytest.mark.spec(\"@spec s-…\")`;\n- in a further language, as the description of that language says.\n\nThe plugin for pytest of the SpecSheriff tools, `pytest-specsheriff`, registers the mark. It also opens the name a run reports with the SpecTag.",
+      "ruTitle": "Как тест объявляет узел, из которого он написан",
+      "ru": "Тест объявляет свой SpecTag:\n\n- в TypeScript и JavaScript — начиная им своё название: `test(\"@spec s-… what it checks\", …)`;\n- в Python — пометкой на тесте `@pytest.mark.spec(\"@spec s-…\")`;\n- в другом языке — так, как говорит описание этого языка.\n\nПлагин для pytest инструментов SpecSheriff, `pytest-specsheriff`, регистрирует пометку. Он также ставит SpecTag в начало названия, которое сообщает прогон."
+    },
+    "s-9rtrj24myzjvshu": {
+      "title": "SpecTags on the system's code",
+      "en": "`sheriff binding` reads the SpecTag of every symbol of the system's code. A SpecTag binds a symbol to the node the symbol implements. The system's code is the code that implements the specification, its tests included.\n\n- A test carries its SpecTag in its name or in a mark on it (§s-zrsc6asgmhv8tnc), so the symbols of the tests are not read.\n- The repository's configuration, its own tools and their tests are not the system's code (§s-hheus6f395ynqvc), and are not read.\n- An inner symbol is covered by the SpecTag of the symbol it stands in.\n- The sid of a SpecTag is looked up among the nodes. That of a SpecTag on a changed symbol is looked up among the approved ones. A symbol changes where a line the commit changes counts for it (§s-2x58az67bm6cxq2).\n- While the commit leaves the specification a draft (§s-j9r8z4xdrfkfs47), a symbol carrying no SpecTag that the commit does not change is reported by the symbol, not refused (§s-kkbqcb9xrpaepwn).",
+      "ruTitle": "SpecTag в коде системы",
+      "ru": "`sheriff binding` читает SpecTag каждого символа кода системы. SpecTag привязывает символ к узлу, который символ реализует. Код системы — это код, который реализует спецификацию, включая его тесты.\n\n- У теста SpecTag стоит в его названии или в пометке на нём (§s-zrsc6asgmhv8tnc), поэтому символы тестов не читаются.\n- Конфигурация репозитория, его собственные инструменты и их тесты не являются кодом системы (§s-hheus6f395ynqvc) и не читаются.\n- Вложенный символ покрывает SpecTag символа, внутри которого он стоит.\n- sid SpecTag ищется среди узлов. sid SpecTag на изменённом символе ищется среди одобренных. Символ меняется, если к нему относится строка, которую меняет коммит (§s-2x58az67bm6cxq2).\n- Пока коммит оставляет спецификацию черновиком (§s-j9r8z4xdrfkfs47), символ без SpecTag, который коммит не меняет, сообщается по символу, а не отвергается (§s-kkbqcb9xrpaepwn)."
+    },
+    "s-utf4mbt7ref8g9c": {
+      "title": "The SpecTags the tests carry",
+      "en": "`sheriff binding` reads every test for the SpecTag it carries.\n\n- A test's SpecTag is resolved against the rules, the terms and the nodes of a project's own NodeKind. That of a test whose text the commit changes is resolved against the approved ones.\n- A test whose only change puts `@spec ` before the bare sid it carried (§s-f5rz6b7dhxejjts) does not count as changed (§s-rah8b37kytb682y).\n- A test carrying a bare sid carries no SpecTag. Whatever is reported or refused for it names `sheriff reindex`, which writes the SpecTag.\n- While the commit leaves the specification a draft (§s-j9r8z4xdrfkfs47), a test carrying no SpecTag that the commit does not change is reported by the test, not refused (§s-kkbqcb9xrpaepwn).\n- The sids of the SpecTags on the changed symbols are looked up among the sids the tests' SpecTags name.\n- For each of the project's own checks and generators whose code the commit changes, the sid of the rule listing it is looked up among the sids the tests' SpecTags name. The code of such a check or generator is the files the settings name as its code.\n- Each test in the files the settings name as the tests of a project's own check or generator is read for the SpecTag of the rule listing it (§s-sfjka4zc4rhfu67).",
+      "ruTitle": "SpecTag, которые есть у тестов",
+      "ru": "`sheriff binding` читает каждый тест на SpecTag, который у него есть.\n\n- SpecTag теста сверяется с правилами, терминами и узлами собственного NodeKind проекта. SpecTag теста, текст которого меняет коммит, сверяется с одобренными.\n- Тест, единственное изменение которого ставит `@spec ` перед голым sid, который у него был (§s-f5rz6b7dhxejjts), не считается изменённым (§s-rah8b37kytb682y).\n- У теста с голым sid нет SpecTag. Всё, что о нём сообщается или по нему отвергается, называет `sheriff reindex`, который записывает SpecTag.\n- Пока коммит оставляет спецификацию черновиком (§s-j9r8z4xdrfkfs47), тест без SpecTag, который коммит не меняет, сообщается по тесту, а не отвергается (§s-kkbqcb9xrpaepwn).\n- sid SpecTag изменённых символов ищутся среди sid, которые называют SpecTag тестов.\n- Для каждой собственной проверки и каждого генератора проекта, код которых меняет коммит, sid правила, которое их перечисляет, ищется среди sid, которые называют SpecTag тестов. Код такой проверки или генератора — файлы, которые настройки называют его кодом.\n- Каждый тест в файлах, которые настройки называют тестами собственной проверки или генератора проекта, читается на SpecTag правила, которое их перечисляет (§s-sfjka4zc4rhfu67)."
+    },
+    "s-j9r8z4xdrfkfs47": {
+      "title": "From a draft to an approved specification, and back",
+      "en": "`sheriff binding` holds the specification's passage from a draft to approved and back (§s-qzthyh7yqvfhsa2). It reads the rule that approves the specification in `project.json`.\n\nIt takes the specification before a commit as the commit's first parent holds it, read as `sheriff reindex` would rewrite it (§s-f5rz6b7dhxejjts). Where the commit has no parent, it takes the specification before the commit as a draft.\n\nWhile the commit leaves the specification a draft, `sheriff binding` reports each of these rather than refusing it, where the commit does not change it (§s-kkbqcb9xrpaepwn):\n\n- a symbol of the system's code outside its tests that carries no SpecTag;\n- a test that carries no SpecTag.\n\nWhile the commit leaves the specification approved, both are refused.\n\nA commit that puts the specification back to draft passes only where it adds to the approvals a withdrawal of that rule's approval, of whichever wording, by one of the specification's owners as the commit holds them.",
+      "ruTitle": "От черновика к одобренной спецификации и обратно",
+      "ru": "`sheriff binding` следит за переходом спецификации от черновика к одобренной и обратно (§s-qzthyh7yqvfhsa2). Правило, которое одобряет спецификацию, он читает в `project.json`.\n\nСпецификацию до коммита он берёт в том виде, в каком её содержит первый родитель коммита, прочитанной так, как её переписал бы `sheriff reindex` (§s-f5rz6b7dhxejjts). Если у коммита нет родителя, спецификацию до коммита он считает черновиком.\n\nПока коммит оставляет спецификацию черновиком, `sheriff binding` сообщает о каждом из следующего, а не отвергает его, если коммит это не меняет (§s-kkbqcb9xrpaepwn):\n\n- символ кода системы помимо тестов, у которого нет SpecTag;\n- тест, у которого нет SpecTag.\n\nПока коммит оставляет спецификацию одобренной, и то и другое отвергается.\n\nКоммит, который возвращает спецификацию в черновик, проходит, только если добавляет в одобрения отзыв одобрения этого правила, какой бы ни была его формулировка, одним из ответственных за спецификацию в том виде, в каком их содержит коммит."
+    }
+  }
+}

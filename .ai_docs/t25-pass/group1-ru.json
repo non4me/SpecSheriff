@@ -1,0 +1,288 @@
+{
+  "stage3": {
+    "s-stxmhq3hgfndvn6": {
+      "en": "validate.ts:88-91 compares the locations of every node of spec.nodes, which in a project include the SpecSheriff guidelines taken from the plugin; it is to compare only the nodes of the files that the repository keeps, the nodes in the cells of a TableRule included (specificationOf in spec-files.ts walks only `children`). Its message is to name the node's file and sid and both locations. The test \"refuses a location other than the one its place gives\" (validate.test.ts:105) is to carry s-stxmhq3hgfndvn6.",
+      "ru": "validate.ts:88-91 сверяет расположения всех узлов spec.nodes, а в проекте в spec.nodes входят и узлы SpecSheriff guidelines, которые проект берёт из плагина. Код должен сверять только узлы в файлах, которые хранит репозиторий, в том числе узлы в ячейках TableRule (specificationOf в spec-files.ts обходит только `children`). Сообщение об отказе должно называть файл и sid узла и оба расположения. У теста «refuses a location other than the one its place gives» (validate.test.ts:105) должен быть SpecTag s-stxmhq3hgfndvn6."
+    },
+    "new:tools-7-1-location": {
+      "en": "model.ts:67-110 (locations): the node at the top of a file of the contracts section is to be numbered like any other node of the base specification, not located by its file; the nodes in the cells of a TableRule are to be numbered after its children; the top node of an extension's file is to take `_guidelines/extensions/<name>` (partOf gives `_guidelines/<name>`); a part whose files lie in a folder other than _guidelines and tech is a part of the base specification, `base` included. spec-files.ts:43 sorts names with localeCompare and is to sort paths by code point. The tests at model.test.ts:9-46 and reindex.test.ts:25 are to carry s-ygg5kpcxgzq3m7w, and the contracts test is to expect the new locations.",
+      "ru": "В model.ts:67-110 (расположения) нужно изменить следующее. Узел на вершине файла раздела контрактов должен получать номер, как любой другой узел базовой спецификации, а не расположение по своему файлу. Узлы в ячейках TableRule должны нумероваться после дочерних узлов этой TableRule. Верхний узел файла расширения должен получать расположение `_guidelines/extensions/<name>`, а сейчас partOf даёт `_guidelines/<name>`. Часть, файлы которой лежат не в папке _guidelines и не в tech, должна считаться частью базовой спецификации, в том числе часть `base`. spec-files.ts:43 сортирует имена с помощью localeCompare, а должен сортировать пути в порядке кодовых точек. У тестов в model.test.ts:9-46 и reindex.test.ts:25 должен быть SpecTag s-ygg5kpcxgzq3m7w, а тест раздела контрактов должен ожидать новые расположения."
+    },
+    "s-95w92rnjuv3sst8": {
+      "en": "validate.ts:96-103 judges the nodes of spec.nodes through judgedHere, which leaves out only spec.json and tools.json; it is to judge only the nodes of the files that the repository keeps, so that the files of the extensions taken from the plugin are left out too, and to judge the nodes in the cells of a TableRule. The tests at validate.test.ts:134 and :160 are to carry s-95w92rnjuv3sst8.",
+      "ru": "validate.ts:96-103 проверяет узлы spec.nodes с помощью функции judgedHere, которая пропускает только spec.json и tools.json. Код должен проверять только узлы в файлах, которые хранит репозиторий, чтобы пропускались и файлы расширений, которые проект берёт из плагина. Проверять он должен и узлы в ячейках TableRule. У тестов в validate.test.ts:134 и :160 должен быть SpecTag s-95w92rnjuv3sst8."
+    },
+    "new:tools-7-1-approval-by": {
+      "en": "validate.ts:106-113 judges the rule that approved the specification against the specification's owners; that rule is replaced by an entry in sheriff.config.json (s-qzthyh7yqvfhsa2), so the branch on APPROVAL_RULE goes, and the second half of the test at validate.test.ts:143 with it. The test is to carry s-75ue25v6r23jkk8, and the comment at approvals.ts:129 is to cite s-75ue25v6r23jkk8 instead of s-95w92rnjuv3sst8. validate.ts:109 is to stop skipping an approval whose sid no node of the repository's files holds, and to refuse it.",
+      "ru": "validate.ts:106-113 проверяет одобрение правила, которым одобрена спецификация, по списку ответственных за спецификацию. Это правило заменяется записью в sheriff.config.json (s-qzthyh7yqvfhsa2). Поэтому ветвление по APPROVAL_RULE удаляется, а вместе с ним и вторая половина теста в validate.test.ts:143. У этого теста должен быть SpecTag s-75ue25v6r23jkk8, а комментарий в approvals.ts:129 должен ссылаться на s-75ue25v6r23jkk8 вместо s-95w92rnjuv3sst8. validate.ts:109 должен перестать пропускать одобрение, sid которого нет ни у одного узла в файлах репозитория, и должен отвергать такое одобрение."
+    },
+    "s-agc6fb3vx46pc23": {
+      "en": "validate.ts: a section's status is to count the nodes in the cells of a TableRule (builtStatuses in model.ts walks only children); the status of a domain's header keeps being compared (line 99), as the proposed row of table 11.3 asks; a header of a domain without sections is to hold no index, where reindex.ts:176-181 writes an empty one; the gathered values are to be read from `x-enumSource.gathered` (validate.ts:370-377); in a project, spec.nodes include the SpecSheriff guidelines taken from the plugin, and only the nodes of the files that the repository keeps are to be compared. The test \"refuses values gathered beside a field...\" (validate.test.ts:508) keeps s-agc6fb3vx46pc23; the tests at validate.test.ts:154, :245 and :279 are to carry it as well. builtStatuses (model.ts:218) derives a header's status from every node of the domain's files other than the header, and so leaves out the header's own children, and every node in a cell; it is to count both.",
+      "ru": "В validate.ts нужно изменить следующее. При выводе статуса одобрения раздела должны учитываться узлы в ячейках TableRule (builtStatuses в model.ts обходит только children). Статус одобрения заголовка домена по-прежнему сравнивается (строка кода 99), как требует предлагаемая строка таблицы 11.3. У заголовка домена без разделов не должно быть указателя, а reindex.ts:176-181 записывает в такой заголовок пустой указатель. Собранные значения должны читаться из `x-enumSource.gathered` (validate.ts:370-377). В проекте в spec.nodes входят и узлы SpecSheriff guidelines, которые проект берёт из плагина, а сравниваться должны только узлы в файлах, которые хранит репозиторий. У теста «refuses values gathered beside a field...» (validate.test.ts:508) остаётся SpecTag s-agc6fb3vx46pc23, и такой же SpecTag должен быть у тестов в validate.test.ts:154, :245 и :279. builtStatuses (model.ts:218) выводит статус одобрения заголовка из всех узлов файлов домена, кроме самого заголовка. Поэтому эта функция не учитывает ни дочерние узлы заголовка, ни узлы в ячейках, а должна учитывать и те и другие."
+    },
+    "new:tools-7-1-one-header": {
+      "en": "validate.ts:223-241 keeps the last header that it finds in a domain's files and refuses only a domain without one; it is to refuse a domain whose files hold two headers or more, naming the file and sid of each. The domain checks are to run only where the Domains extension is chosen: isDomain (model.ts:244) treats every part other than _guidelines, contracts, tech and _archive as a domain, `base` included. The test at validate.test.ts:279 is to be split, its first half carrying s-8esbyvaj2yx5eqf.",
+      "ru": "validate.ts:223-241 запоминает последний заголовок, который находит в файлах домена, и отвергает только домен без заголовка. Код должен отвергать домен, в файлах которого два заголовка или больше, и называть файл и sid каждого из них. Проверки доменов должны выполняться, только если проект выбрал расширение Domains. Сейчас isDomain (model.ts:244) считает доменом любую часть, кроме _guidelines, contracts, tech и _archive, в том числе `base`. Тест в validate.test.ts:279 нужно разделить на два, и у первого из них должен быть SpecTag s-8esbyvaj2yx5eqf."
+    },
+    "new:tools-7-1-link-target": {
+      "en": "validate.ts:136-139 resolves a `supersedes` link among the sids of the archive; the type is gone, and a link's target is to be looked for only among the nodes of the model, the nodes in cells included. The first half of the test at validate.test.ts:211 is to carry s-c4rn9fj4czk768b.",
+      "ru": "validate.ts:136-139 ищет цель связи `supersedes` среди sid архива. Такого типа связи больше нет, и цель любой связи должна искаться только среди узлов модели спецификации, в том числе среди узлов в ячейках. У первой половины теста в validate.test.ts:211 должен быть SpecTag s-c4rn9fj4czk768b."
+    },
+    "s-qzyacnqwvaeaps4": {
+      "en": "model.ts:112 (NOT_CITING) is to set aside the nodes in the cells of a TableRule and `x-enumSource.gathered`, and to read the text cells and the headings of a TableRule. The checks are to read only the nodes of the files that the repository keeps and the nodes in their cells. The tests at validate.test.ts:211 (its second half), :223 and :230 and model.test.ts:48 are to carry s-qzyacnqwvaeaps4.",
+      "ru": "model.ts:112 (NOT_CITING): поиск ссылок должен пропускать узлы в ячейках TableRule и `x-enumSource.gathered`, но читать текстовые ячейки и заголовки (headings) TableRule. Проверки должны читать только узлы в файлах, которые хранит репозиторий, и узлы в ячейках этих узлов. У второй половины теста в validate.test.ts:211, у тестов в :223 и :230 и у теста в model.test.ts:48 должен быть SpecTag s-qzyacnqwvaeaps4."
+    },
+    "s-pvnnr844f3y964m": {
+      "en": "validate.ts:147-151 already refuses both cases. Its message says \"the specification's owner\" and is to say \"owners\". It reads spec.nodes, which in a project include the SpecSheriff guidelines taken from the plugin, and is to read only the nodes of the files that the repository keeps. The test at validate.test.ts:236 is to carry s-pvnnr844f3y964m. The second message at validate.ts:150 does not name the link's target and is to name it. validate.ts:149 is to skip a link whose target is no node of the model, which only s-c4rn9fj4czk768b refuses.",
+      "ru": "validate.ts:147-151 уже отвергает оба случая. В его сообщении сказано «the specification's owner», а должно быть «owners». Этот код читает spec.nodes, а в проекте в них входят и узлы SpecSheriff guidelines, которые проект берёт из плагина. Читать он должен только узлы в файлах, которые хранит репозиторий. У теста в validate.test.ts:236 должен быть SpecTag s-pvnnr844f3y964m. Второе сообщение в validate.ts:150 не называет цель связи, а должно её называть. validate.ts:149 должен пропускать связь, цель которой не является узлом модели спецификации: такую связь отвергает только s-c4rn9fj4czk768b."
+    },
+    "s-e2vdhfsndy5stq9": {
+      "en": "validate.ts:158-172 reads only the title, text and reason of approved nodes, sections and headers; it is to read every node whatever its status, the text in the members of `TextRule.list`, the text cells of a TableRule and the nodes in its cells, and only the nodes of the files that the repository keeps. Its message is to drop \"approved\" and \"a section or a header\". The tests at validate.test.ts:251 and :263 are to carry s-e2vdhfsndy5stq9, and the first is to expect a draft refused too.",
+      "ru": "validate.ts:158-172 читает только заголовок, текст и обоснование, и только у одобренных узлов, разделов и заголовков доменов. Код должен читать каждый узел, каким бы ни был его статус одобрения. Он должен читать также текст в элементах `TextRule.list`, текстовые ячейки TableRule и узлы в её ячейках. Читать он должен только узлы в файлах, которые хранит репозиторий. Из сообщения об отказе должны уйти слова «approved» и «a section or a header». У тестов в validate.test.ts:251 и :263 должен быть SpecTag s-e2vdhfsndy5stq9, а первый из них должен ожидать, что отвергается и черновик."
+    },
+    "s-zhen42p6mnaxu7w": {
+      "en": "validate.ts:160 and :216-218 count any kind other than a section and a header as a rule, which matches the node. They read spec.nodes, which in a project include the SpecSheriff guidelines taken from the plugin, and are to read only the nodes of the files that the repository keeps. The tests at validate.test.ts:272 and :488 are to carry s-zhen42p6mnaxu7w.",
+      "ru": "validate.ts:160 и :216-218 считают правилом узел любого типа, кроме раздела и заголовка домена, и это совпадает с тем, что говорит узел. Этот код читает spec.nodes, а в проекте в них входят и узлы SpecSheriff guidelines, которые проект берёт из плагина. Читать он должен только узлы в файлах, которые хранит репозиторий. У тестов в validate.test.ts:272 и :488 должен быть SpecTag s-zhen42p6mnaxu7w."
+    },
+    "s-qvgzubkrafadqgf": {
+      "en": "validate.ts:250-256 checks only the two ends of the link. It is to accept a TableRule and a RecordType as targets, and to refuse a link whose declaring node's text does not cite the target, as the todo of row 10.1.19 says, the test written first and seen failing. The tests at validate.test.ts:303 and :488 are to carry s-qvgzubkrafadqgf. validate.ts:253 is to leave a link whose target is no node of the model to the check of the link's target.",
+      "ru": "validate.ts:250-256 проверяет только два конца связи. Код должен принимать TableRule и RecordType как цели связи. Он должен отвергать связь, если текст узла, который её объявляет, не ссылается на её цель, как говорит todo строки 10.1.19. Тест на это пишется первым, и нужно увидеть, что он не проходит. У тестов в validate.test.ts:303 и :488 должен быть SpecTag s-qvgzubkrafadqgf. validate.ts:253 должен пропускать связь, цель которой не является узлом модели спецификации, и оставлять её проверке цели связи."
+    },
+    "new:tools-7-1-consumes": {
+      "en": "validate.ts:257-266 already refuses such a link. It is to run only where the Domains extension is chosen. The test at validate.test.ts:296 is to carry s-p3n666zfjdrrw6a. validate.ts:259–260 is to leave a link whose target is no node of the model to the check of the link's target.",
+      "ru": "validate.ts:257-266 уже отвергает такую связь. Этот код должен выполняться, только если проект выбрал расширение Domains. У теста в validate.test.ts:296 должен быть SpecTag s-p3n666zfjdrrw6a. validate.ts:259–260 должен пропускать связь, цель которой не является узлом модели спецификации, и оставлять её проверке цели связи."
+    },
+    "new:tools-7-1-guidelines-to-extension": {
+      "en": "No code makes this check yet. Its test is written first and seen failing, as the todo of row 10.1.20a (s-zyaf34chxugtjyn) says; once the test passes, that todo is removed from the row.",
+      "ru": "Эту проверку пока не выполняет никакой код. Её тест пишется первым, и нужно увидеть, что он не проходит, как говорит todo строки 10.1.20a (s-zyaf34chxugtjyn). Когда тест начнёт проходить, этот todo удаляется из строки."
+    },
+    "s-yprj7d6tnvauggr": {
+      "en": "validate.ts:443-468 (appendices): a description of the technical debt is no longer refused for refining no node of the base specification (line 457); a rule of the appendix of the tools may also implement a node of an extension of the guidelines (line 461); a rule of the project's own guidelines must refine, not implement, a rule of spec.json or of a chosen extension, tools.json no longer counting and the rule on levels no longer a special case (line 463); for the appendix of the tools and the project's own guidelines, a section is no target, while a node of the technical appendix may implement any node of the base specification, as row 10.1.22 says; the nodes in cells are read; the messages drop \"the base of the guidelines\". The check that a file of the technical appendix is named after a domain (lines 446-452) belongs to row 11.3.5 and another node. The tests at validate.test.ts:451, :458 and :465 are to carry s-yprj7d6tnvauggr, and the last is to expect a rule with only an `implements` link refused. partOf (model.ts:55) marks only spec.json and tools.json as the SpecSheriff guidelines, so validate.ts:462 reads the files of the extensions of the guidelines as the project's own guidelines; only specs/_guidelines/project.json is to be read that way.",
+      "ru": "В validate.ts:443-468 (приложения) нужно изменить следующее. Описание технического долга больше не должно отвергаться за то, что не уточняет ни одного узла базовой спецификации (строка кода 457). Правило описания инструментов может реализовывать и узел расширения guidelines (строка кода 461). Правило собственных guidelines проекта должно уточнять, а не реализовывать правило из spec.json или из выбранного расширения (строка кода 463). При этом tools.json больше не учитывается, а правило об уровнях больше не особый случай. Для описания инструментов и собственных guidelines проекта раздел не может быть целью связи, а узел технического приложения может реализовывать любой узел базовой спецификации, как говорит строка 10.1.22. Узлы в ячейках должны читаться. Из сообщений об отказе должны уйти слова «the base of the guidelines». Проверка того, что файл технического приложения назван по имени домена (строки кода 446-452), относится к строке 11.3.5 и к другому узлу. У тестов в validate.test.ts:451, :458 и :465 должен быть SpecTag s-yprj7d6tnvauggr, а последний из них должен ожидать, что правило только со связью `implements` отвергается. partOf (model.ts:55) относит к SpecSheriff guidelines только spec.json и tools.json. Поэтому validate.ts:462 читает файлы расширений guidelines как собственные guidelines проекта, а так должен читаться только specs/_guidelines/project.json."
+    },
+    "s-6bmnsbskg6en4nf": {
+      "en": "validate.ts:35-45 recognises the repository where the SpecSheriff guidelines are written by `writesSpecSheriffGuidelines` in sheriff.config.json, which `sheriff reindex` now removes (s-gb8s9657a65hqmv); it is to read SPECSHERIFF_GUIDELINES_REPO (s-zefk589ykh37b8u). It is to refuse the files in specs/_guidelines/extensions/ too, and its message is to name the files that the plugin delivers. It keeps stopping the other checks while a copy is kept (line 44). The test at validate.test.ts:472 is to carry s-6bmnsbskg6en4nf.",
+      "ru": "validate.ts:35-45 узнаёт репозиторий, где пишутся SpecSheriff guidelines, по ключу `writesSpecSheriffGuidelines` в sheriff.config.json, а `sheriff reindex` теперь удаляет этот ключ (s-gb8s9657a65hqmv). Код должен читать SPECSHERIFF_GUIDELINES_REPO (s-zefk589ykh37b8u). Он должен отвергать и файлы в specs/_guidelines/extensions/, а его сообщение об отказе должно называть файлы, которые поставляет плагин. Пока копия хранится, этот код по-прежнему останавливает остальные проверки (строка кода 44). У теста в validate.test.ts:472 должен быть SpecTag s-6bmnsbskg6en4nf."
+    }
+  },
+  "removed": {
+    "s-stxmhq3hgfndvn6": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.5 (s-tvxhtjbj7mmpmnx), as the agreed drafts of this stage implement their rows.",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.5 (s-tvxhtjbj7mmpmnx), как согласованные черновики этого этапа реализуют свои строки."
+      },
+      {
+        "en": "How a location is computed: it moved to the new node “How a node's location is computed” (s-ygg5kpcxgzq3m7w), since `sheriff reindex` needs it as well.",
+        "ru": "Как вычисляется расположение: это описание перенесено в новый узел «How a node's location is computed» (s-ygg5kpcxgzq3m7w), потому что это вычисление нужно и `sheriff reindex`."
+      }
+    ],
+    "s-95w92rnjuv3sst8": [
+      {
+        "en": "The `implements` links to the main table of checks (s-jau82aq9juv9zzh) and to “What an approval covers” (s-5ah25f6gy99panq): the node implements row 10.1.8 (s-cey3k9xxjvkpyqz), which checks that rule.",
+        "ru": "Связи `implements` с основной таблицей проверок (s-jau82aq9juv9zzh) и с «What an approval covers» (s-5ah25f6gy99panq): узел реализует строку 10.1.8 (s-cey3k9xxjvkpyqz), которая проверяет правило «What an approval covers»."
+      },
+      {
+        "en": "The check of who an approval that a commit adds names, and the citation of the node on earlier releases that came with it: they moved to the new node “Who an added approval names” (s-75ue25v6r23jkk8), which implements row 10.1.9.",
+        "ru": "Проверка того, кого называет одобрение, добавленное коммитом, и пришедшая вместе с ней ссылка на узел о прежних выпусках: они перенесены в новый узел «Who an added approval names» (s-75ue25v6r23jkk8), который реализует строку 10.1.9."
+      }
+    ],
+    "s-agc6fb3vx46pc23": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements rows 10.1.10, 10.1.16, 11.3.2 and 12.12.14.",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строки 10.1.10, 10.1.16, 11.3.2 и 12.12.14."
+      },
+      {
+        "en": "The `implements` links to “Gathered values are written beside their field” (s-ju5vcanbjph7mgh) and to “How a section's approval status is determined” (s-9kfdycuq34beqvs), which are now `cites` links: the rows that the node implements check those rules.",
+        "ru": "Связи `implements` с «Gathered values are written beside their field» (s-ju5vcanbjph7mgh) и с «How a section's approval status is determined» (s-9kfdycuq34beqvs): теперь это связи `cites`. Эти правила проверяются строками, которые реализует узел."
+      },
+      {
+        "en": "The check that every domain has a header, which impl.json maps to this node: it moved to the new node “One header for each domain” (s-8esbyvaj2yx5eqf), which implements row 11.3.1.",
+        "ru": "Проверка того, что у каждого домена есть заголовок. В impl.json эта проверка связана с этим узлом. Она перенесена в новый узел «One header for each domain» (s-8esbyvaj2yx5eqf), который реализует строку 11.3.1."
+      }
+    ],
+    "s-qzyacnqwvaeaps4": [
+      {
+        "en": "The `implements` links to the main table of checks (s-jau82aq9juv9zzh) and to “Incoming links are built” (s-bpdqd9v72wg7vsz): the node implements rows 10.1.13 and 10.1.14 and “A cited node is also linked” (s-cxtt6jvhqcey2k9), which says what a citation is.",
+        "ru": "Связи `implements` с основной таблицей проверок (s-jau82aq9juv9zzh) и с «Incoming links are built» (s-bpdqd9v72wg7vsz): узел реализует строки 10.1.13 и 10.1.14, а также правило «A cited node is also linked» (s-cxtt6jvhqcey2k9), которое говорит, что такое ссылка."
+      },
+      {
+        "en": "Resolving a link's target: it moved to the new node “The target of a link” (s-c4rn9fj4czk768b), which implements row 10.1.12.",
+        "ru": "Поиск цели связи: он перенесён в новый узел «The target of a link» (s-c4rn9fj4czk768b), который реализует строку 10.1.12."
+      }
+    ],
+    "s-pvnnr844f3y964m": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.15 (s-s79v9mmyw56hgpx).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.15 (s-s79v9mmyw56hgpx)."
+      },
+      {
+        "en": "The name NodeKind, which the owner removed on 2026-11-10 (s-vsh384ybt4w25a2).",
+        "ru": "Имя NodeKind, которое вы убрали 2026-11-10 (s-vsh384ybt4w25a2)."
+      }
+    ],
+    "s-e2vdhfsndy5stq9": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.17 (s-83natrftdsmttsu).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.17 (s-83natrftdsmttsu)."
+      },
+      {
+        "en": "Reading only approved nodes, sections and headers: row 10.1.17 covers every sentence of the specification, drafts included (the owner, 2026-11-13).",
+        "ru": "Чтение только одобренных узлов, разделов и заголовков доменов: строка 10.1.17 распространяется на каждое предложение спецификации, в том числе на предложения черновиков (ваше решение от 2026-11-13)."
+      }
+    ],
+    "s-zhen42p6mnaxu7w": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.18 (s-exxuckgakfxkycp).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.18 (s-exxuckgakfxkycp)."
+      },
+      {
+        "en": "The citation of “A section contains rules and requires nothing” (s-7445ahgjck2aefg) for what counts as a rule: “What is considered a rule of a section” (s-pctqj9wqaq8762t) now says it, and “A RecordType is a rule” (s-ktfstpv8rurznrp) adds the RecordType.",
+        "ru": "Ссылка на «A section contains rules and requires nothing» (s-7445ahgjck2aefg) как на узел, который говорит, что считается правилом: теперь это говорит «What is considered a rule of a section» (s-pctqj9wqaq8762t), а «A RecordType is a rule» (s-ktfstpv8rurznrp) добавляет к правилам RecordType."
+      }
+    ],
+    "s-qvgzubkrafadqgf": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.19 (s-6u54kfn4ze29r6h).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.19 (s-6u54kfn4ze29r6h)."
+      },
+      {
+        "en": "The check of a `consumes` link: it is row 11.3.3 of the Domains extension, which the new node “`consumes` links” (s-p3n666zfjdrrw6a) implements.",
+        "ru": "Проверка связи `consumes`: это строка 11.3.3 расширения Domains, которую реализует новый узел «`consumes` links» (s-p3n666zfjdrrw6a)."
+      },
+      {
+        "en": "The citations of “The implementation of an approved rule” (s-6fw72j65jkqrfpf) and “What a link is” (s-sn6au3vcr9uy5pm): the node now cites “Exempting a rule from being implemented” (s-gf6n8ge4mke3pr2), which states what an exemption is.",
+        "ru": "Ссылки на «The implementation of an approved rule» (s-6fw72j65jkqrfpf) и на «What a link is» (s-sn6au3vcr9uy5pm): теперь узел ссылается на «Exempting a rule from being implemented» (s-gf6n8ge4mke3pr2), где сказано, что такое освобождение правила от имплементации."
+      },
+      {
+        "en": "The name NodeKind, which the owner removed on 2026-11-10 (s-vsh384ybt4w25a2).",
+        "ru": "Имя NodeKind, которое вы убрали 2026-11-10 (s-vsh384ybt4w25a2)."
+      }
+    ],
+    "new:tools-7-1-guidelines-to-extension": [
+      {
+        "en": "The sentence that a citation of a node of an extension is refused through the link it requires: “Outgoing links and citations” (s-qzyacnqwvaeaps4) already says that every citation requires a link.",
+        "ru": "Предложение о том, что ссылку на узел расширения отвергает проверка связи, которой эта ссылка требует: «Outgoing links and citations» (s-qzyacnqwvaeaps4) уже говорит, что каждая ссылка требует связи."
+      }
+    ],
+    "s-yprj7d6tnvauggr": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements rows 10.1.22 to 10.1.24.",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строки с 10.1.22 по 10.1.24."
+      }
+    ],
+    "s-6bmnsbskg6en4nf": [
+      {
+        "en": "The `implements` link to the main table of checks (s-jau82aq9juv9zzh): the node implements row 10.1.25 (s-rnbm4v8hsta6heq).",
+        "ru": "Связь `implements` с основной таблицей проверок (s-jau82aq9juv9zzh): узел реализует строку 10.1.25 (s-rnbm4v8hsta6heq)."
+      }
+    ]
+  },
+  "location": {
+    "new:tools-7-1-location": {
+      "en": "tools 7.1.4a (new, after \"Locations computed anew\")",
+      "ru": "tools 7.1.4a (новый, после «Locations computed anew»)"
+    },
+    "new:tools-7-1-approval-by": {
+      "en": "tools 7.1.5a (new, after \"An approved node's approval\")",
+      "ru": "tools 7.1.5a (новый, после «An approved node's approval»)"
+    },
+    "new:tools-7-1-one-header": {
+      "en": "tools 7.1.9a (new, after \"Values built from other nodes\")",
+      "ru": "tools 7.1.9a (новый, после «Values built from other nodes»)"
+    },
+    "new:tools-7-1-link-target": {
+      "en": "tools 7.1.7a (new, before \"Outgoing links and citations\")",
+      "ru": "tools 7.1.7a (новый, перед «Outgoing links and citations»)"
+    },
+    "new:tools-7-1-consumes": {
+      "en": "tools 7.1.12a (new, after \"`exempts` links\")",
+      "ru": "tools 7.1.12a (новый, после «`exempts` links»)"
+    },
+    "new:tools-7-1-guidelines-to-extension": {
+      "en": "tools 7.1.12b (new, after \"`consumes` links\")",
+      "ru": "tools 7.1.12b (новый, после «`consumes` links»)"
+    },
+    "proposal:domains-header-status": {
+      "en": "domains 11.1.4a (new, after \"A domain's header carries the index built from its sections\")",
+      "ru": "domains 11.1.4a (новый, после «A domain's header carries the index built from its sections»)"
+    },
+    "proposal:11-3-header-status-row": {
+      "en": "domains 11.3.2a (new row of the table of checks of the Domains extension, after row 11.3.2)",
+      "ru": "domains 11.3.2a (новая строка таблицы проверок расширения Domains, после строки 11.3.2)"
+    },
+    "proposal:row-10-1-8": {
+      "en": "spec 10.1.8 (row of the main table of checks)",
+      "ru": "spec 10.1.8 (строка основной таблицы проверок)"
+    },
+    "proposal:row-10-1-17": {
+      "en": "spec 10.1.17 (row of the main table of checks)",
+      "ru": "spec 10.1.17 (строка основной таблицы проверок)"
+    },
+    "proposal:s-ztseyetus7np6br": {
+      "en": "tools 2.2 (new)",
+      "ru": "tools 2.2 (новый)"
+    }
+  },
+  "approved": {
+    "s-stxmhq3hgfndvn6": {
+      "title": "Locations computed anew",
+      "en": "`sheriff validate` computes in memory the location of each node from where it is, and compares it with the location its file holds.",
+      "ruTitle": "Расположения, вычисленные заново",
+      "ru": "`sheriff validate` вычисляет в памяти расположение каждого узла по тому, где узел находится, и сравнивает его с расположением, которое хранит файл узла."
+    },
+    "s-95w92rnjuv3sst8": {
+      "title": "An approved node's approval",
+      "en": "`sheriff validate` looks up each approved node in the approvals. The latest line for the node's sid and the fingerprint of its wording must be an approval. These nodes are left out:\n\n- the nodes of the SpecSheriff guidelines the project takes;\n- a section and a domain's header.\n\n`sheriff validate` looks up whoever an approval's line names among the owners of its node, as the commit holds them. It does so for each approval the commit adds to the approvals of its parent. The approvals of the parent are read as `sheriff reindex` would rewrite them (§s-f5rz6b7dhxejjts).",
+      "ruTitle": "Одобрение одобренного узла",
+      "ru": "`sheriff validate` ищет каждый одобренный узел в одобрениях. Последняя строка для sid узла и отпечатка его формулировки должна быть одобрением. Не проверяются следующие узлы:\n\n- узлы SpecSheriff guidelines, которые берёт проект;\n- раздел и заголовок домена.\n\n`sheriff validate` ищет того, кого называет строка одобрения, среди ответственных за её узел в том виде, в каком их содержит коммит. Он делает это для каждого одобрения, которое коммит добавляет к одобрениям своего родителя. Одобрения родителя читаются в том виде, в какой их переписал бы `sheriff reindex` (§s-f5rz6b7dhxejjts)."
+    },
+    "s-agc6fb3vx46pc23": {
+      "title": "Indexes, incoming links, gathered values and the statuses of sections and headers, rebuilt",
+      "en": "`sheriff validate` rebuilds these in memory and compares them with what is committed:\n\n- the index of each domain's header, the header read as it now stands in the domain's files;\n- the incoming links;\n- the values gathered beside each field (§s-ju5vcanbjph7mgh);\n- the status of each section and domain's header (§s-9kfdycuq34beqvs).",
+      "ruTitle": "Указатели, связи, указывающие на узел, собранные значения и статусы разделов и заголовков, построенные заново",
+      "ru": "`sheriff validate` строит заново в памяти следующее и сравнивает с тем, что закоммичено:\n\n- указатель в заголовке каждого домена, причём заголовок читается таким, каким он сейчас стоит в файлах домена;\n- связи, указывающие на узлы;\n- значения, собранные рядом с каждым полем (§s-ju5vcanbjph7mgh);\n- статус каждого раздела и каждого заголовка домена (§s-9kfdycuq34beqvs)."
+    },
+    "s-qzyacnqwvaeaps4": {
+      "title": "Outgoing links and citations",
+      "en": "`sheriff validate` resolves the target of every outgoing link among the sids that exist.\n\nIt reads the citations in every node and sets them against the links the node makes:\n\n- A `§` followed by a sid and then by no lower-case letter or digit cites that sid.\n- A `§` followed by anything else, up to a space, a comma, a semicolon or a closing parenthesis, is a citation by a location.\n- Text in backticks counts in the check as any other text does, except a citation by a location (§s-bpdqd9v72wg7vsz).\n- A header's index and the values gathered beside a field are not read.",
+      "ruTitle": "Исходящие связи и ссылки",
+      "ru": "`sheriff validate` ищет цель каждой исходящей связи среди существующих sid.\n\nОн читает ссылки в каждом узле и сверяет их со связями, которые объявляет узел:\n\n- `§`, за которым следует sid, а за ним нет строчной буквы или цифры, — ссылка на этот sid.\n- `§`, за которым следует что-либо другое до пробела, запятой, точки с запятой или закрывающей скобки, — ссылка по расположению.\n- Текст в обратных кавычках учитывается проверкой так же, как любой другой текст, кроме ссылки по расположению (§s-bpdqd9v72wg7vsz).\n- Указатель в заголовке и значения, собранные рядом с полем, не читаются."
+    },
+    "s-pvnnr844f3y964m": {
+      "title": "The NodeKinds at the ends of a link",
+      "en": "`sheriff validate` looks up the NodeKind of the node at each end of every outgoing link and sets it against the link's type.",
+      "ruTitle": "Типы узлов на концах связи",
+      "ru": "`sheriff validate` смотрит, какого типа узел на каждом конце каждой исходящей связи, и сверяет это с типом связи."
+    },
+    "s-e2vdhfsndy5stq9": {
+      "title": "Words running in capitals",
+      "en": "`sheriff validate` reads the title, text and reason of every approved node, and of every section and domain's header, for three words or more running in capitals.\n\n- Each such word has two characters or more.\n- The words are separated only by spaces or tabs.\n- Anything in backticks or double quotation marks is left out.",
+      "ruTitle": "Слова заглавными буквами подряд",
+      "ru": "`sheriff validate` ищет в заголовке, тексте и обосновании каждого одобренного узла, а также каждого раздела и заголовка домена три или более слова подряд, набранные заглавными буквами.\n\n- Каждое такое слово состоит из двух или более знаков.\n- Между словами только пробелы или табуляции.\n- Всё, что стоит в обратных кавычках или в двойных кавычках, не учитывается."
+    },
+    "s-zhen42p6mnaxu7w": {
+      "title": "A section with a rule in it",
+      "en": "`sheriff validate` reads the children of every section, and those of each section inside it, for a node that counts as a rule (§s-7445ahgjck2aefg).",
+      "ruTitle": "Раздел, в котором есть правило",
+      "ru": "`sheriff validate` ищет среди дочерних узлов каждого раздела и каждого вложенного в него раздела узел, который считается правилом (§s-7445ahgjck2aefg)."
+    },
+    "s-qvgzubkrafadqgf": {
+      "title": "`consumes` and `exempts` links",
+      "en": "`sheriff validate` reads what stands at each end of every `consumes` and `exempts` link:\n\n- a `consumes` link, for a domain's header at its start and a section of another domain at its end;\n- an `exempts` link, for a node of `project.json` at its start, and a rule, a node of a project's own NodeKind or a section at its end.",
+      "ruTitle": "Связи `consumes` и `exempts`",
+      "ru": "`sheriff validate` проверяет, что стоит на каждом конце каждой связи `consumes` и `exempts`:\n\n- у связи `consumes` — заголовок домена в её начале и раздел другого домена в её конце;\n- у связи `exempts` — узел `project.json` в её начале, а в её конце правило, узел собственного типа узлов проекта или раздел."
+    },
+    "s-yprj7d6tnvauggr": {
+      "title": "`implements` and `refines` links of the appendices and a project's own guidelines",
+      "en": "`sheriff validate` resolves the outgoing `implements` and `refines` links of each node but a section, and reads the part of the node each names.",
+      "ruTitle": "Связи `implements` и `refines` приложений и собственных guidelines проекта",
+      "ru": "`sheriff validate` ищет цели исходящих связей `implements` и `refines` каждого узла, кроме раздела, и читает ту часть узла, которую называет каждая из них."
+    },
+    "s-6bmnsbskg6en4nf": {
+      "title": "No copy of the SpecSheriff guidelines",
+      "en": "`sheriff validate` refuses a copy of the SpecSheriff guidelines or of their schema outside the repository they are written in. A copy is:\n\n- a `spec.json` or a `tools.json` under `specs/_guidelines/`;\n- any file under `specs/_schema/` but `project.schema.json`.",
+      "ruTitle": "Никаких копий SpecSheriff guidelines",
+      "ru": "`sheriff validate` отвергает копию SpecSheriff guidelines или их схемы вне репозитория, в котором они пишутся. Копия — это:\n\n- `spec.json` или `tools.json` в `specs/_guidelines/`;\n- любой файл в `specs/_schema/`, кроме `project.schema.json`."
+    }
+  }
+}

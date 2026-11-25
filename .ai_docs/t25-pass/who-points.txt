@@ -1,0 +1,243 @@
+
+=== 1.2 s-eferktypcj7njt5 The structure of the specification is defined by its schema
+  in  cites from spec/1.22 A project's own guidelines refine or implement the SpecSheriff guidelines
+  in  cites from spec/1.23 A project's own NodeKind is numbered, counted and implemented as a rule is
+  in  implements from spec/5.1 What is checked, when, and what a failure costs
+  in  implements from tools/1 Where the files are
+  in  cites from tools/7.1.1 A key written twice in one object
+  in  implements from tools/7.1.2 The schema and a project's extension
+  cite spec/1.23.text: The nodes of a project's own NodeKind, declared in the extension of the schema (§s-eferktypcj7njt5), are held as rules are in these respects:
+  cite tools/1.text: A project's extension of the schema (§s-eferktypcj7njt5) is kept in `specs/_schema/project.schema.json`.
+  cite tools/7.1.2.text: `sheriff validate` validates each file with a JSON Schema validator against the base schema of the SpecSheriff guidelines, composed with the project's extension (§s-eferktypcj7njt5).
+  file .claude\vt\confirmed.json x1
+  file CLAUDE.md x1
+  file md-version\_guidelines\spec.md x15
+  file md-version\_guidelines\tools.md x6
+  file skills\claude-code\tools\guidelines\spec.json x15
+  file skills\claude-code\tools\guidelines\tools.json x6
+  file skills\codex\tools\guidelines\spec.json x15
+  file skills\codex\tools\guidelines\tools.json x6
+  file skills\tools\guidelines\spec.json x15
+  file skills\tools\guidelines\tools.json x6
+  file skills\tools\src\schema.ts x1
+  file skills\tools\test\unit\schema.test.ts x7
+
+=== 1.5 s-5ah25f6gy99panq What a node's status says
+  in  refines from spec/1.7 Only its owners approve a node
+  in  implements from spec/5.1 What is checked, when, and what a failure costs
+  in  cites from spec/5.12 Where an agent writes, the checks run at each of its edits
+  in  implements from tools/2 The commands
+  in  implements from tools/7.1.5 An approved node's approval
+  in  implements from tools/11 How an approval is recorded
+  cite spec/5.12.text: - leave a node approved over a wording for which no approval stands (§s-5ah25f6gy99panq), a section and a domain's header left out;
+  cite tools/11.reason: A withdrawal takes back the node's approval, not that of one of its wordings (§s-5ah25f6gy99panq).
+  file .claude\vt\confirmed.json x1
+  file .claude\vt\status.mjs x1
+  file CLAUDE.md x1
+  file docs\README.md x1
+  file md-version\_guidelines\spec.md x13
+  file md-version\_guidelines\tools.md x7
+  file skills\claude-code\tools\guidelines\spec.json x13
+  file skills\claude-code\tools\guidelines\tools.json x7
+  file skills\codex\tools\guidelines\spec.json x13
+  file skills\codex\tools\guidelines\tools.json x7
+  file skills\tools\guidelines\spec.json x13
+  file skills\tools\guidelines\tools.json x7
+  file skills\tools\src\reindex.ts x1
+  file skills\tools\test\unit\reindex.test.ts x2
+
+=== 1.19 s-vj7ercem526zd6v The technical appendix stands beside the base specification
+  in  refines from spec/1.18 The base specification holds no figure of one instance
+  in  refines from spec/1.20 The technical debt holds the problems of the default implementation set aside
+  in  cites from spec/1.31 Sids of a NodeKind's nodes as a field's values
+  in  cites from spec/5.1 What is checked, when, and what a failure costs
+  in  cites from tools/7.1.22 A file of the technical appendix named after a domain
+  in  cites from tools/17 Where the types and RuntimeChecks generated from the RecordTypes are written
+  cite spec/1.31.reason: An instance changes the technical appendix for itself (§s-vj7ercem526zd6v), so a value read from the appendix would differ from one instance to the next.
+  cite tools/17.reason: Such choices are described in the stack section (§s-vj7ercem526zd6v).
+  file .claude\vt\confirmed.json x1
+  file .claude\vt\rules.md x1
+  file docs\README.md x1
+  file md-version\_guidelines\spec.md x10
+  file md-version\_guidelines\tools.md x4
+  file skills\claude-code\tools\guidelines\spec.json x10
+  file skills\claude-code\tools\guidelines\tools.json x4
+  file skills\codex\tools\guidelines\spec.json x10
+  file skills\codex\tools\guidelines\tools.json x4
+  file skills\tools\guidelines\spec.json x10
+  file skills\tools\guidelines\tools.json x4
+
+=== 1.21 s-a4rbry4hsu34hy8 The guidelines hold their base and the appendix of their tools
+  in  cites from spec/1.2 The structure of the specification is defined by its schema
+  in  implements from spec/5.1 What is checked, when, and what a failure costs
+  in  implements from tools/1 Where the files are
+  cite spec/5.1.text: | Every rule of the appendix of the tools (§s-a4rbry4hsu34hy8) implements a node of the base of the guidelines | refused |
+  file .claude\vt\confirmed.json x1
+  file docs\README.md x1
+  file md-version\_guidelines\spec.md x7
+  file md-version\_guidelines\tools.md x1
+  file skills\claude-code\tools\guidelines\spec.json x7
+  file skills\claude-code\tools\guidelines\tools.json x1
+  file skills\codex\tools\guidelines\spec.json x7
+  file skills\codex\tools\guidelines\tools.json x1
+  file skills\tools\guidelines\spec.json x7
+  file skills\tools\guidelines\tools.json x1
+
+=== 1.22 s-bsya3febm6u64ab A project's own guidelines refine or implement the SpecSheriff guidelines
+  in  cites from spec/1.5 What a node's status says
+  in  cites from spec/1.17 Of a user interface the base states what it shows, not how it looks
+  in  cites from spec/1.28 The list of a field's values in contracts may consolidate values from different domains
+  in  cites from spec/1.40 Every domain stands at a level
+  in  cites from spec/2.1 Outgoing links are written, incoming links are built
+  in  cites from spec/3.6 An approved rule is implemented or exempted
+  in  implements from spec/5.1 What is checked, when, and what a failure costs
+  in  cites from spec/6.1 The specification is written in English
+  in  implements from tools/14 The plugin for Claude Code carries everything its work needs
+  in  implements from tools/15 The plugin for Codex CLI carries everything its work needs
+  cite spec/1.5.text: - a node of the SpecSheriff guidelines a project takes (§s-bsya3febm6u64ab);
+  cite spec/1.5.reason: A project takes the SpecSheriff guidelines as they were approved where they are written (§s-bsya3febm6u64ab), so their approval is not the project's to withdraw.
+  cite spec/1.40.text: Every domain stands at one of the levels the specification's owners list in the project's own guidelines (§s-bsya3febm6u64ab).
+  cite spec/2.1.reason: The SpecSheriff guidelines read the same in every project working by one release (§s-bsya3febm6u64ab).
+  cite spec/3.6.reason: A project's own guidelines hold what only its specification needs (§s-bsya3febm6u64ab).
+  cite spec/6.1.reason: A project takes them as they are written and never changes them (§s-bsya3febm6u64ab).
+  file .claude\vt\confirmed.json x1
+  file docs\README.md x1
+  file md-version\_guidelines\spec.md x23
+  file md-version\_guidelines\tools.md x2
+  file skills\claude-code\tools\guidelines\spec.json x23
+  file skills\claude-code\tools\guidelines\tools.json x2
+  file skills\codex\tools\guidelines\spec.json x23
+  file skills\codex\tools\guidelines\tools.json x2
+  file skills\tools\guidelines\spec.json x23
+  file skills\tools\guidelines\tools.json x2
+  file skills\tools\test\unit\reindex.test.ts x1
+
+=== 1.24 s-e877bnfa559tvk9 Data structures are described in the specification
+  in  cites from spec/1.1 The nodes are the specification
+  in  refines from spec/1.25 A field is required only where its value is guaranteed
+  in  refines from spec/1.26 A RecordType variant exists only for a value carrying fields of its own
+  in  refines from spec/1.27 One source for the values of a field of type `one of`
+  in  cites from spec/3.4 The test comes before the code
+  in  implements from spec/5.1 What is checked, when, and what a failure costs
+  in  cites from spec/5.10 The reviewer sees only the change and the nodes it names
+  in  implements from tools/2 The commands
+  in  implements from tools/17 Where the types and RuntimeChecks generated from the RecordTypes are written
+  in  implements from tools/18 What a RecordType generates
+  in  implements from tools/19 A RecordType its variants refine
+  in  implements from tools/20 The type each neutral type of a field gives
+  cite spec/1.1.text: What is generated from the nodes into the system's code — its types and RuntimeChecks (§s-e877bnfa559tvk9), and what a project's own generators write (§s-km4x4s26kv7pjze) — waits for its nodes instead.
+  cite spec/1.27.reason: They are found there by its reader, by the type generated for it (§s-e877bnfa559tvk9) and by the check comparing each variant with the values it names (§s-z3dnru6qqdf9m6j).
+  cite spec/3.4.reason: Code generated from a node, as the types and RuntimeChecks of a RecordType are (§s-e877bnfa559tvk9), is held by every commit to what the node produces (§s-kh8qcd5kxgh9z3j).
+  cite spec/5.10.text: - what a RecordType requires, by the types and RuntimeChecks generated from it (§s-e877bnfa559tvk9);
+  cite tools/17.text: The list of those files is defined in the rule that describes how the system generates its types and RuntimeChecks from its RecordTypes, as the rule on data structures requires (§s-e877bnfa559tvk9).
+  file .claude\vt\confirmed.json x1
+  file md-version\_guidelines\spec.md x15
+  file md-version\_guidelines\tools.md x6
+  file skills\claude-code\tools\guidelines\spec.json x15
+  file skills\claude-code\tools\guidelines\tools.json x6
+  file skills\codex\tools\guidelines\spec.json x15
+  file skills\codex\tools\guidelines\tools.json x6
+  file skills\tools\guidelines\spec.json x15
+  file skills\tools\guidelines\tools.json x6
+  file skills\tools\src\types.ts x1
+  file skills\tools\test\e2e\commands.test.ts x1
+  file skills\tools\test\unit\types.test.ts x1
+
+=== 1.34 s-7vm323mhry2enx3 What the domains share is agreed in contracts
+  in  cites from spec/1.28 The list of a field's values in contracts may consolidate values from different domains
+  in  cites from spec/1.35 The division of the specification
+  in  cites from spec/1.37 An entity is declared once
+  in  cites from spec/1.39 A domain uses another domain's RecordTypes only from the sections it declares
+  in  implements from spec/5.1 What is checked, when, and what a failure costs
+  cite spec/1.28.reason: A RecordType one domain provides is described in that domain (§s-7vm323mhry2enx3).
+  cite spec/1.35.reason: A domain describes the RecordTypes it provides to the others as its interface (§s-7vm323mhry2enx3).
+  cite spec/1.37.text: An entity is declared by the term that names it, in contracts (§s-7vm323mhry2enx3).
+  cite spec/1.39.reason: A RecordType of contracts is provided by no single domain (§s-7vm323mhry2enx3), so naming it makes a domain rely on no other.
+  file .claude\vt\confirmed.json x1
+  file md-version\_guidelines\spec.md x10
+  file skills\claude-code\tools\guidelines\spec.json x10
+  file skills\codex\tools\guidelines\spec.json x10
+  file skills\tools\guidelines\spec.json x10
+
+=== 1.38 s-yggv9myedprnaa7 A domain's specification opens with its header
+  in  cites from spec/1.7 Only its owners approve a node
+  in  cites from spec/1.35 The division of the specification
+  in  refines from spec/1.39 A domain uses another domain's RecordTypes only from the sections it declares
+  cite spec/1.7.text: A domain (§s-yggv9myedprnaa7) or a section may have owners of its own.
+  cite spec/1.35.reason: Its header's `consumes` links name the sections of theirs it uses (§s-yggv9myedprnaa7).
+  cite spec/1.39.reason: So whoever changes such a RecordType sees which domains it reaches (§s-yggv9myedprnaa7).
+  file .claude\vt\confirmed.json x1
+  file md-version\_guidelines\spec.md x10
+  file skills\claude-code\tools\guidelines\spec.json x10
+  file skills\codex\tools\guidelines\spec.json x10
+  file skills\tools\guidelines\spec.json x10
+  file skills\tools\test\unit\reindex.test.ts x2
+
+=== 1.40 s-nkyty4dy9x2v2a4 Every domain stands at a level
+  in  cites from spec/1.6 The status of a section and of a domain's header
+  in  implements from tools/1 Where the files are
+  cite spec/1.6.reason: A header's level is one of those the project's own guidelines list (§s-nkyty4dy9x2v2a4).
+  cite tools/1.text: - the levels the domains stand at are the members of the `TextRule.list` carried by its rule that refines §s-nkyty4dy9x2v2a4;
+  file .claude\vt\confirmed.json x1
+  file .claude\vt\viewer\serve.mjs x1
+  file md-version\_guidelines\spec.md x4
+  file md-version\_guidelines\tools.md x2
+  file skills\claude-code\tools\guidelines\spec.json x4
+  file skills\claude-code\tools\guidelines\tools.json x2
+  file skills\codex\tools\guidelines\spec.json x4
+  file skills\codex\tools\guidelines\tools.json x2
+  file skills\tools\guidelines\spec.json x4
+  file skills\tools\guidelines\tools.json x2
+  file skills\tools\src\model.ts x1
+
+=== 2.1 s-bpdqd9v72wg7vsz Outgoing links are written, incoming links are built
+  in  cites from spec/2.2 A link carries its type
+  in  implements from spec/5.1 What is checked, when, and what a failure costs
+  in  implements from tools/2 The commands
+  in  cites from tools/6 The hooks
+  in  implements from tools/7.1.7 Outgoing links and citations
+  cite spec/2.2.text: - `cites` — the linking node cites the linked one (§s-bpdqd9v72wg7vsz), and no other type says how the two bear on each other.
+  cite tools/7.1.7.text: - Text in backticks counts in the check as any other text does, except a citation by a location (§s-bpdqd9v72wg7vsz).
+  file .claude\vt\confirmed.json x1
+  file CLAUDE.md x1
+  file md-version\_guidelines\spec.md x13
+  file md-version\_guidelines\tools.md x6
+  file skills\claude-code\tools\guidelines\spec.json x13
+  file skills\claude-code\tools\guidelines\tools.json x6
+  file skills\codex\tools\guidelines\spec.json x13
+  file skills\codex\tools\guidelines\tools.json x6
+  file skills\tools\guidelines\spec.json x13
+  file skills\tools\guidelines\tools.json x6
+  file skills\tools\test\unit\model.test.ts x4
+  file skills\tools\test\unit\reindex.test.ts x2
+  file skills\tools\test\unit\validate.test.ts x1
+
+=== 5.12 s-83ev4wwesbwnhnp Where an agent writes, the checks run at each of its edits
+  in  implements from tools/2 The commands
+  in  implements from tools/3 Setting a repository up and taking SpecSheriff out of it
+  in  implements from tools/6 The hooks
+  in  implements from tools/7.3.2 An edit judged before it is made
+  in  cites from tools/11 How an approval is recorded
+  in  implements from tools/14 The plugin for Claude Code carries everything its work needs
+  in  implements from tools/16 The agent's hooks for Codex CLI
+  cite tools/11.reason: No edit of the approvals passes the guard (§s-83ev4wwesbwnhnp), so a line once appended can be taken out only through git.
+  file .claude\vt\confirmed.json x1
+  file docs\README.md x1
+  file md-version\_guidelines\spec.md x13
+  file md-version\_guidelines\tools.md x9
+  file skills\claude-code\tools\guidelines\spec.json x13
+  file skills\claude-code\tools\guidelines\tools.json x9
+  file skills\codex\tools\guidelines\spec.json x13
+  file skills\codex\tools\guidelines\tools.json x9
+  file skills\tools\guidelines\spec.json x13
+  file skills\tools\guidelines\tools.json x9
+  file skills\tools\test\e2e\hooks.test.ts x1
+  file skills\tools\test\unit\gates.test.ts x6
+
+=== 6.2 s-3dgt5c94jr55j3z A rule names its subject and states what must hold
+  file .claude\vt\confirmed.json x1
+  file .claude\vt\rules.md x1
+  file md-version\_guidelines\spec.md x2
+  file skills\claude-code\tools\guidelines\spec.json x2
+  file skills\codex\tools\guidelines\spec.json x2
+  file skills\tools\guidelines\spec.json x2

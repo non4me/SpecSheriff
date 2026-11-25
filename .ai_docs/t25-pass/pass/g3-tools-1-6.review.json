@@ -1,0 +1,31 @@
+{
+  "s-zefk589ykh37b8u": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-f5rz6b7dhxejjts": {
+    "verdict": "changed",
+    "issues": [
+      "Reason, second paragraph: a pronoun now points at another subject. The input was one sentence whose subject is `sheriff types`: \"`sheriff types` runs after every edit an agent makes and at every commit, where the pre-commit hook copies each file it names into the working tree for its author to stage (§s-477gtdrkw34dzxw): the files it names are then exactly those its author has to stage\". There both \"it\" mean `sheriff types`. The output names `sheriff types` only in the hook's sentence: \"At a commit, the pre-commit hook copies each file `sheriff types` names into the working tree for its author to stage (§s-477gtdrkw34dzxw).\" The next sentence then opens \"The files it names are then exactly those its author has to stage.\" Here \"it\" follows a sentence whose subject is the pre-commit hook, so it reads as the hook, and the text never says the hook names files. Fix: \"The files `sheriff types` names are then exactly those its author has to stage.\""
+    ]
+  },
+  "s-7unxytshhc4md54": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-rpv4fkdqqguptqd": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-k4nqjr96ux7a5m7": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-477gtdrkw34dzxw": {
+    "verdict": "changed",
+    "issues": [
+      "Reason, paragraph on the types: a purpose became a consequence. The input: \"The types and runtime checks generated from the RecordTypes are generated after every edit an agent makes and at every commit, so that they follow the nodes at the first edit or commit after every node they are generated from is approved (§s-kh8qcd5kxgh9z3j), ...\". There \"so that\" gives the aim, which is the ground of generating at every edit and commit. The output: \"... are generated after every edit an agent makes and at every commit. So they follow the nodes at the first edit or commit after every node they are generated from is approved (§s-kh8qcd5kxgh9z3j).\" There \"So\" states a result rather than the aim. This is a weak shift, and the ground is still readable. Fix: \"They are generated then so that they follow the nodes ...\".",
+      "Lesser, reason, paragraph on the reviewer's settings: the input kept the pronoun in the sentence that names the user: \"..., so only the user makes it (§s-xr5xxa9cxf2mq5u), and they make it once, when they install the plugin, ...\". The output starts a new sentence with \"They make it once, when they install the plugin, ...\" right after one whose subject is \"The settings the reviewer runs at\". The other reading makes no sense, so the user is still the likely referent. Fix: \"The user makes it once, when they install the plugin, ...\"."
+    ]
+  }
+}

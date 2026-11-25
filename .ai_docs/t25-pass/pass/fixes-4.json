@@ -1,0 +1,23 @@
+[
+  {
+    "group": "g3-tools-1-6",
+    "sid": "s-f5rz6b7dhxejjts",
+    "field": "reason",
+    "from": "The files it names are then exactly those its author has to stage.",
+    "to": "The files `sheriff types` names are then exactly those its author has to stage."
+  },
+  {
+    "group": "g3-tools-1-6",
+    "sid": "s-477gtdrkw34dzxw",
+    "field": "reason",
+    "from": "The types and RuntimeChecks generated from the RecordTypes are generated after every edit an agent makes and at every commit. So they follow the nodes at the first edit or commit after every node they are generated from is approved (§s-kh8qcd5kxgh9z3j). A person who edits the nodes without an agent has no hook between edits.",
+    "to": "The types and RuntimeChecks generated from the RecordTypes are generated after every edit an agent makes and at every commit, so that they follow the nodes at the first edit or commit after every node they are generated from is approved (§s-kh8qcd5kxgh9z3j), and a person who edits the nodes without an agent has no hook between edits."
+  },
+  {
+    "group": "g3-tools-1-6",
+    "sid": "s-477gtdrkw34dzxw",
+    "field": "reason",
+    "from": "They make it once, when they install the plugin,",
+    "to": "The user makes it once, when they install the plugin,"
+  }
+]

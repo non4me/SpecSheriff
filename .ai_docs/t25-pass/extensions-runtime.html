@@ -1,0 +1,151 @@
+<title>Расширения SpecSheriff изнутри</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: three stores side by side (plugin, repository, what the tools do), then the two ways the list changes. */
+  /* One dark look whatever the viewer's theme: the owner reads on a dark ground. */
+  :root {
+    --bg: #0f171c;
+    --panel: #17232b;
+    --panel-2: #1d2c36;
+    --fg: #eef1f3;
+    --muted: #a3b0b9;
+    --rule: #2c3a44;
+    --plugin: #8fb0cf;
+    --repo: #5fbf86;
+    --run: #e2a23b;
+    --change: #5cb8d8;
+    --display: "PT Serif", Georgia, serif;
+    --body: "PT Sans", "Segoe UI", Arial, sans-serif;
+    --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45;
+    padding-block: 20px 40px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  main { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  .lede { color: var(--muted); margin: 4px 0 0; max-width: 70ch; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+  .box { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid var(--c); border-radius: 6px; padding: 14px 16px; min-width: 0; display: grid; gap: 10px; }
+  .box h2 { font-size: 1rem; margin: 0; color: var(--c); letter-spacing: 0.02em; }
+  .box .where { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+  .item { background: var(--panel-2); border-radius: 4px; padding: 8px 10px; display: grid; gap: 4px; }
+  .item b { font-weight: 700; }
+  .item .path { font-family: var(--mono); font-size: 0.8rem; color: var(--c); overflow-wrap: anywhere; }
+  .item ul { margin: 0; padding-left: 18px; }
+  .ext { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 6px; }
+  .ext span { border: 1px dashed var(--c); border-radius: 4px; padding: 4px 6px; font-size: 0.85rem; }
+  .ext span.on { border-style: solid; background: color-mix(in srgb, var(--repo) 18%, transparent); }
+  ol.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  code { font-family: var(--mono); font-size: 0.85em; color: var(--fg); background: var(--panel-2); padding: 0 3px; border-radius: 3px; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .flow .node { background: var(--panel-2); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 10px; font-size: 0.9rem; }
+  .flow .arrow { color: var(--change); font-family: var(--mono); }
+  .note { border-left: 3px solid var(--muted); padding: 2px 0 2px 12px; color: var(--muted); max-width: 80ch; }
+  .note b { color: var(--fg); }
+</style>
+
+<main>
+  <header>
+    <h1>Как расширения устроены технически</h1>
+    <p class="lede">Расширения — часть плагина SpecSheriff, а не отдельные плагины. Они приходят с каждым выпуском плагина и спят, пока ответственный не включит их в проекте. Так сказано в согласованном 1.7.1.</p>
+  </header>
+
+  <section class="row">
+    <div class="box" style="--c: var(--plugin)">
+      <h2>1 · Плагин SpecSheriff на машине</h2>
+      <div class="where">одна установка, один выпуск, вне git проекта</div>
+      <div class="item">
+        <b>Инструменты SpecSheriff</b>
+        <span class="path">tools/dist/cli.js</span>
+        <span>общий код: проверки, хуки, генераторы — и код проверок каждого расширения, который работает, только если расширение активно</span>
+      </div>
+      <div class="item">
+        <b>SpecSheriff guidelines</b>
+        <span class="path">tools/guidelines/spec.json, tools.json</span>
+      </div>
+      <div class="item">
+        <b>Расширения guidelines — каждое в своём файле</b>
+        <span class="path">tools/guidelines/extensions/&lt;имя&gt;.json</span>
+        <div class="ext">
+          <span>Домены</span><span>RecordType</span><span>Представления спецификации</span>
+        </div>
+        <span>у каждого: его правила, его часть схемы (свои типы узлов), его часть описания инструментов, при нужде свой skill</span>
+      </div>
+      <div class="item">
+        <b>Skills</b>
+        <span class="path">skills/spec, spec-review, spec-init, spec-adopt, spec-remove, spec-settings (новый)</span>
+      </div>
+    </div>
+
+    <div class="box" style="--c: var(--repo)">
+      <h2>2 · Репозиторий проекта</h2>
+      <div class="where">в git, одинаково в каждом клоне</div>
+      <div class="item">
+        <b>Перечень активных расширений</b>
+        <span class="path">sheriff.config.json</span>
+        <span>например: Домены и RecordType</span>
+        <div class="ext">
+          <span class="on">Домены ✓</span><span class="on">RecordType ✓</span>
+        </div>
+      </div>
+      <div class="item">
+        <b>Спецификация проекта</b>
+        <span class="path">specs/</span>
+        <ul>
+          <li>базовая спецификация и техническое приложение</li>
+          <li>собственные guidelines проекта — <span class="path">specs/_guidelines/project.json</span></li>
+          <li>расширение схемы проекта — <span class="path">specs/_schema/project.schema.json</span></li>
+        </ul>
+      </div>
+      <div class="item">
+        <b>Копий нет</b>
+        <span>ни SpecSheriff guidelines, ни расширений в проекте нет: их читают из плагина (2.5)</span>
+      </div>
+    </div>
+
+    <div class="box" style="--c: var(--run)">
+      <h2>3 · Что делают инструменты при каждом запуске</h2>
+      <div class="where">хук агента, git-хук, команда</div>
+      <ol class="steps">
+        <li>читают перечень активных расширений из <code>sheriff.config.json</code></li>
+        <li>собирают схему: базовая + схемы активных расширений + расширение схемы проекта</li>
+        <li>проверяют спецификацию по этой схеме: узел типа из неактивного расширения отвергается</li>
+        <li>запускают проверки SpecSheriff guidelines и проверки активных расширений</li>
+        <li><code>sheriff guide</code> печатает агенту SpecSheriff guidelines, правила активных расширений, собственные guidelines проекта и указатель остальных расширений</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="box" style="--c: var(--change)">
+    <h2>4 · Как меняется перечень активных расширений</h2>
+    <div class="flow">
+      <span class="node">окно <code>sheriff settings</code> с чекбоксами</span>
+      <span class="node">диалог вопроса в чате, при удалённой работе</span>
+      <span class="node">просьба агенту в чате</span>
+      <span class="arrow">→</span>
+      <span class="node"><code>sheriff extension enable | disable &lt;имя&gt;</code></span>
+      <span class="arrow">→</span>
+      <span class="node">ответственный? ничего не зависит от выключаемого?</span>
+      <span class="arrow">→</span>
+      <span class="node">запись в <code>sheriff.config.json</code></span>
+      <span class="arrow">→</span>
+      <span class="node">коммит</span>
+    </div>
+  </section>
+
+  <section class="box" style="--c: var(--plugin)">
+    <h2>5 · Обновление плагина</h2>
+    <ul>
+      <li>новый выпуск приносит новое расширение → оно появляется в <code>sheriff settings</code> как доступное, но не активно, пока ответственный его не включит</li>
+      <li>выпуск без расширения, которое проект включил → проверки отклоняют коммит и называют это расширение</li>
+    </ul>
+  </section>
+
+  <p class="note"><b>Почему в проекте записаны только активные.</b> Какие расширения существуют, определяет установленный выпуск плагина. Если скопировать этот перечень в проект, копия будет отставать от плагина после каждого обновления. Поэтому <code>sheriff settings</code> показывает оба перечня: все расширения выпуска, а активные среди них отмечены. Хранится в проекте только выбор.</p>
+</main>

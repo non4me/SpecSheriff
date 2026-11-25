@@ -1,0 +1,745 @@
+<title>Таблица проверок 12.12</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header with the counts and the controls, the intro, the two tables as foldable rows beside a column of
+     the nodes they check, then the reason and the open questions. One dark look, as the owner reads every page. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --stays: #5fbf86; --dom: #9fb6cf; --gen: #5cb8d8; --ado: #e2a23b; --del: #e07a6a; --lit: #e8b75a;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+  header { display: grid; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  h1 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 0; text-wrap: balance; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.8rem; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .filter, #open-all, #close-all { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  .filter[aria-pressed="true"] { border-color: var(--fg); background: var(--panel-2); }
+  .filter:focus-visible, #open-all:focus-visible, #close-all:focus-visible, .chip:focus-visible, summary:focus-visible { outline: 2px solid var(--gen); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; margin: 0; max-width: 80ch; }
+  .note { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  ol.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  li.row { background: var(--panel); border: 1px solid transparent; border-left: 3px solid var(--stays); border-radius: 4px; min-width: 0; }
+  li.row.f-dom { border-left-color: var(--dom); } li.row.f-gen { border-left-color: var(--gen); } li.row.f-ado { border-left-color: var(--ado); } li.row.f-del { border-left-color: var(--del); }
+  li.row.lit { border-color: var(--lit); background: var(--panel-2); }
+  li.row.sel { border-color: var(--fg); background: var(--panel-2); }
+  details.fold > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 4.2rem auto 1fr; gap: 4px 10px; align-items: baseline; padding: 8px 10px; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  .n { font-family: var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .fate { font-family: var(--mono); font-size: 0.72rem; padding: 1px 7px; border: 1px solid currentColor; border-radius: 3px; white-space: nowrap; }
+  .fate.stays { color: var(--stays); } .fate.dom { color: var(--dom); } .fate.gen { color: var(--gen); } .fate.ado { color: var(--ado); } .fate.del { color: var(--del); }
+  .head { min-width: 0; overflow-wrap: anywhere; }
+  @media (max-width: 560px) { details.fold > summary { grid-template-columns: 2rem 1fr; } .head { grid-column: 1 / -1; } }
+  .body { padding: 0 12px 12px; display: grid; gap: 6px; }
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .pair > div { min-width: 0; }
+  .lab { font-family: var(--mono); font-size: 0.72rem; color: var(--lit); letter-spacing: 0.04em; }
+  p { margin: 0; overflow-wrap: anywhere; }
+  .cost { color: var(--muted); font-size: 0.9rem; }
+  .change { font-size: 0.92rem; } .was { color: var(--muted); font-size: 0.88rem; }
+  code { font-family: var(--mono); font-size: 0.86em; }
+  .cite { font-family: var(--mono); font-size: 0.85em; border-bottom: 1px dotted currentColor; cursor: help; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font: inherit; font-family: var(--mono); font-size: 0.78rem; color: var(--fg); background: var(--panel-2); border: 1px solid var(--rule); border-radius: 3px; padding: 2px 7px; cursor: pointer; }
+  .chip.lit { border-color: var(--lit); color: var(--lit); }
+  aside { position: sticky; top: env(safe-area-inset-top, 0px); max-height: 100vh; overflow-y: auto; display: grid; gap: 6px; align-content: start; }
+  @media (max-width: 900px) { aside { position: static; max-height: none; } }
+  .node { text-align: left; font: inherit; font-size: 0.86rem; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px; cursor: pointer; display: grid; gap: 2px; }
+  .node .at { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .node.lit { border-color: var(--lit); } .node.sel { border-color: var(--fg); background: var(--panel-2); }
+  .node .cnt { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  ul.doubts { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+  .none { color: var(--muted); }
+  .pre { white-space: pre-line; }
+  .impl { border: 1px solid var(--rule); border-left: 3px solid #5cb8d8; border-radius: 4px; padding: 8px 10px; display: grid; gap: 4px; background: var(--panel-2); }
+  .impl .at { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .impl .why { color: var(--muted); font-style: italic; }
+  .impl.gap { border-left-color: #e07a6a; color: #e07a6a; }
+  .impl.base { border-left-color: #e8b75a; }
+  .about { border-left: 3px solid #e8b75a; padding-left: 10px; }
+  .thead { display: grid; grid-template-columns: 3fr 1fr; gap: 12px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel-2); font-size: 0.9rem; }
+  @media (prefers-reduced-motion: no-preference) { li.row, .node { transition: background-color .15s, border-color .15s; } }
+</style>
+<div class="wrap">
+  <header>
+    <h1>The table of checks of the RecordType extension</h1>
+    <div class="sub">12.12 · s-3k8mvhq2xbn5wpz · TableRule · Таблица проверок расширения «RecordType»</div>
+    <p class="hint">Каждая строка: текст по-английски и по-русски с ценой отказа, что изменилось, какой она была и какие узлы она проверяет. Цвет полосы слева — судьба строки. Щелчок по узлу справа подсвечивает строки, которые его проверяют; щелчок по узлу в строке подсвечивает его справа. Свёрнутые строки остаются свёрнутыми после обновления страницы.</p>
+    <div class="bar" role="group" aria-label="Показать строки">
+      <button type="button" class="filter" data-fate="stays" aria-pressed="true" id="f-stays"><span class="fate stays">остаётся в 12.12</span> 0</button>
+      <button type="button" class="filter" data-fate="stays" aria-pressed="true" id="f-stays"><span class="fate stays">переходит сюда из таблицы 10.1</span> 13</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 11.3 «Таблица проверок расширения «Домены»»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 12.12 «Таблица проверок расширения «RecordType»»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 11.1 «Домены: декомпозиция»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 12 «RecordType»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 11.2 «Домены: иерархия»</span> 0</button>
+      <button type="button" class="filter" data-fate="stays" aria-pressed="true" id="f-stays"><span class="fate stays">новая строка в 12.12</span> 3</button>
+      <button type="button" class="filter" data-fate="del" aria-pressed="true" id="f-del"><span class="fate del">удаляется</span> 3</button>
+      <button type="button" id="open-all">Раскрыть все строки</button>
+      <button type="button" id="close-all">Свернуть все строки</button>
+    </div>
+  </header>
+
+  <section class="note" aria-labelledby="intro-h">
+    <h2 id="intro-h">Шапка таблицы — сам узел, согласована 2026-11-18</h2>
+    <div class="pair"><div><div class="lab">EN · текст</div><p class="pre">This table contains the complete list of the checks of the RecordType extension (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) that run after an edit to the specification or to the code, including its tests.</p></div><div><div class="lab">RU · текст</div><p class="pre">Эта таблица содержит полный список проверок расширения «RecordType» (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>), которые запускаются после правок как самой спецификации, так и кода, включая тесты.</p></div></div>
+    
+    <div class="pair"><div><div class="lab">EN · обоснование</div><p>The checks of the RecordType extension bind only a project that has chosen the extension (<span class="cite" title="1.7.5 Configuring extensions">§s-9ttvcwpqkehm58g</span>). The main table of checks names no particular extension (<span class="cite" title="1.7.3 A rule of the SpecSheriff guidelines names no particular extension">§s-chk5hnzmcpeqj25</span>), so these checks are listed here, beside the rules they enforce. In one table, every check of the extension can be seen at a glance, together with what its failure costs.</p></div><div><div class="lab">RU · обоснование</div><p>Проверки расширения «RecordType» обязывают только проект, который выбрал это расширение (<span class="cite" title="1.7.5 Configuring extensions">§s-9ttvcwpqkehm58g</span>). Основная таблица проверок не называет ни одного конкретного расширения (<span class="cite" title="1.7.3 A rule of the SpecSheriff guidelines names no particular extension">§s-chk5hnzmcpeqj25</span>), поэтому эти проверки перечислены здесь, рядом с правилами, которые они обеспечивают. В одной таблице все проверки расширения видны сразу, вместе с ценой непрохождения каждой.</p></div></div>
+    <div class="lab">Что изменилось</div>
+    <ul class="doubts"><li>Новый узел, по вашему решению от 18 ноября. Шапка повторяет согласованную шапку 11.3 для расширения «RecordType», поэтому отмечена согласованной по вашему правилу, без отдельного вопроса.</li><li>19 ноября, по вашим названиям: заголовок «Таблица проверок расширения», в обосновании — «основная таблица проверок». Смысл не меняется, согласование сохраняется.</li></ul>
+    <p class="hint">Ниже — строки таблицы в прежнем виде. Каждую проверку вместе с её ценой покажем и согласуем отдельно, по одной.</p>
+  </section>
+
+  <div class="grid">
+    <div style="display:grid; gap:18px; min-width:0">
+      <div class="thead" role="row" aria-label="Заголовок таблицы"><span role="columnheader"><b>What is checked</b> · Что проверяется</span><span role="columnheader"><b>On failure</b> · При непрохождении</span></div>
+      <section aria-label="" style="display:grid; gap:8px"><h2> · <span style="color:var(--muted)"></span></h2><ol class="rows"><li class="row f-stays" id="r8" data-rests="s-7vm323mhry2enx3" data-fate="stays">
+  <details class="fold" data-key="r8" open>
+    <summary><span class="n">12.12.1</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">RecordType names are unique across the specification, regardless of letter case</span><span class="fate stays">согласована 2026-11-18</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает имя каждого RecordType. Два RecordType с одним именем, хотя бы и в разном регистре, дали бы в сгенерированном коде два типа с одним именем.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>RecordType names are unique across the specification, regardless of letter case</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Имена RecordType уникальны во всей спецификации без учёта регистра букв</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-7vm323mhry2enx3" title="RecordType">12.1 · RecordType · RecordType</button></div>
+      <div class="impl base"><div class="at">12.1 · s-7vm323mhry2enx3 · согласован</div>
+        <div class="pair"><div><p><b>RecordType</b></p><p class="pre">A RecordType (<span class="cite" title="12.2 What a RecordType contains">§s-6eb92ddch7shuvu</span>) is the format of data that a part of the system outputs and keeps in its store. It belongs to the API of that part of the system. Other parts of the system may use that data in whole or in part.
+
+In the specification, a part of the system is described by a top-level section of the base specification or by a domain. In the code, a part of the system is a module or a component.
+
+Data in one format has one RecordType. It is declared in the only section of the base specification that describes where data in that format first appears. The exception is a fragment of a format, such as an address. Fragments are declared in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>), and any section may reuse them. RecordType names are unique across the specification, regardless of letter case.</p><p class="why">Two descriptions of one format drift apart over time. The parts of the system that read the data then cannot tell which description is valid. A format declared once, under one name, by whoever changes it, has nothing to drift from.</p></div>
+        <div><p><b>RecordType</b></p><p class="pre">RecordType (<span class="cite" title="12.2 What a RecordType contains">§s-6eb92ddch7shuvu</span>) — это формат данных, которые часть системы выдаёт и хранит в своём хранилище. Он относится к API этой части системы. Другие части системы могут использовать эти данные целиком или частично.
+
+В спецификации часть системы описывает раздел верхнего уровня базовой спецификации или домен. В коде часть системы — это модуль или компонент.
+
+У данных одного формата один RecordType. Он объявляется в том единственном разделе базовой спецификации, который описывает, где данные этого формата появляются впервые. Исключение — фрагмент формата, например адрес. Фрагменты объявляются в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>), и их может переиспользовать любой раздел. Имена RecordType уникальны во всей спецификации без учёта регистра букв.</p><p class="why">Два описания одного формата со временем расходятся. Тогда части системы, которые читают эти данные, не могут понять, какое описание верно. Формату, объявленному один раз, под одним именем, тем, кто его меняет, расходиться не с чем.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.3 · s-vke5hakwf3uyrjs</div>
+        <div class="pair"><div><p><b>Sids, locations, terms and names of RecordTypes, counted</b></p><p class="pre"><code>sheriff validate</code> collects every sid, location, term and RecordType's name, and counts each.
+
+- A term and a RecordType's name are counted in lower case.
+- For each term node, the part it stands in is looked up.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября вместе с правкой 12.1: Смысл тот же. Одобренная строка — отрицание («никакие два…»), а ваше правило требует говорить, что выполняется. Новая формулировка повторяет слова согласованного 12.1 «Имена RecordType уникальны во всей спецификации» и добавляет «без учёта регистра букв», как вы решили 30 октября. В английском — «regardless of letter case» по замечанию читателя: «whatever the case» читается и как «в любом случае».</p>
+      <div class="lab">Было</div><p class="was">No two RecordTypes share a name, whatever the case of its letters | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r38" data-rests="s-7vm323mhry2enx3" data-fate="stays">
+  <details class="fold" data-key="r38" open>
+    <summary><span class="n">12.12.2</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A field with <code>identifierOf</code> refers to a RecordType that names one of its own fields as the field identifying its data records</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждое поле типа <code>identifier of</code>. Тип идентификатора берётся из поля, которое идентифицирует записи данных того RecordType, на который он ссылается. Без такого поля тип не из чего взять.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A field with <code>identifierOf</code> refers to a RecordType that names one of its own fields as the field identifying its data records</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Поле с <code>identifierOf</code> ссылается на RecordType, который называет одно из своих полей полем, идентифицирующим его записи данных</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-7vm323mhry2enx3" title="RecordType">12.1 · RecordType · RecordType</button></div>
+      <div class="impl base"><div class="at">12.1 · s-7vm323mhry2enx3 · согласован</div>
+        <div class="pair"><div><p><b>RecordType</b></p><p class="pre">A RecordType (<span class="cite" title="12.2 What a RecordType contains">§s-6eb92ddch7shuvu</span>) is the format of data that a part of the system outputs and keeps in its store. It belongs to the API of that part of the system. Other parts of the system may use that data in whole or in part.
+
+In the specification, a part of the system is described by a top-level section of the base specification or by a domain. In the code, a part of the system is a module or a component.
+
+Data in one format has one RecordType. It is declared in the only section of the base specification that describes where data in that format first appears. The exception is a fragment of a format, such as an address. Fragments are declared in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>), and any section may reuse them. RecordType names are unique across the specification, regardless of letter case.</p><p class="why">Two descriptions of one format drift apart over time. The parts of the system that read the data then cannot tell which description is valid. A format declared once, under one name, by whoever changes it, has nothing to drift from.</p></div>
+        <div><p><b>RecordType</b></p><p class="pre">RecordType (<span class="cite" title="12.2 What a RecordType contains">§s-6eb92ddch7shuvu</span>) — это формат данных, которые часть системы выдаёт и хранит в своём хранилище. Он относится к API этой части системы. Другие части системы могут использовать эти данные целиком или частично.
+
+В спецификации часть системы описывает раздел верхнего уровня базовой спецификации или домен. В коде часть системы — это модуль или компонент.
+
+У данных одного формата один RecordType. Он объявляется в том единственном разделе базовой спецификации, который описывает, где данные этого формата появляются впервые. Исключение — фрагмент формата, например адрес. Фрагменты объявляются в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>), и их может переиспользовать любой раздел. Имена RecordType уникальны во всей спецификации без учёта регистра букв.</p><p class="why">Два описания одного формата со временем расходятся. Тогда части системы, которые читают эти данные, не могут понять, какое описание верно. Формату, объявленному один раз, под одним именем, тем, кто его меняет, расходиться не с чем.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.17 · s-3anv9qcmx8pwp2w</div>
+        <div class="pair"><div><p><b>An identifier followed to its end</b></p><p class="pre"><code>sheriff validate</code> looks up the RecordType that each field of type <code>identifier of</code> names. Among the fields of that RecordType, it looks up the one the RecordType names as identifying it.
+
+- Where that field is itself an identifier, the RecordType it names is followed in the same way, until a field of another type is reached.
+- A RecordType reached twice is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 19 ноября: Смысл тот же. В одобренной строке два требования, и каждое выполнимо без другого (7.3.3), поэтому они становятся двумя строками, как 11.3.1. Первое — ваше решение от 31 октября: идентификатор имеет тип поля, которое идентифицирует записи данных, а это поле называет RecordType этих данных (согласованный 12.2). Второе — тоже от 31 октября: цепочка идентификаторов, вернувшаяся к уже пройденному RecordType, не даёт типа, который можно задать в реализации. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Поле типа <code>identifier of</code>» стало «полем с <code>identifierOf</code>»: в JSON Schema нет ссылок между записями, поэтому это слово SpecSheriff. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was">A field of type <code>identifier of</code> names a RecordType that names the field identifying it, one of its fields, and the identifying fields it leads to, followed from one identifier to the next, end in a field of another type | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r38.5" data-rests="s-7vm323mhry2enx3" data-fate="stays">
+  <details class="fold" data-key="r38.5" open>
+    <summary><span class="n">12.12.3</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">Every chain of identifiers, followed from one identifying field to the next, ends in a field without <code>identifierOf</code></span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает цепочки идентификаторов. Цепочка, которая возвращается к уже пройденному RecordType, не даёт идентификатору типа.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>Every chain of identifiers, followed from one identifying field to the next, ends in a field without <code>identifierOf</code></p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Цепочка идентификаторов, если идти от одного идентифицирующего поля к следующему, заканчивается полем без <code>identifierOf</code></p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-7vm323mhry2enx3" title="RecordType">12.1 · RecordType · RecordType</button></div>
+      <div class="impl base"><div class="at">12.1 · s-7vm323mhry2enx3 · согласован</div>
+        <div class="pair"><div><p><b>RecordType</b></p><p class="pre">A RecordType (<span class="cite" title="12.2 What a RecordType contains">§s-6eb92ddch7shuvu</span>) is the format of data that a part of the system outputs and keeps in its store. It belongs to the API of that part of the system. Other parts of the system may use that data in whole or in part.
+
+In the specification, a part of the system is described by a top-level section of the base specification or by a domain. In the code, a part of the system is a module or a component.
+
+Data in one format has one RecordType. It is declared in the only section of the base specification that describes where data in that format first appears. The exception is a fragment of a format, such as an address. Fragments are declared in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>), and any section may reuse them. RecordType names are unique across the specification, regardless of letter case.</p><p class="why">Two descriptions of one format drift apart over time. The parts of the system that read the data then cannot tell which description is valid. A format declared once, under one name, by whoever changes it, has nothing to drift from.</p></div>
+        <div><p><b>RecordType</b></p><p class="pre">RecordType (<span class="cite" title="12.2 What a RecordType contains">§s-6eb92ddch7shuvu</span>) — это формат данных, которые часть системы выдаёт и хранит в своём хранилище. Он относится к API этой части системы. Другие части системы могут использовать эти данные целиком или частично.
+
+В спецификации часть системы описывает раздел верхнего уровня базовой спецификации или домен. В коде часть системы — это модуль или компонент.
+
+У данных одного формата один RecordType. Он объявляется в том единственном разделе базовой спецификации, который описывает, где данные этого формата появляются впервые. Исключение — фрагмент формата, например адрес. Фрагменты объявляются в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>), и их может переиспользовать любой раздел. Имена RecordType уникальны во всей спецификации без учёта регистра букв.</p><p class="why">Два описания одного формата со временем расходятся. Тогда части системы, которые читают эти данные, не могут понять, какое описание верно. Формату, объявленному один раз, под одним именем, тем, кто его меняет, расходиться не с чем.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.17 · s-3anv9qcmx8pwp2w</div>
+        <div class="pair"><div><p><b>An identifier followed to its end</b></p><p class="pre"><code>sheriff validate</code> looks up the RecordType that each field of type <code>identifier of</code> names. Among the fields of that RecordType, it looks up the one the RecordType names as identifying it.
+
+- Where that field is itself an identifier, the RecordType it names is followed in the same way, until a field of another type is reached.
+- A RecordType reached twice is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Вторая половина одобренной строки об <code>identifier of</code>. Вы согласовали её 19 ноября вместе с 12.12.2. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Полем типа, отличного от <code>identifier of</code>» стало «полем без <code>identifierOf</code>». Смысл не изменился. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was"></p>
+    </div>
+  </details>
+</li>
+<li class="row f-del" id="r35" data-rests="s-z3dnru6qqdf9m6j" data-fate="del">
+  <details class="fold" data-key="r35" open>
+    <summary><span class="n">—</span><span class="fate del">удаляется</span><span class="head"></span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый RecordType, у которого есть варианты. Поля выбранного варианта лежат в поле типа <code>variant</code>; будь таких полей два, было бы не сказано, в котором из них.</p>
+      <div class="pair"><div><div class="lab">EN</div><p></p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p></p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button></div>
+      <div class="impl base"><div class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</div>
+        <div class="pair"><div><p><b>RecordType variants</b></p><p class="pre">A RecordType variant declares the fields that a data record of a RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.
+
+A RecordType variant is a RecordType that:
+- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- has a <code>refines</code> link (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) to that RecordType;
+- names the values it corresponds to, one value for each field that selects a RecordType variant.
+
+A data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType.</p><p class="why">Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div>
+        <div><p><b>Варианты RecordType</b></p><p class="pre">Вариант RecordType объявляет поля, которые запись данных RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.
+
+Вариант RecordType — это RecordType, который:
+- объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- ссылается через связь <code>refines</code> (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) на этот RecordType;
+- называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.
+
+Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет.</p><p class="why">Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Удаляется. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. Типа <code>variant</code> больше нет: поля варианта стоят рядом с полями RecordType, поэтому проверять нечего. Номера остальных строк пока не сдвигаются, чтобы не путать их во время согласования.</p>
+      <div class="lab">Было</div><p class="was">A RecordType holds at most one field of type <code>variant</code>, the ones it inherits counted | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r27" data-rests="s-z3dnru6qqdf9m6j" data-fate="stays">
+  <details class="fold" data-key="r27" open>
+    <summary><span class="n">12.12.4</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A RecordType variant has a <code>refines</code> link to the RecordType to whose fields it adds its own</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый вариант RecordType. Без связи <code>refines</code> вариант не получает поля своего RecordType, и инструменты не знают, вариантом какого RecordType он является.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A RecordType variant has a <code>refines</code> link to the RecordType to whose fields it adds its own</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Вариант RecordType ссылается через <code>refines</code> на RecordType, поля которого он дополняет</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button></div>
+      <div class="impl base"><div class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</div>
+        <div class="pair"><div><p><b>RecordType variants</b></p><p class="pre">A RecordType variant declares the fields that a data record of a RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.
+
+A RecordType variant is a RecordType that:
+- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- has a <code>refines</code> link (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) to that RecordType;
+- names the values it corresponds to, one value for each field that selects a RecordType variant.
+
+A data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType.</p><p class="why">Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div>
+        <div><p><b>Варианты RecordType</b></p><p class="pre">Вариант RecordType объявляет поля, которые запись данных RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.
+
+Вариант RecordType — это RecordType, который:
+- объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- ссылается через связь <code>refines</code> (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) на этот RecordType;
+- называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.
+
+Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет.</p><p class="why">Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»): строка прямо называет связь <code>refines</code>, которую проверяет, и говорит, что вариант дополняет поля своего RecordType (12.6). Номер строки — 12.12.4: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was">A RecordType variant refines the RecordType it is a variant of | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r28" data-rests="s-z3dnru6qqdf9m6j" data-fate="stays">
+  <details class="fold" data-key="r28" open>
+    <summary><span class="n">12.12.5</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A RecordType variant is declared in the same section of the base specification as its RecordType</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый вариант RecordType. Полное описание записей данных находится там, где ищут сам RecordType (обоснование 12.6).</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A RecordType variant is declared in the same section of the base specification as its RecordType</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Вариант RecordType объявлен в том же разделе базовой спецификации, что и его RecordType</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button></div>
+      <div class="impl base"><div class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</div>
+        <div class="pair"><div><p><b>RecordType variants</b></p><p class="pre">A RecordType variant declares the fields that a data record of a RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.
+
+A RecordType variant is a RecordType that:
+- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- has a <code>refines</code> link (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) to that RecordType;
+- names the values it corresponds to, one value for each field that selects a RecordType variant.
+
+A data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType.</p><p class="why">Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div>
+        <div><p><b>Варианты RecordType</b></p><p class="pre">Вариант RecordType объявляет поля, которые запись данных RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.
+
+Вариант RecordType — это RecordType, который:
+- объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- ссылается через связь <code>refines</code> (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) на этот RecordType;
+- называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.
+
+Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет.</p><p class="why">Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»): по согласованному 12.6 вариант объявлен в том же разделе базовой спецификации, что и его RecordType; строка больше не опирается на 1.32. Номер строки — 12.12.5: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.</p>
+      <div class="lab">Было</div><p class="was">A RecordType variant stands in the part of the specification that declares the value it answers to | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r29" data-rests="s-z3dnru6qqdf9m6j" data-fate="stays">
+  <details class="fold" data-key="r29" open>
+    <summary><span class="n">12.12.6</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A RecordType variant declares at least one field</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      
+      <div class="pair"><div><div class="lab">EN</div><p>A RecordType variant declares at least one field</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Вариант RecordType объявляет хотя бы одно поле</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button></div>
+      
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября вместе с 12.6. Номер строки — 12.12.6: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.</p>
+      <div class="lab">Было</div><p class="was">A RecordType variant declares at least one field held neither by its RecordType nor by any field of type <code>variant</code> of that RecordType | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r29.5" data-rests="s-z3dnru6qqdf9m6j" data-fate="stays">
+  <details class="fold" data-key="r29.5" open>
+    <summary><span class="n">12.12.7</span><span class="fate stays">новая строка в 12.12</span><span class="head">The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый вариант RecordType. Поля варианта стоят в записи данных рядом с полями RecordType. Поле, которое объявляет RecordType, есть в записи при любом варианте, поэтому вариант его не объявляет. Условие, которое связывает такое поле с другим полем, 12.2 записывает отдельным правилом.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button></div>
+      <div class="impl base"><div class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</div>
+        <div class="pair"><div><p><b>RecordType variants</b></p><p class="pre">A RecordType variant declares the fields that a data record of a RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.
+
+A RecordType variant is a RecordType that:
+- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- has a <code>refines</code> link (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) to that RecordType;
+- names the values it corresponds to, one value for each field that selects a RecordType variant.
+
+A data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType.</p><p class="why">Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div>
+        <div><p><b>Варианты RecordType</b></p><p class="pre">Вариант RecordType объявляет поля, которые запись данных RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.
+
+Вариант RecordType — это RecordType, который:
+- объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- ссылается через связь <code>refines</code> (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) на этот RecordType;
+- называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.
+
+Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет.</p><p class="why">Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Новая строка. Следует из предложения для 12.6: имя каждого поля варианта отличается от имён полей его RecordType. Вы согласовали её 19 ноября вместе с 12.6. Номер строки — 12.12.7: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was"></p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r30" data-rests="s-z3dnru6qqdf9m6j" data-fate="stays">
+  <details class="fold" data-key="r30" open>
+    <summary><span class="n">12.12.8</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A RecordType variant names values only for the fields that select a variant of its RecordType, exactly one value for each of those fields</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый вариант RecordType. Из значений, которые называет вариант, генерируется условие <code>if</code>, при котором запись получает его поля.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A RecordType variant names values only for the fields that select a variant of its RecordType, exactly one value for each of those fields</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Вариант RecordType называет значения только тех полей, которые выбирают вариант его RecordType, по одному значению каждого из них</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button></div>
+      <div class="impl base"><div class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</div>
+        <div class="pair"><div><p><b>RecordType variants</b></p><p class="pre">A RecordType variant declares the fields that a data record of a RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.
+
+A RecordType variant is a RecordType that:
+- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- has a <code>refines</code> link (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) to that RecordType;
+- names the values it corresponds to, one value for each field that selects a RecordType variant.
+
+A data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType.</p><p class="why">Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div>
+        <div><p><b>Варианты RecordType</b></p><p class="pre">Вариант RecordType объявляет поля, которые запись данных RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.
+
+Вариант RecordType — это RecordType, который:
+- объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- ссылается через связь <code>refines</code> (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) на этот RecordType;
+- называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.
+
+Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет.</p><p class="why">Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»). Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was">A RecordType variant answers to values of exactly the fields its RecordType names as choosing the variant, each value one its choosing field's source declares | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r30.5" data-rests="s-z3dnru6qqdf9m6j s-xfu2gpzddjnmgks" data-fate="stays">
+  <details class="fold" data-key="r30.5" open>
+    <summary><span class="n">12.12.9</span><span class="fate stays">новая строка в 12.12</span><span class="head">Each value that a RecordType variant names for a field is in the <code>enum</code> of that field</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый вариант RecordType. Вариант для значения, которого у поля нет, не соответствует ни одной записи данных.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>Each value that a RecordType variant names for a field is in the <code>enum</code> of that field</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Каждое значение, которое вариант RecordType называет для поля, есть в <code>enum</code> этого поля</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button><button type="button" class="chip" data-sid="s-xfu2gpzddjnmgks" title="One source for the values of a field of type `one of`">spec/1.27 · One source for the values of a field of type `one of`</button></div>
+      <div class="impl base"><div class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</div>
+        <div class="pair"><div><p><b>RecordType variants</b></p><p class="pre">A RecordType variant declares the fields that a data record of a RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.
+
+A RecordType variant is a RecordType that:
+- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- has a <code>refines</code> link (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) to that RecordType;
+- names the values it corresponds to, one value for each field that selects a RecordType variant.
+
+A data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType.</p><p class="why">Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div>
+        <div><p><b>Варианты RecordType</b></p><p class="pre">Вариант RecordType объявляет поля, которые запись данных RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.
+
+Вариант RecordType — это RecordType, который:
+- объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- ссылается через связь <code>refines</code> (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) на этот RecordType;
+- называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.
+
+Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет.</p><p class="why">Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Новая строка: вторая половина одобренной строки 12.12.8. «Одно из объявленных источником выбирающего поля» заменено на «есть в <code>enum</code> этого поля»: по вашему решению привести RecordType к JSON Schema значения поля из любого источника стоят в его <code>enum</code> (12.7, 12.9). Вы согласовали её 19 ноября («ок»). Номер строки — 12.12.9: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.</p>
+      <div class="lab">Было</div><p class="was"></p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r31" data-rests="s-z3dnru6qqdf9m6j" data-fate="stays">
+  <details class="fold" data-key="r31" open>
+    <summary><span class="n">12.12.10</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">Each variant of one RecordType corresponds to its own combination of values</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый RecordType, у которого есть варианты. Если двум вариантам соответствует одно сочетание значений, запись получает поля обоих, а в JSON Schema сработали бы сразу две пары <code>if</code>/<code>then</code>.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>Each variant of one RecordType corresponds to its own combination of values</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Варианты одного RecordType соответствуют разным сочетаниям значений</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-z3dnru6qqdf9m6j" title="RecordType variants">12.6 · RecordType variants · Варианты RecordType</button></div>
+      <div class="impl base"><div class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</div>
+        <div class="pair"><div><p><b>RecordType variants</b></p><p class="pre">A RecordType variant declares the fields that a data record of a RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) holds because of the values of some fields of that RecordType. The fields of the RecordType whose values decide this are the fields that select a RecordType variant. They are named by the RecordType itself or by a RecordType that it refines. Each combination of their values, one value for each field, has its own RecordType variant if the combination adds fields of its own, and only then.
+
+A RecordType variant is a RecordType that:
+- is declared where the RecordType that it is a variant of is declared: in the same section of the base specification or in the contracts section (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- has a <code>refines</code> link (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) to that RecordType;
+- names the values it corresponds to, one value for each field that selects a RecordType variant.
+
+A data record holds the fields of its RecordType variant alongside the fields of its RecordType. The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through <code>refines</code> from another RecordType.</p><p class="why">Where the values of some fields decide which other fields a data record holds, a RecordType alone does not describe every field that the parts of the system that read its data records can expect. Its RecordType variants describe the rest. Since they are declared where the RecordType is declared, those parts of the system find the whole description of the data records where they look for the RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div>
+        <div><p><b>Варианты RecordType</b></p><p class="pre">Вариант RecordType объявляет поля, которые запись данных RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.
+
+Вариант RecordType — это RecordType, который:
+- объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>);
+- ссылается через связь <code>refines</code> (<span class="cite" title="6.1 What a link is">§s-sn6au3vcr9uy5pm</span>) на этот RecordType;
+- называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.
+
+Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет.</p><p class="why">Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>).</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.16 · s-c2r9jndrjbtbsv6</div>
+        <div class="pair"><div><p><b>What a RecordType variant must agree with</b></p><p class="pre"><code>sheriff validate</code> checks that each RecordType variant agrees with the RecordType it refines, found by the variant's <code>refines</code> link:
+
+- the fields the variant answers to are those the nearest RecordType up its <code>refines</code> links names as choosing it;
+- each value it answers to is among the values of its choosing field, collected from the field's one source (<span class="cite" title="tools/7.1.18 Where the values of a field of type `one of` are collected">§s-5nf87c3e3jg9v7c</span>);
+- the variant stands in the part of the specification where its value is declared (<span class="cite" title="spec/1.32 Where a value is declared">§s-xfwuvd3funutmsw</span>);
+- the variant declares at least one field that no RecordType up its <code>refines</code> links holds, the fields their fields of type <code>variant</code> hold included;
+- at most one field of type <code>variant</code> stands along those links;
+- no other variant of the same RecordType answers to the same values.
+
+A variant failing any of these is refused.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»): утверждение вместо отрицания; «отвечают на значения» заменено на «соответствуют сочетаниям значений», как в 12.6. Номер строки — 12.12.10: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.</p>
+      <div class="lab">Было</div><p class="was">No two variants of one RecordType answer to the same values | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r32" data-rests="s-xfu2gpzddjnmgks" data-fate="stays">
+  <details class="fold" data-key="r32" open>
+    <summary><span class="n">12.12.11</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">Each value of a field with <code>enum</code> is declared once, not counting the values gathered beside the field</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждое поле с <code>enum</code>. Каждое значение записывается вместе с узлом, из которого оно приходит (12.9); значение, объявленное дважды, пришло бы из двух узлов.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>Each value of a field with <code>enum</code> is declared once, not counting the values gathered beside the field</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Каждое значение поля с <code>enum</code> объявлено один раз, не считая значений, собранных рядом с ним</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-xfu2gpzddjnmgks" title="One source for the values of a field of type `one of`">spec/1.27 · One source for the values of a field of type `one of`</button></div>
+      
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Поле типа <code>one of</code>» стало «полем с <code>enum</code>». Смысл не изменился. Вы согласовали её 19 ноября («ок») в одобренной формулировке, с механической заменой «поля типа <code>one of</code>» на «поле с <code>enum</code>». Строка опирается теперь только на 12.7. Номер строки — 12.12.11: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was">Each value of a field of type <code>one of</code> is declared once, the values gathered beside it not counted | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r36" data-rests="s-xfu2gpzddjnmgks" data-fate="stays">
+  <details class="fold" data-key="r36" open>
+    <summary><span class="n">12.12.12</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">Every field with <code>enum</code> holds at least one value from its source</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждое поле с <code>enum</code>. Пустому <code>enum</code> в JSON Schema не соответствует ни одно значение, поэтому ни одна запись данных с таким полем не была бы верной.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>Every field with <code>enum</code> holds at least one value from its source</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Каждое поле с <code>enum</code> содержит хотя бы одно значение из своего источника</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-xfu2gpzddjnmgks" title="One source for the values of a field of type `one of`">spec/1.27 · One source for the values of a field of type `one of`</button></div>
+      
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Поле типа <code>one of</code>» стало «полем с <code>enum</code>». Смысл не изменился. Вы согласовали её 19 ноября в одобренной формулировке, с механической заменой «поля типа <code>one of</code>» на «поле с <code>enum</code>». Номер строки — 12.12.12: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.</p>
+      <div class="lab">Было</div><p class="was">Every field of type <code>one of</code> holds at least one value from its source | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-del" id="r33" data-rests="s-gzfq3x8hesj227e" data-fate="del">
+  <details class="fold" data-key="r33" open>
+    <summary><span class="n">—</span><span class="fate del">удаляется</span><span class="head"></span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      
+      <div class="pair"><div><div class="lab">EN</div><p></p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p></p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-gzfq3x8hesj227e" title="How a domain's added values find their field">spec/1.29 · How a domain's added values find their field</button></div>
+      
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Удаляется. Строка проверяла значения, которые добавляют домены. По вашему решению от 16 ноября этого источника в согласованном 12.7 больше нет: в контрактах лежат только фрагменты формата, и RecordType, который собирает значения разных доменов, больше не бывает.</p>
+      <div class="lab">Было</div><p class="was">A field of type <code>one of</code> whose values are not those the domains add has no list a domain adds to it | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-del" id="r34" data-rests="s-96df5fcfqsvex9d s-gzfq3x8hesj227e" data-fate="del">
+  <details class="fold" data-key="r34" open>
+    <summary><span class="n">—</span><span class="fate del">удаляется</span><span class="head"></span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      
+      <div class="pair"><div><div class="lab">EN</div><p></p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p></p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-96df5fcfqsvex9d" title="The list of a field's values in contracts may consolidate values from different domains">spec/1.28 · The list of a field's values in contracts may consolidate values from different domains</button><button type="button" class="chip" data-sid="s-gzfq3x8hesj227e" title="How a domain's added values find their field">spec/1.29 · How a domain's added values find their field</button></div>
+      
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Удаляется. Строка проверяла значения, которые добавляют домены. По вашему решению от 16 ноября этого источника в согласованном 12.7 больше нет: в контрактах лежат только фрагменты формата, и RecordType, который собирает значения разных доменов, больше не бывает.</p>
+      <div class="lab">Было</div><p class="was">A list of values a domain adds stands in a rule of that domain refining a RecordType described in contracts, and names a field of type <code>one of</code> of that RecordType whose values are those the domains add | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r37" data-rests="s-mt6auv3jz8m5gzh" data-fate="stays">
+  <details class="fold" data-key="r37" open>
+    <summary><span class="n">12.12.13</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A field whose values are sids of nodes of one of the project's own kinds names a kind that exists</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждое поле, значения которого — sid узлов одного собственного типа проекта. Из узлов несуществующего типа инструментам SpecSheriff нечего собрать в <code>enum</code> поля.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A field whose values are sids of nodes of one of the project's own kinds names a kind that exists</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Поле, значения которого — sid узлов собственного типа в проекте, называет существующий тип</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-mt6auv3jz8m5gzh" title="Sids of a NodeKind's nodes as a field's values">spec/1.31 · Sids of a NodeKind's nodes as a field's values</button></div>
+      
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок») в одобренной формулировке. Номер строки — 12.12.13: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст: «NodeKind» заменено на «one of the project's own kinds» — имя, которое вы дали 10 ноября вместо NodeKind, как в 12.8. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was">A field whose values are the sids of a NodeKind's nodes names a NodeKind that exists | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r21" data-rests="s-ju5vcanbjph7mgh" data-fate="stays">
+  <details class="fold" data-key="r21" open>
+    <summary><span class="n">12.12.14</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">The values gathered beside a field are exactly what their source produces</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждое поле, значения которого приходят из других мест спецификации. Значение, исправленное вручную или оставшееся после того, как его узел убран, пропустил бы сгенерированный RuntimeCheck.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>The values gathered beside a field are exactly what their source produces</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Значения, собранные рядом с полем, — те, что даёт их источник</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-ju5vcanbjph7mgh" title="Gathered values stand beside their field">spec/1.33 · Gathered values stand beside their field</button></div>
+      
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок») в одобренной формулировке. Номер строки — 12.12.14: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was">The values gathered beside a field are what their source produces | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r26" data-rests="s-8ht2hn88cu2qwz9" data-fate="stays">
+  <details class="fold" data-key="r26" open>
+    <summary><span class="n">12.12.15</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">In the types of its fields and through <code>refines</code>, a RecordType refers only to the RecordTypes of the part of the system that outputs its data and to the fragments of a format that are declared in the contracts section</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый RecordType, который ссылается на другой RecordType в типах своих полей или через <code>refines</code>.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>In the types of its fields and through <code>refines</code>, a RecordType refers only to the RecordTypes of the part of the system that outputs its data and to the fragments of a format that are declared in the contracts section</p><p class="cost">On failure: reported by the node's sid</p></div>
+      <div><div class="lab">RU</div><p>В типах своих полей и через <code>refines</code> RecordType ссылается только на RecordType той части системы, которая выдаёт его данные, и на фрагменты формата, объявленные в контрактах</p><p class="cost">При непрохождении: сообщается по sid узла</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-8ht2hn88cu2qwz9" title="What a RecordType may refer to">12.10 · What a RecordType may refer to · На что может ссылаться RecordType</button></div>
+      <div class="impl base"><div class="at">12.10 · s-8ht2hn88cu2qwz9 · согласован</div>
+        <div class="pair"><div><p><b>What a RecordType may refer to</b></p><p class="pre">In the types of its fields, at any depth, and through <code>refines</code>, a RecordType refers only to the RecordTypes of the part of the system that outputs its data and to the fragments of a format that are declared in the contracts section (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>). A fragment of a format refers only to other fragments. The rules that describe one part of the system may cite a RecordType of another part.</p><p class="why">A RecordType describes the data that its own part of the system outputs and stores, not what that part takes in from other parts or from outside the system. If it referred to another part's RecordType, it would change whenever that part changed that RecordType, though nothing in its own part had changed. A fragment that referred to a RecordType of a part of the system would tie every RecordType that uses the fragment to that part.</p></div>
+        <div><p><b>На что может ссылаться RecordType</b></p><p class="pre">В любом месте типов своих полей и через <code>refines</code> RecordType ссылается только на RecordType той части системы, которая выдаёт его данные, и на фрагменты формата, объявленные в контрактах (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>). Фрагмент формата ссылается только на другие фрагменты. Правила, которые описывают одну часть системы, могут ссылаться на RecordType другой части.</p><p class="why">RecordType описывает данные, которые его часть системы выдаёт и хранит, а не то, что она берёт у других частей или извне системы. Ссылающийся на RecordType другой части, он менялся бы при каждом изменении этого RecordType той частью, хотя в его собственной части ничего не менялось. Фрагмент, ссылающийся на RecordType какой-то части системы, привязал бы к этой части каждый RecordType, который этот фрагмент использует.</p></div></div></div>
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»). Номер строки — 12.12.15: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.</p>
+      <div class="lab">Было</div><p class="was">A RecordType of a domain names a RecordType of another domain only where the named RecordType stands in a section its domain's header names in its <code>consumes</code> links | reported by the node's sid</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r26.5" data-rests="s-8ht2hn88cu2qwz9" data-fate="stays">
+  <details class="fold" data-key="r26.5" open>
+    <summary><span class="n">12.12.16</span><span class="fate stays">новая строка в 12.12</span><span class="head">A fragment of a format refers only to other fragments of a format</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый фрагмент формата в контрактах. Фрагмент не выдаёт данные никакая одна часть системы, поэтому первое предложение 12.10 к нему не применить.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A fragment of a format refers only to other fragments of a format</p><p class="cost">On failure: reported by the node's sid</p></div>
+      <div><div class="lab">RU</div><p>Фрагмент формата ссылается только на другие фрагменты формата</p><p class="cost">При непрохождении: сообщается по sid узла</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-8ht2hn88cu2qwz9" title="What a RecordType may refer to">12.10 · What a RecordType may refer to · На что может ссылаться RecordType</button></div>
+      <div class="impl base"><div class="at">12.10 · s-8ht2hn88cu2qwz9 · согласован</div>
+        <div class="pair"><div><p><b>What a RecordType may refer to</b></p><p class="pre">In the types of its fields, at any depth, and through <code>refines</code>, a RecordType refers only to the RecordTypes of the part of the system that outputs its data and to the fragments of a format that are declared in the contracts section (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>). A fragment of a format refers only to other fragments. The rules that describe one part of the system may cite a RecordType of another part.</p><p class="why">A RecordType describes the data that its own part of the system outputs and stores, not what that part takes in from other parts or from outside the system. If it referred to another part's RecordType, it would change whenever that part changed that RecordType, though nothing in its own part had changed. A fragment that referred to a RecordType of a part of the system would tie every RecordType that uses the fragment to that part.</p></div>
+        <div><p><b>На что может ссылаться RecordType</b></p><p class="pre">В любом месте типов своих полей и через <code>refines</code> RecordType ссылается только на RecordType той части системы, которая выдаёт его данные, и на фрагменты формата, объявленные в контрактах (<span class="cite" title="12.1 RecordType">§s-7vm323mhry2enx3</span>). Фрагмент формата ссылается только на другие фрагменты. Правила, которые описывают одну часть системы, могут ссылаться на RecordType другой части.</p><p class="why">RecordType описывает данные, которые его часть системы выдаёт и хранит, а не то, что она берёт у других частей или извне системы. Ссылающийся на RecordType другой части, он менялся бы при каждом изменении этого RecordType той частью, хотя в его собственной части ничего не менялось. Фрагмент, ссылающийся на RecordType какой-то части системы, привязал бы к этой части каждый RecordType, который этот фрагмент использует.</p></div></div></div>
+      
+      
+      <div class="lab">Что изменилось</div><p class="change">Новая строка: проверяет второе предложение согласованного 12.10. Вы согласовали её 19 ноября («ок»). Номер строки — 12.12.16: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.</p>
+      <div class="lab">Было</div><p class="was"></p>
+    </div>
+  </details>
+</li></ol></section>
+    </div>
+    <aside aria-label="Узлы, которые проверяют строки">
+      <h2>Проверяемые узлы</h2>
+      <button type="button" class="node" data-sid="s-7vm323mhry2enx3"><span class="at">12.1 · s-7vm323mhry2enx3 · согласован</span><span>RecordType</span><span class="cnt">строк: 3</span></button>
+      <button type="button" class="node" data-sid="s-z3dnru6qqdf9m6j"><span class="at">12.6 · s-z3dnru6qqdf9m6j · согласован</span><span>RecordType variants</span><span class="cnt">строк: 8</span></button>
+      <button type="button" class="node" data-sid="s-8ht2hn88cu2qwz9"><span class="at">12.10 · s-8ht2hn88cu2qwz9 · согласован</span><span>What a RecordType may refer to</span><span class="cnt">строк: 2</span></button>
+      <button type="button" class="node" data-sid="s-xfu2gpzddjnmgks"><span class="at">spec/1.27 · s-xfu2gpzddjnmgks · согласован</span><span>One source for the values of a field of type `one of`</span><span class="cnt">строк: 3</span></button>
+      <button type="button" class="node" data-sid="s-96df5fcfqsvex9d"><span class="at">spec/1.28 · s-96df5fcfqsvex9d · согласован</span><span>The list of a field's values in contracts may consolidate values from different domains</span><span class="cnt">строк: 1</span></button>
+      <button type="button" class="node" data-sid="s-gzfq3x8hesj227e"><span class="at">spec/1.29 · s-gzfq3x8hesj227e · согласован</span><span>How a domain's added values find their field</span><span class="cnt">строк: 2</span></button>
+      <button type="button" class="node" data-sid="s-mt6auv3jz8m5gzh"><span class="at">spec/1.31 · s-mt6auv3jz8m5gzh · согласован</span><span>Sids of a NodeKind's nodes as a field's values</span><span class="cnt">строк: 1</span></button>
+      <button type="button" class="node" data-sid="s-ju5vcanbjph7mgh"><span class="at">spec/1.33 · s-ju5vcanbjph7mgh · согласован</span><span>Gathered values stand beside their field</span><span class="cnt">строк: 1</span></button>
+    </aside>
+  </div>
+
+  <section class="note" aria-labelledby="doubts-h">
+    <h2 id="doubts-h">Открытые вопросы</h2>
+    <ul class="doubts"></ul>
+  </section>
+</div>
+<script>
+  // Folding is kept per viewer; the page reads right without it.
+  const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+  const folds = [...document.querySelectorAll("details.fold")];
+  for (const d of folds) {
+    if (store.get("fold:" + d.dataset.key) === "closed") d.open = false;
+    d.addEventListener("toggle", () => store.set("fold:" + d.dataset.key, d.open ? "open" : "closed"));
+  }
+  document.getElementById("open-all").addEventListener("click", () => folds.forEach((d) => (d.open = true)));
+  document.getElementById("close-all").addEventListener("click", () => folds.forEach((d) => (d.open = false)));
+
+  // Filters by a row's fate.
+  for (const b of document.querySelectorAll(".filter")) b.addEventListener("click", () => {
+    const on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", String(on));
+    document.querySelectorAll("li.row[data-fate='" + b.dataset.fate + "']").forEach((r) => (r.hidden = !on));
+  });
+
+  // Cross-lighting: a node lights the rows checking it, a row lights the nodes it checks.
+  const clear = () => document.querySelectorAll(".lit, .sel").forEach((e) => e.classList.remove("lit", "sel"));
+  const lightNode = (sid) => {
+    clear();
+    document.querySelectorAll(".node[data-sid='" + sid + "']").forEach((e) => e.classList.add("sel"));
+    document.querySelectorAll("li.row").forEach((r) => { if (r.dataset.rests.split(" ").includes(sid)) r.classList.add("lit"); });
+    document.querySelectorAll(".chip[data-sid='" + sid + "']").forEach((e) => e.classList.add("lit"));
+  };
+  for (const n of document.querySelectorAll(".node")) n.addEventListener("click", () => lightNode(n.dataset.sid));
+  for (const c of document.querySelectorAll(".chip")) c.addEventListener("click", (e) => {
+    e.stopPropagation();
+    lightNode(c.dataset.sid);
+    document.querySelector(".node[data-sid='" + c.dataset.sid + "']")?.scrollIntoView({ block: "nearest" });
+  });
+</script>

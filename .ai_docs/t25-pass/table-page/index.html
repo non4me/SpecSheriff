@@ -1,0 +1,71 @@
+<title>Таблица проверок 10.1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header with the counts and the controls, the intro, the two tables as foldable rows beside a column of
+     the nodes they check, then the reason and the open questions. One dark look, as the owner reads every page. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --stays: #5fbf86; --dom: #9fb6cf; --gen: #5cb8d8; --ado: #e2a23b; --del: #e07a6a; --lit: #e8b75a;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+  header { display: grid; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  h1 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 0; text-wrap: balance; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.8rem; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .filter, #open-all, #close-all { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  .filter[aria-pressed="true"] { border-color: var(--fg); background: var(--panel-2); }
+  .filter:focus-visible, #open-all:focus-visible, #close-all:focus-visible, .chip:focus-visible, summary:focus-visible { outline: 2px solid var(--gen); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; margin: 0; max-width: 80ch; }
+  .note { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  ol.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  li.row { background: var(--panel); border: 1px solid transparent; border-left: 3px solid var(--stays); border-radius: 4px; min-width: 0; }
+  li.row.f-dom { border-left-color: var(--dom); } li.row.f-gen { border-left-color: var(--gen); } li.row.f-ado { border-left-color: var(--ado); } li.row.f-del { border-left-color: var(--del); }
+  li.row.lit { border-color: var(--lit); background: var(--panel-2); }
+  li.row.sel { border-color: var(--fg); background: var(--panel-2); }
+  details.fold > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 4.2rem auto 1fr; gap: 4px 10px; align-items: baseline; padding: 8px 10px; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  .n { font-family: var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .fate { font-family: var(--mono); font-size: 0.72rem; padding: 1px 7px; border: 1px solid currentColor; border-radius: 3px; white-space: nowrap; }
+  .fate.stays { color: var(--stays); } .fate.dom { color: var(--dom); } .fate.gen { color: var(--gen); } .fate.ado { color: var(--ado); } .fate.del { color: var(--del); }
+  .head { min-width: 0; overflow-wrap: anywhere; }
+  @media (max-width: 560px) { details.fold > summary { grid-template-columns: 2rem 1fr; } .head { grid-column: 1 / -1; } }
+  .body { padding: 0 12px 12px; display: grid; gap: 6px; }
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .pair > div { min-width: 0; }
+  .lab { font-family: var(--mono); font-size: 0.72rem; color: var(--lit); letter-spacing: 0.04em; }
+  p { margin: 0; overflow-wrap: anywhere; }
+  .cost { color: var(--muted); font-size: 0.9rem; }
+  .change { font-size: 0.92rem; } .was { color: var(--muted); font-size: 0.88rem; }
+  code { font-family: var(--mono); font-size: 0.86em; }
+  .cite { font-family: var(--mono); font-size: 0.85em; border-bottom: 1px dotted currentColor; cursor: help; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font: inherit; font-family: var(--mono); font-size: 0.78rem; color: var(--fg); background: var(--panel-2); border: 1px solid var(--rule); border-radius: 3px; padding: 2px 7px; cursor: pointer; }
+  .chip.lit { border-color: var(--lit); color: var(--lit); }
+  aside { position: sticky; top: env(safe-area-inset-top, 0px); max-height: 100vh; overflow-y: auto; display: grid; gap: 6px; align-content: start; }
+  @media (max-width: 900px) { aside { position: static; max-height: none; } }
+  .node { text-align: left; font: inherit; font-size: 0.86rem; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px; cursor: pointer; display: grid; gap: 2px; }
+  .node .at { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .node.lit { border-color: var(--lit); } .node.sel { border-color: var(--fg); background: var(--panel-2); }
+  .node .cnt { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  ul.doubts { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+  .none { color: var(--muted); }
+  .pre { white-space: pre-line; }
+  .impl { border: 1px solid var(--rule); border-left: 3px solid #5cb8d8; border-radius: 4px; padding: 8px 10px; display: grid; gap: 4px; background: var(--panel-2); }
+  .impl .at { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .impl .why { color: var(--muted); font-style: italic; }
+  .impl.gap { border-left-color: #e07a6a; color: #e07a6a; }
+  .impl.base { border-left-color: #e8b75a; }
+  .about { border-left: 3px solid #e8b75a; padding-left: 10px; }
+  .thead { display: grid; grid-template-columns: 3fr 1fr; gap: 12px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel-2); font-size: 0.9rem; }
+  @media (prefers-reduced-motion: no-preference) { li.row, .node { transition: background-color .15s, border-color .15s; } }
+</style>
+<div id="page-root"></div>
+<script src="page.js"></script>

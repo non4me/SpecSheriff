@@ -1,0 +1,395 @@
+{
+  "title": "The table of checks of the RecordType extension, with what each failure costs",
+  "ruTitle": "Таблица проверок расширения «RecordType» и цена непрохождения каждой из них",
+  "head": {
+    "sid": "s-3k8mvhq2xbn5wpz",
+    "kind": "TableRule",
+    "title": "The table of checks of the RecordType extension",
+    "ruTitle": "Таблица проверок расширения «RecordType»",
+    "text": "This table contains the complete list of the checks of the RecordType extension (§s-7vm323mhry2enx3) that run after an edit to the specification or to the code, including its tests.",
+    "ruText": "Эта таблица содержит полный список проверок расширения «RecordType» (§s-7vm323mhry2enx3), которые запускаются после правок как самой спецификации, так и кода, включая тесты.",
+    "reason": "The checks of the RecordType extension bind only a project that has chosen the extension (§s-9ttvcwpqkehm58g). The main table of checks names no particular extension (§s-chk5hnzmcpeqj25), so these checks are listed here, beside the rules they enforce. In one table, every check of the extension can be seen at a glance, together with what its failure costs.",
+    "ruReason": "Проверки расширения «RecordType» обязывают только проект, который выбрал это расширение (§s-9ttvcwpqkehm58g). Основная таблица проверок не называет ни одного конкретного расширения (§s-chk5hnzmcpeqj25), поэтому эти проверки перечислены здесь, рядом с правилами, которые они обеспечивают. В одной таблице все проверки расширения видны сразу, вместе с ценой непрохождения каждой.",
+    "refs": [
+      {
+        "type": "refines",
+        "to": "s-jau82aq9juv9zzh"
+      },
+      {
+        "type": "cites",
+        "to": "s-7vm323mhry2enx3"
+      },
+      {
+        "type": "cites",
+        "to": "s-9ttvcwpqkehm58g"
+      },
+      {
+        "type": "cites",
+        "to": "s-chk5hnzmcpeqj25"
+      }
+    ],
+    "columns": [
+      {
+        "en": "What is checked",
+        "ru": "Что проверяется",
+        "holds": "a node: the check, its own sid, links and approval"
+      },
+      {
+        "en": "On failure",
+        "ru": "При непрохождении",
+        "holds": "text, part of the wording of the check in its row"
+      }
+    ],
+    "agreed": "2026-11-18",
+    "changes": [
+      "Новый узел, по вашему решению от 18 ноября. Шапка повторяет согласованную шапку 11.3 для расширения «RecordType», поэтому отмечена согласованной по вашему правилу, без отдельного вопроса.",
+      "19 ноября, по вашим названиям: заголовок «Таблица проверок расширения», в обосновании — «основная таблица проверок». Смысл не меняется, согласование сохраняется."
+    ]
+  },
+  "tables": [
+    {
+      "heading": "",
+      "ruHeading": "",
+      "rows": [
+        {
+          "n": 8,
+          "num": "12.12.1",
+          "was": "No two RecordTypes share a name, whatever the case of its letters | refused",
+          "en": "RecordType names are unique across the specification, regardless of letter case",
+          "cost": "refused",
+          "ru": "Имена RecordType уникальны во всей спецификации без учёта регистра букв",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября вместе с правкой 12.1: Смысл тот же. Одобренная строка — отрицание («никакие два…»), а ваше правило требует говорить, что выполняется. Новая формулировка повторяет слова согласованного 12.1 «Имена RecordType уникальны во всей спецификации» и добавляет «без учёта регистра букв», как вы решили 30 октября. В английском — «regardless of letter case» по замечанию читателя: «whatever the case» читается и как «в любом случае».",
+          "rests": [
+            "s-7vm323mhry2enx3"
+          ],
+          "impl": [
+            "s-vke5hakwf3uyrjs"
+          ],
+          "about": "Затрагивает имя каждого RecordType. Два RecordType с одним именем, хотя бы и в разном регистре, дали бы в сгенерированном коде два типа с одним именем.",
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 38,
+          "num": "12.12.2",
+          "was": "A field of type `identifier of` names a RecordType that names the field identifying it, one of its fields, and the identifying fields it leads to, followed from one identifier to the next, end in a field of another type | refused",
+          "en": "A field with `identifierOf` refers to a RecordType that names one of its own fields as the field identifying its data records",
+          "cost": "refused",
+          "ru": "Поле с `identifierOf` ссылается на RecordType, который называет одно из своих полей полем, идентифицирующим его записи данных",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 19 ноября: Смысл тот же. В одобренной строке два требования, и каждое выполнимо без другого (7.3.3), поэтому они становятся двумя строками, как 11.3.1. Первое — ваше решение от 31 октября: идентификатор имеет тип поля, которое идентифицирует записи данных, а это поле называет RecordType этих данных (согласованный 12.2). Второе — тоже от 31 октября: цепочка идентификаторов, вернувшаяся к уже пройденному RecordType, не даёт типа, который можно задать в реализации. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Поле типа `identifier of`» стало «полем с `identifierOf`»: в JSON Schema нет ссылок между записями, поэтому это слово SpecSheriff. Смысл не изменился.",
+          "rests": [
+            "s-7vm323mhry2enx3"
+          ],
+          "impl": [
+            "s-3anv9qcmx8pwp2w"
+          ],
+          "about": "Затрагивает каждое поле типа `identifier of`. Тип идентификатора берётся из поля, которое идентифицирует записи данных того RecordType, на который он ссылается. Без такого поля тип не из чего взять.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 38.5,
+          "num": "12.12.3",
+          "was": "",
+          "en": "Every chain of identifiers, followed from one identifying field to the next, ends in a field without `identifierOf`",
+          "cost": "refused",
+          "ru": "Цепочка идентификаторов, если идти от одного идентифицирующего поля к следующему, заканчивается полем без `identifierOf`",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Вторая половина одобренной строки об `identifier of`. Вы согласовали её 19 ноября вместе с 12.12.2. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Полем типа, отличного от `identifier of`» стало «полем без `identifierOf`». Смысл не изменился. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-7vm323mhry2enx3"
+          ],
+          "impl": [
+            "s-3anv9qcmx8pwp2w"
+          ],
+          "about": "Затрагивает цепочки идентификаторов. Цепочка, которая возвращается к уже пройденному RecordType, не даёт идентификатору типа.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 35,
+          "num": null,
+          "was": "A RecordType holds at most one field of type `variant`, the ones it inherits counted | refused",
+          "en": "",
+          "cost": "refused",
+          "ru": "",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. Типа `variant` больше нет: поля варианта стоят рядом с полями RecordType, поэтому проверять нечего. Номера остальных строк пока не сдвигаются, чтобы не путать их во время согласования.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "about": "Затрагивает каждый RecordType, у которого есть варианты. Поля выбранного варианта лежат в поле типа `variant`; будь таких полей два, было бы не сказано, в котором из них.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 27,
+          "num": "12.12.4",
+          "was": "A RecordType variant refines the RecordType it is a variant of | refused",
+          "en": "A RecordType variant has a `refines` link to the RecordType to whose fields it adds its own",
+          "cost": "refused",
+          "ru": "Вариант RecordType ссылается через `refines` на RecordType, поля которого он дополняет",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»): строка прямо называет связь `refines`, которую проверяет, и говорит, что вариант дополняет поля своего RecordType (12.6). Номер строки — 12.12.4: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "about": "Затрагивает каждый вариант RecordType. Без связи `refines` вариант не получает поля своего RecordType, и инструменты не знают, вариантом какого RecordType он является.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 28,
+          "num": "12.12.5",
+          "was": "A RecordType variant stands in the part of the specification that declares the value it answers to | refused",
+          "en": "A RecordType variant is declared in the same section of the base specification as its RecordType",
+          "cost": "refused",
+          "ru": "Вариант RecordType объявлен в том же разделе базовой спецификации, что и его RecordType",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»): по согласованному 12.6 вариант объявлен в том же разделе базовой спецификации, что и его RecordType; строка больше не опирается на 1.32. Номер строки — 12.12.5: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "about": "Затрагивает каждый вариант RecordType. Полное описание записей данных находится там, где ищут сам RecordType (обоснование 12.6).",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 29,
+          "num": "12.12.6",
+          "was": "A RecordType variant declares at least one field held neither by its RecordType nor by any field of type `variant` of that RecordType | refused",
+          "en": "A RecordType variant declares at least one field",
+          "cost": "refused",
+          "ru": "Вариант RecordType объявляет хотя бы одно поле",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября вместе с 12.6. Номер строки — 12.12.6: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 29.5,
+          "num": "12.12.7",
+          "was": "",
+          "en": "The name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes through `refines` from another RecordType",
+          "cost": "refused",
+          "ru": "Имя каждого поля, которое объявляет вариант RecordType, отличается от имени любого поля, которое его RecordType объявляет сам или берёт из RecordType, который он уточняет",
+          "ruCost": "отклоняется",
+          "fate": "new",
+          "change": "Новая строка. Следует из предложения для 12.6: имя каждого поля варианта отличается от имён полей его RecordType. Вы согласовали её 19 ноября вместе с 12.6. Номер строки — 12.12.7: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "about": "Затрагивает каждый вариант RecordType. Поля варианта стоят в записи данных рядом с полями RecordType. Поле, которое объявляет RecordType, есть в записи при любом варианте, поэтому вариант его не объявляет. Условие, которое связывает такое поле с другим полем, 12.2 записывает отдельным правилом.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 30,
+          "num": "12.12.8",
+          "was": "A RecordType variant answers to values of exactly the fields its RecordType names as choosing the variant, each value one its choosing field's source declares | refused",
+          "en": "A RecordType variant names values only for the fields that select a variant of its RecordType, exactly one value for each of those fields",
+          "cost": "refused",
+          "ru": "Вариант RecordType называет значения только тех полей, которые выбирают вариант его RecordType, по одному значению каждого из них",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»). Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "about": "Затрагивает каждый вариант RecordType. Из значений, которые называет вариант, генерируется условие `if`, при котором запись получает его поля.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 30.5,
+          "num": "12.12.9",
+          "was": "",
+          "en": "Each value that a RecordType variant names for a field is in the `enum` of that field",
+          "cost": "refused",
+          "ru": "Каждое значение, которое вариант RecordType называет для поля, есть в `enum` этого поля",
+          "ruCost": "отклоняется",
+          "fate": "new",
+          "change": "Новая строка: вторая половина одобренной строки 12.12.8. «Одно из объявленных источником выбирающего поля» заменено на «есть в `enum` этого поля»: по вашему решению привести RecordType к JSON Schema значения поля из любого источника стоят в его `enum` (12.7, 12.9). Вы согласовали её 19 ноября («ок»). Номер строки — 12.12.9: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j",
+            "s-xfu2gpzddjnmgks"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "about": "Затрагивает каждый вариант RecordType. Вариант для значения, которого у поля нет, не соответствует ни одной записи данных.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 31,
+          "num": "12.12.10",
+          "was": "No two variants of one RecordType answer to the same values | refused",
+          "en": "Each variant of one RecordType corresponds to its own combination of values",
+          "cost": "refused",
+          "ru": "Варианты одного RecordType соответствуют разным сочетаниям значений",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»): утверждение вместо отрицания; «отвечают на значения» заменено на «соответствуют сочетаниям значений», как в 12.6. Номер строки — 12.12.10: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "impl": [
+            "s-c2r9jndrjbtbsv6"
+          ],
+          "about": "Затрагивает каждый RecordType, у которого есть варианты. Если двум вариантам соответствует одно сочетание значений, запись получает поля обоих, а в JSON Schema сработали бы сразу две пары `if`/`then`.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 32,
+          "num": "12.12.11",
+          "was": "Each value of a field of type `one of` is declared once, the values gathered beside it not counted | refused",
+          "en": "Each value of a field with `enum` is declared once, not counting the values gathered beside the field",
+          "cost": "refused",
+          "ru": "Каждое значение поля с `enum` объявлено один раз, не считая значений, собранных рядом с ним",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Поле типа `one of`» стало «полем с `enum`». Смысл не изменился. Вы согласовали её 19 ноября («ок») в одобренной формулировке, с механической заменой «поля типа `one of`» на «поле с `enum`». Строка опирается теперь только на 12.7. Номер строки — 12.12.11: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-xfu2gpzddjnmgks"
+          ],
+          "about": "Затрагивает каждое поле с `enum`. Каждое значение записывается вместе с узлом, из которого оно приходит (12.9); значение, объявленное дважды, пришло бы из двух узлов.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 36,
+          "num": "12.12.12",
+          "was": "Every field of type `one of` holds at least one value from its source | refused",
+          "en": "Every field with `enum` holds at least one value from its source",
+          "cost": "refused",
+          "ru": "Каждое поле с `enum` содержит хотя бы одно значение из своего источника",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. По вашему решению от 19 ноября: всё, что касается RecordType, приводится к JSON Schema 2020-12; механические правки вы приняли сразу. «Поле типа `one of`» стало «полем с `enum`». Смысл не изменился. Вы согласовали её 19 ноября в одобренной формулировке, с механической заменой «поля типа `one of`» на «поле с `enum`». Номер строки — 12.12.12: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.",
+          "rests": [
+            "s-xfu2gpzddjnmgks"
+          ],
+          "about": "Затрагивает каждое поле с `enum`. Пустому `enum` в JSON Schema не соответствует ни одно значение, поэтому ни одна запись данных с таким полем не была бы верной.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 33,
+          "num": null,
+          "was": "A field of type `one of` whose values are not those the domains add has no list a domain adds to it | refused",
+          "en": "",
+          "cost": "refused",
+          "ru": "",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется. Строка проверяла значения, которые добавляют домены. По вашему решению от 16 ноября этого источника в согласованном 12.7 больше нет: в контрактах лежат только фрагменты формата, и RecordType, который собирает значения разных доменов, больше не бывает.",
+          "rests": [
+            "s-gzfq3x8hesj227e"
+          ],
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 34,
+          "num": null,
+          "was": "A list of values a domain adds stands in a rule of that domain refining a RecordType described in contracts, and names a field of type `one of` of that RecordType whose values are those the domains add | refused",
+          "en": "",
+          "cost": "refused",
+          "ru": "",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется. Строка проверяла значения, которые добавляют домены. По вашему решению от 16 ноября этого источника в согласованном 12.7 больше нет: в контрактах лежат только фрагменты формата, и RecordType, который собирает значения разных доменов, больше не бывает.",
+          "rests": [
+            "s-96df5fcfqsvex9d",
+            "s-gzfq3x8hesj227e"
+          ],
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 37,
+          "num": "12.12.13",
+          "was": "A field whose values are the sids of a NodeKind's nodes names a NodeKind that exists | refused",
+          "en": "A field whose values are sids of nodes of one of the project's own kinds names a kind that exists",
+          "cost": "refused",
+          "ru": "Поле, значения которого — sid узлов собственного типа в проекте, называет существующий тип",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок») в одобренной формулировке. Номер строки — 12.12.13: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст: «NodeKind» заменено на «one of the project's own kinds» — имя, которое вы дали 10 ноября вместо NodeKind, как в 12.8. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-mt6auv3jz8m5gzh"
+          ],
+          "about": "Затрагивает каждое поле, значения которого — sid узлов одного собственного типа проекта. Из узлов несуществующего типа инструментам SpecSheriff нечего собрать в `enum` поля.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 21,
+          "num": "12.12.14",
+          "was": "The values gathered beside a field are what their source produces | refused",
+          "en": "The values gathered beside a field are exactly what their source produces",
+          "cost": "refused",
+          "ru": "Значения, собранные рядом с полем, — те, что даёт их источник",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок») в одобренной формулировке. Номер строки — 12.12.14: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-ju5vcanbjph7mgh"
+          ],
+          "about": "Затрагивает каждое поле, значения которого приходят из других мест спецификации. Значение, исправленное вручную или оставшееся после того, как его узел убран, пропустил бы сгенерированный RuntimeCheck.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 26,
+          "num": "12.12.15",
+          "was": "A RecordType of a domain names a RecordType of another domain only where the named RecordType stands in a section its domain's header names in its `consumes` links | reported by the node's sid",
+          "en": "In the types of its fields and through `refines`, a RecordType refers only to the RecordTypes of the part of the system that outputs its data and to the fragments of a format that are declared in the contracts section",
+          "cost": "reported by the node's sid",
+          "ru": "В типах своих полей и через `refines` RecordType ссылается только на RecordType той части системы, которая выдаёт его данные, и на фрагменты формата, объявленные в контрактах",
+          "ruCost": "сообщается по sid узла",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Показывается одобренная формулировка; её смысл и предложение, если оно нужно, — когда дойдёт её очередь. Вы согласовали её 19 ноября («ок»). Номер строки — 12.12.15: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком. Только английский текст, по замечаниям вдумчивого читателя EngStickler. Смысл не изменился.",
+          "rests": [
+            "s-8ht2hn88cu2qwz9"
+          ],
+          "about": "Затрагивает каждый RecordType, который ссылается на другой RecordType в типах своих полей или через `refines`.",
+          "agreed": "2026-11-19"
+        },
+        {
+          "n": 26.5,
+          "num": "12.12.16",
+          "was": "",
+          "en": "A fragment of a format refers only to other fragments of a format",
+          "cost": "reported by the node's sid",
+          "ru": "Фрагмент формата ссылается только на другие фрагменты формата",
+          "ruCost": "сообщается по sid узла",
+          "fate": "new",
+          "change": "Новая строка: проверяет второе предложение согласованного 12.10. Вы согласовали её 19 ноября («ок»). Номер строки — 12.12.16: 19 ноября строки перенумерованы по порядку таблицы, после того как вы согласовали её целиком.",
+          "rests": [
+            "s-8ht2hn88cu2qwz9"
+          ],
+          "about": "Затрагивает каждый фрагмент формата в контрактах. Фрагмент не выдаёт данные никакая одна часть системы, поэтому первое предложение 12.10 к нему не применить.",
+          "agreed": "2026-11-19"
+        }
+      ]
+    }
+  ],
+  "doubts": [],
+  "toolsRu": {}
+}

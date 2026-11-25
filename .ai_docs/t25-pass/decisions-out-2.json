@@ -1,0 +1,560 @@
+{
+  "12.6": [
+    {
+      "date": "2026-11-16",
+      "problem": "By the ruling of 2026-10-31, a RecordType variant was declared in the part of the specification that declared the value selecting it. That part need not be the one that declared its RecordType.",
+      "ruling": "The owner: a RecordType variant is declared where the RecordType it is a variant of is declared. Each variant corresponds to one combination of values of the fields that select a variant, one value for each field.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The node spoke of domains, which another extension of the guidelines defines.",
+      "ruling": "The owner ruled on 2026-11-16 that a rule of an extension relies only on the guidelines and on its own extension (1.7.4). So the node speaks of sections of the base specification and of parts of the system instead.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "Once a data record holds the fields of its RecordType variant alongside those of its RecordType, a field of the variant could have the same name as a field of the RecordType.",
+      "ruling": "The owner: the name of each field that a RecordType variant declares differs from the name of every field that its RecordType declares or takes from another RecordType through `refines`.",
+      "type": "textual"
+    }
+  ],
+  "12.7": [
+    {
+      "date": "2026-11-16",
+      "problem": "One of the sources of the values of a field with `enum` was the values that several domains add to one RecordType.",
+      "ruling": "The owner: the contracts section declares no RecordType except fragments of formats, so no RecordType gathers values from several domains. That source is removed, together with the two rules that governed it.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "One of the listed sources was the names of the domains, which another extension of the guidelines defines.",
+      "ruling": "The owner chose to make that source the names of the parts of the base specification, as in 12.11.",
+      "type": "textual"
+    }
+  ],
+  "12.8": [],
+  "12.9": [],
+  "12.11": [
+    {
+      "date": "2026-11-18",
+      "problem": "The rule made the names of the domains the values of a field, although this extension must not rely on the extension that defines domains (1.7.4).",
+      "ruling": "The owner chose to generalise the rule: a field's values may be the names of the parts into which the base specification is divided. A part added or removed adds or removes a value.",
+      "type": "textual"
+    }
+  ],
+  "3.1": [
+    {
+      "date": "2026-11-08",
+      "problem": "The node did not say where the contracts section is, or whether every specification needs one.",
+      "ruling": "The owner: the contracts section is a section of its own within the base specification. It exists only where the rules of the specification share something.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-09",
+      "problem": "The node held what only a specification divided into domains needs: the conventions on a domain's API, the statement that the contracts section is not a domain, a domain's RecordType and a separate document of contracts for several domains.",
+      "ruling": "In line with the owner's decision that the rules not every project needs belong in extensions of the guidelines, the node speaks only of sections. Those matters move to an extension.",
+      "type": "textual"
+    }
+  ],
+  "3.2": [
+    {
+      "date": "2026-11-09",
+      "problem": "The first sentence of the rule was a prohibition rather than a statement of what to do.",
+      "ruling": "The owner: the rule states what to do. Where a section needs terms of its own, they are added to the contracts section.",
+      "type": "textual"
+    }
+  ],
+  "3.3": [
+    {
+      "date": "2026-11-08",
+      "problem": "Nothing in the guidelines said whether a term may state what the system does with the entity it names.",
+      "ruling": "The owner: a term only introduces an entity, while what the system does is stated in rules. A computation is behaviour, so a rule, not the term, states how a quantity is computed.",
+      "type": "textual"
+    }
+  ],
+  "12.1": [
+    {
+      "date": "2026-11-09",
+      "problem": "The node \"An entity is declared once\" repeated what the rules on terms (3.2 and 3.3) say, apart from two sentences that were stated nowhere else.",
+      "ruling": "The owner: that node is removed, and this node replaces it, taking over those two sentences and the removed node's reason.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-09",
+      "problem": "It was unclear whether a RecordType describes only the data that a domain passes to others or also the data it stores, and whether a domain may have more than one RecordType for an entity.",
+      "ruling": "The owner: a RecordType describes both the data a domain outputs and the data it keeps in its store. A domain may store data in one structure and pass on data in another, so it is not limited to one RecordType for an entity.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-09",
+      "problem": "By the owner's earlier ruling of that day, each domain could declare its own RecordType for the same entity.",
+      "ruling": "The owner: a domain that takes data from another uses the RecordType of that data. It declares a RecordType of its own, with a different structure and a new name, only when it changes the structure of the data.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-14",
+      "problem": "The node tied a RecordType to an entity, which left unclear how many RecordTypes describe the same data and where each one is declared.",
+      "ruling": "The owner: data in one format has one RecordType, declared in the one domain where such data first appears. A fragment of a format, such as an address, is declared in the contracts section instead, so that any domain may reuse it.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The node spoke of domains, which another extension of the guidelines defines.",
+      "ruling": "The owner ruled on 2026-11-16 that a rule of an extension relies only on the guidelines and on its own extension (1.7.4). So the node speaks of parts of the system and of sections of the base specification instead, and its example names domains only as one way of dividing the base specification.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The node did not say whether two RecordType names that differ only in letter case count as different names.",
+      "ruling": "In line with the owner's ruling of 2026-10-30, RecordType names are unique regardless of letter case.",
+      "type": "textual"
+    }
+  ],
+  "11.1.3": [
+    {
+      "date": "2026-11-09",
+      "problem": "A domain's header had to state the domain's level.",
+      "ruling": "The owner: the level is optional, and it is used when the domains are visualized.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "It was unclear whether two domains that notify each other through events use one another in a cycle, which the rule forbids.",
+      "ruling": "The owner: the ban on such a cycle stays. A notification sent through an event does not make the sender a user of the receiving domain, so notifications may go in either direction.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The header stated where the domain's code is, although SpecTags bind code to rules, not to sections or domains.",
+      "ruling": "The owner: the header no longer states where the domain's code is.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The header had to contain the index of the domain's sections, although a small domain may have no sections.",
+      "ruling": "The owner: the header contains the index only where the domain has sections.",
+      "type": "textual"
+    }
+  ],
+  "11.1.4": [],
+  "11.2.1": [
+    {
+      "date": "2026-11-09",
+      "problem": "By the ruling of 2026-10-27, every domain had a level, although the level serves only to draw the diagram of the links between the domains.",
+      "ruling": "The owner: the level is optional, and a domain's header may contain one.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-14",
+      "problem": "The node did not define a domain's level or say how the levels are numbered.",
+      "ruling": "The owner: a domain's level is an optional property that shows the domain's position in the hierarchy relative to the other domains. The list of levels runs from the top of the hierarchy down, and a level's number is its place in that list.",
+      "type": "textual"
+    }
+  ],
+  "11.2.2": [
+    {
+      "date": "2026-11-14",
+      "problem": "Once a domain's level became optional, the rules of the diagram did not say where a domain without a level is placed.",
+      "ruling": "The owner agreed that the SpecSheriff tools draw the diagram. The domains whose header contains no level are placed together in a row of their own, below the rows of the levels.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-14",
+      "problem": "The rules of the diagram also stated the order of the domains within a row, which the rule on the order of the domains at the same level (11.2.3) sets.",
+      "ruling": "The owner: that item is removed, so that only 11.2.3 sets the order within a row.",
+      "type": "textual"
+    }
+  ],
+  "11.2.3": [
+    {
+      "date": "2026-11-14",
+      "problem": "By the owner's decision of 2026-11-09, the order of the domains was part of the rules of the diagram. Yet the map of the specification uses that order without the diagram's rows, and the tests of the tools check it separately.",
+      "ruling": "The owner accepted the reviewer's proposal: the order of the domains is a rule of its own.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-14",
+      "problem": "The rule ordered all the domains in one sequence, although a domain's level already places it vertically on the diagram.",
+      "ruling": "The owner: the rule orders only the domains at the same level, that is, those in one row of the diagram.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-14",
+      "problem": "The rule did not say how the domains in a row are placed relative to the domains they use.",
+      "ruling": "The owner: first come, in alphabetical order, the domains that have no link to any other domain in the row. Each other domain is then placed to the right of every domain in the row that it uses, as close to them as possible. The appendix of the tools sets out the harder cases.",
+      "type": "textual"
+    }
+  ],
+  "6.3": [
+    {
+      "date": "2026-11-09",
+      "problem": "The rule did not say where a node keeps the link it declares for a citation.",
+      "ruling": "The owner: the link is kept in the node's `refs` list, separately from the citation itself.",
+      "type": "textual"
+    }
+  ],
+  "6.4": [
+    {
+      "date": "2026-11-18",
+      "problem": "The rule said which incoming links a node of the SpecSheriff guidelines holds, but not which ones a node of an extension that the project has chosen holds.",
+      "ruling": "The owner chose to state this qualification in each rule that it concerns. Here, a node of a chosen extension holds only the links pointing at it from that extension, as a node of the guidelines holds only those from the guidelines.",
+      "type": "textual"
+    }
+  ],
+  "10.2": [
+    {
+      "date": "2026-11-11",
+      "problem": "The node said only that the checks run on each edit an agent makes, and its title named where an agent writes rather than what the node specifies.",
+      "ruling": "The owner: the node lists the moments at which the checks run: before an agent's edit, after each of its edits, on a commit and on a push. Its title is \"When the checks run\".",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The tests of the system's code ran on every push, although the guidelines require only that they pass before a change reaches the project's shared branch.",
+      "ruling": "In line with the owner's ruling on 1.6.1, the tests run on a push only where the project's own guidelines name a push as the moment at which they run.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The tests that run on a push covered the system's code and the project's own checks, but not the project's own code generators (10.9).",
+      "ruling": "The owner agreed that those tests also cover the project's own code generators.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The checks that run after an agent's edit and on a commit came only from the main table of checks.",
+      "ruling": "In line with the owner's ruling on the tables of checks of extensions (1.7.7), those checks also include the ones in the table of checks of an extension.",
+      "type": "textual"
+    }
+  ],
+  "10.3": [
+    {
+      "date": "2026-11-13",
+      "problem": "The rule did not say which edits the check before an edit can judge, although a shell command does not say in advance which files it will change.",
+      "ruling": "The owner accepted that the refusal before an edit applies only to an edit whose request names the files it writes to and what it writes to them. A shell command names neither.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The check before an agent's edit guarded the approvals, but not the entries that set the specification's approval status or its `strict` flag.",
+      "ruling": "The owner agreed that the SpecSheriff tools also refuse an agent's edit that changes those entries other than through the procedures that record or withdraw them.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "An agent could change the record of the extensions that the project has chosen by editing it directly.",
+      "ruling": "The owner accepted that the SpecSheriff tools refuse such an edit too, unless it is made through the procedure that records or withdraws the choice.",
+      "type": "textual"
+    }
+  ],
+  "7.1": [
+    {
+      "date": "2026-11-15",
+      "problem": "The rules on how a node is written stated no common goal, reader or scope, so those who wrote or reviewed nodes could apply them in different ways.",
+      "ruling": "The owner: a node of its own sets out the goal of these rules, the reader of a node, the parts of a node that the rules apply to and the terms a node may use without explaining them.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-15",
+      "problem": "It was unclear whether the rules on how a node is written apply to the citations in a node and to its examples.",
+      "ruling": "The owner: citations are technical information, so these rules do not apply to them. Examples are kept in the separate `examples` property, so a rule that names only the title, the text and the reason does not apply to them either.",
+      "type": "textual"
+    }
+  ],
+  "7.2.1": [
+    {
+      "date": "2026-11-09",
+      "problem": "The rule also required a property to be stated in terms of what the specification declares, never over what happens not to exist yet.",
+      "ruling": "The owner: that paragraph is removed from the rule.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-16",
+      "problem": "The rule spoke of a rule's subject, which reads both as the grammatical subject and as the topic, and said too abstractly whom a rule binds.",
+      "ruling": "The owner accepted a rule that distinguishes two cases. A rule that requires an action names its actor and what the actor must do, while a rule that requires a property names the thing that must have it.",
+      "type": "textual"
+    }
+  ],
+  "7.3.2": [
+    {
+      "date": "2026-11-15",
+      "problem": "The rule did not say whether a sentence relating two facts, each of which could be disputed on its own, states one thought or two.",
+      "ruling": "The owner: a sentence that states one relation between two facts, such as a cause, a contrast or a condition, states one thought. A sentence that sets two facts side by side with no relation between them, or that states two relations, states two thoughts.",
+      "type": "textual"
+    }
+  ],
+  "7.5.1": [
+    {
+      "date": "2026-11-07",
+      "problem": "The rule that a superfluous rule is removed stood among the rules on what the specification governs, although it concerns every rule.",
+      "ruling": "The owner: it is a rule about rules in general, so it stands as a node of its own in the section on how rules are written.",
+      "type": "procedural"
+    }
+  ],
+  "1.1.6": [
+    {
+      "date": "2026-11-08",
+      "problem": "The rule on owners stood after rules that already relied on the notion of an owner.",
+      "ruling": "The owner: the rule moves ahead of them, so that the notion of an owner is introduced before it is first used.",
+      "type": "procedural"
+    }
+  ],
+  "1.3.1": [
+    {
+      "date": "2026-11-08",
+      "problem": "Rules relied on the approval status before any rule said what values it takes and what has one.",
+      "ruling": "The owner: a node of its own introduces the approval status and what has one, ahead of the rules that use it.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The node said that `draft` is the default status, which the schema of the nodes already states.",
+      "ruling": "The owner: the rules of the guidelines do not name the default status, which only the schema holds.",
+      "type": "textual"
+    }
+  ],
+  "1.3.3": [
+    {
+      "date": "2026-11-08",
+      "problem": "The conditions under which the specification, a section and a rule are approved were stated in three separate rules.",
+      "ruling": "The owner: one node states everything about when the status is `approved`.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-20",
+      "problem": "The reason said that the status `approved` states that one of the rule's owners has agreed, although an agent may now approve a node on an owner's behalf.",
+      "ruling": "The owner accepted that the status claims the rule's present wording was approved by one of its owners or, as 1.3.6 allows, by an agent on an owner's behalf.",
+      "type": "textual"
+    }
+  ],
+  "1.7.1": [
+    {
+      "date": "2026-11-09",
+      "problem": "Rules that not every system needs were part of the guidelines that every project shares.",
+      "ruling": "The owner: such rules form extensions of the guidelines, which are delivered with the SpecSheriff plugin and the tools that carry them out. A project uses an extension only by its own choice.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-13",
+      "problem": "The node did not say whether the rules of an extension are rules of the SpecSheriff guidelines, or whether the extensions are kept together.",
+      "ruling": "The owner accepted that the rules of an extension are not rules of the SpecSheriff guidelines. Each extension is kept apart from the others.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-13",
+      "problem": "Nothing in the guidelines said how the extensions are kept apart in the files of the guidelines.",
+      "ruling": "The owner left this to the agent, which decided that each extension is kept in a file of its own.",
+      "type": "procedural"
+    }
+  ],
+  "1.7.2": [
+    {
+      "date": "2026-11-16",
+      "problem": "By the owner's ruling of 2026-11-11, an extension could change a rule of the SpecSheriff guidelines through an `overrides` link, so a rule of the guidelines would not hold in every project.",
+      "ruling": "The owner: a rule of an extension only adds a rule or refines a rule of the SpecSheriff guidelines, and it is consistent with every rule of the guidelines. An extension no longer changes a rule of the guidelines, so the `overrides` link is withdrawn.",
+      "type": "textual"
+    }
+  ],
+  "1.7.3": [
+    {
+      "date": "2026-11-09",
+      "problem": "A rule of the SpecSheriff guidelines could rely on an extension that a project has not chosen.",
+      "ruling": "The owner decided that the rules not every project needs belong in extensions of the guidelines. So a rule of the SpecSheriff guidelines names no particular extension, cites none of its nodes and declares no link to them.",
+      "type": "textual"
+    }
+  ],
+  "1.7.4": [
+    {
+      "date": "2026-11-16",
+      "problem": "An earlier draft let an extension rely on another extension, keeping the rules that relied on it in a section of their own.",
+      "ruling": "The owner: each extension relies only on the SpecSheriff guidelines and names no other extension, so any combination of extensions works. The earlier draft is withdrawn.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The rule limited the words that a rule of an extension uses and the nodes that it cites, but not the types of the links it declares.",
+      "ruling": "The owner accepted the reviewer's proposal: the links that such a rule declares are only of the types that the guidelines or its own extension define.",
+      "type": "textual"
+    }
+  ],
+  "1.7.5": [
+    {
+      "date": "2026-11-18",
+      "problem": "Nothing in the guidelines said where a project records which extensions of the guidelines it uses.",
+      "ruling": "The owner: the extensions that a project has chosen are recorded in its configuration in the repository. Only the chosen ones are recorded, since the available ones come with each release of the plugin.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "Nothing in the guidelines said who chooses the extensions that a project uses, or how.",
+      "ruling": "The owner: an owner of the specification chooses them, either personally, using a utility from the SpecSheriff plugin, or through an agent working for that owner. An agent changes the choice only when that owner asks it to.",
+      "type": "textual"
+    }
+  ],
+  "1.7.6": [
+    {
+      "date": "2026-11-18",
+      "problem": "Withdrawing the choice of an extension could leave nodes that rely on what the extension defines.",
+      "ruling": "The owner: a chosen extension stays chosen while a node of the specification that is not part of the extension depends on it. The procedure that withdraws the choice refuses to do so while such a node exists, naming each such node.",
+      "type": "textual"
+    }
+  ],
+  "4.3": [],
+  "4.4": [
+    {
+      "date": "2026-11-09",
+      "problem": "The node could be read as treating any problem or defect of the implementation as technical debt.",
+      "ruling": "The owner: technical debt is a shortcoming in the internal quality of the system's implementation that has been accepted on purpose. A defect is not technical debt.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-09",
+      "problem": "Nothing in the guidelines said what an entry of the technical debt section is called, or whether it has a reason, as a rule does.",
+      "ruling": "The owner: an entry is the description of a shortcoming, which need not have a reason. Such a description may refine the nodes it concerns.",
+      "type": "textual"
+    }
+  ],
+  "6.1": [
+    {
+      "date": "2026-11-09",
+      "problem": "The section on links did not open with what a link is. Its list of types also included `consumes`, which only domains use.",
+      "ruling": "The owner: this node opens the section with the definition of a link. The type `consumes` moves to the extension of the guidelines that defines domains.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-11",
+      "problem": "No type of link let a check name the rule that it verifies.",
+      "ruling": "The owner: a check links to the rule it verifies through a link of the type `checks`, which is written by hand.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-12",
+      "problem": "The type `supersedes` linked a node to an archived node, although an archived node has no sid to link to.",
+      "ruling": "The owner accepted that the type `supersedes` is removed from the list of types of link.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "Only an extension of the guidelines could define further types of link, although a project may need a relation that the guidelines do not provide for.",
+      "ruling": "The owner: a project's own guidelines may also define types of link. Each such type states its meaning and contradicts no rule of the SpecSheriff guidelines.",
+      "type": "textual"
+    }
+  ],
+  "2.6": [
+    {
+      "date": "2026-11-09",
+      "problem": "The node did not say when a section is deleted.",
+      "ruling": "The owner: a section is deleted outright once no node is left in it.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-12",
+      "problem": "An archived node kept its sid, so anything could go on relying on a node that may be deleted from the archive at any time.",
+      "ruling": "The owner: an archived node has no sid of its own, and its former sid is kept nowhere. A node restored from the archive returns to the specification with a new sid.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-12",
+      "problem": "An archived node could name as its replacement a node that was later removed in turn.",
+      "ruling": "The owner: an archived node names as its replacement only a node of the specification. When that replacement is removed, the archived node names the replacement's own replacement instead, or none.",
+      "type": "textual"
+    }
+  ],
+  "6.2": [],
+  "6.5": [
+    {
+      "date": "2026-11-16",
+      "problem": "The reason said that only a term names an entity, which no longer held once an entity became anything that the specification defines.",
+      "ruling": "The owner: the reason drops that claim and says only that a link between two terms tells how the entities they name relate. Nothing is missing from the text and stays as it is.",
+      "type": "textual"
+    }
+  ],
+  "6.6": [
+    {
+      "date": "2026-11-17",
+      "problem": "A ratio could take only the multiplicities `1`, `0..1`, `1..*` and `0..*`, so an exact number, such as the two teams of a match, could not be written.",
+      "ruling": "The owner agreed that a ratio may state any multiplicity in UML notation: a whole number, or a range of whole numbers whose upper bound may be `*`.",
+      "type": "textual"
+    }
+  ],
+  "7.6.1": [
+    {
+      "date": "2026-11-16",
+      "problem": "The requirement that a quotation match what it quotes character for character was stated only in the reason, so it bound nobody.",
+      "ruling": "The owner accepted moving this requirement into the text.",
+      "type": "textual"
+    }
+  ],
+  "7.2.2": [],
+  "7.3.3": [],
+  "7.2.3": [
+    {
+      "date": "2026-11-10",
+      "problem": "The rule said that a general word carries its object, and the word \"object\" also reads as a JSON object in the specification.",
+      "ruling": "The owner: a general word is used together with what it applies to, and the rule no longer speaks of an object.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "The rule did not say how close to a general word the thing it applies to must appear.",
+      "ruling": "The owner: it appears in the same phrase as the general word, never a sentence later.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-15",
+      "problem": "The rule did not say which parts of a node it applies to.",
+      "ruling": "The owner: it applies to a node's text, reason, list members and table cells, but not to its title.",
+      "type": "textual"
+    }
+  ],
+  "7.2.4": [
+    {
+      "date": "2026-11-16",
+      "problem": "The rules on naming spoke of the things that names refer to without saying what such a thing is.",
+      "ruling": "The owner: a name refers to an entity, and an entity is anything that the specification defines. A name means the same thing in every node that uses it.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-16",
+      "problem": "Several principles of naming were stated only in the spec-review skill, not in the specification.",
+      "ruling": "The owner: those principles move into the specification, as the rows of a table in this node, each with a rule of its own and two examples that require nothing.",
+      "type": "textual"
+    }
+  ],
+  "7.2.4.1": [
+    {
+      "date": "2026-11-16",
+      "problem": "The rule allowed a coined name only for a thing that is a procedure, an entity, a constant or a variable.",
+      "ruling": "In line with the owner's ruling of the same day that a name refers to an entity, which is anything the specification defines, that condition is dropped, since it adds nothing.",
+      "type": "textual"
+    }
+  ],
+  "7.2.4.2": [],
+  "7.2.4.3": [],
+  "7.2.4.4": [
+    {
+      "date": "2026-11-10",
+      "problem": "How a node writes a property's key was stated only in the spec-review skill. The ruling of 2026-10-28 made an exception for the keys `type` and `kind` without explaining it.",
+      "ruling": "The owner: the specification states how a property's key is written next to the object it belongs to, so the key may be a general word. A property needs a name of its own only where it is also used apart from its object.",
+      "type": "textual"
+    }
+  ],
+  "7.2.4.5": [],
+  "7.2.6": [],
+  "7.2.7": [
+    {
+      "date": "2026-11-15",
+      "problem": "The requirement that a node explain a word whose meaning the specification defines was only a personal rule of the owner, which the wording checker applied.",
+      "ruling": "The owner: it becomes a rule of the specification, among the rules on clarity in the section on how rules are written.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-16",
+      "problem": "The rule did not say which words count as taking their meaning from the specification.",
+      "ruling": "The owner: the rule covers a name that means something only within the specification, and a common word to which the specification gives a meaning other than its everyday one, such as a narrower meaning. A common word used in its everyday meaning is not covered.",
+      "type": "textual"
+    }
+  ],
+  "7.4.1": []
+}

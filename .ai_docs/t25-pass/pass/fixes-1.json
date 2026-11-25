@@ -1,0 +1,32 @@
+[
+  {
+    "group": "g2-spec-1b", "sid": "s-ce9wbaut6edfuy8", "field": "reason",
+    "from": "Two definitions of one entity are held by two parties, and the two change it apart.",
+    "to": "Two definitions of one entity are two places that each answer for it, and the two are changed apart."
+  },
+  {
+    "group": "g5a-spec-2-4", "sid": "s-sn6au3vcr9uy5pm", "field": "reason",
+    "from": "An exemption is a link rather than a mark on the exempted rule, so that one node gives the reason for every rule it exempts. Being a link, it also shows what exempts each exempted rule outside the SpecSheriff guidelines, among that rule's incoming links.",
+    "to": "An exemption is a link rather than a mark on the exempted rule. So one node gives the reason for every rule it exempts, and each exempted rule outside the SpecSheriff guidelines shows, among its incoming links, what exempts it."
+  },
+  {
+    "group": "g5a-spec-2-4", "sid": "s-sn6au3vcr9uy5pm", "field": "text",
+    "from": "takes the linked node out of the rule that it is implemented (§s-6fw72j65jkqrfpf), for the reason its text gives. The linked node is a rule, a node of a project's own NodeKind (§s-vsh384ybt4w25a2) or a section. Where it is a section, every rule and every node of a project's own NodeKind under it is taken out.",
+    "to": "takes out of the rule that it is implemented (§s-6fw72j65jkqrfpf), for the reason its text gives, the linked rule or node of a project's own NodeKind (§s-vsh384ybt4w25a2), or every such node under the linked section."
+  },
+  {
+    "group": "g5a-spec-2-4", "sid": "s-6fw72j65jkqrfpf", "field": "text",
+    "from": "Such a rule or node is implemented when:",
+    "to": "Such a rule or node is implemented when both hold:"
+  },
+  {
+    "group": "g5a-spec-2-4", "sid": "s-6fw72j65jkqrfpf", "field": "reason",
+    "from": "So a rule the system's code does not carry out",
+    "to": "So an approved rule the system's code does not carry out"
+  },
+  {
+    "group": "g5a-spec-2-4", "sid": "s-6fw72j65jkqrfpf", "field": "reason",
+    "from": "Only both together show by a check that the code carries the rule out.",
+    "to": "Only both together show by a check that the code does what the rule says."
+  }
+]

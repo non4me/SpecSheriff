@@ -1,0 +1,193 @@
+<title>Узел описания инструментов: Удалённый узел и архив</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Удалённый узел и архив <span style="color:var(--muted);font-weight:400">· A removed node and the archive</span></h1>
+<div class="sub">tools 7.1.6 · s-j4webte36gkraju · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Архив хранит каждое удалённое правило, которое код мог реализовать, и ничего больше (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>). У архивного узла нет sid, поэтому запись удалённого узла можно проверить только в коммите, который удаляет узел.</div>
+  <div><div class="label">Reason</div>The archive keeps each removed rule that the code may have implemented, and nothing else (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>). An archived node has no sid, so the entry of a removed node can be checked only in the commit that removes the node.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое: у узла не было обоснования. Оно говорит, зачем архив и почему запись проверяется только в коммите удаления.</p>
+
+<div class="reason">
+  <div><div class="label">Пример</div>Коммит удаляет одобренное правило <code>base/3.2</code> и пустой раздел <code>base/5</code>. Он добавляет в <code>specs/_archive/base.json</code> узел типа <code>TextRule</code> с расположением <code>base/3.2</code> и формулировкой правила; его поле <code>archived</code> указывает дату и причину. Ближайшая ошибка — отправить в архив и пустой раздел: тогда <code>sheriff validate</code> отвергает коммит и называет <code>specs/_archive/base.json</code> и <code>base/5</code>.</div>
+  <div><div class="label">Example</div>A commit removes the approved rule <code>base/3.2</code> and the empty section <code>base/5</code>. It adds to <code>specs/_archive/base.json</code> a <code>TextRule</code> that has the location <code>base/3.2</code> and the rule's wording, and whose <code>archived</code> field gives the date and the reason. The closest mistake is to archive the empty section as well: <code>sheriff validate</code> then refuses the commit, naming <code>specs/_archive/base.json</code> and <code>base/5</code>.</div>
+</div>
+<p class="hint" style="margin-top:8px">Предложил рецензент. Пример показывает правильную запись в архиве и ближайшую ошибку.</p>
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-f2b5zvc565s242f s-qb79dcw694x2h63">
+  <td class="en"><p><code>sheriff validate</code> checks that a commit adds to the archive (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>) exactly the nodes that it removes from the specification and that must be archived (<span class="cite" data-sid="s-qb79dcw694x2h63" title="A removed node that has ever been approved is placed in the archive with the reason for its removal. A section, and a node that was never approved, are deleted outright and do not go to the archive. The check leaves out the nodes of the SpecSheriff guidelines that a project uses">§10.1.11</span>). It checks only the nodes of the files that the repository keeps.</p></td>
+  <td class="ru"><p><code>sheriff validate</code> проверяет, что коммит добавляет в архив (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>) ровно те узлы, которые он удаляет из спецификации и которые должны попасть в архив (<span class="cite" data-sid="s-qb79dcw694x2h63" title="A removed node that has ever been approved is placed in the archive with the reason for its removal. A section, and a node that was never approved, are deleted outright and do not go to the archive. The check leaves out the nodes of the SpecSheriff guidelines that a project uses">§10.1.11</span>). Он проверяет только узлы файлов, которые хранит репозиторий.</p></td>
+  <td class="change">Было: «<code>sheriff validate</code> ищет в одобрениях каждый sid, который коммит удаляет из спецификации». Теперь узел открывается тем, что проверяется. Только файлы, которые хранит репозиторий: так узлы SpecSheriff guidelines, которые проект берёт из плагина, не проверяются, как и требует строка 10.1.11.</td>
+  <td class="links"><span class="cite" data-sid="s-f2b5zvc565s242f">The archive</span><span class="cite" data-sid="s-qb79dcw694x2h63">A removed node that has ever been approved is placed in the archive with the reason for its removal. A section, and a node that was never approved, are deleted outright and do not go to the archive. The check leaves out the nodes of the SpecSheriff guidelines that a project uses</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="">
+  <td class="en"><p>A node is removed by a commit if the parent of the commit holds a node with its sid, and that sid is gone from the specification after the commit. For a merge commit, the parent is its first parent. A removed node must be archived where both of the following hold:</p></td>
+  <td class="ru"><p>Узел удалён коммитом, если в родительском коммите есть узел с его sid, а после коммита этого sid в спецификации нет. Для коммита слияния родитель — его первый родитель. Удалённый узел должен попасть в архив, если выполнено и то и другое:</p></td>
+  <td class="change">Новое: узел, перенесённый в другой файл, сохраняет sid, поэтому удалённым не считается. Для слияния сказано, с каким коммитом сравнивать.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-67vekyup7y8smap">
+  <td class="en"><div class="li">• it has ever been approved (<span class="cite" data-sid="s-67vekyup7y8smap" title="Only a node's owners approve it">§1.3.4</span>);</div></td>
+  <td class="ru"><div class="li">• ему когда-либо давали одобрение (<span class="cite" data-sid="s-67vekyup7y8smap" title="Only a node's owners approve it">§1.3.4</span>);</div></td>
+  <td class="change">Было: «Узел, которому когда-либо давалось одобрение, ищется в архиве…».</td>
+  <td class="links"><span class="cite" data-sid="s-67vekyup7y8smap">Only a node's owners approve it</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="s-9kfdycuq34beqvs">
+  <td class="en"><div class="li">• its approval status is set by approvals, unlike a section's, which is derived from the nodes under it (<span class="cite" data-sid="s-9kfdycuq34beqvs" title="How a section's approval status is determined">§1.3.8</span>).</div></td>
+  <td class="ru"><div class="li">• его статус одобрения задаётся одобрениями, в отличие от статуса раздела, который выводится из узлов под ним (<span class="cite" data-sid="s-9kfdycuq34beqvs" title="How a section's approval status is determined">§1.3.8</span>).</div></td>
+  <td class="change">Было: «…если это не раздел и не заголовок домена». Теперь сказано утвердительно и с причиной. Заголовок домена убран: правило 1.3.8 говорит только о разделе.</td>
+  <td class="links"><span class="cite" data-sid="s-9kfdycuq34beqvs">How a section's approval status is determined</span></td>
+</tr>
+<tr class="part" id="part-4" data-cites="">
+  <td class="en"><p><code>sheriff validate</code> looks up the approvals of a removed node by the sid that the node has in the parent of the removing commit.</p></td>
+  <td class="ru"><p>Одобрения удалённого узла <code>sheriff validate</code> ищет по sid, который у узла в родительском коммите удаляющего коммита.</p></td>
+  <td class="change">Новое: у узла в архиве sid нет, поэтому одобрения ищутся по sid из предыдущего коммита.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-5" data-cites="s-kag2m9tzdnduxdx s-5ah25f6gy99panq s-gb8s9657a65hqmv">
+  <td class="en"><p>A node of the archive is added by a commit in which the archive after the commit holds more nodes with that node's location (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>), kind and wording (<span class="cite" data-sid="s-5ah25f6gy99panq" title="What an approval covers">§1.3.5</span>) than the archive of the commit's parent. <code>sheriff validate</code> reads the parent's archive in the form to which <code>sheriff reindex</code> would rewrite it (<span class="cite" data-sid="s-gb8s9657a65hqmv" title="unknown node">§s-gb8s9657a65hqmv</span>). For a node in a cell of a <code>TableRule</code>, the wording compared is the node's own wording.</p></td>
+  <td class="ru"><p>Узел архива добавлен коммитом, если узлов с его расположением (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>), типом и формулировкой (<span class="cite" data-sid="s-5ah25f6gy99panq" title="What an approval covers">§1.3.5</span>) в архиве после коммита больше, чем в архиве родительского коммита. Архив родительского коммита <code>sheriff validate</code> читает в том виде, в какой его переписал бы <code>sheriff reindex</code> (<span class="cite" data-sid="s-gb8s9657a65hqmv" title="unknown node">§s-gb8s9657a65hqmv</span>). Для узла в ячейке <code>TableRule</code> сравнивается собственная формулировка узла.</p></td>
+  <td class="change">Новое: у узла в архиве нет sid, поэтому узлы считаются по расположению, типу и формулировке. Счёт покрывает узел, удалённый второй раз после восстановления. Прежний архив читается после переименований, которые делает <code>sheriff reindex</code>, чтобы переименованный тип узла не выглядел добавленным. Следствие: коммит, который меняет формулировку узла в архиве, будет отвергнут.</td>
+  <td class="links"><span class="cite" data-sid="s-kag2m9tzdnduxdx">A node's location</span><span class="cite" data-sid="s-5ah25f6gy99panq">What an approval covers</span><span class="cite" data-sid="s-gb8s9657a65hqmv">s-gb8s9657a65hqmv</span></td>
+</tr>
+<tr class="part" id="part-6" data-cites="">
+  <td class="en"><p>The entry of a removed node is a node that the commit adds to the archive with the location, the kind and the wording that the removed node had in the commit's parent. <code>sheriff validate</code> accepts the commit only if all of the following hold:</p></td>
+  <td class="ru"><p>Запись удалённого узла — это узел, который коммит добавляет в архив с тем же расположением, тем же типом и той же формулировкой, какие были у удалённого узла в родительском коммите. <code>sheriff validate</code> принимает коммит, только если выполнено всё следующее:</p></td>
+  <td class="change">Новое: формулировка входит в запись, потому что строка 10.1.11 требует поместить в архив сам узел.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-7" data-cites="">
+  <td class="en"><div class="li">• each removed node that must be archived has its entry in the archive;</div></td>
+  <td class="ru"><div class="li">• у каждого удалённого узла, который должен попасть в архив, там есть запись;</div></td>
+  <td class="change">Было: «…ищется в архиве вместе с причиной удаления».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-8" data-cites="">
+  <td class="en"><div class="li">• the <code>archived</code> field of each such entry gives the date of the removal and the reason for it;</div></td>
+  <td class="ru"><div class="li">• поле <code>archived</code> каждой такой записи указывает дату удаления и его причину;</div></td>
+  <td class="change">Новое: сказано, где записаны дата и причина.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-9" data-cites="">
+  <td class="en"><div class="li">• each node that the commit adds to the archive is the entry of a removed node that must be archived.</div></td>
+  <td class="ru"><div class="li">• каждый узел, который коммит добавляет в архив, — запись удалённого узла, который должен попасть в архив.</div></td>
+  <td class="change">Было: «Любой другой узел отвергается, если он стоит в архиве». Теперь это проверяется в коммите, который добавляет узел в архив: без sid узел архива позже не сопоставить с одобрениями.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-10" data-cites="">
+  <td class="en"><p>When <code>sheriff validate</code> refuses a commit, it names the sid of each removed node that the refusal concerns, and the file and the location of each node of the archive that it concerns.</p></td>
+  <td class="ru"><p>Отвергая коммит, <code>sheriff validate</code> называет sid каждого удалённого узла, которого касается отказ, а также файл и расположение каждого узла архива, которого он касается.</p></td>
+  <td class="change">Новое: как назван узел архива, у которого нет sid.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>«ищет в одобрениях каждый sid»: у узла в архиве sid нет, поэтому одобрения ищутся по sid удалённого узла, прочитанного из коммита до удаления.</li>
+<li>Проверка файла архива по его схеме перешла в новый узел «Validation of a file of the archive», который идёт сразу после этого.</li>
+<li>Передача замены дальше: по вашему решению от 21 ноября архивный узел только может назвать замену, и никто её не обновляет.</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-qb79dcw694x2h63"><span class="loc">реализует · 10.1.11</span> <b>A removed node that has ever been approved is placed in the archive with the reason for its removal. A section, and a node that was never approved, are deleted outright and do not go to the archive. The check leaves out the nodes of the SpecSheriff guidelines that a project uses</b><br><span class="meta">guidelines · s-qb79dcw694x2h63</span></li>
+<li class="node" data-sid="s-f2b5zvc565s242f"><span class="loc">реализует · 2.6</span> <b>The archive</b><br><span class="rut">Архив</span><br><span class="meta">guidelines · s-f2b5zvc565s242f</span></li>
+<li class="node" data-sid="s-67vekyup7y8smap"><span class="loc">ссылается · 1.3.4</span> <b>Only a node's owners approve it</b><br><span class="rut">Узел одобряют только его ответственные</span><br><span class="meta">guidelines · s-67vekyup7y8smap</span></li>
+<li class="node" data-sid="s-9kfdycuq34beqvs"><span class="loc">ссылается · 1.3.8</span> <b>How a section's approval status is determined</b><br><span class="rut">Как определяется статус одобрения раздела</span><br><span class="meta">guidelines · s-9kfdycuq34beqvs</span></li>
+<li class="node" data-sid="s-kag2m9tzdnduxdx"><span class="loc">ссылается · 8.5</span> <b>A node's location</b><br><span class="rut">Расположение узла</span><br><span class="meta">guidelines · s-kag2m9tzdnduxdx</span></li>
+<li class="node" data-sid="s-5ah25f6gy99panq"><span class="loc">ссылается · 1.3.5</span> <b>What an approval covers</b><br><span class="rut">Что покрывает одобрение</span><br><span class="meta">guidelines · s-5ah25f6gy99panq</span></li>
+<li class="node" data-sid="s-gb8s9657a65hqmv"><span class="loc">ссылается · ?</span> <b>?</b><br><span class="meta">? · s-gb8s9657a65hqmv</span></li>
+</ul>
+
+<h2>Тесты, привязанные к узлу сейчас</h2>
+<ul class="plain">
+<li><code>deletes a section outright, an approval given for it under an earlier release aside, and refuses one standing in the archive</code><br><span class="meta">skills/tools/test/unit/validate.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка</h2>
+<p class="hint">Пока вы не согласились с предложением, текстом узла остаётся одобренная формулировка.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre>`sheriff validate` ищет в одобрениях каждый sid, который коммит удаляет из спецификации.
+
+- Узел, которому когда-либо давалось одобрение, ищется в архиве вместе с причиной удаления, если это не раздел и не заголовок домена.
+- Любой другой узел отвергается, если он стоит в архиве.
+
+Обоснования у узла нет.</pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate` looks up in the approvals each sid a commit removes from the specification.
+
+- A node an approval was ever given for is looked up in the archive, with the reason for its removal, unless it is a section or a domain's header.
+- Any other node is refused where it stands in the archive.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

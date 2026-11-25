@@ -1,0 +1,27 @@
+{
+  "s-kh8qcd5kxgh9z3j": { "verdict": "same", "issues": [] },
+  "s-eferktypcj7njt5": { "verdict": "same", "issues": [] },
+  "s-7445ahgjck2aefg": { "verdict": "same", "issues": [] },
+  "s-kag2m9tzdnduxdx": { "verdict": "same", "issues": [] },
+  "s-5ah25f6gy99panq": { "verdict": "same", "issues": [] },
+  "s-9kfdycuq34beqvs": { "verdict": "same", "issues": [] },
+  "s-67vekyup7y8smap": { "verdict": "same", "issues": [] },
+  "s-utvqbypzhmgndug": { "verdict": "same", "issues": [] },
+  "s-f2b5zvc565s242f": { "verdict": "same", "issues": [] },
+  "s-gqbj8849rf224qa": {
+    "verdict": "changed",
+    "issues": [
+      "text, second sentence: the input said a decision \"is kept in that rule's metadata\"; the output says it \"is kept in that rule's `meta.decisions`\". The place is narrowed from the node's metadata as a whole to one property of it, a value the input did not name. RULES.md maps \"a node's decisions\" to `meta.decisions`, not the word \"metadata\". The schema keeps decisions only in `meta.decisions`, so no check moves, but the owner should accept the narrowing knowingly or the text should go back to \"that rule's metadata\"."
+    ]
+  },
+  "s-t28j22vbdmmeqnh": { "verdict": "same", "issues": [] },
+  "s-dpe5kcz4eamv39g": { "verdict": "same", "issues": [] },
+  "s-efe2cmw9asrbt2g": { "verdict": "same", "issues": [] },
+  "s-xqs2e24mx5253ye": { "verdict": "same", "issues": [] },
+  "s-v7vd4ydrwexsgsj": { "verdict": "same", "issues": [] },
+  "s-5x737t9nee4zgaa": { "verdict": "same", "issues": [] },
+  "s-xef48cjh6krvavz": { "verdict": "same", "issues": [] },
+  "s-9hfbxv5pfnsh4kc": { "verdict": "same", "issues": [] },
+  "s-vj7ercem526zd6v": { "verdict": "same", "issues": [] },
+  "s-2r7k2aeyusgy6fw": { "verdict": "same", "issues": [] }
+}

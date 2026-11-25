@@ -1,0 +1,48 @@
+{
+  "note": "Drafts of two new rows of the main table of checks (node 10.1, s-jau82aq9juv9zzh), one for each judgement of the reviewer that agreed node 1.6.1 (s-m4h279nbaqkpa3t) added: whether a commit message's statement that a rule's implementation needs no change is true, and whether an approved node of the technical appendix agrees with the base specification. They are to stand after row 10.1.43, the check of the first judgement, in the group 'The specification and the code'. Each row is a check: its text says what is checked, its cost what a failure costs. Row 10.1.43b became 10.1.25a, in the group 'The specification alone', since it reads no code.",
+  "rows": [
+    {
+      "n": 76,
+      "num": "10.1.43a",
+      "fate": "new",
+      "en": "Where a commit's message states that a rule's implementation needs no change, the tests and the code bound to that rule, directly or through a chain of `implements` links (§s-sn6au3vcr9uy5pm), do what the rule's wording after the commit says and do nothing that it does not say",
+      "cost": "refused, naming the rule, while the specification is approved; reported, naming the rule, while it is a draft",
+      "ru": "Если в сообщении коммита сказано, что реализацию правила менять не нужно, тесты и код, привязанные к этому правилу напрямую или через цепочку связей `implements` (§s-sn6au3vcr9uy5pm), делают то, что говорит формулировка правила после коммита, и ничего сверх этого",
+      "ruCost": "отклоняется с названием правила, пока спецификация одобрена; сообщается с названием правила, пока она черновик",
+      "reason": "Without this check, a commit could leave a rule's tests and code behind its new wording, and escape the cost of that lag, merely by stating that the rule's implementation needs no change.",
+      "ruReason": "Без этой проверки коммит мог бы оставить тесты и код правила отстающими от его новой формулировки и избежать цены этого отставания, просто заявив, что реализацию правила менять не нужно.",
+      "rests": [
+        "s-m4h279nbaqkpa3t",
+        "s-nyh9yk22ba6g77q"
+      ],
+      "impl": [
+        "s-vp24dqydygztqbt"
+      ],
+      "about": "Затрагивает каждый коммит, в сообщении которого сказано, что реализацию правила менять не нужно (10.1.40). Рецензент получает формулировку правила до и после коммита, его тесты и код (10.4).",
+      "tests": [],
+      "change": "Новая строка, по согласованным 1.6.1 и 10.2: второе суждение рецензента. Цена — как у 10.1.40, потому что утверждение заменяет изменения, которых требует 10.1.40. Рецензент правил проверил строку: добавлена ссылка на узел о связях; обоснование говорит одной фразой и о проверке, и о цене."
+    },
+    {
+      "n": 77,
+      "num": "10.1.25a",
+      "fate": "new",
+      "en": "A node of the technical appendix (§s-qmmzf9nksfsa3qp) that is approved in a commit and has an `implements` link (§s-sn6au3vcr9uy5pm) to a rule of the base specification refines the rules of the base specification that it implements. Such a node contradicts no rule of the base specification",
+      "cost": "refused, naming the node and each rule of the base specification that the node contradicts, or that it implements without refining it",
+      "ru": "Узел технического приложения (§s-qmmzf9nksfsa3qp), который одобрен в коммите и имеет связь `implements` (§s-sn6au3vcr9uy5pm) с правилом базовой спецификации, уточняет реализуемые им правила базовой спецификации. Такой узел не противоречит ни одному правилу базовой спецификации",
+      "ruCost": "отклоняется с названием узла и каждого правила базовой спецификации, которому узел противоречит или которое он реализует, не уточняя его",
+      "reason": "An agent may approve such a node on an owner's behalf (§s-t5uw8zfxzhfdg86), and code is then written from the node. Without this check, no one but the node's author would compare it with the base specification before code written from it is committed.",
+      "ruReason": "Агент может одобрить такой узел от имени ответственного (§s-t5uw8zfxzhfdg86), и затем по узлу пишется код. Без этой проверки никто, кроме автора узла, не сравнил бы его с базовой спецификацией до того, как код, написанный по нему, попадёт в коммит.",
+      "rests": [
+        "s-m4h279nbaqkpa3t",
+        "s-t5uw8zfxzhfdg86",
+        "s-nyh9yk22ba6g77q"
+      ],
+      "impl": [
+        "s-vp24dqydygztqbt"
+      ],
+      "about": "Затрагивает каждый коммит, в котором одобряется узел технического приложения со связью `implements` с правилом базы, кто бы его ни одобрил. Рецензент получает узел, реализуемые им правила базы, правила, связанные с ними, и правила того же раздела верхнего уровня (10.4).",
+      "tests": [],
+      "change": "Новая строка, по согласованным 1.6.1 и 10.2: третье суждение рецензента. Отклоняется всегда, как 10.1.43: противоречие базе — дефект и в черновике спецификации. Рецензент правил проверил строку: она не читает код, поэтому стоит в группе «Только спецификация» как 10.1.25a; текст разделён на два предложения; добавлены ссылки на узлы о структуре спецификации и о связях."
+    }
+  ]
+}

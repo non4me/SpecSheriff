@@ -1,0 +1,506 @@
+{
+  "7.6.2": [],
+  "7.4.2": [
+    {
+      "date": "2026-11-10",
+      "problem": "Most reasons read as comments on the paragraphs of their rule's text.",
+      "ruling": "The owner: a reason answers why its rule exists, what it solves and what it is for, as briefly as that answer allows. It speaks of the rule as a whole and does not go through the paragraphs of the text.",
+      "type": "textual"
+    }
+  ],
+  "7.3.1": [
+    {
+      "date": "2026-11-10",
+      "problem": "The rule on how a node's title is written was stated only among the rules for working with the owner, and nowhere in the guidelines.",
+      "ruling": "The owner: the guidelines state that rule in a node of their own.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-15",
+      "problem": "The node required a title to be understood by a reader who sees nothing else.",
+      "ruling": "The owner: a title is a short name for what the node is about and does not state the rule. Since the section already sets the topic, the title gives only what distinguishes the node within its section.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-16",
+      "problem": "Calling a title a short name gave the word \"name\" a second meaning, in addition to its meaning in the rule that one thing has one name.",
+      "ruling": "The owner accepted a wording under which a title says in a few words what the node is about, and only what distinguishes it from the other nodes of its section.",
+      "type": "textual"
+    }
+  ],
+  "7.2.5": [
+    {
+      "date": "2026-11-09",
+      "problem": "Whether a definition may state only what the defined thing is not.",
+      "ruling": "The owner: a definition by negation is not allowed. A definition states what the defined thing is.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-14",
+      "problem": "The node's text contained an example sentence.",
+      "ruling": "The owner: the example goes into the node's examples, separate from its text.",
+      "type": "textual"
+    }
+  ],
+  "8.3": [
+    {
+      "date": "2026-11-10",
+      "problem": "The node used the name NodeKind, which says nothing by itself and which no rule explains.",
+      "ruling": "The owner: the name NodeKind is removed, and the node speaks of a project's own kind of node.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "The node implied a default value of `needsCode`, although the schema makes `needsCode` required.",
+      "ruling": "The owner: the node's first sentence and its reason follow the schema, in which `needsCode` is required and has no default.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "The node said that a test is written before the code.",
+      "ruling": "The owner: that sentence is removed, since another rule sets the order of a test and the code it tests.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "The node stated both that a project may declare kinds of node of its own and how such a kind is declared and checked.",
+      "ruling": "The owner split the node in two. This node keeps what a project may declare, and a new node states how such a kind is declared and checked.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "The node only implied that a project can create nodes of any kind it needs, so its reason had nothing to refer to.",
+      "ruling": "The owner: the node opens by saying that a project can create nodes of any kind it needs.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "Which parts of a project declare its own kind of node, and in what wording the node states what such a kind's `needsCode` determines.",
+      "ruling": "The owner: a project's extension of the schema and the project's own guidelines may declare the project's own kind of node and state whether its nodes require an implementation in code. This is the wording of the node that states how such a kind is declared.",
+      "type": "textual"
+    }
+  ],
+  "8.5": [],
+  "8.4": [
+    {
+      "date": "2026-11-10",
+      "problem": "How a project's own kind of node is declared and checked was stated in a paragraph of the rule on a project's own kinds of node.",
+      "ruling": "The owner: a node of its own states it, as a short account of how the mechanism works: what is new, where and how it is introduced, and what is linked to what.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "Where a project's own kind of node is declared, and how the rule that lists the kind refers to that declaration.",
+      "ruling": "The owner: a project adds the new kind of node to its JSON Schema, in the field `kinds`. A rule in the project's own guidelines lists the kind, and that rule's `TextRule.list.declaredIn` refers to the field `kinds`.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "The check compared only the names of the kinds that the JSON Schema and the project's own guidelines declare, so a changed `needsCode` passed unnoticed.",
+      "ruling": "The owner: the check compares both the name and the `needsCode` of each new kind of node.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-10",
+      "problem": "What a kind's `needsCode` states.",
+      "ruling": "The owner: `needsCode` states whether the kind's nodes require an implementation in code.",
+      "type": "textual"
+    }
+  ],
+  "7.6.3": [
+    {
+      "date": "2026-11-11",
+      "problem": "Whether a node must give examples of what its text states.",
+      "ruling": "The owner: examples are allowed but not required. They are proposed whenever a node is written or changed.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-16",
+      "problem": "An example could show only a typical case of applying the rule and the mistake closest to that case.",
+      "ruling": "The owner: in a rule of the SpecSheriff guidelines or of an extension, an example may also show how a project's own guidelines could refine or extend the rule.",
+      "type": "textual"
+    }
+  ],
+  "7.5.2": [
+    {
+      "date": "2026-11-13",
+      "problem": "The rule on keeping each sentence as short as its meaning allows was one of the owner's own rules for writing, not a rule of the guidelines.",
+      "ruling": "The owner: the rule also becomes a rule of the guidelines, in a node of its own.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-13",
+      "problem": "Whether the nodes already agreed to must be rewritten at once to meet the new rule.",
+      "ruling": "The owner: the rule applies to what is written from then on. An agreed node is brought into line with it when it is next changed.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-13",
+      "problem": "Read literally, the ban on replacing words with a label or an abbreviation would forbid common abbreviations, such as API, and the key `refs`, which the owner had kept as an abbreviation that misleads nobody.",
+      "ruling": "The owner agreed that the ban covers only a label or an abbreviation that the specification does not define and that a reader may not know.",
+      "type": "textual"
+    }
+  ],
+  "10.6": [
+    {
+      "date": "2026-11-13",
+      "problem": "The specification counted as approved while a particular rule of the project's own guidelines was approved, so its approval status depended on the approval of a rule.",
+      "ruling": "The owner: an owner approves the specification by a separate entry, with no rule in between. The approval status of a node or of a section does not affect that of the specification.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The specification could not be approved while any symbol of the system's code, or any test, carried no SpecTag.",
+      "ruling": "The owner: the specification's approval status no longer depends on SpecTags. The approval procedure shows the owner what the checks report and, if they report anything, records the approval only after the owner confirms it.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "What the approval procedure does while the specification's strict flag is on.",
+      "ruling": "The owner: while the flag is on, the approval procedure refuses to record an approval in the cases that the rule on the strict flag names.",
+      "type": "textual"
+    }
+  ],
+  "10.7": [
+    {
+      "date": "2026-11-17",
+      "problem": "The owners had no means of making the checks refuse a commit while code that the commit leaves unchanged carries no SpecTag.",
+      "ruling": "The owner: the specification has a `strict` flag at the same level as its approval status. Only an owner changes the flag, by a separate entry, and its default value, false, is set only by the schema.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "What happens when an owner turns the flag on, or approves the specification while the flag is on, and code without a SpecTag remains.",
+      "ruling": "The owner: both procedures refuse to run, and each refusal names the command that lists that code instead of listing it.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "Whether the flag concerns only code without a SpecTag, and whether its name should say so.",
+      "ruling": "The owner: the flag keeps the name `strict` and is not limited to code without a SpecTag: a rule of the SpecSheriff guidelines, of an extension or of a project's own guidelines may make any check stricter while the flag is on. Both refusals then apply to every check that the flag makes stricter.",
+      "type": "textual"
+    }
+  ],
+  "10.10": [
+    {
+      "date": "2026-11-13",
+      "problem": "The node required every test of a project's own check or generator to carry the SpecTag of the rule that lists it, although such checks and generators are not the system's code.",
+      "ruling": "The owner: a SpecTag appears only in the code that implements the system and in the tests of that code, so the requirements on the tests of a project's own checks are removed.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "Whether a SpecTag may appear outside the system's code, in a repository's own tools and their tests, such as a project's own checks and code generators.",
+      "ruling": "The owner: it may, but there it names only a rule of the guidelines. Such a SpecTag never counts as implementing a rule of the base specification or of the technical appendix.",
+      "type": "textual"
+    }
+  ],
+  "10.4": [
+    {
+      "date": "2026-11-11",
+      "problem": "The node said that the reviewer is given the nodes that the code implements.",
+      "ruling": "The owner: code implements rules, so the node speaks of the rules that the code implements.",
+      "type": "textual"
+    }
+  ],
+  "10.5": [
+    {
+      "date": "2026-11-14",
+      "problem": "The node listed the cases in which a commit is refused, so a case missing from the list, such as a review run that ends in an error, would let a commit through.",
+      "ruling": "The owner accepted a wording under which only an answer that the SpecSheriff tools can read lets the commit through. The cases became examples.",
+      "type": "textual"
+    }
+  ],
+  "10.8": [
+    {
+      "date": "2026-11-10",
+      "problem": "The node used the name NodeKind, which no rule explains.",
+      "ruling": "The owner: the node speaks of a kind of node instead.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-14",
+      "problem": "The node held a project's own check to everything that the rule listing the checks says of a check, citing that rule instead of stating the requirements. Read literally, this included the review and the tests, which that rule also lists.",
+      "ruling": "The owner accepted a wording that states in plain words each requirement a project's own check meets, since a citation supports a statement but never replaces it.",
+      "type": "textual"
+    }
+  ],
+  "10.11": [],
+  "10.12": [
+    {
+      "date": "2026-11-14",
+      "problem": "Where the SpecSheriff tools cannot run, the node refused every commit and push, while the appendix of the tools lets them through when the project's own tools pass.",
+      "ruling": "The owner accepted that the project's own tools still run there and the commit or the push goes through unless one of them fails. Whoever makes it is told that no SpecSheriff check ran.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "In what order the project's own tools, the SpecSheriff tools and the checks run on a commit and on a push.",
+      "ruling": "The owner: they run in three steps, from the particular to the general: the tools that rewrite files, then the project's own checks and its other tools, then the checks of the SpecSheriff guidelines. After the first step, nothing changes what the commit contains.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The node did not say when a project's own code generators run.",
+      "ruling": "The owner: they run in the first step, together with the generators of the SpecSheriff tools.",
+      "type": "textual"
+    }
+  ],
+  "10.13": [
+    {
+      "date": "2026-11-14",
+      "problem": "The reviewer doubted the paragraph requiring that a procedure needed only once be removed after it has run, since no tool and no check enforces it.",
+      "ruling": "The owner accepted a wording that keeps the paragraph. Whoever writes such a procedure carries the rule out, as with other rules that no check enforces.",
+      "type": "procedural"
+    }
+  ],
+  "8.6": [
+    {
+      "date": "2026-11-11",
+      "problem": "How a rule that has the form of a table is held in the specification.",
+      "ruling": "The owner: each cell of the table holds either text or a node, and no separate kind of node stands for a row. The rows may be grouped under headings.",
+      "type": "textual"
+    }
+  ],
+  "7.5.3": [
+    {
+      "date": "2026-11-11",
+      "problem": "When a rule is to be made a `TableRule`, and when a cell is to hold a node rather than text.",
+      "ruling": "The owner: a `TableRule`, and a node in a cell, are used only where they are needed. Elsewhere a table is written in the node's text.",
+      "type": "textual"
+    }
+  ],
+  "11.1.5": [
+    {
+      "date": "2026-11-14",
+      "problem": "The rule only allowed a link to cross a domain's boundary. Where no node of the other domain held the statement that it relies on, the new rule written there had to name the linking node in its `meta.todos`.",
+      "ruling": "The owner: a node that relies on what another domain states has a link to the node of that domain that states it, of any type and to any of that domain's sections. The new rule no longer names the linking node in its `meta.todos`.",
+      "type": "textual"
+    }
+  ],
+  "9.5": [
+    {
+      "date": "2026-11-17",
+      "problem": "Whether the rule on code and tests without a SpecTag moves to an extension for adopting an existing project or stays in the base.",
+      "ruling": "The owner: it stays in the base, in the section on tests and code, next to the nodes on the SpecTag.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The rule applied only while the specification was a draft, and the checks reported each symbol without a SpecTag.",
+      "ruling": "The owner: the rule no longer depends on the specification being a draft. Instead of a message for each symbol, the checks issue a single warning without a list, which names the command that lists such code by file and symbol.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "When the checks warn about code outside the commit that carries no SpecTag, and when they refuse the commit.",
+      "ruling": "The owner: while the specification is a draft, the commit passes without a warning. While it is approved, the commit passes with the warning if the strict flag is off, and is refused if the flag is on.",
+      "type": "textual"
+    }
+  ],
+  "10.9": [
+    {
+      "date": "2026-11-17",
+      "problem": "Whether a project's own code generators belong to an extension of the guidelines on generating code from the nodes or to the guidelines themselves.",
+      "ruling": "The owner: code generation stays in the guidelines. The rule moves next to the rule on a project's own checks, right after it.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-17",
+      "problem": "The node said that what a project's own generator writes waits for the approval of the rule that lists the generator, as code generated from nodes waits for their approval.",
+      "ruling": "The owner: the generator writes its code from the approved wordings of its nodes. While the rule that lists the generator is a draft, the code the generator has already written stays as it is.",
+      "type": "textual"
+    }
+  ],
+  "13.1": [
+    {
+      "date": "2026-11-17",
+      "problem": "Where the rule on what the human-readable export shows belongs, since only the appendix of the tools described the export.",
+      "ruling": "The owner accepted a plan under which an extension on the views of the specification states what the export shows. A node of the appendix of the tools states how the tools write it and implements this node.",
+      "type": "procedural"
+    }
+  ],
+  "13.2": [
+    {
+      "date": "2026-11-17",
+      "problem": "An earlier restructuring had moved the rule on the map of the specification into the appendix of the tools.",
+      "ruling": "The owner accepted a plan under which the rule returns to the extension on the views of the specification and keeps its sid. The node of the appendix of the tools on building the map implements it.",
+      "type": "procedural"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The rewritten node opened by calling the map a mind map and dropped phrases from the approved wording: that the map holds no facts of its own, and why a branch opens and closes.",
+      "ruling": "The owner: the node keeps those phrases and again opens by calling the map the specification seen from above. A mind map is named only in the example.",
+      "type": "textual"
+    }
+  ],
+  "1.7.7": [
+    {
+      "date": "2026-11-19",
+      "problem": "Once each extension had a table of checks of its own, the name \"the table of checks\" no longer told the tables apart.",
+      "ruling": "The owner: the table of the SpecSheriff guidelines is \"the main table of checks\", and the table of an extension is \"the table of checks of an extension\". This node introduces the second name.",
+      "type": "textual"
+    }
+  ],
+  "head of table-10-1": [
+    {
+      "date": "2026-11-11",
+      "problem": "The node's text restated what other rules say: which checks run mechanically and when, that a check refuses a change unless its row says otherwise, and what each check reads.",
+      "ruling": "The owner replaced the text with one sentence of the owner's own: the table holds the complete list of the checks that run after an edit to the specification or to the code, tests included. The reason says only why the checks are listed in one table.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "Called the complete list of checks, the table contradicted the tables of checks of extensions and the rule by which a project's own guidelines add checks.",
+      "ruling": "The owner: the table holds the complete list of the checks of the SpecSheriff guidelines.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-19",
+      "problem": "Once each extension had a table of checks of its own, the title \"The table of checks\" no longer named this table alone.",
+      "ruling": "The owner: the table is called \"the main table of checks\".",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.1 of table-10-1": [],
+  "row 10.1.2 of table-10-1": [
+    {
+      "date": "2026-11-12",
+      "problem": "The check said only that every file matches its schema, without saying which files or which schema.",
+      "ruling": "The owner worded the check: every file of the specification complies with its JSON Schema.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.3 of table-10-1": [
+    {
+      "date": "2026-11-12",
+      "problem": "Whether the check that no two nodes share a sid covers the nodes in the archive.",
+      "ruling": "The owner: the check covers only the nodes of the specification, since an archived node keeps no record of its former sid.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.5 of table-10-1": [
+    {
+      "date": "2026-11-12",
+      "problem": "An archived node keeps the location it had when it was removed, and another node may later take that location.",
+      "ruling": "The owner: the check covers only the nodes of the specification. It makes the check that no two nodes share a location redundant, and that check is therefore removed.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.6 of table-10-1": [
+    {
+      "date": "2026-11-12",
+      "problem": "An archived term node is in the archive rather than in the contracts section.",
+      "ruling": "The owner: the check covers only the term nodes of the specification.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-12",
+      "problem": "Where a term is defined once the base specification is divided into domains.",
+      "ruling": "The owner agreed to the check as it applies to a base specification without domains. The extension for domains extends it: a term that several domains need is defined in the contracts section, and a term that one domain needs is defined in that domain.",
+      "type": "procedural"
+    }
+  ],
+  "row 10.1.7 of table-10-1": [
+    {
+      "date": "2026-11-12",
+      "problem": "Applied to the archive, the check would keep a new term from taking the name of a term that has been removed.",
+      "ruling": "The owner: the check covers only the term nodes of the specification, so a new term may take the name of an archived one.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.8 of table-10-1": [
+    {
+      "date": "2026-11-18",
+      "problem": "The check required an approval of every node outside the SpecSheriff guidelines, including the nodes of the extensions of the guidelines that the project has chosen.",
+      "ruling": "The owner: the check also leaves out the nodes of the extensions that the project has chosen.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.9 of table-10-1": [
+    {
+      "date": "2026-11-12",
+      "problem": "The check treated the commit itself as the one that approves, and covered every approval, not only those that the commit adds.",
+      "ruling": "The owner: only the approvals that a commit adds are checked, each against the owners that its node has as of that commit.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.10 of table-10-1": [],
+  "row 10.1.11 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The check stated its rule and its exceptions in one sentence, and said that a removed node that has ever been approved is in the archive.",
+      "ruling": "The owner: the main rule comes first and the exceptions follow separately. Such a node is placed in the archive with the reason for its removal.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.12 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The check said only that every link names a node, although an archived node keeps no sid and the link type `supersedes` had been removed.",
+      "ruling": "The owner: every link names a node of the specification by its sid.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.13 of table-10-1": [],
+  "row 10.1.14 of table-10-1": [],
+  "row 10.1.15 of table-10-1": [],
+  "row 10.1.16 of table-10-1": [],
+  "row 10.1.17 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The check covered only approved nodes, sections and domain headers, and allowed capitals only in a name quoted from the code.",
+      "ruling": "The owner: no sentence of the specification, drafts included, is written entirely in capital letters. The only exceptions are abbreviations, constants and special designations, such as part numbers.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.18 of table-10-1": [],
+  "row 10.1.19 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The check covered only which nodes an `exempts` link connects, although the rule on exempting a rule from being implemented also requires a citation in the text.",
+      "ruling": "The owner: the check also requires that the text of a node declaring an `exempts` link cite the node that the link names.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.20a of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "No check enforced the requirement that a rule of the SpecSheriff guidelines declares no link to a node of an extension of the guidelines.",
+      "ruling": "The owner accepted a new check that enforces it.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.22 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The check required every rule of the technical debt section to refine a node of the base specification, although the rule on technical debt lets a description of a defect refine a node without requiring it to.",
+      "ruling": "The owner: that requirement is removed from the check.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.23 of table-10-1": [],
+  "row 10.1.24 of table-10-1": [
+    {
+      "date": "2026-11-13",
+      "problem": "The check said that a rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines, although a project's own guidelines never implement them.",
+      "ruling": "The owner: each rule of a project's own guidelines refines or extends a rule of the SpecSheriff guidelines.",
+      "type": "textual"
+    },
+    {
+      "date": "2026-11-18",
+      "problem": "The check named only the SpecSheriff guidelines, though a project's own guidelines may also refine a rule of an extension that the project has chosen.",
+      "ruling": "The owner: a rule of a project's own guidelines may refine or extend a rule of an extension that the project has chosen.",
+      "type": "textual"
+    }
+  ],
+  "row 10.1.25 of table-10-1": [],
+  "row 10.1.25a of table-10-1": [
+    {
+      "date": "2026-11-20",
+      "problem": "Whether the reviewer's check of a node of the technical appendix approved in a commit refuses the commit while the specification is still a draft.",
+      "ruling": "The owner: it always refuses the commit, since a node that contradicts the base specification is a defect even in a draft specification.",
+      "type": "textual"
+    }
+  ]
+}

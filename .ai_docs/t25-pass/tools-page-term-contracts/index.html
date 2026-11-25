@@ -1,0 +1,119 @@
+<title>Узел описания инструментов: Узлы-термины вне раздела контрактов</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Узлы-термины вне раздела контрактов <span style="color:var(--muted);font-weight:400">· Term nodes outside the contracts section</span></h1>
+<div class="sub">tools 7.1.3a (new) · new:tools-7-1-term-contracts · предложение от 2026-11-22 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Раздел контрактов — единственная часть спецификации, которая хранится в <code>specs/contracts/</code>, поэтому папка файла узла-термина показывает, находится ли узел в этом разделе.</div>
+  <div><div class="label">Reason</div>The contracts section is the only part of the specification kept in <code>specs/contracts/</code>, so the folder of a term node's file shows whether the node is in that section.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое, предложено рецензентом.</p>
+
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-ypa92gpcj3f5zj8 s-z6tq6a3btnvvwx7 s-zefk589ykh37b8u s-7kc8dw7zdz63q53 s-kag2m9tzdnduxdx">
+  <td class="en"><p><code>sheriff validate</code> refuses each term node (<span class="cite" data-sid="s-ypa92gpcj3f5zj8" title="A term is defined once, in the contracts section">§3.2</span>) of the specification whose file is outside <code>specs/contracts/</code>, the folder of the contracts section (<span class="cite" data-sid="s-z6tq6a3btnvvwx7" title="What the sections share is agreed in the contracts section">§3.1</span>, <span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>, <span class="cite" data-sid="s-7kc8dw7zdz63q53" title="Every term node of the specification is in the contracts section">§10.1.6</span>). The refusal names the node's file and its location in the specification (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>).</p></td>
+  <td class="ru"><p><code>sheriff validate</code> отвергает каждый узел-термин (<span class="cite" data-sid="s-ypa92gpcj3f5zj8" title="A term is defined once, in the contracts section">§3.2</span>) спецификации, который хранится вне <code>specs/contracts/</code> — папки раздела контрактов (<span class="cite" data-sid="s-z6tq6a3btnvvwx7" title="What the sections share is agreed in the contracts section">§3.1</span>, <span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>, <span class="cite" data-sid="s-7kc8dw7zdz63q53" title="Every term node of the specification is in the contracts section">§10.1.6</span>). Отказ называет файл и расположение этого узла (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>).</p></td>
+  <td class="change">Из узла «Sids, locations, terms and names of RecordTypes, counted»: было «для каждого узла-термина ищется часть, в которой он стоит». Теперь сказано, что проверяется. Что называет отказ — предложено рецензентом: так делает код.</td>
+  <td class="links"><span class="cite" data-sid="s-ypa92gpcj3f5zj8">A term is defined once, in the contracts section</span><span class="cite" data-sid="s-z6tq6a3btnvvwx7">What the sections share is agreed in the contracts section</span><span class="cite" data-sid="s-zefk589ykh37b8u">Where the files are</span><span class="cite" data-sid="s-7kc8dw7zdz63q53">Every term node of the specification is in the contracts section</span><span class="cite" data-sid="s-kag2m9tzdnduxdx">A node's location</span></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-7kc8dw7zdz63q53"><span class="loc">реализует · 10.1.6</span> <b>Every term node of the specification is in the contracts section</b><br><span class="meta">guidelines · s-7kc8dw7zdz63q53</span></li>
+<li class="node" data-sid="s-z6tq6a3btnvvwx7"><span class="loc">ссылается · 3.1</span> <b>What the sections share is agreed in the contracts section</b><br><span class="rut">Общее для разделов согласуется в контрактах</span><br><span class="meta">guidelines · s-z6tq6a3btnvvwx7</span></li>
+<li class="node" data-sid="s-zefk589ykh37b8u"><span class="loc">ссылается · tools 1</span> <b>Where the files are</b><br><span class="meta">appendix of the tools · s-zefk589ykh37b8u</span></li>
+<li class="node" data-sid="s-ypa92gpcj3f5zj8"><span class="loc">ссылается · 3.2</span> <b>A term is defined once, in the contracts section</b><br><span class="rut">Термин определяется один раз, в контрактах</span><br><span class="meta">guidelines · s-ypa92gpcj3f5zj8</span></li>
+<li class="node" data-sid="s-kag2m9tzdnduxdx"><span class="loc">ссылается · 8.5</span> <b>A node's location</b><br><span class="rut">Расположение узла</span><br><span class="meta">guidelines · s-kag2m9tzdnduxdx</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «Sids, locations, terms and names of RecordTypes, counted»</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Одобренная формулировка узла «Sids, locations, terms and names of RecordTypes, counted», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate` collects every sid, location, term and RecordType's name, and counts each.
+
+- A term and a RecordType's name are counted in lower case.
+- For each term node, the part it stands in is looked up.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

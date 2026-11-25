@@ -1,0 +1,478 @@
+<title>Таблица проверок 11.3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header with the counts and the controls, the intro, the two tables as foldable rows beside a column of
+     the nodes they check, then the reason and the open questions. One dark look, as the owner reads every page. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --stays: #5fbf86; --dom: #9fb6cf; --gen: #5cb8d8; --ado: #e2a23b; --del: #e07a6a; --lit: #e8b75a;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+  header { display: grid; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  h1 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 0; text-wrap: balance; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.8rem; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .filter, #open-all, #close-all { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  .filter[aria-pressed="true"] { border-color: var(--fg); background: var(--panel-2); }
+  .filter:focus-visible, #open-all:focus-visible, #close-all:focus-visible, .chip:focus-visible, summary:focus-visible { outline: 2px solid var(--gen); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; margin: 0; max-width: 80ch; }
+  .note { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 8px; min-width: 0; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  ol.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  li.row { background: var(--panel); border: 1px solid transparent; border-left: 3px solid var(--stays); border-radius: 4px; min-width: 0; }
+  li.row.f-dom { border-left-color: var(--dom); } li.row.f-gen { border-left-color: var(--gen); } li.row.f-ado { border-left-color: var(--ado); } li.row.f-del { border-left-color: var(--del); }
+  li.row.lit { border-color: var(--lit); background: var(--panel-2); }
+  li.row.sel { border-color: var(--fg); background: var(--panel-2); }
+  details.fold > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 4.2rem auto 1fr; gap: 4px 10px; align-items: baseline; padding: 8px 10px; }
+  details.fold > summary::-webkit-details-marker { display: none; }
+  .n { font-family: var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .fate { font-family: var(--mono); font-size: 0.72rem; padding: 1px 7px; border: 1px solid currentColor; border-radius: 3px; white-space: nowrap; }
+  .fate.stays { color: var(--stays); } .fate.dom { color: var(--dom); } .fate.gen { color: var(--gen); } .fate.ado { color: var(--ado); } .fate.del { color: var(--del); }
+  .head { min-width: 0; overflow-wrap: anywhere; }
+  @media (max-width: 560px) { details.fold > summary { grid-template-columns: 2rem 1fr; } .head { grid-column: 1 / -1; } }
+  .body { padding: 0 12px 12px; display: grid; gap: 6px; }
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .pair > div { min-width: 0; }
+  .lab { font-family: var(--mono); font-size: 0.72rem; color: var(--lit); letter-spacing: 0.04em; }
+  p { margin: 0; overflow-wrap: anywhere; }
+  .cost { color: var(--muted); font-size: 0.9rem; }
+  .change { font-size: 0.92rem; } .was { color: var(--muted); font-size: 0.88rem; }
+  code { font-family: var(--mono); font-size: 0.86em; }
+  .cite { font-family: var(--mono); font-size: 0.85em; border-bottom: 1px dotted currentColor; cursor: help; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font: inherit; font-family: var(--mono); font-size: 0.78rem; color: var(--fg); background: var(--panel-2); border: 1px solid var(--rule); border-radius: 3px; padding: 2px 7px; cursor: pointer; }
+  .chip.lit { border-color: var(--lit); color: var(--lit); }
+  aside { position: sticky; top: env(safe-area-inset-top, 0px); max-height: 100vh; overflow-y: auto; display: grid; gap: 6px; align-content: start; }
+  @media (max-width: 900px) { aside { position: static; max-height: none; } }
+  .node { text-align: left; font: inherit; font-size: 0.86rem; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 6px 8px; cursor: pointer; display: grid; gap: 2px; }
+  .node .at { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .node.lit { border-color: var(--lit); } .node.sel { border-color: var(--fg); background: var(--panel-2); }
+  .node .cnt { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  ul.doubts { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+  .none { color: var(--muted); }
+  .pre { white-space: pre-line; }
+  .impl { border: 1px solid var(--rule); border-left: 3px solid #5cb8d8; border-radius: 4px; padding: 8px 10px; display: grid; gap: 4px; background: var(--panel-2); }
+  .impl .at { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .impl .why { color: var(--muted); font-style: italic; }
+  .impl.gap { border-left-color: #e07a6a; color: #e07a6a; }
+  .impl.base { border-left-color: #e8b75a; }
+  .about { border-left: 3px solid #e8b75a; padding-left: 10px; }
+  .thead { display: grid; grid-template-columns: 3fr 1fr; gap: 12px; padding: 8px 12px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel-2); font-size: 0.9rem; }
+  @media (prefers-reduced-motion: no-preference) { li.row, .node { transition: background-color .15s, border-color .15s; } }
+</style>
+<div class="wrap">
+  <header>
+    <h1>The table of checks of the Domains extension</h1>
+    <div class="sub">11.3 · s-rp2nxe3cga2p26x · TableRule · Таблица проверок расширения «Домены»</div>
+    <p class="hint">Каждая строка: текст по-английски и по-русски с ценой отказа, что изменилось, какой она была и какие узлы она проверяет. Цвет полосы слева — судьба строки. Щелчок по узлу справа подсвечивает строки, которые его проверяют; щелчок по узлу в строке подсвечивает его справа. Свёрнутые строки остаются свёрнутыми после обновления страницы.</p>
+    <div class="bar" role="group" aria-label="Показать строки">
+      <button type="button" class="filter" data-fate="stays" aria-pressed="true" id="f-stays"><span class="fate stays">остаётся в 11.3</span> 0</button>
+      <button type="button" class="filter" data-fate="stays" aria-pressed="true" id="f-stays"><span class="fate stays">переходит сюда из таблицы 10.1</span> 6</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 11.3 «Таблица проверок расширения «Домены»»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 12.12 «Таблица проверок расширения «RecordType»»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 11.1 «Домены: декомпозиция»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 12 «RecordType»</span> 0</button>
+      <button type="button" class="filter" data-fate="dom" aria-pressed="true" id="f-dom"><span class="fate dom">уходит в 11.2 «Домены: иерархия»</span> 0</button>
+      <button type="button" class="filter" data-fate="stays" aria-pressed="true" id="f-stays"><span class="fate stays">новая строка в 11.3</span> 0</button>
+      <button type="button" class="filter" data-fate="del" aria-pressed="true" id="f-del"><span class="fate del">удаляется</span> 0</button>
+      <button type="button" id="open-all">Раскрыть все строки</button>
+      <button type="button" id="close-all">Свернуть все строки</button>
+    </div>
+  </header>
+
+  <section class="note" aria-labelledby="intro-h">
+    <h2 id="intro-h">Шапка таблицы — сам узел, согласована 2026-11-18</h2>
+    <div class="pair"><div><div class="lab">EN · текст</div><p class="pre">This table contains the complete list of the checks of the Domains extension (<span class="cite" title="11.1.1 Decomposition of the specification">§s-h6h25ctd3yryudh</span>) that run after an edit to the specification or to the code, including its tests.</p></div><div><div class="lab">RU · текст</div><p class="pre">Эта таблица содержит полный список проверок расширения «Домены» (<span class="cite" title="11.1.1 Decomposition of the specification">§s-h6h25ctd3yryudh</span>), которые запускаются после правок как самой спецификации, так и кода, включая тесты.</p></div></div>
+    
+    <div class="pair"><div><div class="lab">EN · обоснование</div><p>The checks of the Domains extension bind only a project that has chosen the extension (<span class="cite" title="1.7.5 Configuring extensions">§s-9ttvcwpqkehm58g</span>). The main table of checks names no particular extension (<span class="cite" title="1.7.3 A rule of the SpecSheriff guidelines names no particular extension">§s-chk5hnzmcpeqj25</span>), so these checks are listed here, beside the rules they enforce. In one table, every check of the extension can be seen at a glance, together with what its failure costs.</p></div><div><div class="lab">RU · обоснование</div><p>Проверки расширения «Домены» обязывают только проект, который выбрал это расширение (<span class="cite" title="1.7.5 Configuring extensions">§s-9ttvcwpqkehm58g</span>). Основная таблица проверок не называет ни одного конкретного расширения (<span class="cite" title="1.7.3 A rule of the SpecSheriff guidelines names no particular extension">§s-chk5hnzmcpeqj25</span>), поэтому эти проверки перечислены здесь, рядом с правилами, которые они обеспечивают. В одной таблице все проверки расширения видны сразу, вместе с ценой непрохождения каждой.</p></div></div>
+    <div class="lab">Что изменилось</div>
+    <ul class="doubts"><li>Новый узел, по вашему решению от 18 ноября: у каждого расширения свои проверки, в его собственном правиле-таблице с теми же столбцами, что в 10.1. Связь refines к 10.1.</li><li>Текст повторяет вашу шапку 10.1, с «проверок расширения «Домены»» вместо «проверок SpecSheriff guidelines». Ссылка на 11.1.1 объясняет, о каком расширении речь.</li><li>По рецензенту: убрана фраза «Эти проверки запускаются вместе с проверками из таблицы проверок». Когда запускаются проверки, говорит 10.2; правка 10.2, которая назовёт и таблицы, уточняющие 10.1, — следующим вопросом.</li><li>По рецензенту: в обосновании «ни одного конкретного расширения», как в 1.7.3.</li><li>Вы согласовали шапку 18 ноября («шапку я, по-моему, уже согласовывал… Давай дальше»): она только применяет ваше решение о таблицах проверок расширений.</li><li>19 ноября, по вашим названиям: заголовок «Таблица проверок расширения», в обосновании — «основная таблица проверок». Смысл не меняется, согласование сохраняется.</li></ul>
+    <p class="hint">Ниже — строки таблицы в прежнем виде. Каждую проверку вместе с её ценой покажем и согласуем отдельно, по одной.</p>
+  </section>
+
+  <div class="grid">
+    <div style="display:grid; gap:18px; min-width:0">
+      <div class="thead" role="row" aria-label="Заголовок таблицы"><span role="columnheader"><b>What is checked</b> · Что проверяется</span><span role="columnheader"><b>On failure</b> · При непрохождении</span></div>
+      <section aria-label="" style="display:grid; gap:8px"><h2> · <span style="color:var(--muted)"></span></h2><ol class="rows"><li class="row f-stays" id="r20" data-rests="s-yggv9myedprnaa7" data-fate="stays">
+  <details class="fold" data-key="r20" open>
+    <summary><span class="n">11.3.1</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">Every domain has exactly one header</span><span class="fate stays">согласована 2026-11-19</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый домен. Без заголовка тот, кто работает над доменом, не узнает из одного узла, за что домен отвечает и что он использует.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>Every domain has exactly one header</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>У каждого домена ровно один заголовок</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">11.1.3 · A domain's specification opens with its header · Спецификация домена открывается его заголовком</button></div>
+      <div class="impl base"><div class="at">11.1.3 · s-yggv9myedprnaa7 · согласован</div>
+        <div class="pair"><div><p><b>A domain's specification opens with its header</b></p><p class="pre">A domain's specification opens with its header. The header is a node stating:
+
+- what the domain does;
+- its owners, where it names them (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- its level (optional, used when the domains are visualized).
+
+The header's <code>consumes</code> links name the sections of other domains the domain uses. Domains do not form a cycle in which they use one another. A notification that one domain sends to another through an event does not make the sender a user of the receiving domain. Such notifications may go in either direction. Where the domain has sections, the header also carries their index (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Whoever works on one domain loads its header and learns from it alone, without loading the rest:
+
+- what the domain is responsible for;
+- who is responsible for its wording;
+- how it is divided;
+- what it uses from other domains.
+
+A domain cannot work without the domains it uses, so domains that use one another cyclically cannot be built one after another.</p></div>
+        <div><p><b>Спецификация домена открывается его заголовком</b></p><p class="pre">Спецификация домена открывается его заголовком. Заголовок — это узел, который говорит:
+
+- что делает домен;
+- его ответственные, если он их называет (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- уровень (опционально, используется при визуализации доменов).
+
+Связи <code>consumes</code> заголовка называют разделы других доменов, которыми домен пользуется. Домены не используют друг друга по кругу. Уведомление, которое один домен отправляет другому через событие, не делает отправителя пользователем домена-получателя. Такие уведомления могут идти в любую сторону. Если у домена есть разделы, заголовок несёт ещё и их указатель (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Тот, кто работает над одним доменом, загружает его заголовок и узнаёт из него одного, не загружая остального:
+
+- за что отвечает домен;
+- кто отвечает за его формулировки;
+- как он разделён;
+- что он берёт у других.
+
+Домен не может работать без доменов, которыми пользуется, поэтому домены, использующие друг друга по кругу, нельзя построить один за другим.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.9 · s-agc6fb3vx46pc23</div>
+        <div class="pair"><div><p><b>Indexes, incoming links, gathered values and the statuses of sections and headers, rebuilt</b></p><p class="pre"><code>sheriff validate</code> rebuilds these in memory and compares them with what is committed:
+
+- the index of each domain's header, the header read as it now stands in the domain's files;
+- the incoming links;
+- the values gathered beside each field (<span class="cite" title="spec/1.33 Gathered values stand beside their field">§s-ju5vcanbjph7mgh</span>);
+- the status of each section and domain's header (<span class="cite" title="1.3.8 How a section's approval status is determined">§s-9kfdycuq34beqvs</span>).</p><p class="why"></p></div>
+        <div><p><b>Указатели, входящие связи, собранные значения и статусы разделов и заголовков — пересобираются</b></p><p class="pre"><code>sheriff validate</code> пересобирает их в памяти и сравнивает с тем, что в коммите:
+
+- указатель каждого заголовка домена — по заголовку, каким он сейчас стоит в файлах домена;
+- входящие связи;
+- значения, собранные рядом с каждым полем (<span class="cite" title="spec/1.33 Gathered values stand beside their field">§s-ju5vcanbjph7mgh</span>);
+- статус каждого раздела и заголовка домена (<span class="cite" title="1.3.8 How a section's approval status is determined">§s-9kfdycuq34beqvs</span>).</p><p class="why">У этого узла нет обоснования — пробел, допишем на шаге инструментов.</p></div></div></div>
+      <div class="lab">Тесты</div><ul class="doubts"><li><code>unit/validate.test.ts: refuses a domain without a header, and a header whose index its sections do not produce</code></li><li><code>unit/reindex.test.ts: rebuilds the index in a domain's header from the domain's sections</code></li></ul>
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября: одобренная строка «Every domain has a header, and the index in it is what the domain's sections produce» делится на две, и эта строка — её первая половина. Вторая половина, об указателе, — строка 11.3.2. Вы согласовали 19 ноября («ок») уточнённую формулировку: у каждого домена ровно один заголовок. Заголовок, скопированный в другой документ разделённого домена, инструменты раньше пропускали.</p>
+      <div class="lab">Было</div><p class="was">Every domain has a header, and the index in it is what the domain's sections produce | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r20.5" data-rests="s-2r59txnms5serdr s-yggv9myedprnaa7" data-fate="stays">
+  <details class="fold" data-key="r20.5" open>
+    <summary><span class="n">11.3.2</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">The header of each domain that has sections carries the index computed from those sections</span><span class="fate stays">согласована 2026-11-18</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает указатель в заголовке каждого домена. Указатель, который не совпадает с разделами домена, сообщает о домене неверное.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>The header of each domain that has sections carries the index computed from those sections</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Заголовок каждого домена, у которого есть разделы, содержит указатель, вычисленный из этих разделов</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-2r59txnms5serdr" title="A domain's header carries the index built from its sections">11.1.4 · A domain's header carries the index built from its sections · Заголовок домена несёт построенный указатель его разделов</button><button type="button" class="chip" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">11.1.3 · A domain's specification opens with its header · Спецификация домена открывается его заголовком</button></div>
+      <div class="impl base"><div class="at">11.1.4 · s-2r59txnms5serdr · согласован</div>
+        <div class="pair"><div><p><b>A domain's header carries the index built from its sections</b></p><p class="pre">The index a domain's header carries (<span class="cite" title="11.1.3 A domain's specification opens with its header">§s-yggv9myedprnaa7</span>) is built from the domain's sections and never written by hand. For each section the index lists:
+
+- its sid, its title and its text, which states what the section is responsible for;
+- the domains that use it.</p><p class="why">The index is built rather than written, because a table of contents kept by hand is a second copy of the sections and drifts from them. Whoever loads the header learns from the index how the domain is divided (<span class="cite" title="11.1.3 A domain's specification opens with its header">§s-yggv9myedprnaa7</span>), and which domains a change to a section reaches.</p></div>
+        <div><p><b>Заголовок домена несёт построенный указатель его разделов</b></p><p class="pre">Указатель, который несёт заголовок домена (<span class="cite" title="11.1.3 A domain's specification opens with its header">§s-yggv9myedprnaa7</span>), строится из разделов домена и никогда не пишется вручную. Для каждого раздела указатель содержит:
+
+- его sid, его заголовок и его текст, который говорит, за что раздел отвечает;
+- домены, которые им пользуются.</p><p class="why">Указатель строится, а не пишется, потому что оглавление, которое ведут вручную, — вторая копия разделов и отстаёт от них. Тот, кто загружает заголовок, узнаёт из указателя, как разделён домен (<span class="cite" title="11.1.3 A domain's specification opens with its header">§s-yggv9myedprnaa7</span>), и до каких доменов доходит изменение раздела.</p></div></div></div><div class="impl base"><div class="at">11.1.3 · s-yggv9myedprnaa7 · согласован</div>
+        <div class="pair"><div><p><b>A domain's specification opens with its header</b></p><p class="pre">A domain's specification opens with its header. The header is a node stating:
+
+- what the domain does;
+- its owners, where it names them (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- its level (optional, used when the domains are visualized).
+
+The header's <code>consumes</code> links name the sections of other domains the domain uses. Domains do not form a cycle in which they use one another. A notification that one domain sends to another through an event does not make the sender a user of the receiving domain. Such notifications may go in either direction. Where the domain has sections, the header also carries their index (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Whoever works on one domain loads its header and learns from it alone, without loading the rest:
+
+- what the domain is responsible for;
+- who is responsible for its wording;
+- how it is divided;
+- what it uses from other domains.
+
+A domain cannot work without the domains it uses, so domains that use one another cyclically cannot be built one after another.</p></div>
+        <div><p><b>Спецификация домена открывается его заголовком</b></p><p class="pre">Спецификация домена открывается его заголовком. Заголовок — это узел, который говорит:
+
+- что делает домен;
+- его ответственные, если он их называет (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- уровень (опционально, используется при визуализации доменов).
+
+Связи <code>consumes</code> заголовка называют разделы других доменов, которыми домен пользуется. Домены не используют друг друга по кругу. Уведомление, которое один домен отправляет другому через событие, не делает отправителя пользователем домена-получателя. Такие уведомления могут идти в любую сторону. Если у домена есть разделы, заголовок несёт ещё и их указатель (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Тот, кто работает над одним доменом, загружает его заголовок и узнаёт из него одного, не загружая остального:
+
+- за что отвечает домен;
+- кто отвечает за его формулировки;
+- как он разделён;
+- что он берёт у других.
+
+Домен не может работать без доменов, которыми пользуется, поэтому домены, использующие друг друга по кругу, нельзя построить один за другим.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.9 · s-agc6fb3vx46pc23</div>
+        <div class="pair"><div><p><b>Indexes, incoming links, gathered values and the statuses of sections and headers, rebuilt</b></p><p class="pre"><code>sheriff validate</code> rebuilds these in memory and compares them with what is committed:
+
+- the index of each domain's header, the header read as it now stands in the domain's files;
+- the incoming links;
+- the values gathered beside each field (<span class="cite" title="spec/1.33 Gathered values stand beside their field">§s-ju5vcanbjph7mgh</span>);
+- the status of each section and domain's header (<span class="cite" title="1.3.8 How a section's approval status is determined">§s-9kfdycuq34beqvs</span>).</p><p class="why"></p></div>
+        <div><p><b>Указатели, входящие связи, собранные значения и статусы разделов и заголовков — пересобираются</b></p><p class="pre"><code>sheriff validate</code> пересобирает их в памяти и сравнивает с тем, что в коммите:
+
+- указатель каждого заголовка домена — по заголовку, каким он сейчас стоит в файлах домена;
+- входящие связи;
+- значения, собранные рядом с каждым полем (<span class="cite" title="spec/1.33 Gathered values stand beside their field">§s-ju5vcanbjph7mgh</span>);
+- статус каждого раздела и заголовка домена (<span class="cite" title="1.3.8 How a section's approval status is determined">§s-9kfdycuq34beqvs</span>).</p><p class="why">У этого узла нет обоснования — пробел, допишем на шаге инструментов.</p></div></div></div>
+      <div class="lab">Тесты</div><ul class="doubts"><li><code>unit/validate.test.ts: refuses a domain without a header, and a header whose index its sections do not produce</code></li><li><code>unit/reindex.test.ts: rebuilds the index in a domain's header from the domain's sections</code></li></ul>
+      <div class="lab">Что изменилось</div><p class="change">Вторая половина одобренной строки «Every domain has a header, and the index in it is what the domain's sections produce». «Вычисляется из» — ваше слово из согласованной 10.1.16 («вычисляются из исходящих») вместо «то, что дают». По вашему решению от 18 ноября указатель обязателен, только если у домена есть разделы: маленький домен может их не иметь. Вы согласовали её 18 ноября вместе с правкой 11.1.3: требование стоит в 11.1.3, а эта строка — его проверка, как в таблице 10.1.</p>
+      <div class="lab">Было</div><p class="was"></p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r23" data-rests="s-yggv9myedprnaa7" data-fate="stays">
+  <details class="fold" data-key="r23" open>
+    <summary><span class="n">11.3.3</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A <code>consumes</code> link goes from a domain's header to a section of another domain</span><span class="fate stays">согласована 2026-11-18</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждую связь <code>consumes</code>. Связь, которая идёт не от заголовка домена или не к разделу другого домена, не говорит, какие разделы домен использует.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A <code>consumes</code> link goes from a domain's header to a section of another domain</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Связь <code>consumes</code> идёт от заголовка домена к разделу другого домена</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">11.1.3 · A domain's specification opens with its header · Спецификация домена открывается его заголовком</button></div>
+      <div class="impl base"><div class="at">11.1.3 · s-yggv9myedprnaa7 · согласован</div>
+        <div class="pair"><div><p><b>A domain's specification opens with its header</b></p><p class="pre">A domain's specification opens with its header. The header is a node stating:
+
+- what the domain does;
+- its owners, where it names them (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- its level (optional, used when the domains are visualized).
+
+The header's <code>consumes</code> links name the sections of other domains the domain uses. Domains do not form a cycle in which they use one another. A notification that one domain sends to another through an event does not make the sender a user of the receiving domain. Such notifications may go in either direction. Where the domain has sections, the header also carries their index (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Whoever works on one domain loads its header and learns from it alone, without loading the rest:
+
+- what the domain is responsible for;
+- who is responsible for its wording;
+- how it is divided;
+- what it uses from other domains.
+
+A domain cannot work without the domains it uses, so domains that use one another cyclically cannot be built one after another.</p></div>
+        <div><p><b>Спецификация домена открывается его заголовком</b></p><p class="pre">Спецификация домена открывается его заголовком. Заголовок — это узел, который говорит:
+
+- что делает домен;
+- его ответственные, если он их называет (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- уровень (опционально, используется при визуализации доменов).
+
+Связи <code>consumes</code> заголовка называют разделы других доменов, которыми домен пользуется. Домены не используют друг друга по кругу. Уведомление, которое один домен отправляет другому через событие, не делает отправителя пользователем домена-получателя. Такие уведомления могут идти в любую сторону. Если у домена есть разделы, заголовок несёт ещё и их указатель (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Тот, кто работает над одним доменом, загружает его заголовок и узнаёт из него одного, не загружая остального:
+
+- за что отвечает домен;
+- кто отвечает за его формулировки;
+- как он разделён;
+- что он берёт у других.
+
+Домен не может работать без доменов, которыми пользуется, поэтому домены, использующие друг друга по кругу, нельзя построить один за другим.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.12 · s-qvgzubkrafadqgf</div>
+        <div class="pair"><div><p><b><code>consumes</code> and <code>exempts</code> links</b></p><p class="pre"><code>sheriff validate</code> reads what stands at each end of every <code>consumes</code> and <code>exempts</code> link:
+
+- a <code>consumes</code> link, for a domain's header at its start and a section of another domain at its end;
+- an <code>exempts</code> link, for a node of <code>project.json</code> at its start, and a rule, a node of a project's own NodeKind or a section at its end.</p><p class="why"></p></div>
+        <div><p><b>Связи <code>consumes</code> и <code>exempts</code></b></p><p class="pre"><code>sheriff validate</code> проверяет, какие узлы стоят на концах каждой связи <code>consumes</code> и каждой связи <code>exempts</code>:
+
+- у связи <code>consumes</code> в начале должен быть заголовок домена, а в конце — раздел другого домена;
+- у связи <code>exempts</code> в начале должен быть узел <code>project.json</code>, а в конце — правило, узел собственного NodeKind проекта или раздел.</p><p class="why">У этого узла нет обоснования — пробел, допишем на шаге инструментов.</p></div></div></div>
+      <div class="lab">Тесты</div><ul class="doubts"><li><code>unit/validate.test.ts: refuses a consumes link that does not go from a header to a section of another domain</code></li></ul>
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её без изменений 18 ноября.</p>
+      <div class="lab">Было</div><p class="was">A <code>consumes</code> link goes from a domain's header to a section of another domain | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r25" data-rests="s-yggv9myedprnaa7" data-fate="stays">
+  <details class="fold" data-key="r25" open>
+    <summary><span class="n">11.3.4</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">The domains do not use one another in a cycle through the <code>consumes</code> links of their headers</span><span class="fate stays">согласована 2026-11-18</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает связи <code>consumes</code> всех доменов вместе. Домены, которые используют друг друга по кругу, нельзя построить один за другим.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>The domains do not use one another in a cycle through the <code>consumes</code> links of their headers</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Домены не используют друг друга по кругу через связи <code>consumes</code> своих заголовков</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-yggv9myedprnaa7" title="A domain's specification opens with its header">11.1.3 · A domain's specification opens with its header · Спецификация домена открывается его заголовком</button></div>
+      <div class="impl base"><div class="at">11.1.3 · s-yggv9myedprnaa7 · согласован</div>
+        <div class="pair"><div><p><b>A domain's specification opens with its header</b></p><p class="pre">A domain's specification opens with its header. The header is a node stating:
+
+- what the domain does;
+- its owners, where it names them (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- its level (optional, used when the domains are visualized).
+
+The header's <code>consumes</code> links name the sections of other domains the domain uses. Domains do not form a cycle in which they use one another. A notification that one domain sends to another through an event does not make the sender a user of the receiving domain. Such notifications may go in either direction. Where the domain has sections, the header also carries their index (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Whoever works on one domain loads its header and learns from it alone, without loading the rest:
+
+- what the domain is responsible for;
+- who is responsible for its wording;
+- how it is divided;
+- what it uses from other domains.
+
+A domain cannot work without the domains it uses, so domains that use one another cyclically cannot be built one after another.</p></div>
+        <div><p><b>Спецификация домена открывается его заголовком</b></p><p class="pre">Спецификация домена открывается его заголовком. Заголовок — это узел, который говорит:
+
+- что делает домен;
+- его ответственные, если он их называет (<span class="cite" title="1.1.6 The owners">§s-6sk8uet75dmq5qz</span>);
+- уровень (опционально, используется при визуализации доменов).
+
+Связи <code>consumes</code> заголовка называют разделы других доменов, которыми домен пользуется. Домены не используют друг друга по кругу. Уведомление, которое один домен отправляет другому через событие, не делает отправителя пользователем домена-получателя. Такие уведомления могут идти в любую сторону. Если у домена есть разделы, заголовок несёт ещё и их указатель (<span class="cite" title="11.1.4 A domain's header carries the index built from its sections">§s-2r59txnms5serdr</span>).</p><p class="why">Тот, кто работает над одним доменом, загружает его заголовок и узнаёт из него одного, не загружая остального:
+
+- за что отвечает домен;
+- кто отвечает за его формулировки;
+- как он разделён;
+- что он берёт у других.
+
+Домен не может работать без доменов, которыми пользуется, поэтому домены, использующие друг друга по кругу, нельзя построить один за другим.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.13 · s-vuujweu57sxsa58</div>
+        <div class="pair"><div><p><b>No circular dependency between the domains</b></p><p class="pre"><code>sheriff validate</code> walks the domains along the <code>consumes</code> links, from each domain's header to the domains whose sections it names. Where the walk comes back to a domain it has already passed, the check refuses the change. It names the domains along that circle.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      <div class="lab">Тесты</div><ul class="doubts"><li><code>unit/validate.test.ts: refuses domains using one another in a cycle</code></li></ul>
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября с уточнением: Смысл тот же. Добавлено, по каким связям определяется круг: по вашему решению от 30 октября (одобренный 1.41) — только по связям <code>consumes</code> заголовков, а не по связям между правилами, которые свободно пересекают границы доменов. Отрицание оставлено, как в согласованном 11.1.3.</p>
+      <div class="lab">Было</div><p class="was">The domains do not use one another in a cycle | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r40" data-rests="s-vj7ercem526zd6v s-qmmzf9nksfsa3qp s-h6h25ctd3yryudh" data-fate="stays">
+  <details class="fold" data-key="r40" open>
+    <summary><span class="n">11.3.5</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">Every section of the technical appendix other than the stack section and the technical debt section has the same name and the same place in the structure as a domain or a section of the base specification</span><span class="fate stays">согласована 2026-11-18</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает каждый раздел технического приложения. Раздел под именем, которого нет ни у одного домена, не относится ни к одной части базовой спецификации. Разделы стека и технического долга — исключение.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>Every section of the technical appendix other than the stack section and the technical debt section has the same name and the same place in the structure as a domain or a section of the base specification</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Каждый раздел технического приложения, кроме раздела стека и раздела технического долга, совпадает с доменом или разделом базовой спецификации по имени и по месту в структуре</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-vj7ercem526zd6v" title="What the technical appendix contains">4.1 · What the technical appendix contains · Что содержит техническое приложение</button><button type="button" class="chip" data-sid="s-qmmzf9nksfsa3qp" title="The basic structure of the specification">1.1.2 · The basic structure of the specification · Базовая структура спецификации</button><button type="button" class="chip" data-sid="s-h6h25ctd3yryudh" title="Decomposition of the specification">11.1.1 · Decomposition of the specification · Декомпозиция спецификации</button></div>
+      <div class="impl base"><div class="at">4.1 · s-vj7ercem526zd6v · согласован</div>
+        <div class="pair"><div><p><b>What the technical appendix contains</b></p><p class="pre">The technical appendix contains:
+
+- a section for each top-level section of the base specification it implements, under that section's title;
+- a section for the stack;
+- technical debt (<span class="cite" title="4.4 Technical debt">§s-2r7k2aeyusgy6fw</span>).</p><p class="why">The appendix describes how the base specification's rules are implemented, so it has no meaning on its own. It exists to keep how the system is built apart from what the system does. With the appendix divided as the base is, a reader looks for the implementation of a rule in one place.
+
+The accepted shortcomings are read as one list, so they are kept in one section, which spans the whole system as the stack does. A shortcoming is not how a rule is implemented but where the implementation is worse than it could be.</p></div>
+        <div><p><b>Что содержит техническое приложение</b></p><p class="pre">Техническое приложение содержит:
+
+- раздел для каждого раздела верхнего уровня базовой спецификации, который оно реализует, под названием этого раздела;
+- раздел стека;
+- технический долг (<span class="cite" title="4.4 Technical debt">§s-2r7k2aeyusgy6fw</span>).</p><p class="why">Приложение описывает, как реализуются правила базовой спецификации, поэтому само по себе смысла не имеет. Оно нужно, чтобы отделить то, как система построена, от того, что она делает. Когда приложение разделено так же, как база, реализацию правила ищут в одном месте.
+
+Принятые недостатки читают одним списком, поэтому они стоят в одном разделе, который охватывает всю систему, как и стек. Недостаток — это не то, как выполняется правило, а то, чем реализация хуже, чем могла бы быть.</p></div></div></div><div class="impl base"><div class="at">1.1.2 · s-qmmzf9nksfsa3qp · согласован</div>
+        <div class="pair"><div><p><b>The basic structure of the specification</b></p><p class="pre">The specification consists of three main parts: its guidelines, its base and its technical appendix. Each part of the specification answers a question of its own:
+
+- the guidelines say how the specification is kept and implemented;
+- the base specification says what the system does;
+- the technical appendix says how the system is built.
+
+Where needed, the base specification may be divided into sections. If it is divided, the technical appendix inherits the structure of the base specification where the two overlap.</p><p class="why">The parts change at different rates. The guidelines hardly change. The base specification changes with the system's business logic or its core functionality. The technical appendix changes most often.
+
+The rules of one subject area bear on one another and change together, so they are kept together. With the appendix divided the same way as the base, there is only one place to look for a rule's implementation.</p></div>
+        <div><p><b>Базовая структура спецификации</b></p><p class="pre">Спецификация состоит из трёх основных частей: guidelines, базы и технического приложения. Каждая часть спецификации отвечает на свой вопрос:
+
+- guidelines говорят, как спецификация ведётся и реализуется;
+- базовая спецификация говорит, что делает система;
+- техническое приложение говорит, как система построена.
+
+Базовая спецификация в случае необходимости может быть разделена на части в виде разделов. В случае разделения, техническое приложение наследует структуру базовой спецификации в той части, в которой они пересекаются.</p><p class="why">Части меняются с разной скоростью. Guidelines почти не меняются. Базовая спецификация меняется вместе с бизнес-логикой системы или её основной функциональностью. Техническое приложение меняется чаще всего.
+
+Правила одной предметной области связаны друг с другом и меняются вместе, поэтому их держат вместе. Когда приложение разделено так же, как база, реализацию правила ищут в одном месте.</p></div></div></div><div class="impl base"><div class="at">11.1.1 · s-h6h25ctd3yryudh · согласован</div>
+        <div class="pair"><div><p><b>Decomposition of the specification</b></p><p class="pre">If the base specification is divided into domains, it consists of the contracts section and those domains. A specification not divided into domains is considered one domain.
+
+A domain is the part of the base specification devoted to one subject area of the system. No other domain is responsible for that area.
+
+The contracts section is the part of the base specification the domains share. It is where the entities common to them, and how they work together, are agreed (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>).</p><p class="why">A subject area's rules bear on one another and change together, so they are kept together and apart from those of other areas.
+
+Once there are domains, the entities they share and how they work together need one place where they are agreed. That place is the contracts section, since it belongs to no domain.
+
+A domain's header names, in its <code>consumes</code> links, the sections of other domains that the domain uses (<span class="cite" title="11.1.3 A domain's specification opens with its header">§s-yggv9myedprnaa7</span>). A change to a domain's rules outside the sections that other domains use then leaves those domains unaffected.
+
+A system with only one such area has no line to divide it along.</p></div>
+        <div><p><b>Декомпозиция спецификации</b></p><p class="pre">Если базовая спецификация разделена на домены, она состоит из контрактов и этих доменов. Спецификация, не разделённая на домены, считается одним доменом.
+
+Домен — это часть базовой спецификации, посвящённая одной предметной области системы. Ни один другой домен за эту область не отвечает.
+
+Контракты — это часть базовой спецификации, общая для доменов. В ней согласуют общие для них сущности и то, как они работают вместе (<span class="cite" title="3.1 What the sections share is agreed in the contracts section">§s-z6tq6a3btnvvwx7</span>).</p><p class="why">Правила одной предметной области влияют друг на друга и меняются вместе, поэтому их держат вместе и отдельно от правил других областей.
+
+Когда появляются домены, общим для них сущностям и тому, как они работают вместе, нужно одно место, где их согласуют. Это контракты, потому что они не принадлежат ни одному домену.
+
+Связи <code>consumes</code> в заголовке домена называют разделы других доменов, которые он использует (<span class="cite" title="11.1.3 A domain's specification opens with its header">§s-yggv9myedprnaa7</span>). Тогда изменение правил домена вне разделов, которыми пользуются другие домены, оставляет эти домены как есть.
+
+В системе с одной такой областью нет границы, по которой её можно было бы разделить.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.22 · s-gvafe6bnstwab8b</div>
+        <div class="pair"><div><p><b>A file of the technical appendix named after a domain</b></p><p class="pre"><code>sheriff validate</code> looks up among the domains the name of each file of the technical appendix but <code>stack.json</code> and <code>debt.json</code>.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      <div class="lab">Тесты</div><ul class="doubts"><li><code>unit/validate.test.ts: refuses a section of the technical appendix standing under a name no domain has, the stack's and the technical debt's aside</code></li></ul>
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября в вашем смысле: Ваш смысл (18 ноября): приложение отвечает на вопрос «как» для правил базы, поэтому повторяет её структуру — домены и разделы, — но только по мере необходимости. Правило базы, которое не нужно уточнять, пары в приложении не получает, поэтому строка проверяет только одно направление: у каждого раздела приложения есть пара в базе. Стек и технический долг пары в базе не имеют. Названия двух исключений — как в согласованной 10.1.22. Только английский, после согласования, по замечанию читателя: «has the same name and the same place in the structure as» вместо «matches … in its name and in its place in the structure». Смысл и русский текст не менялись.</p>
+      <div class="lab">Было</div><p class="was">Every section of the technical appendix but those of the stack and of the technical debt stands under the name of a domain | refused</p>
+    </div>
+  </details>
+</li>
+<li class="row f-stays" id="r22" data-rests="s-nkyty4dy9x2v2a4" data-fate="stays">
+  <details class="fold" data-key="r22" open>
+    <summary><span class="n">11.3.6</span><span class="fate stays">переходит сюда из таблицы 10.1</span><span class="head">A domain's header may contain one of the levels, if the project's own guidelines define levels</span><span class="fate stays">согласована 2026-11-18</span></summary>
+    <div class="body">
+      <div class="lab">Что затрагивает</div><p class="about">Затрагивает заголовок домена, который называет уровень. Уровень, которого нет в списке собственных guidelines проекта, не даёт домену места на схеме доменов.</p>
+      <div class="pair"><div><div class="lab">EN</div><p>A domain's header may contain one of the levels, if the project's own guidelines define levels</p><p class="cost">On failure: refused</p></div>
+      <div><div class="lab">RU</div><p>Заголовок домена может содержать один из уровней, если такие определены в собственных guidelines проекта</p><p class="cost">При непрохождении: отклоняется</p></div></div>
+      
+      
+      <div class="lab">Охраняет правила (связь checks)</div><div class="chips"><button type="button" class="chip" data-sid="s-nkyty4dy9x2v2a4" title="A domain's level in the hierarchy">11.2.1 · A domain's level in the hierarchy · Уровень домена в иерархии</button></div>
+      <div class="impl base"><div class="at">11.2.1 · s-nkyty4dy9x2v2a4 · согласован</div>
+        <div class="pair"><div><p><b>A domain's level in the hierarchy</b></p><p class="pre">A domain's level is an optional property of the domain that shows its position in the hierarchy relative to the other domains. A domain's header may contain one of the levels that the specification's owners list in the project's own guidelines (<span class="cite" title="2.3 A project's own guidelines">§s-u7tw6m8npxmv5tu</span>). The list of levels runs from the top of the hierarchy down. A level's number is its place in that list.
+
+By default, the levels are assigned to the domains from the general to the particular. The narrower a domain's responsibility, the lower its level.</p><p class="why">In complex systems it is important to see the architecture of the whole solution: how the domains are connected and interact through their hierarchy. To make this possible, a domain's header records its level in that hierarchy.</p></div>
+        <div><p><b>Уровень домена в иерархии</b></p><p class="pre">Уровень — это опциональное свойство домена, показывающее, как в иерархии он расположен по отношению к другим доменам. Заголовок домена может содержать один из уровней, которые ответственные за спецификацию перечисляют в собственных guidelines проекта (<span class="cite" title="2.3 A project's own guidelines">§s-u7tw6m8npxmv5tu</span>). Этот список идёт от вершины иерархии вниз. Номер уровня — это его место в этом списке.
+
+По умолчанию уровни присваиваются от общего к частному. Чем меньше ответственность домена, тем ниже его уровень.</p><p class="why">В сложных системах важно видеть архитектуру всего решения: как домены связаны и взаимодействуют между собой посредством их иерархии. Чтобы это было возможно, в заголовке домена содержится информация о его уровне в этой иерархии.</p></div></div></div>
+      <div class="lab">Реализуют (узлы описания инструментов)</div><div class="impl"><div class="at">описание инструментов 7.1.15 · s-uxmkwbnpgtjzkgv</div>
+        <div class="pair"><div><p><b>A header's level</b></p><p class="pre"><code>sheriff validate</code> looks up the level each header names in the list the project's own guidelines hold.</p><p class="why"></p></div>
+        <div><p class="none">перевод — когда дойдём до этой проверки</p></div></div></div>
+      <div class="lab">Тесты</div><ul class="doubts"><li><code>unit/validate.test.ts: refuses a level the project's own guidelines do not list</code></li></ul>
+      <div class="lab">Что изменилось</div><p class="change">Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября в вашей формулировке: Ваша формулировка (18 ноября): заголовок уровень содержит, а не называет; уровень необязателен (ваше решение от 8 ноября, согласованный 11.2.1). Проверка отклоняет заголовок, который содержит уровень не из списка собственных guidelines проекта или содержит уровень, когда список не задан. Заголовок без уровня проходит.</p>
+      <div class="lab">Было</div><p class="was">Every domain's header names a level the project's own guidelines list | refused</p>
+    </div>
+  </details>
+</li></ol></section>
+    </div>
+    <aside aria-label="Узлы, которые проверяют строки">
+      <h2>Проверяемые узлы</h2>
+      <button type="button" class="node" data-sid="s-qmmzf9nksfsa3qp"><span class="at">1.1.2 · s-qmmzf9nksfsa3qp · согласован</span><span>The basic structure of the specification</span><span class="cnt">строк: 1</span></button>
+      <button type="button" class="node" data-sid="s-vj7ercem526zd6v"><span class="at">4.1 · s-vj7ercem526zd6v · согласован</span><span>What the technical appendix contains</span><span class="cnt">строк: 1</span></button>
+      <button type="button" class="node" data-sid="s-h6h25ctd3yryudh"><span class="at">11.1.1 · s-h6h25ctd3yryudh · согласован</span><span>Decomposition of the specification</span><span class="cnt">строк: 1</span></button>
+      <button type="button" class="node" data-sid="s-yggv9myedprnaa7"><span class="at">11.1.3 · s-yggv9myedprnaa7 · согласован</span><span>A domain's specification opens with its header</span><span class="cnt">строк: 4</span></button>
+      <button type="button" class="node" data-sid="s-2r59txnms5serdr"><span class="at">11.1.4 · s-2r59txnms5serdr · согласован</span><span>A domain's header carries the index built from its sections</span><span class="cnt">строк: 1</span></button>
+      <button type="button" class="node" data-sid="s-nkyty4dy9x2v2a4"><span class="at">11.2.1 · s-nkyty4dy9x2v2a4 · согласован</span><span>A domain's level in the hierarchy</span><span class="cnt">строк: 1</span></button>
+    </aside>
+  </div>
+
+  <section class="note" aria-labelledby="doubts-h">
+    <h2 id="doubts-h">Открытые вопросы</h2>
+    <ul class="doubts"></ul>
+  </section>
+</div>
+<script>
+  // Folding is kept per viewer; the page reads right without it.
+  const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+  const folds = [...document.querySelectorAll("details.fold")];
+  for (const d of folds) {
+    if (store.get("fold:" + d.dataset.key) === "closed") d.open = false;
+    d.addEventListener("toggle", () => store.set("fold:" + d.dataset.key, d.open ? "open" : "closed"));
+  }
+  document.getElementById("open-all").addEventListener("click", () => folds.forEach((d) => (d.open = true)));
+  document.getElementById("close-all").addEventListener("click", () => folds.forEach((d) => (d.open = false)));
+
+  // Filters by a row's fate.
+  for (const b of document.querySelectorAll(".filter")) b.addEventListener("click", () => {
+    const on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", String(on));
+    document.querySelectorAll("li.row[data-fate='" + b.dataset.fate + "']").forEach((r) => (r.hidden = !on));
+  });
+
+  // Cross-lighting: a node lights the rows checking it, a row lights the nodes it checks.
+  const clear = () => document.querySelectorAll(".lit, .sel").forEach((e) => e.classList.remove("lit", "sel"));
+  const lightNode = (sid) => {
+    clear();
+    document.querySelectorAll(".node[data-sid='" + sid + "']").forEach((e) => e.classList.add("sel"));
+    document.querySelectorAll("li.row").forEach((r) => { if (r.dataset.rests.split(" ").includes(sid)) r.classList.add("lit"); });
+    document.querySelectorAll(".chip[data-sid='" + sid + "']").forEach((e) => e.classList.add("lit"));
+  };
+  for (const n of document.querySelectorAll(".node")) n.addEventListener("click", () => lightNode(n.dataset.sid));
+  for (const c of document.querySelectorAll(".chip")) c.addEventListener("click", (e) => {
+    e.stopPropagation();
+    lightNode(c.dataset.sid);
+    document.querySelector(".node[data-sid='" + c.dataset.sid + "']")?.scrollIntoView({ block: "nearest" });
+  });
+</script>

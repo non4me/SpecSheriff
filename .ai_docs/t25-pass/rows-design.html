@@ -1,0 +1,177 @@
+<title>Строки таблицы проверок</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header, then two figures — the table as it is and as proposed — then what is new and what is left
+     to decide. One dark look, as every page the owner reads. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --base: #e8b75a; --tools: #5cb8d8; --tests: #5fbf86; --gap: #e07a6a;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+  h1 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; max-width: 78ch; }
+  .muted { color: var(--muted); }
+  figure { margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+  .svgbox { overflow-x: auto; }
+  svg { display: block; width: 100%; min-width: 760px; height: auto; color: var(--fg); }
+  figcaption { color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
+  ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 82ch; }
+  code { font-family: var(--mono); font-size: 0.86em; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .note { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+</style>
+<div class="wrap">
+  <header style="display:grid; gap:8px">
+    <h1>Строки таблицы проверок как узлы</h1>
+    <p class="muted">Узел 10.1 «Таблица проверок». Сейчас строка — текст внутри одного узла. Предлагается: каждая строка — лёгкий дочерний узел со своим sid, а таблицей она остаётся при показе.</p>
+  </header>
+
+  <figure>
+    <h2>Сейчас: связи и тесты ведут на таблицу целиком</h2>
+    <div class="svgbox">
+    <svg viewBox="0 0 1060 300" role="img" aria-label="Сейчас узлы описания инструментов и тесты ссылаются на один узел таблицы, а не на её строки; у строк нет sid.">
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+      </defs>
+      <text x="20" y="24" font-family="PT Mono, monospace" font-size="12" fill="#e8b75a">БАЗА GUIDELINES</text>
+      <rect x="20" y="36" width="330" height="240" rx="4" fill="none" stroke="#e8b75a" stroke-width="2"/>
+      <text x="36" y="60" font-size="14" font-weight="700" fill="currentColor">10.1 Таблица проверок</text>
+      <text x="36" y="78" font-family="PT Mono, monospace" font-size="11" fill="#a3b0b9">s-jau82aq9juv9zzh · один sid на всё</text>
+      <g font-size="12" fill="currentColor">
+        <text x="36" y="110" font-size="11.5">| Ни один файл… не задаёт одному свойству двух значений |</text>
+        <text x="36" y="134">| Каждый файл соответствует своей схеме |</text>
+        <text x="36" y="158">| Никакие два узла не имеют одного sid |</text>
+        <text x="36" y="182">| … ещё 41 строка |</text>
+      </g>
+      <text x="36" y="214" font-size="12" fill="#e07a6a">у строк нет sid: на строку нельзя сослаться,</text>
+      <text x="36" y="232" font-size="12" fill="#e07a6a">её нельзя одобрить, к ней не привязать тест</text>
+
+      <text x="430" y="24" font-family="PT Mono, monospace" font-size="12" fill="#5cb8d8">ОПИСАНИЕ ИНСТРУМЕНТОВ, РАЗДЕЛ 7</text>
+      <g font-size="12" fill="currentColor">
+        <rect x="430" y="40" width="300" height="44" rx="4" fill="#1d2b35" stroke="#5cb8d8"/>
+        <text x="444" y="60">7.1.1 A key written twice in one object</text><text x="444" y="76" font-family="PT Mono, monospace" font-size="10.5" fill="#a3b0b9">s-7zqsstgnuc772ba</text>
+        <rect x="430" y="100" width="300" height="44" rx="4" fill="#1d2b35" stroke="#5cb8d8"/>
+        <text x="444" y="120">7.1.2 The schema and a project's extension</text><text x="444" y="136" font-family="PT Mono, monospace" font-size="10.5" fill="#a3b0b9">s-xzcw3hv4hmxz7h7</text>
+        <rect x="430" y="160" width="300" height="44" rx="4" fill="#1d2b35" stroke="#5cb8d8"/>
+        <text x="444" y="180">… ещё 36 узлов, по узлу на проверку</text>
+      </g>
+      <g stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#a1)">
+        <line x1="430" y1="62" x2="352" y2="100"/>
+        <line x1="430" y1="122" x2="352" y2="140"/>
+        <line x1="430" y1="182" x2="352" y2="180"/>
+      </g>
+      <text x="360" y="252" font-size="11.5" fill="#a3b0b9">implements → на таблицу целиком: все 38</text>
+      <text x="360" y="268" font-size="11.5" fill="#a3b0b9">входящих связей стоят на одном узле</text>
+
+      <text x="800" y="24" font-family="PT Mono, monospace" font-size="12" fill="#5fbf86">ТЕСТЫ ИНСТРУМЕНТОВ</text>
+      <rect x="800" y="40" width="240" height="72" rx="4" fill="#1d2b35" stroke="#5fbf86"/>
+      <text x="814" y="62" font-size="12" fill="currentColor">52 теста, например</text>
+      <text x="814" y="80" font-size="12" fill="currentColor">«refuses a file giving one field…»</text>
+      <text x="814" y="98" font-family="PT Mono, monospace" font-size="10.5" fill="#a3b0b9">@spec s-jau82aq9juv9zzh</text>
+      <path d="M860,112 C840,215 600,215 352,210" stroke="currentColor" stroke-width="1.4" fill="none" stroke-dasharray="5 4" marker-end="url(#a1)"/>
+      <text x="760" y="222" font-size="11.5" fill="currentColor">SpecTag → таблица</text>
+    </svg>
+    </div>
+    <figcaption>Узлы описания инструментов и тесты указывают на таблицу как на один узел. Какая проверка чем реализована и чем проверена, можно понять только по заголовкам. Пропущенную проверку не заметит ни один инструмент.</figcaption>
+  </figure>
+
+  <figure>
+    <h2>Предлагается: у каждой строки свой sid, связи и тесты — на строку</h2>
+    <div class="svgbox">
+    <svg viewBox="0 0 1060 390" role="img" aria-label="Предлагается: каждая строка таблицы — дочерний узел со своим sid; узел описания инструментов держит implements на строку, тест связан SpecTag со строкой, а входящие связи строки строятся инструментами.">
+      <defs>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#a3b0b9"/></marker>
+      </defs>
+      <text x="20" y="24" font-family="PT Mono, monospace" font-size="12" fill="#e8b75a">БАЗА GUIDELINES</text>
+      <rect x="20" y="36" width="370" height="330" rx="4" fill="none" stroke="#e8b75a" stroke-width="2"/>
+      <text x="36" y="60" font-size="14" font-weight="700" fill="currentColor">10.1 Таблица проверок — раздел</text>
+      <text x="36" y="78" font-size="11.5" fill="#a3b0b9">держит строки и сам ничего не требует</text>
+      <g font-size="12" fill="currentColor">
+        <rect x="36" y="94" width="338" height="78" rx="4" fill="#1d2b35" stroke="#e8b75a"/>
+        <text x="50" y="114" font-weight="700">10.1.1</text><text x="104" y="114" font-family="PT Mono, monospace" font-size="10.5" fill="#a3b0b9">s-… свой, постоянный</text>
+        <text x="50" y="132">Ни один файл… не задаёт одному свойству двух значений</text>
+        <text x="50" y="150" fill="#a3b0b9">цена: отклоняется</text>
+        <text x="50" y="166" font-size="11" fill="#5cb8d8">← реализует: 7.1.1 · тесты: строятся</text>
+        <rect x="36" y="184" width="338" height="78" rx="4" fill="#1d2b35" stroke="#e8b75a"/>
+        <text x="50" y="204" font-weight="700">10.1.2</text><text x="104" y="204" font-family="PT Mono, monospace" font-size="10.5" fill="#a3b0b9">s-… свой, постоянный</text>
+        <text x="50" y="222">Каждый файл… соответствует своей схеме</text>
+        <text x="50" y="240" fill="#a3b0b9">цена: отклоняется</text>
+        <text x="50" y="256" font-size="11" fill="#5cb8d8">← реализует: 7.1.2 · тесты: строятся</text>
+        <rect x="36" y="274" width="338" height="66" rx="4" fill="#1d2b35" stroke="#e07a6a" stroke-dasharray="5 4"/>
+        <text x="50" y="294" font-weight="700">10.1.k</text>
+        <text x="50" y="312">строка, которую никто не реализует</text>
+        <text x="50" y="330" font-size="11" fill="#e07a6a">сообщается: у проверки нет реализации</text>
+      </g>
+
+      <text x="460" y="24" font-family="PT Mono, monospace" font-size="12" fill="#5cb8d8">ОПИСАНИЕ ИНСТРУМЕНТОВ, РАЗДЕЛ 7</text>
+      <g font-size="12" fill="currentColor">
+        <rect x="460" y="104" width="280" height="50" rx="4" fill="#1d2b35" stroke="#5cb8d8"/>
+        <text x="474" y="124">7.1.1 A key written twice in one object</text><text x="474" y="142" font-size="11" fill="#a3b0b9">как делается и зачем</text>
+        <rect x="460" y="194" width="280" height="50" rx="4" fill="#1d2b35" stroke="#5cb8d8"/>
+        <text x="474" y="214">7.1.2 The schema and a project's extension</text><text x="474" y="232" font-size="11" fill="#a3b0b9">как делается и зачем</text>
+      </g>
+      <g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#a2)">
+        <line x1="460" y1="122" x2="376" y2="122"/>
+        <line x1="460" y1="212" x2="376" y2="212"/>
+      </g>
+      <text x="392" y="112" font-size="11" fill="currentColor">implements</text>
+      <text x="392" y="202" font-size="11" fill="currentColor">implements</text>
+
+      <text x="810" y="24" font-family="PT Mono, monospace" font-size="12" fill="#5fbf86">ТЕСТЫ ИНСТРУМЕНТОВ</text>
+      <g font-size="12" fill="currentColor">
+        <rect x="810" y="94" width="230" height="58" rx="4" fill="#1d2b35" stroke="#5fbf86"/>
+        <text x="824" y="114">«refuses a file giving one field…»</text><text x="824" y="132" font-family="PT Mono, monospace" font-size="10.5" fill="#a3b0b9">@spec sid строки 10.1.1</text>
+        <rect x="810" y="184" width="230" height="58" rx="4" fill="#1d2b35" stroke="#5fbf86"/>
+        <text x="824" y="204">«refuses a file that does not match…»</text><text x="824" y="222" font-family="PT Mono, monospace" font-size="10.5" fill="#a3b0b9">@spec sid строки 10.1.2</text>
+      </g>
+      <path d="M860,94 C820,50 520,50 376,100" stroke="currentColor" stroke-width="1.4" fill="none" stroke-dasharray="5 4" marker-end="url(#a2)"/>
+      <path d="M860,242 C820,300 520,300 376,252" stroke="currentColor" stroke-width="1.4" fill="none" stroke-dasharray="5 4" marker-end="url(#a2)"/>
+      <text x="580" y="56" font-size="11" fill="currentColor">SpecTag → строка</text>
+      <text x="580" y="304" font-size="11" fill="currentColor">SpecTag → строка</text>
+
+      <rect x="460" y="330" width="580" height="44" rx="4" fill="none" stroke="#a3b0b9" stroke-dasharray="3 3"/>
+      <text x="474" y="350" font-size="12" fill="currentColor">Показ: экспорт, карта и страница выводят строки 10.1 одной таблицей —</text>
+      <text x="474" y="366" font-size="12" fill="currentColor">проверка · цена · кто реализует · тесты.</text>
+    </svg>
+    </div>
+    <figcaption>Каждая строка — лёгкий дочерний узел: свой sid, текст проверки и цена непрохождения. Связь <code>implements</code> ставится вручную из узла описания инструментов на строку. Входящие связи и число тестов строки строятся инструментами, как у всех узлов. Строка без реализации видна сразу.</figcaption>
+  </figure>
+
+  <div class="cols">
+    <section class="note" aria-labelledby="new-h">
+      <h2 id="new-h">Что нового</h2>
+      <ul>
+        <li>Тип узла «строка таблицы проверок»: текст проверки и поле «цена непрохождения». Обоснование необязательно — зачем, говорит реализующий узел описания инструментов.</li>
+        <li>Узел 10.1 — раздел, который держит строки; при показе раздел этого типа выводится таблицей.</li>
+        <li>Узлы раздела 7 описания инструментов держат <code>implements</code> на строку, а не на таблицу.</li>
+        <li>Тесты инструментов связаны SpecTag со строкой, которую проверяют.</li>
+        <li>Проверка полноты: строка без реализующего узла сообщается; узел, указавший на несуществующую строку, отклоняется.</li>
+      </ul>
+    </section>
+    <section class="note" aria-labelledby="same-h">
+      <h2 id="same-h">Что не меняется</h2>
+      <ul>
+        <li>sid, связи, входящие связи, SpecTag, одобрение — те же, что у любого узла.</li>
+        <li>Текст и цена каждой строки — те, что мы сейчас согласуем.</li>
+        <li>Таблица для читателя выглядит как таблица.</li>
+        <li>Направление: база не ссылается на описание инструментов; связь идёт от описания к базе.</li>
+      </ul>
+    </section>
+    <section class="note" aria-labelledby="open-h">
+      <h2 id="open-h">Что решить потом, по одному</h2>
+      <ul>
+        <li>Как назвать тип такого узла.</li>
+        <li>Одобряется ли каждая строка отдельно, как любой узел, или таблица целиком.</li>
+        <li>Тест связан SpecTag со строкой или с узлом описания инструментов.</li>
+        <li>Тот же приём для других таблиц спецификации, если они появятся.</li>
+      </ul>
+    </section>
+  </div>
+</div>

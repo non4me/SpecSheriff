@@ -1,0 +1,253 @@
+<title>Узел описания инструментов: Настройки, общие для проекта</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Настройки, общие для проекта <span style="color:var(--muted);font-weight:400">· Project-wide settings</span></h1>
+<div class="sub">tools 2 (new, after "Where the files are") · new:tools-1-settings · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Настройка, которая хранится в репозитории, одинакова в каждом клоне, поэтому инструменты SpecSheriff ведут себя одинаково у всех, кто работает над проектом.</div>
+  <div><div class="label">Reason</div>A setting kept in the repository is the same in every clone, so the SpecSheriff tools behave alike for everyone who works on the project.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое.</p>
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-zefk589ykh37b8u">
+  <td class="en"><p><code>sheriff.config.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>) holds the project-wide settings of the SpecSheriff tools:</p></td>
+  <td class="ru"><p><code>sheriff.config.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>) содержит настройки инструментов SpecSheriff, общие для всего проекта:</p></td>
+  <td class="change">Новый узел. Его содержание было в узле «Where the files are».</td>
+  <td class="links"><span class="cite" data-sid="s-zefk589ykh37b8u">Where the files are</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-hheus6f395ynqvc">
+  <td class="en"><div class="li">• the glob patterns that match the files holding the system's code (<span class="cite" data-sid="s-hheus6f395ynqvc" title="What is considered the system's code">§9.1</span>) and those holding its tests;</div></td>
+  <td class="ru"><div class="li">• glob-шаблоны, которым соответствуют файлы с кодом системы (<span class="cite" data-sid="s-hheus6f395ynqvc" title="What is considered the system's code">§9.1</span>) и файлы с его тестами;</div></td>
+  <td class="change same">Без изменений по смыслу.</td>
+  <td class="links"><span class="cite" data-sid="s-hheus6f395ynqvc">What is considered the system's code</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-2fau85dfyyeq66m s-km4x4s26kv7pjze s-utf4mbt7ref8g9c">
+  <td class="en"><div class="li">• for each check and each generator that the project's own guidelines add (<span class="cite" data-sid="s-2fau85dfyyeq66m" title="A project's own checks join the shared ones">§10.8</span>, <span class="cite" data-sid="s-km4x4s26kv7pjze" title="A project's own code generators">§10.9</span>): the rule that lists it, its name in that rule, the command that runs it, and the glob patterns that match the files holding its code and its tests (<span class="cite" data-sid="s-utf4mbt7ref8g9c" title="The SpecTags the tests carry">§tools 7.2.4</span>);</div></td>
+  <td class="ru"><div class="li">• для каждой проверки и каждого генератора, которые добавляют собственные guidelines проекта (<span class="cite" data-sid="s-2fau85dfyyeq66m" title="A project's own checks join the shared ones">§10.8</span>, <span class="cite" data-sid="s-km4x4s26kv7pjze" title="A project's own code generators">§10.9</span>): правило, которое их перечисляет, их имя в этом правиле, команду, которая их запускает, и glob-шаблоны, которым соответствуют файлы с их кодом и их тестами (<span class="cite" data-sid="s-utf4mbt7ref8g9c" title="The SpecTags the tests carry">§tools 7.2.4</span>);</div></td>
+  <td class="change">Добавлено, что запись о проверке или генераторе называет ещё правило, которое их перечисляет, и их имя в нём: инструменты это читают и требуют.</td>
+  <td class="links"><span class="cite" data-sid="s-2fau85dfyyeq66m">A project's own checks join the shared ones</span><span class="cite" data-sid="s-km4x4s26kv7pjze">A project's own code generators</span><span class="cite" data-sid="s-utf4mbt7ref8g9c">The SpecTags the tests carry</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="s-qzthyh7yqvfhsa2 s-q3pfzyaxvpr2zj2 s-mbmnsnxenmavu3z s-9ttvcwpqkehm58g">
+  <td class="en"><div class="li">• the entries that set the specification's approval status (<span class="cite" data-sid="s-qzthyh7yqvfhsa2" title="The specification's approval status">§10.6</span>) and its <code>strict</code> flag (<span class="cite" data-sid="s-q3pfzyaxvpr2zj2" title="The specification's strict flag">§10.7</span>), and those that record which extensions of the guidelines (<span class="cite" data-sid="s-mbmnsnxenmavu3z" title="What an extension of the guidelines is">§1.7.1</span>) the project has chosen (<span class="cite" data-sid="s-9ttvcwpqkehm58g" title="Configuring extensions">§1.7.5</span>);</div></td>
+  <td class="ru"><div class="li">• записи, которые задают статус одобрения спецификации (<span class="cite" data-sid="s-qzthyh7yqvfhsa2" title="The specification's approval status">§10.6</span>) и её флаг <code>strict</code> (<span class="cite" data-sid="s-q3pfzyaxvpr2zj2" title="The specification's strict flag">§10.7</span>), и записи о том, какие расширения guidelines (<span class="cite" data-sid="s-mbmnsnxenmavu3z" title="What an extension of the guidelines is">§1.7.1</span>) выбрал проект (<span class="cite" data-sid="s-9ttvcwpqkehm58g" title="Configuring extensions">§1.7.5</span>);</div></td>
+  <td class="change">Новое. По вашему решению от 21 ноября записи статуса одобрения спецификации и флага <code>strict</code> хранятся здесь, рядом с записями о выбранных расширениях. Что каждая запись называет сделавшего её ответственного, здесь не повторяется: это требуют правила 10.6 и 10.7 и строка 10.1.27b. Из чего состоит запись, скажут узлы «How an approval is recorded» и узел о выборе расширений.</td>
+  <td class="links"><span class="cite" data-sid="s-qzthyh7yqvfhsa2">The specification's approval status</span><span class="cite" data-sid="s-q3pfzyaxvpr2zj2">The specification's strict flag</span><span class="cite" data-sid="s-mbmnsnxenmavu3z">What an extension of the guidelines is</span><span class="cite" data-sid="s-9ttvcwpqkehm58g">Configuring extensions</span></td>
+</tr>
+<tr class="part" id="part-4" data-cites="s-477gtdrkw34dzxw">
+  <td class="en"><div class="li">• the command that runs the tests of the system's code and of the project's own checks and generators (<span class="cite" data-sid="s-477gtdrkw34dzxw" title="The hooks">§tools 6</span>);</div></td>
+  <td class="ru"><div class="li">• команду, которая запускает тесты кода системы и собственных проверок и генераторов проекта (<span class="cite" data-sid="s-477gtdrkw34dzxw" title="The hooks">§tools 6</span>);</div></td>
+  <td class="change">Новое в этом перечне. Сказано, какие тесты запускает команда, так же как в узле «The hooks», который говорит, когда она выполняется.</td>
+  <td class="links"><span class="cite" data-sid="s-477gtdrkw34dzxw">The hooks</span></td>
+</tr>
+<tr class="part" id="part-5" data-cites="s-xr5xxa9cxf2mq5u">
+  <td class="en"><div class="li">• the project-wide settings of the reviewer (<span class="cite" data-sid="s-xr5xxa9cxf2mq5u" title="Who runs the reviewer">§tools 10</span>).</div></td>
+  <td class="ru"><div class="li">• настройки рецензента, общие для всего проекта (<span class="cite" data-sid="s-xr5xxa9cxf2mq5u" title="Who runs the reviewer">§tools 10</span>).</div></td>
+  <td class="change">Новое в этом перечне, со ссылкой на узел «Who runs the reviewer», который эти настройки перечисляет.</td>
+  <td class="links"><span class="cite" data-sid="s-xr5xxa9cxf2mq5u">Who runs the reviewer</span></td>
+</tr>
+<tr class="part" id="part-6" data-cites="s-zefk589ykh37b8u">
+  <td class="en"><p>The SpecSheriff tools refuse a <code>sheriff.config.json</code> that is not valid JSON or does not conform to its schema (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>).</p></td>
+  <td class="ru"><p>Инструменты SpecSheriff отвергают <code>sheriff.config.json</code>, если он не является корректным JSON или не соответствует своей схеме (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>).</p></td>
+  <td class="change">Новое. Инструменты уже отвергают такой файл, и тесты в config.test.ts это проверяют, но ни один узел этого не говорил. Схему файла называет узел «Where the files are».</td>
+  <td class="links"><span class="cite" data-sid="s-zefk589ykh37b8u">Where the files are</span></td>
+</tr>
+<tr class="part" id="part-7" data-cites="s-8xw4mgvpexyvw5q s-pvzms7d8kxb8dk2">
+  <td class="en"><p>To find the SpecTags (<span class="cite" data-sid="s-8xw4mgvpexyvw5q" title="The SpecTag">§9.3</span>) that bind code and tests to their rules, the SpecSheriff tools read only the files that match the glob patterns for code or for tests in <code>sheriff.config.json</code>, and the files into which <code>sheriff types</code> writes the types (<span class="cite" data-sid="s-pvzms7d8kxb8dk2" title="Where the types and RuntimeChecks generated from the RecordTypes are written">§tools 17</span>). A file that matches both a pattern for code and a pattern for tests is read as a test.</p></td>
+  <td class="ru"><p>Чтобы найти SpecTag (<span class="cite" data-sid="s-8xw4mgvpexyvw5q" title="The SpecTag">§9.3</span>), которые привязывают код и тесты к их правилам, инструменты SpecSheriff читают только файлы, которые соответствуют glob-шаблонам кода или тестов в <code>sheriff.config.json</code>, и файлы, в которые <code>sheriff types</code> записывает типы (<span class="cite" data-sid="s-pvzms7d8kxb8dk2" title="Where the types and RuntimeChecks generated from the RecordTypes are written">§tools 17</span>). Файл, который соответствует и шаблону кода, и шаблону тестов, читается как тест.</p></td>
+  <td class="change">Взято из одобренной формулировки «Where the files are». Добавлены файлы типов: одобренный узел «Where the types and RuntimeChecks generated from the RecordTypes are written» велит читать их как код системы, даже если шаблоны их не указывают. Добавлено, что файл, указанный и как код, и как тест, читается как тест: так делает код инструментов.</td>
+  <td class="links"><span class="cite" data-sid="s-8xw4mgvpexyvw5q">The SpecTag</span><span class="cite" data-sid="s-pvzms7d8kxb8dk2">Where the types and RuntimeChecks generated from the RecordTypes are written</span></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>Пункт <code>"writesSpecSheriffGuidelines": true</code> — по вашему решению от 21 ноября: этот ключ нужен только репозиторию SpecSheriff, а значение, важное одному проекту, не хранится в настройках, которые читают инструменты каждого проекта. Как инструменты узнают репозиторий, где пишутся SpecSheriff guidelines, скажет переменная окружения.</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-qzthyh7yqvfhsa2"><span class="loc">реализует · 10.6</span> <b>The specification's approval status</b><br><span class="rut">Статус одобрения спецификации</span><br><span class="meta">guidelines · s-qzthyh7yqvfhsa2</span></li>
+<li class="node" data-sid="s-q3pfzyaxvpr2zj2"><span class="loc">реализует · 10.7</span> <b>The specification's strict flag</b><br><span class="rut">Флаг strict спецификации</span><br><span class="meta">guidelines · s-q3pfzyaxvpr2zj2</span></li>
+<li class="node" data-sid="s-9ttvcwpqkehm58g"><span class="loc">реализует · 1.7.5</span> <b>Configuring extensions</b><br><span class="rut">Настройка расширений</span><br><span class="meta">guidelines · s-9ttvcwpqkehm58g</span></li>
+<li class="node" data-sid="s-hheus6f395ynqvc"><span class="loc">реализует · 9.1</span> <b>What is considered the system's code</b><br><span class="rut">Что считается кодом системы</span><br><span class="meta">guidelines · s-hheus6f395ynqvc</span></li>
+<li class="node" data-sid="s-zefk589ykh37b8u"><span class="loc">ссылается · tools 1</span> <b>Where the files are</b><br><span class="meta">appendix of the tools · s-zefk589ykh37b8u</span></li>
+<li class="node" data-sid="s-2fau85dfyyeq66m"><span class="loc">ссылается · 10.8</span> <b>A project's own checks join the shared ones</b><br><span class="rut">Собственные проверки проекта присоединяются к общим</span><br><span class="meta">guidelines · s-2fau85dfyyeq66m</span></li>
+<li class="node" data-sid="s-km4x4s26kv7pjze"><span class="loc">ссылается · 10.9</span> <b>A project's own code generators</b><br><span class="rut">Собственные генераторы кода проекта</span><br><span class="meta">guidelines · s-km4x4s26kv7pjze</span></li>
+<li class="node" data-sid="s-utf4mbt7ref8g9c"><span class="loc">ссылается · tools 7.2.4</span> <b>The SpecTags the tests carry</b><br><span class="meta">appendix of the tools · s-utf4mbt7ref8g9c</span></li>
+<li class="node" data-sid="s-mbmnsnxenmavu3z"><span class="loc">ссылается · 1.7.1</span> <b>What an extension of the guidelines is</b><br><span class="rut">Что такое расширение guidelines</span><br><span class="meta">guidelines · s-mbmnsnxenmavu3z</span></li>
+<li class="node" data-sid="s-477gtdrkw34dzxw"><span class="loc">ссылается · tools 6</span> <b>The hooks</b><br><span class="meta">appendix of the tools · s-477gtdrkw34dzxw</span></li>
+<li class="node" data-sid="s-xr5xxa9cxf2mq5u"><span class="loc">ссылается · tools 10</span> <b>Who runs the reviewer</b><br><span class="meta">appendix of the tools · s-xr5xxa9cxf2mq5u</span></li>
+<li class="node" data-sid="s-8xw4mgvpexyvw5q"><span class="loc">ссылается · 9.3</span> <b>The SpecTag</b><br><span class="rut">SpecTag</span><br><span class="meta">guidelines · s-8xw4mgvpexyvw5q</span></li>
+<li class="node" data-sid="s-pvzms7d8kxb8dk2"><span class="loc">ссылается · tools 17</span> <b>Where the types and RuntimeChecks generated from the RecordTypes are written</b><br><span class="meta">appendix of the tools · s-pvzms7d8kxb8dk2</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «Where the files are»</h2>
+<ul class="plain">
+<li><code>reads each of the project's own checks and generators: the rule listing it, its name there, its command and the globs of its code and tests</code><br><span class="meta">skills/tools/test/unit/config.test.ts</span></li>
+<li><code>reads the code for tags, the tests for sids, and a file neither names for neither</code><br><span class="meta">skills/tools/test/unit/config.test.ts</span></li>
+<li><code>reads the globs naming where the system's code and its tests live</code><br><span class="meta">skills/tools/test/unit/config.test.ts</span></li>
+<li><code>reads this repository's settings, whose tests are the tools' own</code><br><span class="meta">skills/tools/test/unit/config.test.ts</span></li>
+<li><code>reads whether the SpecSheriff guidelines are written in the repository</code><br><span class="meta">skills/tools/test/unit/config.test.ts</span></li>
+<li><code>refuses a model or an effort in the project's settings, naming the key of the user's git configuration that holds it</code><br><span class="meta">skills/tools/test/unit/config.test.ts</span></li>
+<li><code>refuses settings that are missing, not JSON, or hold a key nobody declared</code><br><span class="meta">skills/tools/test/unit/config.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка узла «Where the files are», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre>Части спецификации хранятся в `specs/`:
+
+- каждый домен — в `specs/&lt;domain&gt;/`, начиная с его заголовка в `specs/&lt;domain&gt;/00-&lt;domain&gt;.json`;
+- контракты — в `specs/contracts/`;
+- техническое приложение — в `specs/tech/`, каждый его раздел в отдельном файле: раздел домена — в `&lt;domain&gt;.json`, раздел стека — в `stack.json`, раздел технического долга — в `debt.json`;
+- guidelines — в `specs/_guidelines/`.
+
+Часть, разделённая на файлы по одному на раздел, хранит свои файлы в своей папке.
+
+В `specs/_guidelines/` собственные guidelines проекта хранятся в `project.json`. В репозитории, где пишутся SpecSheriff guidelines, там же хранятся база — в `spec.json` и описание инструментов — в `tools.json`. Все остальные проекты читают базу и описание инструментов из плагина своего агента (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4).
+
+Схема хранится в `specs/_schema/` репозитория, где пишутся SpecSheriff guidelines. Все остальные проекты читают её из плагина. Схема состоит из файлов:
+- `node.schema.json` — для узла и его метаданных;
+- `section-file.schema.json` — для файла части;
+- `extension.schema.json` — схема расширения.
+
+Расширение схемы, которое добавляет проект (§s-eferktypcj7njt5), хранится в `specs/_schema/project.schema.json`. Оно проверяется по схеме расширения и читается вместе со схемой (§s-xzcw3hv4hmxz7h7). Любой другой файл, который другой проект хранит в `specs/_schema/`, отклоняется как копия схемы.
+
+Одобрения хранятся в `specs/_approvals.jsonl`. Архив удалённых узлов хранится в `specs/_archive/&lt;name&gt;.json`.
+
+`specs/_viewer/` (карта) и `md-version/` (экспорт для чтения) строятся заново после каждого изменения спецификации. Ни то, ни другое не хранится в git.
+
+Инструменты SpecSheriff предоставляют команду `sheriff`. В терминале она запускается как `node &lt;tools&gt;/dist/cli.js` из инструментов, которые плагин хранит на машине (§s-4mej6ccn7xu3d3p). `&lt;tools&gt;` — папка данных плагина для Claude Code или папка `tools/` плагина для Codex CLI в кэше Codex.
+
+Их плагин для pytest, пакет `pytest-specsheriff`, устанавливается через pip из ветки `release`: `pip install "pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff"`.
+
+Настройки инструментов SpecSheriff, общие для проекта, хранятся в `sheriff.config.json` в корне репозитория. Настройки запусков рецензента, которые подтверждает каждый пользователь, хранятся в git-конфигурации пользователя (§s-xr5xxa9cxf2mq5u). Настройка `"writesSpecSheriffGuidelines": true` отмечает репозиторий, где пишутся SpecSheriff guidelines.
+
+Среди настроек glob-шаблоны указывают, где находится код системы и где находятся её тесты. Код и тесты читаются на SpecTag, а файл, не указанный ни как код, ни как тесты, не читается ни на что. Так конфигурация репозитория, его собственные инструменты и их тесты остаются вне кода системы по тому, где они лежат (§s-hheus6f395ynqvc).
+
+Среди настроек есть и команда, которая запускает каждую проверку и каждый генератор, добавленные собственными guidelines проекта (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze). Для каждого из них настройки содержат и glob-шаблоны, указывающие файлы его кода и его тестов (§s-utf4mbt7ref8g9c).
+
+Документы — это markdown-файлы, которые репозиторий хранит вне `specs/`.
+
+Инструменты спецификации — это файлы инструментов SpecSheriff. Проект хранит только те файлы, которые пишет `sheriff init`. Репозиторий, где пишутся SpecSheriff guidelines, хранит их в `skills/`, где тесты читаются на SpecTag, которые в них объявлены.
+
+В `project.json` находятся:
+- ответственные за спецификацию — те, кого называет её верхний узел;
+- уровни, на которых стоят домены, — элементы `TextRule.list` её правила, уточняющего §s-nkyty4dy9x2v2a4;
+- правило, которое одобряет спецификацию, — её правило, уточняющее §s-qzthyh7yqvfhsa2;
+- файлы, которые хранятся как фикстуры тестов, — те, что указывают glob-шаблоны, перечисленные её правилом, уточняющим §s-6hha5en226aj8hu.</pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>The parts of the specification are kept under `specs/`:
+
+- each domain under `specs/&lt;domain&gt;/`, opening with its header in `specs/&lt;domain&gt;/00-&lt;domain&gt;.json`;
+- contracts under `specs/contracts/`;
+- the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `&lt;domain&gt;.json`, the stack's in `stack.json`, the technical debt's in `debt.json`;
+- the guidelines under `specs/_guidelines/`.
+
+A part divided into one file per section keeps its files in its directory.
+
+In `specs/_guidelines/`, a project's own guidelines are kept in `project.json`. In the repository the SpecSheriff guidelines are written in, the base is kept there in `spec.json` and the appendix of the tools in `tools.json`. Every other project reads the base and the appendix of the tools from the plugin of its agent (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4).
+
+The schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in. Every other project reads it from the plugin. The schema is made of these files:
+
+- `node.schema.json` for a node and its metadata;
+- `section-file.schema.json` for the file of a part;
+- `extension.schema.json`, the schema of an extension.
+
+A project's extension of the schema (§s-eferktypcj7njt5) is kept in `specs/_schema/project.schema.json`. It is validated against the schema of an extension and read together with the schema (§s-xzcw3hv4hmxz7h7). Any other file another project keeps under `specs/_schema/` is refused as a copy of the schema.
+
+Approvals are kept in `specs/_approvals.jsonl`. The archive of removed nodes is kept in `specs/_archive/&lt;name&gt;.json`.
+
+`specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification. Neither is stored in git.
+
+The SpecSheriff tools provide the command `sheriff`. In a terminal it is run as `node &lt;tools&gt;/dist/cli.js`, from the tools a plugin keeps on the machine (§s-4mej6ccn7xu3d3p). `&lt;tools&gt;` is the data directory of the plugin for Claude Code, or the `tools/` of the plugin for Codex CLI in Codex's cache.
+
+Their plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install "pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff"`.
+
+The settings of the SpecSheriff tools that a project shares are kept in `sheriff.config.json` at the root of the repository. The settings of the reviewer's runs, which each user confirms, are kept in the user's git configuration (§s-xr5xxa9cxf2mq5u). The setting `"writesSpecSheriffGuidelines": true` marks the repository the SpecSheriff guidelines are written in.
+
+Among the settings, glob patterns name where the system's code lives and where its tests live. The code and the tests are read for SpecTags, and a file named neither as code nor as tests is read for neither. That is how the repository's configuration, its own tools and their tests are kept out of the system's code by where they live (§s-hheus6f395ynqvc).
+
+Among the settings, too, is the command that runs each check and each generator the project's own guidelines add (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze). For each of them, the settings also hold the glob patterns naming the files of its code and of its tests (§s-utf4mbt7ref8g9c).
+
+The documents are the markdown files the repository keeps outside `specs/`.
+
+The tools of the specification are the files of the SpecSheriff tools. A project keeps only the files `sheriff init` writes. The repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the SpecTags they declare.
+
+The following are found in `project.json`:
+
+- the specification's owners are those its top node names;
+- the levels the domains stand at are the members of the `TextRule.list` carried by its rule that refines §s-nkyty4dy9x2v2a4;
+- the rule that approves the specification is its rule that refines §s-qzthyh7yqvfhsa2;
+- the files kept as fixtures of tests are those named by the glob patterns its rule refining §s-6hha5en226aj8hu lists.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

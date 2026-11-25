@@ -1,0 +1,273 @@
+<title>Узел описания инструментов: Что инструменты SpecSheriff читают в собственных guidelines проекта</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Что инструменты SpecSheriff читают в собственных guidelines проекта <span style="color:var(--muted);font-weight:400">· What the SpecSheriff tools read in the project's own guidelines</span></h1>
+<div class="sub">tools 3 (new, after "Project-wide settings") · new:tools-1-project · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Инструментам SpecSheriff нужны значения, которые задают только собственные guidelines проекта, например кто отвечает за спецификацию (<span class="cite" data-sid="s-m42rsngtayk9g3g" title="The minimum the shared rules require">§2.4</span>). Проект даёт своим правилам любые названия и располагает эти правила как хочет, поэтому инструменты находят каждое значение в верхнем узле <code>project.json</code>, по связи или по настройке в <code>sheriff.config.json</code>.</div>
+  <div><div class="label">Reason</div>The SpecSheriff tools need values that only a project's own guidelines set, such as who owns the specification (<span class="cite" data-sid="s-m42rsngtayk9g3g" title="The minimum the shared rules require">§2.4</span>). A project gives its own rules any titles and arranges those rules as it chooses, so the tools find each value in the top node of <code>project.json</code>, by a link, or by a setting in <code>sheriff.config.json</code>.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое. Говорит, какую задачу решает узел: найти значение, которое задаёт проект, не завися от того, как он назвал и расположил свои правила.</p>
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-u7tw6m8npxmv5tu s-zefk589ykh37b8u">
+  <td class="en"><p>The SpecSheriff tools read the following in the project's own guidelines (<span class="cite" data-sid="s-u7tw6m8npxmv5tu" title="A project's own guidelines">§2.3</span>), kept in <code>project.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>):</p></td>
+  <td class="ru"><p>В собственных guidelines проекта (<span class="cite" data-sid="s-u7tw6m8npxmv5tu" title="A project's own guidelines">§2.3</span>), которые хранятся в <code>project.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>), инструменты SpecSheriff читают:</p></td>
+  <td class="change">Новый узел. Его содержание было в узле «Where the files are». Добавлена ссылка на узел, который задаёт путь к <code>project.json</code>.</td>
+  <td class="links"><span class="cite" data-sid="s-u7tw6m8npxmv5tu">A project's own guidelines</span><span class="cite" data-sid="s-zefk589ykh37b8u">Where the files are</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-6sk8uet75dmq5qz">
+  <td class="en"><div class="li">• the specification's owners (<span class="cite" data-sid="s-6sk8uet75dmq5qz" title="The owners">§1.1.6</span>): those whom the top node of <code>project.json</code> names;</div></td>
+  <td class="ru"><div class="li">• ответственных за спецификацию (<span class="cite" data-sid="s-6sk8uet75dmq5qz" title="The owners">§1.1.6</span>): тех, кого называет верхний узел <code>project.json</code>;</div></td>
+  <td class="change same">Без изменений по смыслу. Добавлена ссылка на правило об ответственных.</td>
+  <td class="links"><span class="cite" data-sid="s-6sk8uet75dmq5qz">The owners</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-tdm3rwsppnuh6dm s-nkyty4dy9x2v2a4">
+  <td class="en"><div class="li">• if the project has chosen the Domains extension (<span class="cite" data-sid="s-tdm3rwsppnuh6dm" title="Domains">§11</span>), the levels of the domains: the members of the <code>TextRule.list</code> of the rule that refines the rule on a domain's level (<span class="cite" data-sid="s-nkyty4dy9x2v2a4" title="A domain's level in the hierarchy">§11.2.1</span>);</div></td>
+  <td class="ru"><div class="li">• если проект выбрал расширение Domains (<span class="cite" data-sid="s-tdm3rwsppnuh6dm" title="Domains">§11</span>), — уровни доменов: элементы <code>TextRule.list</code> правила, которое уточняет правило об уровне домена (<span class="cite" data-sid="s-nkyty4dy9x2v2a4" title="A domain's level in the hierarchy">§11.2.1</span>);</div></td>
+  <td class="change">Добавлено условие: уровни есть только у доменов, а домены теперь — расширение. Как в одобренной формулировке, инструменты находят это правило по связи <code>refines</code>.</td>
+  <td class="links"><span class="cite" data-sid="s-tdm3rwsppnuh6dm">Domains</span><span class="cite" data-sid="s-nkyty4dy9x2v2a4">A domain's level in the hierarchy</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="s-6hha5en226aj8hu">
+  <td class="en"><div class="li">• test fixtures: the files that match the glob patterns in the <code>TextRule.list</code> of each rule that refines the rule on such fixtures (<span class="cite" data-sid="s-6hha5en226aj8hu" title="The fixtures of a check's tests are left out of the checks of citations and locations">§10.11</span>);</div></td>
+  <td class="ru"><div class="li">• fixtures тестов: файлы, которые соответствуют glob-шаблонам в <code>TextRule.list</code> каждого правила, которое уточняет правило о таких fixtures (<span class="cite" data-sid="s-6hha5en226aj8hu" title="The fixtures of a check's tests are left out of the checks of citations and locations">§10.11</span>);</div></td>
+  <td class="change same">Без изменений по смыслу. Сказано, что таких правил может быть несколько: инструменты читают шаблоны всех.</td>
+  <td class="links"><span class="cite" data-sid="s-6hha5en226aj8hu">The fixtures of a check's tests are left out of the checks of citations and locations</span></td>
+</tr>
+<tr class="part" id="part-4" data-cites="s-vsh384ybt4w25a2">
+  <td class="en"><div class="li">• the project's own kinds of node: the members of the <code>TextRule.list</code> of the rule that refines the rule on such kinds (<span class="cite" data-sid="s-vsh384ybt4w25a2" title="A project's own kinds of node">§8.3</span>);</div></td>
+  <td class="ru"><div class="li">• собственные виды узлов проекта: элементы <code>TextRule.list</code> правила, которое уточняет правило о таких видах (<span class="cite" data-sid="s-vsh384ybt4w25a2" title="A project's own kinds of node">§8.3</span>);</div></td>
+  <td class="change">Новое: правило 8.4 требует такое правило, а проверка сверяет его со схемой проекта. Что содержит элемент перечня, говорит само правило 8.4, поэтому здесь это не повторяется.</td>
+  <td class="links"><span class="cite" data-sid="s-vsh384ybt4w25a2">A project's own kinds of node</span></td>
+</tr>
+<tr class="part" id="part-5" data-cites="s-2fau85dfyyeq66m s-km4x4s26kv7pjze">
+  <td class="en"><div class="li">• the project's own checks and generators (<span class="cite" data-sid="s-2fau85dfyyeq66m" title="A project's own checks join the shared ones">§10.8</span>, <span class="cite" data-sid="s-km4x4s26kv7pjze" title="A project's own code generators">§10.9</span>): the members of the <code>TextRule.list</code> of the rule that <code>sheriff.config.json</code> names for each such check or generator;</div></td>
+  <td class="ru"><div class="li">• собственные проверки и генераторы проекта (<span class="cite" data-sid="s-2fau85dfyyeq66m" title="A project's own checks join the shared ones">§10.8</span>, <span class="cite" data-sid="s-km4x4s26kv7pjze" title="A project's own code generators">§10.9</span>): элементы <code>TextRule.list</code> правила, которое <code>sheriff.config.json</code> называет для каждой такой проверки или каждого такого генератора;</div></td>
+  <td class="change">Новое в этом узле: инструменты уже читают эти правила и отвергают настройку, если правило не перечисляет названную в ней проверку или генератор.</td>
+  <td class="links"><span class="cite" data-sid="s-2fau85dfyyeq66m">A project's own checks join the shared ones</span><span class="cite" data-sid="s-km4x4s26kv7pjze">A project's own code generators</span></td>
+</tr>
+<tr class="part" id="part-6" data-cites="s-pcnyfp7gev7syax s-n4m5zvh96yb299p">
+  <td class="en"><div class="li">• the project's own tools that rewrite files: the members of the <code>TextRule.list</code> of the rule that refines the rule on the order in which tools and checks run (<span class="cite" data-sid="s-pcnyfp7gev7syax" title="The order in which tools and checks run on a commit and on a push">§10.12</span>), where each member is the path of a tool relative to <code>.githooks/</code>, such as <code>pre-commit.d/format</code> (<span class="cite" data-sid="s-n4m5zvh96yb299p" title="The project's own tools in a git hook">§tools 13</span>);</div></td>
+  <td class="ru"><div class="li">• собственные инструменты проекта, которые переписывают файлы: элементы <code>TextRule.list</code> правила, которое уточняет правило о порядке запуска инструментов и проверок (<span class="cite" data-sid="s-pcnyfp7gev7syax" title="The order in which tools and checks run on a commit and on a push">§10.12</span>); каждый элемент — путь к инструменту относительно <code>.githooks/</code>, например <code>pre-commit.d/format</code> (<span class="cite" data-sid="s-n4m5zvh96yb299p" title="The project's own tools in a git hook">§tools 13</span>);</div></td>
+  <td class="change">Новое: правило 10.12 требует запускать такие инструменты первыми, поэтому инструментам SpecSheriff нужен их перечень. Решение моё: элемент перечня — путь к файлу в <code>.githooks/</code>, где проект уже держит свои инструменты для git hooks. Путь называет и hook, поэтому один и тот же инструмент можно указать для коммита и для push по отдельности. Команда в <code>sheriff.config.json</code> не нужна.</td>
+  <td class="links"><span class="cite" data-sid="s-pcnyfp7gev7syax">The order in which tools and checks run on a commit and on a push</span><span class="cite" data-sid="s-n4m5zvh96yb299p">The project's own tools in a git hook</span></td>
+</tr>
+<tr class="part" id="part-7" data-cites="s-kgbzk2ph9e6jfb4">
+  <td class="en"><div class="li">• the files other than JSON files whose format allows no comments: those that match the glob patterns in the <code>TextRule.list</code> of the rule that refines the rule on how code is bound to its rules (<span class="cite" data-sid="s-kgbzk2ph9e6jfb4" title="How code is bound to its rules">§1.5.2</span>);</div></td>
+  <td class="ru"><div class="li">• файлы, кроме файлов JSON, формат которых не допускает комментариев: те, что соответствуют glob-шаблонам в <code>TextRule.list</code> правила, которое уточняет правило о привязке кода к правилам (<span class="cite" data-sid="s-kgbzk2ph9e6jfb4" title="How code is bound to its rules">§1.5.2</span>);</div></td>
+  <td class="change">Новое: по правилу 1.5.2 файл такого формата привязывается к правилам через файл привязок. Решение моё: такие файлы указывают glob-шаблоны, как fixtures.</td>
+  <td class="links"><span class="cite" data-sid="s-kgbzk2ph9e6jfb4">How code is bound to its rules</span></td>
+</tr>
+<tr class="part" id="part-8" data-cites="s-gf6n8ge4mke3pr2">
+  <td class="en"><div class="li">• the <code>exempts</code> links of the nodes of <code>project.json</code> (<span class="cite" data-sid="s-gf6n8ge4mke3pr2" title="Exempting a rule from being implemented">§9.8</span>).</div></td>
+  <td class="ru"><div class="li">• связи <code>exempts</code> узлов <code>project.json</code> (<span class="cite" data-sid="s-gf6n8ge4mke3pr2" title="Exempting a rule from being implemented">§9.8</span>).</div></td>
+  <td class="change">Новое в этом узле: инструменты уже читают эти связи, когда проверяют, что правило реализовано.</td>
+  <td class="links"><span class="cite" data-sid="s-gf6n8ge4mke3pr2">Exempting a rule from being implemented</span></td>
+</tr>
+<tr class="part" id="part-9" data-cites="">
+  <td class="en"><p>Where an item above refers to the rule that refines another rule, the SpecSheriff tools find that rule by the <code>refines</code> link it carries, and read:</p></td>
+  <td class="ru"><p>Если пункт выше говорит о правиле, которое уточняет другое правило, инструменты SpecSheriff находят это правило по связи <code>refines</code>, которую оно несёт, и читают:</p></td>
+  <td class="change">Новое. Сейчас код при нескольких правилах об уровнях молча берёт последнее, а правила о fixtures объединяет. Теперь инструменты для всех таких пунктов поступают одинаково: читают элементы всех правил по порядку.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-10" data-cites="">
+  <td class="en"><div class="li">• nothing, if no rule of <code>project.json</code> refines that other rule;</div></td>
+  <td class="ru"><div class="li">• ничего, если ни одно правило <code>project.json</code> не уточняет то другое правило;</div></td>
+  <td class="change">Новое.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-11" data-cites="">
+  <td class="en"><div class="li">• otherwise, the members of every rule of <code>project.json</code> that refines that other rule, in the order in which those rules appear there.</div></td>
+  <td class="ru"><div class="li">• иначе — элементы каждого правила <code>project.json</code>, которое уточняет то другое правило, в том порядке, в каком эти правила там стоят.</div></td>
+  <td class="change">Новое.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>Пункт о правиле, которое одобряет спецификацию (уточняет <span class="cite" data-sid="s-qzthyh7yqvfhsa2" title="The specification's approval status">§10.6</span>), — по вашему решению от 21 ноября статус одобрения спецификации хранится в <code>sheriff.config.json</code>.</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-6sk8uet75dmq5qz"><span class="loc">реализует · 1.1.6</span> <b>The owners</b><br><span class="rut">Ответственные</span><br><span class="meta">guidelines · s-6sk8uet75dmq5qz</span></li>
+<li class="node" data-sid="s-nkyty4dy9x2v2a4"><span class="loc">реализует · 11.2.1</span> <b>A domain's level in the hierarchy</b><br><span class="rut">Уровень домена в иерархии</span><br><span class="meta">extension domains · s-nkyty4dy9x2v2a4</span></li>
+<li class="node" data-sid="s-6hha5en226aj8hu"><span class="loc">реализует · 10.11</span> <b>The fixtures of a check's tests are left out of the checks of citations and locations</b><br><span class="rut">Fixtures тестов проверки не участвуют в проверках ссылок и расположений</span><br><span class="meta">guidelines · s-6hha5en226aj8hu</span></li>
+<li class="node" data-sid="s-hhnahzmhahf8jht"><span class="loc">реализует · 8.4</span> <b>How a project's own kind of node is declared and checked</b><br><span class="rut">Как собственный тип узлов объявляется и проверяется</span><br><span class="meta">guidelines · s-hhnahzmhahf8jht</span></li>
+<li class="node" data-sid="s-2fau85dfyyeq66m"><span class="loc">реализует · 10.8</span> <b>A project's own checks join the shared ones</b><br><span class="rut">Собственные проверки проекта присоединяются к общим</span><br><span class="meta">guidelines · s-2fau85dfyyeq66m</span></li>
+<li class="node" data-sid="s-km4x4s26kv7pjze"><span class="loc">реализует · 10.9</span> <b>A project's own code generators</b><br><span class="rut">Собственные генераторы кода проекта</span><br><span class="meta">guidelines · s-km4x4s26kv7pjze</span></li>
+<li class="node" data-sid="s-pcnyfp7gev7syax"><span class="loc">реализует · 10.12</span> <b>The order in which tools and checks run on a commit and on a push</b><br><span class="rut">В каком порядке запускаются инструменты и проверки при коммите и при push</span><br><span class="meta">guidelines · s-pcnyfp7gev7syax</span></li>
+<li class="node" data-sid="s-kgbzk2ph9e6jfb4"><span class="loc">реализует · 1.5.2</span> <b>How code is bound to its rules</b><br><span class="rut">Как код привязывается к своим правилам</span><br><span class="meta">guidelines · s-kgbzk2ph9e6jfb4</span></li>
+<li class="node" data-sid="s-gf6n8ge4mke3pr2"><span class="loc">реализует · 9.8</span> <b>Exempting a rule from being implemented</b><br><span class="rut">Освобождение правила от реализации</span><br><span class="meta">guidelines · s-gf6n8ge4mke3pr2</span></li>
+<li class="node" data-sid="s-u7tw6m8npxmv5tu"><span class="loc">ссылается · 2.3</span> <b>A project's own guidelines</b><br><span class="rut">Собственные guidelines проекта</span><br><span class="meta">guidelines · s-u7tw6m8npxmv5tu</span></li>
+<li class="node" data-sid="s-zefk589ykh37b8u"><span class="loc">ссылается · tools 1</span> <b>Where the files are</b><br><span class="meta">appendix of the tools · s-zefk589ykh37b8u</span></li>
+<li class="node" data-sid="s-tdm3rwsppnuh6dm"><span class="loc">ссылается · 11</span> <b>Domains</b><br><span class="meta">extension domains · s-tdm3rwsppnuh6dm</span></li>
+<li class="node" data-sid="s-vsh384ybt4w25a2"><span class="loc">ссылается · 8.3</span> <b>A project's own kinds of node</b><br><span class="rut">Собственные типы узлов в проекте</span><br><span class="meta">guidelines · s-vsh384ybt4w25a2</span></li>
+<li class="node" data-sid="s-n4m5zvh96yb299p"><span class="loc">ссылается · tools 13</span> <b>The project's own tools in a git hook</b><br><span class="meta">appendix of the tools · s-n4m5zvh96yb299p</span></li>
+<li class="node" data-sid="s-m42rsngtayk9g3g"><span class="loc">ссылается · 2.4</span> <b>The minimum the shared rules require</b><br><span class="meta">guidelines · s-m42rsngtayk9g3g</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «Where the files are»</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Одобренная формулировка узла «Where the files are», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre>Части спецификации хранятся в `specs/`:
+
+- каждый домен — в `specs/&lt;domain&gt;/`, начиная с его заголовка в `specs/&lt;domain&gt;/00-&lt;domain&gt;.json`;
+- контракты — в `specs/contracts/`;
+- техническое приложение — в `specs/tech/`, каждый его раздел в отдельном файле: раздел домена — в `&lt;domain&gt;.json`, раздел стека — в `stack.json`, раздел технического долга — в `debt.json`;
+- guidelines — в `specs/_guidelines/`.
+
+Часть, разделённая на файлы по одному на раздел, хранит свои файлы в своей папке.
+
+В `specs/_guidelines/` собственные guidelines проекта хранятся в `project.json`. В репозитории, где пишутся SpecSheriff guidelines, там же хранятся база — в `spec.json` и описание инструментов — в `tools.json`. Все остальные проекты читают базу и описание инструментов из плагина своего агента (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4).
+
+Схема хранится в `specs/_schema/` репозитория, где пишутся SpecSheriff guidelines. Все остальные проекты читают её из плагина. Схема состоит из файлов:
+- `node.schema.json` — для узла и его метаданных;
+- `section-file.schema.json` — для файла части;
+- `extension.schema.json` — схема расширения.
+
+Расширение схемы, которое добавляет проект (§s-eferktypcj7njt5), хранится в `specs/_schema/project.schema.json`. Оно проверяется по схеме расширения и читается вместе со схемой (§s-xzcw3hv4hmxz7h7). Любой другой файл, который другой проект хранит в `specs/_schema/`, отклоняется как копия схемы.
+
+Одобрения хранятся в `specs/_approvals.jsonl`. Архив удалённых узлов хранится в `specs/_archive/&lt;name&gt;.json`.
+
+`specs/_viewer/` (карта) и `md-version/` (экспорт для чтения) строятся заново после каждого изменения спецификации. Ни то, ни другое не хранится в git.
+
+Инструменты SpecSheriff предоставляют команду `sheriff`. В терминале она запускается как `node &lt;tools&gt;/dist/cli.js` из инструментов, которые плагин хранит на машине (§s-4mej6ccn7xu3d3p). `&lt;tools&gt;` — папка данных плагина для Claude Code или папка `tools/` плагина для Codex CLI в кэше Codex.
+
+Их плагин для pytest, пакет `pytest-specsheriff`, устанавливается через pip из ветки `release`: `pip install "pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff"`.
+
+Настройки инструментов SpecSheriff, общие для проекта, хранятся в `sheriff.config.json` в корне репозитория. Настройки запусков рецензента, которые подтверждает каждый пользователь, хранятся в git-конфигурации пользователя (§s-xr5xxa9cxf2mq5u). Настройка `"writesSpecSheriffGuidelines": true` отмечает репозиторий, где пишутся SpecSheriff guidelines.
+
+Среди настроек glob-шаблоны указывают, где находится код системы и где находятся её тесты. Код и тесты читаются на SpecTag, а файл, не указанный ни как код, ни как тесты, не читается ни на что. Так конфигурация репозитория, его собственные инструменты и их тесты остаются вне кода системы по тому, где они лежат (§s-hheus6f395ynqvc).
+
+Среди настроек есть и команда, которая запускает каждую проверку и каждый генератор, добавленные собственными guidelines проекта (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze). Для каждого из них настройки содержат и glob-шаблоны, указывающие файлы его кода и его тестов (§s-utf4mbt7ref8g9c).
+
+Документы — это markdown-файлы, которые репозиторий хранит вне `specs/`.
+
+Инструменты спецификации — это файлы инструментов SpecSheriff. Проект хранит только те файлы, которые пишет `sheriff init`. Репозиторий, где пишутся SpecSheriff guidelines, хранит их в `skills/`, где тесты читаются на SpecTag, которые в них объявлены.
+
+В `project.json` находятся:
+- ответственные за спецификацию — те, кого называет её верхний узел;
+- уровни, на которых стоят домены, — элементы `TextRule.list` её правила, уточняющего §s-nkyty4dy9x2v2a4;
+- правило, которое одобряет спецификацию, — её правило, уточняющее §s-qzthyh7yqvfhsa2;
+- файлы, которые хранятся как фикстуры тестов, — те, что указывают glob-шаблоны, перечисленные её правилом, уточняющим §s-6hha5en226aj8hu.</pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>The parts of the specification are kept under `specs/`:
+
+- each domain under `specs/&lt;domain&gt;/`, opening with its header in `specs/&lt;domain&gt;/00-&lt;domain&gt;.json`;
+- contracts under `specs/contracts/`;
+- the technical appendix under `specs/tech/`, each of its sections in a file of its own — a domain's in `&lt;domain&gt;.json`, the stack's in `stack.json`, the technical debt's in `debt.json`;
+- the guidelines under `specs/_guidelines/`.
+
+A part divided into one file per section keeps its files in its directory.
+
+In `specs/_guidelines/`, a project's own guidelines are kept in `project.json`. In the repository the SpecSheriff guidelines are written in, the base is kept there in `spec.json` and the appendix of the tools in `tools.json`. Every other project reads the base and the appendix of the tools from the plugin of its agent (§s-zh2vcr3xjumppg5, §s-2pdy9gw2jrjvfb4).
+
+The schema is kept in `specs/_schema/` of the repository the SpecSheriff guidelines are written in. Every other project reads it from the plugin. The schema is made of these files:
+
+- `node.schema.json` for a node and its metadata;
+- `section-file.schema.json` for the file of a part;
+- `extension.schema.json`, the schema of an extension.
+
+A project's extension of the schema (§s-eferktypcj7njt5) is kept in `specs/_schema/project.schema.json`. It is validated against the schema of an extension and read together with the schema (§s-xzcw3hv4hmxz7h7). Any other file another project keeps under `specs/_schema/` is refused as a copy of the schema.
+
+Approvals are kept in `specs/_approvals.jsonl`. The archive of removed nodes is kept in `specs/_archive/&lt;name&gt;.json`.
+
+`specs/_viewer/` (the map) and `md-version/` (the readable export) are rebuilt after every change to the specification. Neither is stored in git.
+
+The SpecSheriff tools provide the command `sheriff`. In a terminal it is run as `node &lt;tools&gt;/dist/cli.js`, from the tools a plugin keeps on the machine (§s-4mej6ccn7xu3d3p). `&lt;tools&gt;` is the data directory of the plugin for Claude Code, or the `tools/` of the plugin for Codex CLI in Codex's cache.
+
+Their plugin for pytest, the package `pytest-specsheriff`, is installed by pip from the branch `release`: `pip install "pytest-specsheriff @ git+https://github.com/non4me/SpecSheriff@release#subdirectory=skills/pytest-specsheriff"`.
+
+The settings of the SpecSheriff tools that a project shares are kept in `sheriff.config.json` at the root of the repository. The settings of the reviewer's runs, which each user confirms, are kept in the user's git configuration (§s-xr5xxa9cxf2mq5u). The setting `"writesSpecSheriffGuidelines": true` marks the repository the SpecSheriff guidelines are written in.
+
+Among the settings, glob patterns name where the system's code lives and where its tests live. The code and the tests are read for SpecTags, and a file named neither as code nor as tests is read for neither. That is how the repository's configuration, its own tools and their tests are kept out of the system's code by where they live (§s-hheus6f395ynqvc).
+
+Among the settings, too, is the command that runs each check and each generator the project's own guidelines add (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze). For each of them, the settings also hold the glob patterns naming the files of its code and of its tests (§s-utf4mbt7ref8g9c).
+
+The documents are the markdown files the repository keeps outside `specs/`.
+
+The tools of the specification are the files of the SpecSheriff tools. A project keeps only the files `sheriff init` writes. The repository the SpecSheriff guidelines are written in keeps them under `skills/`, where the tests are read for the SpecTags they declare.
+
+The following are found in `project.json`:
+
+- the specification's owners are those its top node names;
+- the levels the domains stand at are the members of the `TextRule.list` carried by its rule that refines §s-nkyty4dy9x2v2a4;
+- the rule that approves the specification is its rule that refines §s-qzthyh7yqvfhsa2;
+- the files kept as fixtures of tests are those named by the glob patterns its rule refining §s-6hha5en226aj8hu lists.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

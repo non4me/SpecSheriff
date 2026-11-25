@@ -1,0 +1,256 @@
+{
+  "s-7zqsstgnuc772ba": {
+    "title": "A key written twice in one object",
+    "text": "`sheriff validate` reads each file it validates as text and counts the keys of each object.",
+    "reason": "A parser keeps one of the two values and drops the other without a word, so only the text shows a key written twice.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-xzcw3hv4hmxz7h7": {
+    "title": "The schema and a project's extension",
+    "text": "`sheriff validate` validates each file with a JSON Schema validator against the base schema of the SpecSheriff guidelines, composed with the project's extension (§s-eferktypcj7njt5).\n\nThe extension is validated first, against the schema of an extension. That schema lets an extension add only NodeKinds, properties of an existing NodeKind, and properties of a file or of a link.\n\nWhat the extension adds joins the base schema:\n\n- its NodeKinds join the NodeKinds a node may have;\n- its conditions join those every node is held to;\n- its properties of a file and of a link join those a file and a link may hold.\n\n`sheriff binding` validates each file against the same schema before it checks anything.\n\n`sheriff reindex` validates each file once it has merged each key written twice and changed what an earlier release wrote, as §s-f5rz6b7dhxejjts says. It does so before it computes anything. It leaves out of that validation only what it writes itself:\n\n- the links pointing at a node;\n- outside the archive, a sid a node lacks, every location, a header's index of its sections, the values gathered beside a field and the status of a section and of a domain's header.\n\nWhere the schema refuses a file, or the schema of an extension refuses the project's extension, each of the two commands names that file or the extension and every refusal in it. It then checks nothing more. `sheriff reindex` then writes no file.",
+    "reason": "Each command is written for the shape the schema gives a file. Only a validation against the schema names where a file departs from that shape and what is wrong there. `sheriff reindex` builds each file from all of them, so writing only some would leave the files disagreeing with one another.\n\nA key written twice is merged first, since a file read without the merge holds only its last value. What an earlier release wrote is changed first, since the schema refuses its old names. What `sheriff reindex` writes itself is left out, since a node written by hand lacks it until the command runs.",
+    "changed": true,
+    "doubts": [
+      "'each of the two commands' kept: it most likely means `sheriff binding` and `sheriff reindex`, but naming them (and so removing the count in prose) would choose a reading, since `sheriff validate` is named in the node too."
+    ],
+    "split": "The composed schema and what a refusal stops, which every command applies, stand apart from the order of `sheriff reindex`'s validation and what it leaves out, which only that command carries out."
+  },
+  "s-vke5hakwf3uyrjs": {
+    "title": "Sids, locations, terms and names of RecordTypes, counted",
+    "text": "`sheriff validate` collects every sid, location, term and RecordType's name, and counts each.\n\n- A term and a RecordType's name are counted in lower case.\n- For each term node, the part it stands in is looked up.",
+    "changed": false,
+    "doubts": [],
+    "split": "Counting the sids, locations, terms and names of RecordTypes; looking up the part each term node stands in."
+  },
+  "s-stxmhq3hgfndvn6": {
+    "title": "Locations computed anew",
+    "text": "`sheriff validate` computes in memory the location of each node from where it is, and compares it with the location its file holds.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-95w92rnjuv3sst8": {
+    "title": "An approved node's approval",
+    "text": "`sheriff validate` looks up each approved node in the approvals. The latest line for the node's sid and the fingerprint of its wording must be an approval. These nodes are left out:\n\n- the nodes of the SpecSheriff guidelines the project takes;\n- a section and a domain's header.\n\n`sheriff validate` looks up whoever an approval's line names among the owners of its node, as the commit holds them. It does so for each approval the commit adds to the approvals of its parent. The approvals of the parent are read as `sheriff reindex` would rewrite them (§s-f5rz6b7dhxejjts).",
+    "changed": true,
+    "doubts": [],
+    "split": "That an approved node's latest line is an approval; that each approval a commit adds names one of its node's owners."
+  },
+  "s-j4webte36gkraju": {
+    "title": "A removed node and the archive",
+    "text": "`sheriff validate` looks up in the approvals each sid a commit removes from the specification.\n\n- A node an approval was ever given for is looked up in the archive, with the reason for its removal, unless it is a section or a domain's header.\n- Any other node is refused where it stands in the archive.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-qzyacnqwvaeaps4": {
+    "title": "Outgoing links and citations",
+    "text": "`sheriff validate` resolves the target of every outgoing link among the sids that exist.\n\nIt reads the citations in every node and sets them against the links the node makes:\n\n- A `§` followed by a sid and then by no lower-case letter or digit cites that sid.\n- A `§` followed by anything else, up to a space, a comma, a semicolon or a closing parenthesis, is a citation by a location.\n- Text in backticks counts in the check as any other text does, except a citation by a location (§s-bpdqd9v72wg7vsz).\n- A header's index and the values gathered beside a field are not read.",
+    "reason": "A node may show, in backticks, what a refused citation looks like.",
+    "changed": true,
+    "doubts": [],
+    "split": "Resolving the target of each outgoing link; reading the citations against the links the node makes."
+  },
+  "s-pvnnr844f3y964m": {
+    "title": "The NodeKinds at the ends of a link",
+    "text": "`sheriff validate` looks up the NodeKind of the node at each end of every outgoing link and sets it against the link's type.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-agc6fb3vx46pc23": {
+    "title": "Indexes, incoming links, gathered values and the statuses of sections and headers, rebuilt",
+    "text": "`sheriff validate` rebuilds these in memory and compares them with what is committed:\n\n- the index of each domain's header, the header read as it now stands in the domain's files;\n- the incoming links;\n- the values gathered beside each field (§s-ju5vcanbjph7mgh);\n- the status of each section and domain's header (§s-9kfdycuq34beqvs).",
+    "changed": false,
+    "doubts": []
+  },
+  "s-e2vdhfsndy5stq9": {
+    "title": "Words running in capitals",
+    "text": "`sheriff validate` reads the title, text and reason of every approved node, and of every section and domain's header, for three words or more running in capitals.\n\n- Each such word has two characters or more.\n- The words are separated only by spaces or tabs.\n- Anything in backticks or double quotation marks is left out.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-zhen42p6mnaxu7w": {
+    "title": "A section with a rule in it",
+    "text": "`sheriff validate` reads the children of every section, and those of each section inside it, for a node that counts as a rule (§s-7445ahgjck2aefg).",
+    "changed": false,
+    "doubts": []
+  },
+  "s-qvgzubkrafadqgf": {
+    "title": "`consumes` and `exempts` links",
+    "text": "`sheriff validate` reads what stands at each end of every `consumes` and `exempts` link:\n\n- a `consumes` link, for a domain's header at its start and a section of another domain at its end;\n- an `exempts` link, for a node of `project.json` at its start, and a rule, a node of a project's own NodeKind or a section at its end.",
+    "changed": true,
+    "doubts": [],
+    "split": "The ends of a `consumes` link; the ends of an `exempts` link."
+  },
+  "s-vuujweu57sxsa58": {
+    "title": "No circular dependency between the domains",
+    "text": "`sheriff validate` walks the domains along the `consumes` links, from each domain's header to the domains whose sections it names. Where the walk comes back to a domain it has already passed, the check refuses the change. It names the domains along that circle.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-ezq8csd433vj6fj": {
+    "title": "A used domain's RecordType, only from the declared sections",
+    "text": "A using domain takes a RecordType of a used domain only from the sections its domain's header names in its `consumes` links. Otherwise `sheriff validate` reports it (§s-5yvpn4zhuqmv5bq).\n\n- A RecordType names another by a field's type or by its `refines` link.\n- The report gives the sid of the RecordType that names the other. The change is not refused.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-uxmkwbnpgtjzkgv": {
+    "title": "A header's level",
+    "text": "`sheriff validate` looks up the level each header names in the list the project's own guidelines hold.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-c2r9jndrjbtbsv6": {
+    "title": "What a RecordType variant must agree with",
+    "text": "`sheriff validate` checks that each RecordType variant agrees with the RecordType it refines, found by the variant's `refines` link:\n\n- the fields the variant answers to are those the nearest RecordType up its `refines` links names as choosing it;\n- each value it answers to is among the values of its choosing field, collected from the field's one source (§s-5nf87c3e3jg9v7c);\n- the variant stands in the part of the specification where its value is declared (§s-xfwuvd3funutmsw);\n- the variant declares at least one field that no RecordType up its `refines` links holds, the fields their fields of type `variant` hold included;\n- at most one field of type `variant` stands along those links;\n- no other variant of the same RecordType answers to the same values.\n\nA variant failing any of these is refused.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-3anv9qcmx8pwp2w": {
+    "title": "An identifier followed to its end",
+    "text": "`sheriff validate` looks up the RecordType that each field of type `identifier of` names. Among the fields of that RecordType, it looks up the one the RecordType names as identifying it.\n\n- Where that field is itself an identifier, the RecordType it names is followed in the same way, until a field of another type is reached.\n- A RecordType reached twice is refused.",
+    "changed": true,
+    "doubts": [
+      "'the one it names as identifying it' resolved to the RecordType naming its identifying field, as the schema's `identifiedBy` on a RecordType says; please confirm.",
+      "'that RecordType's fields' kept as words, not `RecordType.fields`: the identifying field may be inherited (the schema says 'its own or inherited'), so the property would narrow it."
+    ]
+  },
+  "s-5nf87c3e3jg9v7c": {
+    "title": "Where the values of a field of type `one of` are collected",
+    "text": "`sheriff validate` collects the values of each field of type `one of` from its one source (§s-xfu2gpzddjnmgks), which is one of these:\n\n- its own list;\n- the members of each `TextRule.list` a rule of a domain adds to it. Each such list is found through its rule's `refines` link, which leads to the RecordType of contracts holding the field. The list names that field (§s-gzfq3x8hesj227e);\n- the names of the domains;\n- the sids of the nodes of the NodeKind it names that stand in the base specification.\n\nIt refuses:\n\n- a field holding no value;\n- a value found in two lists that rules of domains add to the field;\n- a domain's list whose rule refines no RecordType of contracts;\n- a domain's list naming a field the RecordType its rule refines does not hold;\n- a domain's list naming a field whose source is another;\n- a NodeKind named that the schema does not hold.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-cdachayybfvg4na": {
+    "title": "An object in a list",
+    "text": "`sheriff validate` reads each member of a `TextRule.list` that is an object for the property the list names (§s-v7vd4ydrwexsgsj). A member lacking it is refused.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-6bmnsbskg6en4nf": {
+    "title": "No copy of the SpecSheriff guidelines",
+    "text": "`sheriff validate` refuses a copy of the SpecSheriff guidelines or of their schema outside the repository they are written in. A copy is:\n\n- a `spec.json` or a `tools.json` under `specs/_guidelines/`;\n- any file under `specs/_schema/` but `project.schema.json`.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-yprj7d6tnvauggr": {
+    "title": "`implements` and `refines` links of the appendices and a project's own guidelines",
+    "text": "`sheriff validate` resolves the outgoing `implements` and `refines` links of each node but a section, and reads the part of the node each names.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-gvafe6bnstwab8b": {
+    "title": "A file of the technical appendix named after a domain",
+    "text": "`sheriff validate` looks up among the domains the name of each file of the technical appendix but `stack.json` and `debt.json`.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-7pk89t8z6wymmj9": {
+    "title": "How a project's own check is run",
+    "text": "`sheriff validate` runs each check a project's own guidelines add (§s-2fau85dfyyeq66m), by the command the settings name for it.\n\n- The check runs in the directory the other checks read.\n- The check is handed on its standard input what `sheriff model` prints.\n- An exit code other than zero refuses, or is reported where the rule listing the check says it reports.\n- What the check printed is shown with it.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-2x58az67bm6cxq2": {
+    "title": "The symbols a commit changes",
+    "text": "`sheriff binding` finds which symbols of the system's code outside its tests the commit changes.\n\n- A changed line counts for the symbol it stands in. A change anywhere in a symbol is a change of the whole symbol.\n- A line holding a SpecTag, before the commit or after it, counts for the symbol the SpecTag marks, even where it stands outside the symbol's body.\n\nA symbol does not count as changed where each of its changed lines:\n\n- is not a line holding a SpecTag;\n- differs from the line it replaces only in a comment, in the sid a citation names, or in an identifier the commit renames throughout.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-9rtrj24myzjvshu": {
+    "title": "SpecTags on the system's code",
+    "text": "`sheriff binding` reads the SpecTag of every symbol of the system's code. A SpecTag binds a symbol to the node the symbol implements. The system's code is the code that implements the specification, its tests included.\n\n- A test carries its SpecTag in its name or in a mark on it (§s-zrsc6asgmhv8tnc), so the symbols of the tests are not read.\n- The repository's configuration, its own tools and their tests are not the system's code (§s-hheus6f395ynqvc), and are not read.\n- An inner symbol is covered by the SpecTag of the symbol it stands in.\n- The sid of a SpecTag is looked up among the nodes. That of a SpecTag on a changed symbol is looked up among the approved ones. A symbol changes where a line the commit changes counts for it (§s-2x58az67bm6cxq2).\n- While the commit leaves the specification a draft (§s-j9r8z4xdrfkfs47), a symbol carrying no SpecTag that the commit does not change is reported by the symbol, not refused (§s-kkbqcb9xrpaepwn).",
+    "changed": true,
+    "doubts": []
+  },
+  "s-j9r8z4xdrfkfs47": {
+    "title": "From a draft to an approved specification, and back",
+    "text": "`sheriff binding` holds the specification's passage from a draft to approved and back (§s-qzthyh7yqvfhsa2). It reads the rule that approves the specification in `project.json`.\n\nIt takes the specification before a commit as the commit's first parent holds it, read as `sheriff reindex` would rewrite it (§s-f5rz6b7dhxejjts). Where the commit has no parent, it takes the specification before the commit as a draft.\n\nWhile the commit leaves the specification a draft, `sheriff binding` reports each of these rather than refusing it, where the commit does not change it (§s-kkbqcb9xrpaepwn):\n\n- a symbol of the system's code outside its tests that carries no SpecTag;\n- a test that carries no SpecTag.\n\nWhile the commit leaves the specification approved, both are refused.\n\nA commit that puts the specification back to draft passes only where it adds to the approvals a withdrawal of that rule's approval, of whichever wording, by one of the specification's owners as the commit holds them.",
+    "changed": true,
+    "doubts": [
+      "'and so is a test' written out as 'a test that carries no SpecTag', as §s-utf4mbt7ref8g9c states it; please confirm."
+    ],
+    "split": "How the specification's status before and after a commit is taken; what a draft changes for symbols and tests without a SpecTag; the withdrawal a return to draft needs."
+  },
+  "s-utf4mbt7ref8g9c": {
+    "title": "The SpecTags the tests carry",
+    "text": "`sheriff binding` reads every test for the SpecTag it carries.\n\n- A test's SpecTag is resolved against the rules, the terms and the nodes of a project's own NodeKind. That of a test whose text the commit changes is resolved against the approved ones.\n- A test whose only change puts `@spec ` before the bare sid it carried (§s-f5rz6b7dhxejjts) does not count as changed (§s-rah8b37kytb682y).\n- A test carrying a bare sid carries no SpecTag. Whatever is reported or refused for it names `sheriff reindex`, which writes the SpecTag.\n- While the commit leaves the specification a draft (§s-j9r8z4xdrfkfs47), a test carrying no SpecTag that the commit does not change is reported by the test, not refused (§s-kkbqcb9xrpaepwn).\n- The sids of the SpecTags on the changed symbols are looked up among the sids the tests' SpecTags name.\n- For each of the project's own checks and generators whose code the commit changes, the sid of the rule listing it is looked up among the sids the tests' SpecTags name. The code of such a check or generator is the files the settings name as its code.\n- Each test in the files the settings name as the tests of a project's own check or generator is read for the SpecTag of the rule listing it (§s-sfjka4zc4rhfu67).",
+    "changed": true,
+    "doubts": [],
+    "split": "Resolving each test's SpecTag; a changed symbol's sid among the tests' SpecTags; a project's own check or generator and the tests of the rule listing it."
+  },
+  "s-t383grkn3q68dpf": {
+    "title": "A node's `meta.code` and `meta.tests`",
+    "text": "`sheriff binding` collects the SpecTags on the code and on the tests across the repository, and compares them with each node's `meta.code` and `meta.tests`.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-5hb9k2e34dgn284": {
+    "title": "A list and its declaration",
+    "text": "`sheriff binding` compares the members of each list a node holds with the declaration the list names in the code, the schema or the settings. A member that is an object is compared by the property the list names.",
+    "changed": false,
+    "doubts": [
+      "'each list a node holds' kept rather than `TextRule.list`: only a TextRule holds a list in the base schema, but the node says 'a node', and the tools read a list on any node."
+    ]
+  },
+  "s-nh8b2hjvzasdxmd": {
+    "title": "Citing a node only by its sid",
+    "text": "Wherever a node is cited, a rule, a term or a node of a project's own NodeKind, it is cited by its sid, never by its location (§s-kag2m9tzdnduxdx). `sheriff binding` holds every file of the repository to this but those under `specs/`. There `sheriff validate` checks the citations in the nodes (§s-qzyacnqwvaeaps4).\n\n- A location of a node found in a file is refused, in any case of its letters and whether or not the node exists now.\n- One exception: the fixtures of the tests of a check that reads citations or locations. Such a test needs a file holding a location, as the data it feeds the check. The files are those the project's own guidelines list as fixtures (§s-6hha5en226aj8hu).",
+    "changed": true,
+    "doubts": [
+      "The apposition 'a rule, a term or a node of a project's own NodeKind' kept in place: moving it would choose whether it restricts which nodes are meant or only illustrates them; a section, a header and a RecordType are not named in it."
+    ]
+  },
+  "s-dbk2vyeg8z5jxna": {
+    "title": "Generated copies against the nodes",
+    "text": "`sheriff binding` generates in memory the copies the nodes produce, and compares them with what is committed. The copies are:\n\n- the files the technical appendix lists for the types and RuntimeChecks (§s-pvzms7d8kxb8dk2);\n- the files each of the project's own generators prints, run as `sheriff types` runs it (§s-km4x4s26kv7pjze).\n\nEach copy is compared with what the last commit holds instead while a node it waits for is a draft (§s-f5rz6b7dhxejjts). Each such node is reported.\n\nIt refuses:\n\n- a list of the files for the types and RuntimeChecks naming a file of another extension or a path outside the repository;\n- a path a project's generator prints outside the repository or under `specs/`;\n- two rules of the stack each defining such a list;\n- a name that cannot be generated (§s-suv42g8r3ra2h6b);\n- a RecordType holding two fields of type `variant`, its inherited ones counted.",
+    "changed": true,
+    "doubts": [
+      "'Each copy is compared with what the last commit holds instead' kept: whether the committed file or the generated copy is set against the last commit is not said, and rewording would choose."
+    ]
+  },
+  "s-txbwsthdqhvyzd2": {
+    "title": "A node whose tests or code lag behind it",
+    "text": "`sheriff binding` reports a node whose tests or code lag behind it, by the order rule, test, code.\n\nThe check takes the references to the files from the node's `meta.code` and `meta.tests` (§s-t383grkn3q68dpf). It learns from the history of the repository when each of those files and the node's text last changed. The history is read as follows:\n\n- changes made in one commit count as made at once;\n- a commit whose only change to a file of tests puts `@spec ` before bare sids (§s-rah8b37kytb682y) does not count as changing that file;\n- a renamed file is followed under its earlier names too.\n\nIt reports the node where:\n\n- its text changed later than every file of its tests: the tests lag;\n- its text changed later than every file of its code: the code lags;\n- its tests changed later than every file of its code: the code may not have caught up with the tests.\n\nThe node is reported by its sid, naming what lags. The change is not refused.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-jgejd5rpd9d43pd": {
+    "title": "An approved node without code or a test",
+    "text": "`sheriff binding` looks up each approved rule among the sids the SpecTags on the system's code and on its tests name. It looks up in the same way each approved node of a project's own NodeKind that needs code.\n\n- A node of a project's own NodeKind needs code unless its extension declares it as needing none (§s-vsh384ybt4w25a2).\n- Nodes of the SpecSheriff guidelines, of `project.json` and of `debt.json` are left out.\n- A test its framework is told to skip does not count.\n- A rule implementing the node through an `implements` link counts for it, and so, in turn, does each rule implementing such a rule.\n- A node lacking a symbol carrying its SpecTag, or a test carrying it, is reported, naming what it lacks. It is not reported where an `exempts` link to it or to a section it stands under exempts it.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-m8nmfsxkcfu7cjp": {
+    "title": "A citation outside the specification",
+    "text": "`sheriff citations` resolves each sid in the code, the tests and the documents against the nodes, the archive's included. It refuses a `§` followed by a number in place of a sid, such as `§5.8`: a node is cited only by its sid.\n\n- One exception: the fixtures of the tests of a check that reads citations or locations are not read. The files are those the project's own guidelines list as fixtures (§s-6hha5en226aj8hu).",
+    "changed": false,
+    "doubts": []
+  },
+  "s-st6td4mua9uqt9z": {
+    "title": "An edit judged before it is made",
+    "text": "`sheriff guard` builds the file as the edit would leave it, without writing it to disk.\n\n- Each changed line counts for the symbol it stands in. A line holding a SpecTag counts for the symbol the SpecTag marks (§s-2x58az67bm6cxq2).\n- The SpecTags of each changed symbol are looked up among the sids named by the SpecTags of the working tree's tests, the edited file as it would stand included.\n- A node the edit leaves approved is looked up in the approvals, a section and a domain's header left out. The latest line for its sid and the fingerprint of its wording must be an approval (§s-95w92rnjuv3sst8).\n- An edit of a file the settings name as the code of a project's own check or generator is refused where no test of the working tree carries the SpecTag of the rule listing it (§s-sfjka4zc4rhfu67).\n- An edit of `specs/_approvals.jsonl` is refused whatever it changes, since `sheriff approve` records an approval and its withdrawal (§s-v4qus7raqnwzneb).",
+    "changed": true,
+    "doubts": [],
+    "split": "A changed symbol's SpecTags among the tests; an approved node's approval; an edit of a project's own check or generator; an edit of `specs/_approvals.jsonl`."
+  },
+  "s-qqs2svksmjct753": {
+    "title": "A commit message names the nodes its code implements",
+    "text": "A commit that changes code names in its message, by sid, every node the SpecTags on its changed symbols outside the tests name. `sheriff message` refuses the message where:\n\n- a node a SpecTag on a changed symbol outside the tests names is not named in it;\n- a sid in it names no node;\n- a sid in it names a domain's header or a section, which no code implements.",
+    "changed": false,
+    "doubts": []
+  },
+  "s-vp24dqydygztqbt": {
+    "title": "The review of a commit",
+    "text": "`sheriff review` has a runner judge every commit that changes the system's code. A runner is an agent's CLI, started apart from the session that wrote the code (§s-xr5xxa9cxf2mq5u). The runner is given:\n\n- the commit's message;\n- the commit's change, less the files generated from the nodes, each of which is named to it with what it holds;\n- each node the message or a changed symbol's SpecTag names, with its text and its reason. A RecordType is given with its `RecordType.fields`, and a node of a project's own NodeKind with the values its NodeKind declares;\n- each symbol of the system's code outside its tests the commit changes, whole as the commit leaves it, with its file, its lines and its SpecTags.\n\nThe symbols are those `sheriff binding` finds changed (§s-2x58az67bm6cxq2). A symbol's SpecTags are its own or those of the symbol it stands in.\n\nThe runner judges the commit against the nodes. It judges each changed symbol, whole, against the nodes its SpecTags name.\n\nIt refuses the commit where the code:\n\n- does something no named node states in its text;\n- leaves out what a named node requires.\n\nIt also refuses the commit where a changed symbol:\n\n- does something no node its SpecTags name states in its text;\n- carries a SpecTag naming a node it does not implement;\n- carries the SpecTag that names no node while it implements the system's logic.\n\nA finding of the last sort names as its node the rule that every symbol carries a SpecTag (§s-kgbzk2ph9e6jfb4).",
+    "reason": "A SpecTag says which node a symbol is held to. The checks can tell that a SpecTag names a node that exists, not that the symbol does what that node says. Nor can they tell whether a symbol whose SpecTag names no node carries the system's logic. A reader of the code can tell both.\n\nA changed symbol is judged whole, since a change anywhere in it counts as a change of the whole symbol. The whole symbol is then held to the nodes the commit names. Shown only the changed lines, the reviewer would pass the lines beside them that do what no node says.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-b6qdtghnyha3fhk": {
+    "title": "The tests, run before a push",
+    "text": "The pre-push hook runs the tests by the project's test command. It runs no test and compares nothing where both of these hold:\n\n- the push creates or updates a ref;\n- no commit those refs name holds the specification approved (§s-j9r8z4xdrfkfs47).\n\nIt then says that the specification is a draft and no test ran.",
+    "reason": "The working tree is compared with what the push sends only because the tests run in the working tree (§s-477gtdrkw34dzxw), so where no test runs the comparison guards nothing.",
+    "changed": true,
+    "doubts": []
+  }
+}

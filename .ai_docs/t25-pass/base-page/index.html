@@ -1,0 +1,154 @@
+<title>Структура базы SpecSheriff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a slim header with the legend, then the new sections of the base in order, each a list of
+     its nodes; the map from the old locations to the new ones at the end. */
+  /* One dark look, whatever the viewer's theme: the owner reads it on a dark ground. */
+  :root {
+    --bg: #0f171c;
+    --panel: #17232b;
+    --panel-2: #1d2b35;
+    --fg: #eef1f3;
+    --muted: #a3b0b9;
+    --rule: #2c3a44;
+    --law: #e8b75a;
+    --new: #5fbf86;
+    --split: #5cb8d8;
+    --move: #9fb6cf;
+    --same: #7d8b95;
+    --display: "PT Serif", Georgia, serif;
+    --body: "PT Sans", "Segoe UI", Arial, sans-serif;
+    --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap {
+    max-width: 1080px; margin: 0 auto;
+    padding-block: 18px 48px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid; gap: 22px;
+  }
+  header { display: grid; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 16px; }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.15rem; margin: 0; text-wrap: balance; }
+  .as-of { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+  .lead { margin: 0; max-width: 68ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; list-style: none; font-size: 0.9rem; }
+  .legend li { display: flex; align-items: center; gap: 6px; }
+  .hint { color: var(--muted); font-size: 0.85rem; margin: 0; }
+  .mark { font-family: var(--mono); font-size: 0.78rem; padding: 1px 7px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+  .m-law { color: var(--law); } .m-new { color: var(--new); } .m-split { color: var(--split); }
+  .m-part { color: var(--split); } .m-move { color: var(--move); } .m-same { color: var(--same); }
+  .m-agreed { color: var(--new); border-color: var(--new); font-weight: 600; }
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .note { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; min-width: 0; }
+  .note h3 { margin: 0 0 6px; font-size: 0.95rem; color: var(--muted); letter-spacing: 0.02em; }
+  .note ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+  section.part { display: grid; gap: 8px; }
+  .part-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .part-head .num { font-family: var(--mono); color: var(--muted); }
+  .part-head .ru { color: var(--muted); }
+  .purpose { margin: 0; color: var(--muted); font-size: 0.92rem; }
+  .part.laws .part-head h2 { color: var(--law); }
+  .group-head { margin-top: 8px; padding-left: 10px; border-left: 2px solid var(--rule); }
+  .group-head h3 { margin: 0; font-size: 1rem; color: var(--law); }
+  .group-head .purpose { flex-basis: 100%; }
+  .group-head.sub, ol.nodes.sub { margin-left: 22px; }
+  table.draft-table { border-collapse: collapse; width: 100%; margin: 4px 0 10px; font-size: 0.92em; }
+  table.draft-table th, table.draft-table td { border: 1px solid var(--rule); padding: 4px 6px; vertical-align: top; text-align: left; }
+  ol.nodes { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  li.node {
+    display: grid; grid-template-columns: 3.6rem 1fr auto; gap: 2px 12px; align-items: baseline;
+    padding: 7px 10px; border-radius: 4px; background: var(--panel); border: 1px solid transparent; cursor: pointer;
+  }
+  li.node:focus-visible { outline: 2px solid var(--split); outline-offset: 1px; }
+  li.node.law { border-left: 3px solid var(--law); }
+  li.node.lit { border-color: var(--law); background: var(--panel-2); }
+  li.node.sel { border-color: var(--fg); background: var(--panel-2); }
+  .n { font-family: var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .t { min-width: 0; display: grid; gap: 2px; }
+  .en { font-weight: 700; }
+  .ru-t { color: var(--muted); font-size: 0.92rem; }
+  .gist { font-size: 0.92rem; }
+  .now { font-size: 0.92rem; }
+  .now::before { content: "сейчас: "; color: var(--law); font-family: var(--mono); font-size: 0.78rem; }
+  .gist::before { content: "суть нового узла: "; color: var(--law); font-family: var(--mono); font-size: 0.78rem; }
+  .why { font-size: 0.86rem; color: var(--muted); }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .from { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+  .map-wrap { overflow-x: auto; }
+  table.map { border-collapse: collapse; font-size: 0.88rem; min-width: 560px; width: 100%; }
+  table.map th, table.map td { text-align: left; padding: 4px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  table.map th { color: var(--muted); font-weight: 400; }
+  table.map td.o, table.map td.d { font-family: var(--mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  details.full > summary { position: relative; cursor: pointer; list-style: none; padding-left: 1.3rem; }
+  details.full > summary::-webkit-details-marker { display: none; }
+  details.full > summary::before { content: "▸"; position: absolute; left: 0; top: 0; color: var(--muted); }
+  details.full[open] > summary::before { content: "▾"; }
+  details.full > summary .en, details.full > summary .ru-t { display: block; }
+  .fold-body { display: grid; gap: 6px; }
+  .full-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 8px; }
+  .full-col { display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .full-h { font-family: var(--mono); font-size: 0.75rem; color: var(--law); }
+  .full-tx { white-space: pre-wrap; font-size: 0.9rem; overflow-wrap: anywhere; }
+  .cite { border-bottom: 1px dotted currentColor; cursor: help; font-family: ui-monospace, monospace; font-size: 0.85em; }
+  .sid { font-family: ui-monospace, monospace; font-size: 0.75rem; color: var(--same); }
+  ul.changes { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 3px; font-size: 0.86rem; color: var(--muted); }
+  #open-all { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  #open-all:focus-visible, details.full summary:focus-visible { outline: 2px solid var(--split); outline-offset: 2px; }
+  @media (max-width: 560px) {
+    li.node { grid-template-columns: 2.8rem 1fr; }
+    .badges { grid-column: 2; justify-content: flex-start; }
+  }
+  @media (prefers-reduced-motion: no-preference) { li.node { transition: background-color .15s, border-color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>База guidelines: от общего к частному</h1>
+    <span class="as-of">проект структуры spec.json · 7 ноября 2026 · T25 · до ревью по одному узлу</span>
+    <p class="lead">В начале стоят короткие правила, заповеди метода. Всё, что их уточняет, стоит в разделах ниже, от общего к частному. Заповеди и разделы идут по пути изменения: узел → правило → одобрение → тест → код. Проверки держат весь путь и стоят последними. Формулировки узлов здесь не меняются: каждый показан с заголовком, который у него сейчас, а заповедь — ещё и с нынешним текстом. Разделение узла и формулировки его частей — дело ревью узла, по одному.</p>
+    <ul class="legend">
+      <li><span class="mark m-law">заповедь</span>короткое правило в начале</li>
+      <li><span class="mark m-new">✚ новый</span>нового узла раньше не было</li>
+      <li><span class="mark m-split">✂ делится</span>узел разделится при ревью, здесь его заголовок</li>
+      <li><span class="mark m-part">✂ часть</span>часть, которая при разделении уйдёт сюда</li>
+      <li><span class="mark m-move">↗ перенесён</span>узел целиком в другом разделе</li>
+      <li><span class="mark m-same">· на месте</span>в том же разделе, другой номер</li>
+    </ul>
+    <p class="hint">Щелчок по заголовку узла сворачивает и раскрывает его. Согласованные узлы свёрнуты до заголовка, несогласованные раскрыты вместе с обоснованием. Щелчок по номеру или тексту правила подсвечивает узлы, которые его уточняют или в которые ушли его детали.</p>
+    <p><button id="open-all" type="button">Раскрыть все узлы</button></p>
+  </header>
+
+  <div class="notes">
+    <div class="note">
+      <h3>Что не меняется</h3>
+      <ul>
+        <li>Каждый существующий sid остаётся. Перенос меняет только номер, то есть расположение.</li>
+        <li>Перенос не меняет статуса узла. Ссылки и SpecTag идут по sid, поэтому перенос их не ломает.</li>
+        <li>Новые узлы и части разделённых станут черновиками и придут к вам по одному.</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h3>Что решается при показе узлов</h3>
+      <ul>
+        <li>Какая часть разделённого узла сохраняет его sid: та, на которую указывают ссылки и тесты.</li>
+        <li>Формулировки разделяемых узлов и их частей: после проверки рецензентом, каждый узел отдельно.</li>
+        <li>Описание инструментов и project.json получат тот же порядок, когда до них дойдёт ревью.</li>
+      </ul>
+    </div>
+  </div>
+
+  <main id="parts"></main>
+
+  <section class="part" aria-labelledby="map-h">
+    <div class="part-head"><h2 id="map-h">Откуда что пришло</h2></div>
+    <p class="purpose">Каждый узел нынешней базы и место, где он окажется.</p>
+    <div class="map-wrap"><table class="map" id="map"></table></div>
+  </section>
+</div>
+
+<script src="page.js"></script>

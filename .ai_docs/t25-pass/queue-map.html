@@ -1,0 +1,249 @@
+<title>Очередь задач SpecSheriff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a slim header with the legend over a mind map filling the rest of the screen. */
+  /* One dark look, whatever the viewer's theme: the owner reads it on a dark ground. */
+  :root {
+    --bg: #0f171c;
+    --panel: #17232b;
+    --fg: #eef1f3;
+    --muted: #a3b0b9;
+    --rule: #2c3a44;
+    --done: #5fbf86;
+    --now: #5cb8d8;
+    --wait: #e2a23b;
+    --plan: #8fb0cf;
+    --display: "PT Serif", Georgia, serif;
+    --body: "PT Sans", "Segoe UI", Arial, sans-serif;
+    --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px;
+    display: flex; flex-direction: column;
+  }
+  header {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 24px;
+    padding-block: 14px 12px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    border-bottom: 1px solid var(--rule); background: var(--panel);
+  }
+  h1 { font-family: var(--display); font-size: 1.35rem; margin: 0; text-wrap: balance; }
+  .as-of { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; padding: 0; list-style: none; font-size: 0.9rem; }
+  .legend li { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .dot.done { background: var(--done); } .dot.now { background: var(--now); }
+  .dot.wait { background: var(--wait); } .dot.plan { background: var(--plan); }
+  .hint { color: var(--muted); font-size: 0.85rem; flex-basis: 100%; margin: 0; }
+  main { flex: 1; min-height: 70vh; position: relative; }
+  main .markmap { position: absolute; inset: 0; }
+  main svg.markmap { position: static; width: 100%; height: 100%; }
+  main .markmap {
+    --markmap-text-color: var(--fg);
+    --markmap-a-color: var(--plan);
+    --markmap-code-bg: var(--panel);
+    --markmap-code-color: var(--fg);
+    --markmap-circle-open-bg: var(--bg);
+    --markmap-font: 400 15px/20px var(--body);
+  }
+  .markmap code { font-family: var(--mono); font-size: 0.85em; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.12/dist/browser/index.js" integrity="sha384-p+gyhsDIg0RmvIKRr9BBGSyJ9NDDkiFsbilRwdZd20Q8mUL2v7e8+orY4pvTV52w" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.18.12/dist/browser/index.iife.js" integrity="sha384-ZlXKtR0wcZqxEYI8i3TPFFiOJR1MEdIzdVvnhSOonCrPsBup4dnkRw49FeYhfsHF" crossorigin="anonymous"></script>
+
+<header>
+  <h1>Очередь задач на 23 ноября</h1>
+  <span class="as-of">состояние на 23 ноября; сессия закрыта; в работе T25, T32, T33; последний коммит 06ea694</span>
+  <ul class="legend">
+    <li><span class="dot done"></span>✓ сделано сегодня</li>
+    <li><span class="dot now"></span>● в работе сейчас</li>
+    <li><span class="dot wait"></span>◐ ждёт вашего решения</li>
+    <li><span class="dot plan"></span>○ дальше по очереди</li>
+  </ul>
+  <p class="hint">Щелчок по кружку раскрывает или сворачивает ветку; колесо мыши и перетаскивание двигают карту.</p>
+</header>
+<main>
+<div class="markmap"><svg class="markmap" id="map"></svg></div>
+<script type="text/template" id="outline">
+---
+markmap:
+  initialExpandLevel: 3
+  maxWidth: 380
+---
+
+# Очередь на 22 ноября
+
+## ✓ Сделано сегодня
+
+### ✓ Раздел «Команды» — согласован целиком
+- sheriff json, todos, guide, types, генератор проекта, settings, untagged
+- одиннадцать узлов в согласованном порядке
+
+### ✓ Разделы «Инструменты» и «Как выполняется каждая проверка» — согласованы
+- без убранного термина «base of the guidelines»; группировка по командам
+
+### ✓ Узлы строк 10.1.1, 10.1.3, 10.1.6, 10.1.7 и 12.12.1 — согласованы
+- ключ, записанный больше одного раза; повторяющиеся sid, термины и имена RecordType; термины вне контрактов
+
+### ✓ Новые правила показа узлов
+- вам показывается только готовая формулировка, один раз
+- английский читают чтецы EngStickler до показа, а не после
+
+### ✓ Claude Code: в SpecSheriff выключено лишнее
+- плагины vanta, engineering, miro; skills и подключения Datalite; codegraph
+
+### ✓ SkillEvaluator от NVIDIA: skills проверены
+- уровни 1 и 2 пройдены всеми пятью skills
+- описания spec-adopt и spec-init агент может спутать
+
+### ✓ T31 — проверка skills перед каждой публикацией — в очереди
+
+### ✓ Коллизии skills: замер по 38 сессиям
+- предсказанные конфликты с superpowers не случились ни разу
+- новое правило: каждый слой skills решает вопросы своей области
+
+### ✓ Сжатие сессии: замер по 55 сжатиям
+- после сжатия правила перечитывались лишь в 3 случаях из 51
+- две процедуры: перед сжатием — что сохранить, после — перечитать правила
+
+### ✓ Двойник: вопросы 1–4 решены
+- отдельный субагент; на обучении вы видите мою рекомендацию и выбор двойника
+- развивает двойника отдельный наблюдатель
+- два слоя и журнал совпадений; право решать — по видам решений, после серии совпадений
+
+## ● В работе: T25 — одна мысль в предложении, в методе
+
+### ✓ этап 1: черновики — в файлы спецификации, пока в промежуточной папке
+
+### ● этап 2: описание инструментов
+- ✓ пункты 1–8 из 63: 11 узлов описания и 16 новых узлов согласованы
+- ● новый порядок работы — ждёт вашего ответа
+- ○ группа 1: проверки sheriff validate — узлы и связи, пункты 9–19
+- ○ группа 2: ревизия коммита и SpecTag, пункты 20–26
+- ○ группа 3: статус спецификации и списки привязок, пункты 27–32
+- ○ группа 4: ссылки, сгенерированные копии, полнота реализации, пункты 33–40
+- ○ группа 5: проверки расширений Domains и RecordType, пункты 41–47
+- ○ группа 6: одобрение, выбор расширений, установка SpecSheriff, пункты 48–50
+- ○ группа 7: экспорт, карта и то, что порождает RecordType, пункты 51–56
+- ○ группа 8: hooks и плагины, пункты 57–63
+
+### ○ этап 3: тесты, затем код; файлы — в specs/, одобрения
+
+### ○ этап 4: skills, руководства; T31; выпуск с репетицией, saloon
+
+## ● В работе: T32 — проба «поток — отдельный агент»
+
+### ✓ протокол согласован; базовая линия посчитана
+- 8,6% ваших сообщений — поправки; 1,5 сообщения и 18 минут на согласованный узел T25
+- 2 млн свежих токенов за час работы, 0,27 сжатия в час
+
+### ✓ описаны два агента потоков: область vt и область SpecSheriff
+
+### ✓ перезапуск Claude Code: новые агенты загружаются только при запуске
+
+### ✓ контрольные проверки внутри агента потока пройдены
+
+### ✓ повтор, круг 1: 24 прогона и 4 судьи
+- двойник: старая схема 3 ошибки из 3, агент потока 0
+- но агент потока не назвал зависимость от SpecSheriff (3 из 3 в случае 3)
+- и читал файлы репозитория, где лежал чужой вопрос (3 из 3 в случае 4)
+
+### ✓ повтор, круг 2: доработанные агенты потоков
+- двойник: снова 3 ошибки из 3 у старой схемы, 0 у агента потока
+- зависимость от SpecSheriff теперь названа во всех трёх ответах
+- случай 1.7.4 судьи оценивают неустойчиво
+
+### ✓ ваше решение: отдельный агент только для потока из другой области
+- двойник — отдельным агентом с правилами vt; T25 — в основной сессии
+
+### ✓ двойник, вопрос 8: вид решения — по области вопроса и форме решения
+
+### ✓ двойник, вопрос 9: у двойника свой набор принципов, наблюдатель меняет его сам
+
+### ✓ двойник, вопрос 10: двойник читает правила vt, свои принципы — только о том, чего в них нет
+
+### ✓ двойник, вопрос 11: после обучения — сводка решений двойника в конце сессии
+
+### ✓ двойник, вопрос 12: непросмотренная сводка открывает следующую сессию
+
+### ✓ интервью о двойнике закончено: вопросов, на которые можете ответить только вы, не осталось
+
+### ✓ первая строка журнала: эта сессия; ваша оценка — при закрытии
+
+### ○ живая часть продолжается в сессиях T33: строка журнала и ваша оценка после каждой
+
+### ○ после трёх сессий — вывод по протоколу вам; T32 закрывается
+
+## ● В работе: T33 — цифровой двойник: сборка и испытание
+
+### ✓ рисунок устройства и протокол испытания показаны; вы разрешили начать (вариант А)
+
+### ○ следующая сессия: план сборки частей двойника, со сроком
+
+### ○ сборка: наблюдатель, судья, скрипты видов и сравнения, страж файлов, сводка
+
+### ○ изменения в скилле vt — формулировки на ваше согласие
+
+### ○ испытание: 10 дней работы, проверка цифр после 5
+
+## ◐ Ждёт вашего решения
+
+
+### ◐ Новый порядок работы над T25
+- восемь групп по разделам описания инструментов
+- одна готовая страница и один ответ на группу
+- без сообщений между страницами
+
+- начало сессии: цели → группы → контекст → обсуждение сути
+
+## ○ Вопросы на потом
+
+### ○ Термин, нужный одному домену
+- решение от 12 ноября противоречит правилам 3.2 и 10.1.6 при правиле 1.7.2
+- узел 8.6 допускает термин в ячейке, а у узла в ячейке нет заголовка
+
+## ○ Затем: T31 — проверка skills перед каждой публикацией (перед выпуском T25)
+
+### ○ сценарии из истории сессий: набор для skills SpecSheriff и личный набор «с superpowers и без»
+
+### ○ шаг в скрипте выпуска; пробные живые прогоны обоих наборов
+
+### ○ статика и дублирование останавливают выпуск, живой прогон — отчёт вам; 7–10 ч
+
+## ○ Дальше по порядку работ
+
+### ○ T28 — одобрение хранится в самом узле, 5–7 ч
+
+### ○ T29 — просмотрщик спецификации входит в плагин, 3–5 ч
+
+### ○ T30 — ultrareview репозитория, 2–4 ч
+</script>
+</main>
+<script>
+  // The map is drawn from the outline above, with the libraries loaded directly, since the page may
+  // fetch nothing but scripts.
+  // A branch takes the colour of the mark its heading opens with, the legend's, so that a branch
+  // left out never shifts the colours of the others; the root and an unmarked branch stay muted.
+  const { Transformer, Markmap, deriveOptions } = window.markmap;
+  const { root, frontmatter } = new Transformer().transform(document.getElementById("outline").textContent.trim());
+  const css = getComputedStyle(document.documentElement);
+  const marks = { "✓": "--done", "●": "--now", "◐": "--wait", "○": "--plan" };
+  const muted = css.getPropertyValue("--muted").trim();
+  const paint = (node, colour) => { node.branchColour = colour; (node.children || []).forEach(c => paint(c, colour)); };
+  root.branchColour = muted;
+  const text = document.createElement("div");
+  (root.children || []).forEach(branch => {
+    text.innerHTML = branch.content; // markmap writes the heading as HTML, its characters as entities
+    const mark = text.textContent.trim().charAt(0);
+    paint(branch, marks[mark] ? css.getPropertyValue(marks[mark]).trim() : muted);
+  });
+  const options = deriveOptions(frontmatter?.markmap);
+  options.color = node => node.branchColour || muted;
+  Markmap.create("#map", options, root);
+</script>

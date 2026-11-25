@@ -1,0 +1,179 @@
+{
+  "s-a4rbry4hsu34hy8": {
+    "title": "The guidelines hold their base and the appendix of their tools",
+    "text": "The guidelines are divided as the specification is, into their base and the appendix of their tools.\n\nThe base of the guidelines states what is held, what is checked, when, and what a failure costs. It names no technology.\n\nThe appendix of the tools describes how one toolset carries that base out:\n\n- its commands;\n- its hooks;\n- where it keeps the files;\n- how it reads code;\n- who runs its reviewer.\n\nEach rule of that appendix implements at least one node of the base.\n\nThe appendix of the tools is not the technical appendix. The technical appendix describes how the system is built, never the tools of the specification.",
+    "reason": "The guidelines require every base specification to name no technology (§s-5x737t9nee4zgaa), and they are held to it themselves. A rule naming its tool goes stale when the tool changes. Another toolset, written in another language, could not implement that rule.\n\nThe tools hold the specification and the code to each other rather than make up the system. That is why they are described apart from the technical appendix.\n\nBound to the node of the base it implements, a rule of the appendix is found when that node changes.",
+    "changed": true,
+    "doubts": [],
+    "split": "(a) the guidelines are divided into a base naming no technology and the appendix of the tools, which is not the technical appendix; (b) each rule of the appendix of the tools implements at least one node of the base."
+  },
+  "s-bsya3febm6u64ab": {
+    "title": "A project's own guidelines refine or implement the SpecSheriff guidelines",
+    "text": "The guidelines are made of the SpecSheriff guidelines and of a part each project holds as its own:\n\n- the SpecSheriff guidelines, made of their base, which every project shares, and the appendix of the toolset the project uses;\n- the project's own guidelines, which hold what only its specification needs, such as the specification's owners or the list of levels its domains stand at.\n\nEach rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines. It never contradicts that rule.\n\nA project holds no copy of the SpecSheriff guidelines. They come whole with the skills that apply them and are updated with those skills. They are changed only where they are written.",
+    "reason": "The SpecSheriff guidelines, shared by every project, let a tool, a skill or a reader carry from one project to the next. A project also needs what they cannot foresee.\n\nRefining or implementing the SpecSheriff guidelines and never contradicting them, a project's own rules extend them as the technical appendix extends the base. A rule of the SpecSheriff guidelines can then be relied on in every project without reading that project's own.\n\nBecause they come whole with the skills, the SpecSheriff guidelines read the same in every project working by one release. For the same reason, they stand approved there as they were approved where they are written. A copy changed in one project would be a second version that nobody who writes them reads.",
+    "changed": true,
+    "doubts": [],
+    "split": "(a) each rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines and never contradicts it; (b) a project holds no copy of the SpecSheriff guidelines, which come with the skills and are changed only where they are written."
+  },
+  "s-vsh384ybt4w25a2": {
+    "title": "A project's own NodeKind is numbered, counted and implemented as a rule is",
+    "text": "The nodes of a project's own NodeKind, declared in the extension of the schema (§s-eferktypcj7njt5), are held as rules are in these respects:\n\n- they are numbered as rules are (§s-kag2m9tzdnduxdx);\n- they count as rules of the section they stand in (§s-7445ahgjck2aefg);\n- unless the extension declares that they need no code, they are implemented and tested as a rule is (§s-6fw72j65jkqrfpf, §s-rah8b37kytb682y).\n\nA declaration that they need no code exempts them from being implemented (§s-6fw72j65jkqrfpf).\n\nA rule of the project's own guidelines, refining this one, lists each such NodeKind with whether its nodes need code. Its `TextRule.list` names the extension as its declaration, in `declaredIn`. The check of lists compares the list with that declaration (§s-jau82aq9juv9zzh).",
+    "reason": "A project needs NodeKinds the SpecSheriff guidelines cannot foresee. Most of them are one more sort of requirement. So a NodeKind is held as a rule is unless declared otherwise. No check then meets a node whose duties nobody stated.\n\nA NodeKind whose nodes need no code is exempted once, for all its nodes. Listed in a rule of the project's own guidelines, such a NodeKind is approved by one of the specification's owners, as every exemption is (§s-6fw72j65jkqrfpf).",
+    "changed": true,
+    "doubts": [
+      "\"as a rule is\" and \"as rules are\" kept as the ordinary word rule; they may mean the NodeKind `TextRule`, which the rules of the pass forbid me to choose.",
+      "\"the list names the extension as its declaration\" written as \"Its `TextRule.list` names the extension as its declaration, in `declaredIn`\": the property part named, the meaning taken to be the same."
+    ],
+    "split": "(a) the nodes of a project's own NodeKind are numbered, counted, implemented and tested as rules unless declared to need no code; (b) a rule of the project's own guidelines lists each such NodeKind, its list checked against the extension."
+  },
+  "s-e877bnfa559tvk9": {
+    "title": "Data structures are described in the specification",
+    "text": "A structure of data the domains pass to one another or keep in a store is described by a node of its own, a RecordType. The RecordType states:\n\n- its name;\n- what it is;\n- each of its fields, with the field's type in neutral words, any bounds on the field's value included, whether the field is required and what it says;\n- what happens to a field nobody declared;\n- where another RecordType refers to it by an identifier, the field that identifies it.\n\nThe rules that bind one field to another are rules linked to the RecordType.\n\nThe implementation's types and RuntimeChecks are generated from the RecordTypes and never written beside them. Which mechanism performs the RuntimeChecks is described in the technical appendix.",
+    "reason": "A structure is part of what the system is, so it belongs in the specification rather than in the code. The bounds a value may take are part of its type. An identifier of a record has the type of the field that identifies it, so that field is named where its RecordType is described.\n\nWritten beside the description, a type or a RuntimeCheck is a second copy of the same structure and drifts from it. Generated, the two cannot disagree.",
+    "changed": true,
+    "doubts": [
+      "In the reason \"a type or a check\" became \"a type or a RuntimeCheck\": the check meant is the implementation's check of data at runtime, not the method's check.",
+      "The reason's sentences reordered so that it opens with its main ground (a structure belongs in the specification); no sentence lost."
+    ],
+    "split": "(a) a RecordType describes each structure of data with what it states; (b) the rules binding one field to another are linked to the RecordType; (c) the types and RuntimeChecks are generated from the RecordTypes, their mechanism described in the technical appendix."
+  },
+  "s-adhmw4gw6y82f44": {
+    "title": "A field is required only where its value is guaranteed",
+    "text": "A field is required where every record that can hold it has its value:\n\n- the value is set before the record is written;\n- the system makes or observes it whenever it writes the record; or\n- the system refuses to write the record without it, as what identifies the record.\n\nEvery other field is optional:\n\n- one whose value only some records, or some moments of a record, have; or\n- one an answer the system reads may not carry.",
+    "reason": "A value that may not come cannot be demanded. Demanded, it is invented to fill the field, or a record that should have been written is refused for want of it.",
+    "changed": true,
+    "doubts": [
+      "Both lists keep the original colon and its \"or\", so whether they name every case or examples of it stays as open as in the original."
+    ]
+  },
+  "s-z3dnru6qqdf9m6j": {
+    "title": "A RecordType variant exists only for a value carrying fields of its own",
+    "text": "Where a RecordType's fields depend on the values of some of its own fields, the RecordType names those fields as choosing its variant.\n\nA value that brings fields of its own has a RecordType variant. That variant is a RecordType in the part of the specification declaring the value (§s-xfwuvd3funutmsw). It:\n\n- refines the RecordType;\n- names the values it answers to;\n- declares the fields those values bring.\n\nA value that brings none has no variant. A record holding such a value holds only its RecordType's own fields.",
+    "reason": "A variant holding nothing says nothing the declaration of its value does not, so it would be a second copy of that declaration. A variant is held by the part of the specification declaring its value, so that part adds a variant without changing the RecordType or the variants another part holds.",
+    "changed": true,
+    "doubts": [],
+    "split": "(a) a RecordType whose fields depend on its own fields' values names those fields as choosing its variant; (b) a value bringing fields of its own has a variant in the part declaring it, and a value bringing none has none."
+  },
+  "s-xfu2gpzddjnmgks": {
+    "title": "One source for the values of a field of type `one of`",
+    "text": "The values of a field of type `one of` come from exactly one of the sources this rule's `TextRule.list` names. Each value is declared once.",
+    "reason": "Coming from one source, a field's values are found whole where its declaration points. They are found there by its reader, by the type generated for it (§s-e877bnfa559tvk9) and by the check comparing each variant with the values it names (§s-z3dnru6qqdf9m6j). Values coming from two sources would be read from one of them as if it held them all.\n\nA value declared twice could be removed in one place while it stays in the other.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-96df5fcfqsvex9d": {
+    "title": "The list of a field's values in contracts may consolidate values from different domains",
+    "text": "Only a field of type `one of` in a RecordType described in contracts may have as its values those the domains add. Each domain lists the values it adds in a rule of its own.",
+    "reason": "A RecordType described in contracts is shared by the domains, and so are its fields. So each domain may add the values it brings, and the variants answering to them (§s-z3dnru6qqdf9m6j), without changing the RecordType, which the owners of contracts hold.\n\nA RecordType one domain provides is described in that domain (§s-7vm323mhry2enx3). So that domain alone answers for its fields' values and declares them itself.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-gzfq3x8hesj227e": {
+    "title": "How a domain's added values find their field",
+    "text": "A domain's rule that adds values to a field of a RecordType in contracts refines that RecordType. Its `TextRule.list` names the field the values go to.",
+    "reason": "A RecordType may have several fields of type `one of`, so the rule's `TextRule.list` names the field its values go to. The rule is linked to the RecordType by its sid, so the link holds when the RecordType is renamed.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-gqavjzcmubg5pvk": {
+    "title": "Domain names as a field's values",
+    "text": "The values of a field of type `one of` may be the names of the domains, read from the specification. A domain added or removed adds or removes a value.",
+    "reason": "The names of the domains are already held by the specification, so a field whose values they are declares none of them again and cannot fall behind it.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-mt6auv3jz8m5gzh": {
+    "title": "Sids of a NodeKind's nodes as a field's values",
+    "text": "The values of a field of type `one of` may be the sids of the nodes of one NodeKind standing in the base specification, read from the specification. A node of that NodeKind added or archived adds or removes a value.",
+    "reason": "The sids of a NodeKind's nodes are already held by the specification, so a field whose values they are declares none of them again and cannot fall behind it.\n\nThey are read from the base specification alone. An instance changes the technical appendix for itself (§s-vj7ercem526zd6v), so a value read from the appendix would differ from one instance to the next. The guidelines describe no system, so a value read from them would name nothing of the system.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-xfwuvd3funutmsw": {
+    "title": "Where a value is declared",
+    "text": "A value of a field of type `one of` is declared in the part of the specification where the list, the domain or the node it comes from stands.",
+    "reason": "Whoever answers for a list, a domain or a node then declares the values coming from it, and adds the variant answering to each (§s-z3dnru6qqdf9m6j), without changing another part.",
+    "changed": true,
+    "doubts": [
+      "\"the list ... it comes from\" kept as a word: it may be the field's own list or a domain rule's `TextRule.list`, and naming either would choose."
+    ]
+  },
+  "s-ju5vcanbjph7mgh": {
+    "title": "Gathered values stand beside their field",
+    "text": "Where the values of a field of type `one of` are gathered from elsewhere in the specification, all of them are written beside the field. Each is written with the node it comes from. They are gathered anew after every change to the specification and never written by hand.",
+    "reason": "Beside the field, its values are read whole where the field is described, without searching the parts they come from (§s-k73czmpkazcx7mu). The node each value comes from tells whom to ask about it. Gathered anew after every change, they never fall behind their source, as a list kept by hand would (§s-kh8qcd5kxgh9z3j).",
+    "changed": true,
+    "doubts": []
+  },
+  "s-7vm323mhry2enx3": {
+    "title": "What the domains share is agreed in contracts",
+    "text": "Contracts agrees what the domains share and how they work together:\n\n- the terminology;\n- the conventions every domain's API follows;\n- the rules that bind more than one domain.\n\nContracts is not a domain. It belongs to none of the domains. What only one domain needs, that domain holds itself.\n\nA domain coins no term of its own: a term it needs is added to contracts. A term is defined once: one term naming two things, or two terms naming one, is refused.\n\nA RecordType one domain provides to others is described in that domain, as part of its interface. Contracts describes a RecordType only where no single domain provides it, as a store more than one domain writes.",
+    "reason": "Domains that coin their own words, or their own conventions for the same exchange, stop understanding one another. A reader then cannot tell whether two words mean one thing.\n\nHolding in contracts only what binds more than one domain keeps contracts from answering for what a single domain defines.\n\nNobody answers for a RecordType described away from the domain that provides it: the provider changes what it gives while its description stands elsewhere.",
+    "changed": true,
+    "doubts": [
+      "Reason: \"keeps it from owning\" became \"keeps contracts from answering for\", and \"has no owner\" became \"Nobody answers for\", the wording 1.28 uses for a domain's duty to its values."
+    ],
+    "split": "(a) contracts, not a domain, agrees what the domains share and leaves to a domain what only it needs; (b) a domain coins no term, and a term is defined once; (c) a RecordType is described in the domain that provides it, in contracts only where no single domain does."
+  },
+  "s-h6h25ctd3yryudh": {
+    "title": "The division of the specification",
+    "text": "The base specification is made of contracts and of one domain or several. A domain is the part of the base specification devoted to one subject area of the system. No other domain is responsible for that area.",
+    "reason": "A subject area's rules bear on one another and change together, so they are kept together and apart from those of other areas.\n\nA domain describes the RecordTypes it provides to the others as its interface (§s-7vm323mhry2enx3). Its header's `consumes` links name the sections of theirs it uses (§s-yggv9myedprnaa7). A change to a domain's rules outside its interface and the sections others use then leaves the other domains as they are.\n\nA system of one such area has no line to divide it along.",
+    "changed": true,
+    "doubts": []
+  },
+  "s-k73czmpkazcx7mu": {
+    "title": "A part of the specification can be read alone",
+    "text": "Each domain, contracts, the technical appendix and the guidelines are held apart. A part too large to read at once is divided into one file per section.",
+    "reason": "The specification is too large to fit whole into the context window of an agent working with it. It is therefore divided into self-contained domains, and a domain into sections, so that only the part the work at hand needs is loaded. Contracts is the exception: shared by every domain, it is loaded whichever part the work needs.",
+    "changed": true,
+    "doubts": [],
+    "split": "(a) each domain, contracts, the technical appendix and the guidelines are held apart; (b) a part too large to read at once is divided into one file per section."
+  },
+  "s-ce9wbaut6edfuy8": {
+    "title": "An entity is declared once",
+    "text": "Every entity of the system is declared once. An entity is what a term names, such as a user or a session.\n\nAn entity is declared by the term that names it, in contracts (§s-7vm323mhry2enx3). Its data, where the specification describes them, are declared by one RecordType. That RecordType stands in the domain that provides it or, where no single domain does, in contracts.\n\nNo two RecordTypes share a name.",
+    "reason": "Two definitions of one entity are two places that each answer for it, and the two are changed apart. The duplicate is usually the first visible trace of one domain doing another's work.",
+    "changed": true,
+    "doubts": [
+      "\"the domain that provides it\" kept with \"it\", which may be the RecordType or the entity, as in the original.",
+      "Reason: \"two owners of it, and two owners change it apart\" became \"held by two parties, and the two change it apart\"."
+    ],
+    "split": "(a) every entity is declared once, by its term in contracts and its data by one RecordType; (b) no two RecordTypes share a name."
+  },
+  "s-yggv9myedprnaa7": {
+    "title": "A domain's specification opens with its header",
+    "text": "A domain's specification opens with its header. The header is a node stating:\n\n- what the domain does;\n- its owners, where it names them (§s-67vekyup7y8smap);\n- the level it stands at;\n- where its code is.\n\nThe header's `consumes` links name the sections of other domains the domain uses.\n\nThe header also carries the index of the domain's sections, built from the sections and never written by hand. For each section the index holds:\n\n- its sid, its title and its text, which states what the section is responsible for;\n- the domains that use it.",
+    "reason": "Whoever works on one domain loads its header and learns from it alone, without loading the rest:\n\n- what the domain is responsible for;\n- who answers for its wording;\n- how it is divided;\n- what it takes from the others.\n\nThe index is built rather than written, because a table of contents kept by hand is a second copy of the sections and drifts from them.",
+    "changed": true,
+    "doubts": [],
+    "split": "(a) a domain opens with a header stating what it does, its owners, its level and its code, whose `consumes` links name the sections it uses; (b) the header carries the index of the domain's sections, built and never written by hand."
+  },
+  "s-5yvpn4zhuqmv5bq": {
+    "title": "A domain uses another domain's RecordTypes only from the sections it declares",
+    "text": "A RecordType of one domain names a RecordType of another domain, in a field's type or as the RecordType it refines, only where the named RecordType stands in a section the first domain's header names in its `consumes` links. A RecordType named from elsewhere is reported, not refused.",
+    "reason": "A domain's header then names every section of another domain whose RecordTypes the domain relies on at runtime. That other domain's index names the domain beside each such section. So whoever changes such a RecordType sees which domains it reaches (§s-yggv9myedprnaa7).\n\nA RecordType of contracts is provided by no single domain (§s-7vm323mhry2enx3), so naming it makes a domain rely on no other.\n\nA RecordType named from elsewhere is reported rather than refused, since declaring the use may set the domains using one another in a cycle (§s-uw9n84edf7cbe9n). Only a change to the design removes such a cycle. Until then the work goes on with the dependency in view.",
+    "changed": true,
+    "doubts": [
+      "The text's first sentence, over 25 words, kept whole: it states one thought, and splitting off \"in a field's type or as the RecordType it refines\" would choose whether those two ways of naming are all of them."
+    ]
+  },
+  "s-nkyty4dy9x2v2a4": {
+    "title": "Every domain stands at a level",
+    "text": "Every domain stands at one of the levels the specification's owners list in the project's own guidelines (§s-bsya3febm6u64ab). They are listed from the general to the particular: the smaller a domain's responsibility, the lower its level.\n\nA level is always shown as its number and its name together. Its number is its place in that list.",
+    "reason": "The links between domains give an order but not a place. A domain that uses nothing may be where the others start, or stand apart from them. One that nothing uses may be where they end, or stand over them. The level says which.",
+    "changed": true,
+    "doubts": [
+      "\"that list\" of levels kept as a word: whether the levels stand in a `TextRule.list` the original does not say."
+    ],
+    "split": "(a) every domain stands at one of the levels listed in the project's own guidelines; (b) a level is shown as its number and its name, its number being its place in the list."
+  },
+  "s-uw9n84edf7cbe9n": {
+    "title": "The order of the domains",
+    "text": "The domains are ordered by the `consumes` links of their headers:\n\n- a domain stands after every domain it uses;\n- it stands as close as possible before the domains that use it;\n- where the links put two domains in the same place, they stand in the order of their names.\n\nThe domains do not use one another in a cycle.",
+    "reason": "A domain cannot work without the domains it uses, so this is the order the domains are specified and built in. Computed from the links, the order cannot disagree with them.\n\nStanding as close as possible before its users, a domain is taken up when the first of them needs it. A cycle has no such order.",
+    "changed": true,
+    "doubts": [],
+    "split": "(a) the domains are ordered by the `consumes` links of their headers; (b) the domains do not use one another in a cycle."
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "s-bpdqd9v72wg7vsz": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-sn6au3vcr9uy5pm": {
+    "verdict": "changed",
+    "issues": [
+      "Reason, last paragraph, second half: the subject is swapped. The input said the purpose of the link is that 'each exempted rule outside the SpecSheriff guidelines shows, among its incoming links, what exempts it'. The output says 'Being a link, it also shows what exempts each exempted rule outside the SpecSheriff guidelines, among that rule's incoming links'. The one who shows is now the exemption, not the exempted rule, so the exemption 'shows what exempts' the rule, which is itself. The second effect also moves out of the 'so that' purpose into a side consequence ('Being a link, it also'). Suggested: 'It also lets each exempted rule outside the SpecSheriff guidelines show, among its incoming links, what exempts it.'",
+      "Text, item `exempts` (small): the input took out 'the linked rule or node of a project's own kind, or every such node under the linked section', so a linked section is never itself taken out, only the nodes under it. The output says the link 'takes the linked node out of the rule that it is implemented', then 'The linked node is a rule, a node of a project's own NodeKind or a section'. Read together, these take the section itself out too. The next sentence ('Where it is a section, every rule and every node of a project's own NodeKind under it is taken out') restores the rest. Since a section requires nothing, the effect is nil, but the wording no longer matches."
+    ]
+  },
+  "s-hr7j7scmfkkjnws": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-hheus6f395ynqvc": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-ef93u6cnbs2sevr": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-rwqzepmrt77rv35": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-rah8b37kytb682y": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-kgbzk2ph9e6jfb4": {
+    "verdict": "same",
+    "issues": []
+  },
+  "s-6fw72j65jkqrfpf": {
+    "verdict": "changed",
+    "issues": [
+      "Text, first paragraph: the input joined the two conditions with 'and': 'a symbol of the system's code carries its SpecTag, and a test carries its SpecTag and passes'. Both are required, and the reason confirms this ('only both together show it by a check'). The output gives them as a bare list after 'Such a rule or node is implemented when:'. Nothing says both must hold. Elsewhere in this pass, lists are introduced as alternatives ('one of these:', 'This covers:'), so 'either' becomes a possible reading. Suggested: 'Such a rule or node is implemented when both hold:'.",
+      "Reason, first paragraph (small): the input said 'so one the system's code does not carry out leaves the specification stating what does not hold of it'. Here 'one' stands for 'an approved rule'. The output says 'So a rule the system's code does not carry out...', which drops the qualifier 'approved' and widens the ground to any rule, a draft included. Suggested: 'So an approved rule the system's code does not carry out...'.",
+      "Reason, second paragraph: the input said 'only both together show it by a check'. The output resolves 'it' as 'show by a check that the code carries the rule out'. The rewriter flagged this choice in its doubts. RULES section 1 says such a sentence is kept as it stood, not resolved. The nearest antecedent is 'that the code does what the rule says', and the output's 'that the code carries the rule out' is close to it, not identical. Either keep 'it', or confirm the reading with the owner."
+    ]
+  },
+  "s-zu8ne3wq84zchc4": {
+    "verdict": "same",
+    "issues": []
+  }
+}

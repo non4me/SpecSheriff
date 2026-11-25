@@ -1,0 +1,415 @@
+<title>Архитектура RecordType</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: the structure drawn first, then how it is written and what the data look like, then the checks,
+     then the decisions weighed against established practice as a matrix with the pluses and minuses of each.
+     One dark look, as on every page made for the owner. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --ok: #5fbf86; --now: #e8b75a; --next: #5cb8d8; --bad: #e07a6a; --part: #8fb0cf;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 18px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
+  header { display: grid; gap: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.15rem; margin: 0; text-wrap: balance; }
+  h3 { font-size: 1rem; margin: 0; }
+  p { margin: 0; max-width: 85ch; }
+  .muted { color: var(--muted); }
+  code, .mono { font-family: var(--mono); font-size: 0.88em; }
+  section { display: grid; gap: 12px; min-width: 0; }
+  .scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
+  svg.arch { display: block; min-width: 1080px; width: 100%; height: auto; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .two > div { min-width: 0; display: grid; gap: 8px; align-content: start; }
+  pre { margin: 0; padding: 12px 14px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.5; color: var(--fg); }
+  pre .c { color: var(--muted); } pre .hl { color: var(--now); }
+  ul.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  ul.checks li { display: grid; grid-template-columns: 5.2rem 7.6rem 1fr; gap: 10px; align-items: baseline; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; }
+  ul.checks li.cur { border-color: var(--now); }
+  @media (max-width: 640px) { ul.checks li { grid-template-columns: 5.2rem 1fr; } ul.checks li .txt { grid-column: 1 / -1; } }
+  .num { font-family: var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pill { font-family: var(--mono); font-size: 0.74rem; padding: 1px 8px; border: 1px solid currentColor; border-radius: 10px; white-space: nowrap; justify-self: start; }
+  .pill.ok { color: var(--ok); } .pill.now { color: var(--now); } .pill.next { color: var(--next); } .pill.bad { color: var(--bad); }
+  table.matrix { border-collapse: collapse; width: 100%; min-width: 880px; font-size: 0.9rem; }
+  table.matrix th, table.matrix td { border-bottom: 1px solid var(--rule); padding: 8px 8px; text-align: center; vertical-align: middle; }
+  table.matrix thead th { font-weight: 700; font-size: 0.82rem; color: var(--muted); background: var(--panel-2); }
+  table.matrix th.dec { text-align: left; font-weight: 400; min-width: 260px; }
+  table.matrix th.dec b { display: block; }
+  table.matrix td.verdict { text-align: left; white-space: nowrap; }
+  .m { font-size: 1.1rem; line-height: 1; }
+  .m.same { color: var(--ok); } .m.part { color: var(--now); } .m.diff { color: var(--bad); } .m.na { color: var(--rule); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.88rem; color: var(--muted); }
+  .cards { display: grid; gap: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+  .card.cur { border-color: var(--now); }
+  .card .top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+  .card .id { font-family: var(--mono); color: var(--muted); }
+  ul.prac { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+  ul.prac li { display: grid; grid-template-columns: 1.4rem 9.5rem 1fr; gap: 8px; align-items: baseline; }
+  @media (max-width: 640px) { ul.prac li { grid-template-columns: 1.4rem 1fr; } ul.prac li .why { grid-column: 2; } }
+  .pm { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .pm > div { min-width: 0; display: grid; gap: 4px; align-content: start; }
+  .pm h4 { margin: 0; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pm .plus h4 { color: var(--ok); } .pm .minus h4 { color: var(--bad); }
+  .pm ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+  .note { border-left: 3px solid var(--now); padding-left: 12px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Архитектура RecordType</h1>
+    <p class="muted">По согласованным 12.1, 12.6 и 12.10 и по набору проверок вариантов, принятому 19 ноября (строки 12.12.4–12.12.9).</p>
+    <p class="note">Правка 12.12.5 меняет только формулировку проверки. Устройство вариантов задаёт согласованный 12.6, и с правкой оно не меняется. Строка 12.12.5 проверяет одну связь на схеме — стрелку <code>refines</code> от варианта к его RecordType.</p>
+  </header>
+
+  <section aria-labelledby="h-scheme">
+    <h2 id="h-scheme">Схема</h2>
+    <div class="scroll">
+      <svg class="arch" viewBox="0 0 1120 660" role="img" aria-labelledby="svg-t svg-d">
+        <title id="svg-t">RecordType «Уведомление», два его варианта, фрагмент формата в контрактах и RecordType другой части системы</title>
+        <desc id="svg-d">Варианты по email и по SMS ссылаются через refines на RecordType «Уведомление» в той же части системы. Вариант по SMS использует фрагмент формата «Номер телефона» из контрактов. RecordType «Попытка доставки» из другой части системы не может ссылаться на RecordType «Уведомление».</desc>
+        <defs>
+          <marker id="gen" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="14" markerHeight="14" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M1,1 L13,7 L1,13 z" fill="#17232b" stroke="#eef1f3" stroke-width="1.5"/>
+          </marker>
+          <marker id="okarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#5fbf86"/>
+          </marker>
+          <marker id="badarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#e07a6a"/>
+          </marker>
+        </defs>
+        <rect x="0" y="0" width="1120" height="660" fill="#17232b"/>
+
+        <!-- Part of the system: notifications -->
+        <rect x="16" y="20" width="720" height="624" rx="8" fill="#0f171c" stroke="#8fb0cf" stroke-dasharray="6 5"/>
+        <text x="32" y="46" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="16" font-weight="700">Часть системы «Уведомления»</text>
+        <text x="32" y="66" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="13">в спецификации — раздел верхнего уровня базовой спецификации или домен; в коде — модуль или компонент (12.1)</text>
+
+        <!-- RecordType -->
+        <rect x="166" y="90" width="440" height="196" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="166" y="90" width="440" height="34" rx="6" fill="#2c3a44"/>
+        <text x="182" y="113" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="15" font-weight="700">RecordType «Уведомление»</text>
+        <text x="182" y="146" fill="#a3b0b9" font-family="PT Mono, Consolas, monospace" font-size="12.5">identifiedBy: id · chosenBy: channel</text>
+        <g font-family="PT Mono, Consolas, monospace" font-size="13" fill="#eef1f3">
+          <text x="182" y="176">id</text><text x="262" y="176" fill="#a3b0b9">text</text>
+          <text x="182" y="204">channel</text><text x="262" y="204" fill="#a3b0b9">one of: email · sms · app</text>
+          <text x="182" y="232">text</text><text x="262" y="232" fill="#a3b0b9">text</text>
+          <text x="182" y="260">delivery</text><text x="262" y="260" fill="#a3b0b9">variant</text>
+        </g>
+        <g font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5" fill="#a3b0b9" text-anchor="end">
+          <text x="594" y="176">идентифицирует запись</text>
+          <text x="594" y="204">выбирает вариант</text>
+          <text x="594" y="260">поля варианта</text>
+        </g>
+        <!-- badge 12.12.4 -->
+        <rect x="614" y="247" width="70" height="20" rx="10" fill="#0f171c" stroke="#5fbf86"/>
+        <text x="649" y="261" fill="#5fbf86" font-family="PT Mono, Consolas, monospace" font-size="12" text-anchor="middle">12.12.4</text>
+
+        <!-- Variant: email -->
+        <rect x="40" y="380" width="320" height="130" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="40" y="380" width="320" height="32" rx="6" fill="#2c3a44"/>
+        <text x="56" y="402" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="14.5" font-weight="700">Вариант «Уведомление по email»</text>
+        <text x="56" y="438" fill="#e8b75a" font-family="PT Mono, Consolas, monospace" font-size="13">answersTo: channel = email</text>
+        <text x="56" y="470" fill="#eef1f3" font-family="PT Mono, Consolas, monospace" font-size="13">address</text>
+        <text x="136" y="470" fill="#a3b0b9" font-family="PT Mono, Consolas, monospace" font-size="13">email address</text>
+        <text x="56" y="496" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">собственное поле варианта</text>
+        <rect x="282" y="424" width="70" height="20" rx="10" fill="#0f171c" stroke="#5cb8d8"/>
+        <text x="317" y="438" fill="#5cb8d8" font-family="PT Mono, Consolas, monospace" font-size="12" text-anchor="middle">12.12.8</text>
+        <rect x="282" y="456" width="70" height="20" rx="10" fill="#0f171c" stroke="#5cb8d8"/>
+        <text x="317" y="470" fill="#5cb8d8" font-family="PT Mono, Consolas, monospace" font-size="12" text-anchor="middle">12.12.7</text>
+
+        <!-- Variant: sms -->
+        <rect x="396" y="380" width="320" height="130" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="396" y="380" width="320" height="32" rx="6" fill="#2c3a44"/>
+        <text x="412" y="402" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="14.5" font-weight="700">Вариант «Уведомление по SMS»</text>
+        <text x="412" y="438" fill="#e8b75a" font-family="PT Mono, Consolas, monospace" font-size="13">answersTo: channel = sms</text>
+        <text x="412" y="470" fill="#eef1f3" font-family="PT Mono, Consolas, monospace" font-size="13">phone</text>
+        <text x="468" y="470" fill="#a3b0b9" font-family="PT Mono, Consolas, monospace" font-size="13">фрагмент «Номер телефона»</text>
+        <text x="412" y="496" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">собственное поле варианта</text>
+        <rect x="638" y="424" width="70" height="20" rx="10" fill="#0f171c" stroke="#5cb8d8"/>
+        <text x="673" y="438" fill="#5cb8d8" font-family="PT Mono, Consolas, monospace" font-size="12" text-anchor="middle">12.12.8</text>
+
+        <!-- refines arrows, the link row 12.12.5 checks -->
+        <line x1="200" y1="380" x2="300" y2="288" stroke="#eef1f3" stroke-width="1.6" marker-end="url(#gen)"/>
+        <line x1="556" y1="380" x2="450" y2="288" stroke="#eef1f3" stroke-width="1.6" marker-end="url(#gen)"/>
+        <text x="262" y="340" fill="#eef1f3" font-family="PT Mono, Consolas, monospace" font-size="13">refines</text>
+        <text x="434" y="340" fill="#eef1f3" font-family="PT Mono, Consolas, monospace" font-size="13" text-anchor="end">refines</text>
+        <rect x="150" y="326" width="74" height="22" rx="11" fill="#e8b75a"/>
+        <text x="187" y="341" fill="#0f171c" font-family="PT Mono, Consolas, monospace" font-size="12.5" text-anchor="middle" font-weight="700">12.12.5</text>
+        <rect x="520" y="326" width="74" height="22" rx="11" fill="#e8b75a"/>
+        <text x="557" y="341" fill="#0f171c" font-family="PT Mono, Consolas, monospace" font-size="12.5" text-anchor="middle" font-weight="700">12.12.5</text>
+
+        <!-- notes under the variants -->
+        <g font-family="PT Sans, Segoe UI, sans-serif" font-size="13" fill="#a3b0b9">
+          <text x="40" y="546"><tspan fill="#5cb8d8" font-family="PT Mono, Consolas, monospace">12.12.9</tspan>  у двух вариантов нет одинаковых значений</text>
+          <text x="40" y="572">channel = app не приносит полей — варианта нет (12.6)</text>
+          <text x="40" y="598"><tspan fill="#5cb8d8" font-family="PT Mono, Consolas, monospace">12.12.6</tspan>  варианты объявлены там же, где их RecordType</text>
+        </g>
+
+        <!-- refused: a variant with no refines link -->
+        <rect x="430" y="530" width="286" height="96" rx="6" fill="none" stroke="#e07a6a" stroke-dasharray="5 4"/>
+        <text x="444" y="553" fill="#e07a6a" font-family="PT Sans, Segoe UI, sans-serif" font-size="13.5" font-weight="700">RecordType без связи refines</text>
+        <text x="444" y="575" fill="#e07a6a" font-family="PT Mono, Consolas, monospace" font-size="12.5">answersTo: channel = sms</text>
+        <text x="444" y="597" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">не сказано, чьи поля он дополняет</text>
+        <text x="444" y="616" fill="#e07a6a" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">→ отклоняется (12.12.5)</text>
+
+        <!-- Another part of the system: delivery -->
+        <rect x="764" y="20" width="340" height="230" rx="8" fill="#0f171c" stroke="#8fb0cf" stroke-dasharray="6 5"/>
+        <text x="780" y="46" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="16" font-weight="700">Часть системы «Доставка»</text>
+        <rect x="780" y="64" width="308" height="98" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="780" y="64" width="308" height="32" rx="6" fill="#2c3a44"/>
+        <text x="796" y="86" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="14.5" font-weight="700">RecordType «Попытка доставки»</text>
+        <text x="796" y="122" fill="#e07a6a" font-family="PT Mono, Consolas, monospace" font-size="13">notification</text>
+        <text x="796" y="144" fill="#e07a6a" font-family="PT Mono, Consolas, monospace" font-size="13">identifier of «Уведомление»</text>
+        <text x="780" y="190" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">поле не может ссылаться на RecordType другой</text>
+        <text x="780" y="207" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">части; правило этой части может на него</text>
+        <text x="780" y="224" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">сослаться (12.10)</text>
+        <line x1="780" y1="132" x2="610" y2="150" stroke="#e07a6a" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#badarrow)"/>
+        <g stroke="#e07a6a" stroke-width="2.4"><line x1="686" y1="132" x2="704" y2="150"/><line x1="704" y1="132" x2="686" y2="150"/></g>
+
+        <!-- Contracts -->
+        <rect x="764" y="380" width="340" height="200" rx="8" fill="#0f171c" stroke="#5fbf86" stroke-dasharray="6 5"/>
+        <text x="780" y="406" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="16" font-weight="700">Контракты</text>
+        <text x="780" y="426" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">фрагменты формата; использовать их может любая часть</text>
+        <rect x="780" y="440" width="308" height="98" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="780" y="440" width="308" height="32" rx="6" fill="#2c3a44"/>
+        <text x="796" y="462" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="14.5" font-weight="700">Фрагмент «Номер телефона»</text>
+        <g font-family="PT Mono, Consolas, monospace" font-size="13">
+          <text x="796" y="498" fill="#eef1f3">country</text><text x="876" y="498" fill="#a3b0b9">text</text>
+          <text x="796" y="522" fill="#eef1f3">number</text><text x="876" y="522" fill="#a3b0b9">text</text>
+        </g>
+        <text x="780" y="562" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5">тип поля — фрагмент формата: можно (12.1, 12.10)</text>
+        <path d="M716,466 L748,466 L748,490 L778,490" fill="none" stroke="#5fbf86" stroke-width="1.6" marker-end="url(#okarrow)"/>
+      </svg>
+    </div>
+    <p class="muted">Белая стрелка с полым треугольником — связь <code>refines</code>, как обобщение в UML: от частного к общему. Жёлтым — строка 12.12.5, которая сейчас согласуется; голубым — следующие строки; зелёным — согласованная 12.12.4.</p>
+  </section>
+
+  <section aria-labelledby="h-write">
+    <h2 id="h-write">Как это записано и как выглядят данные</h2>
+    <div class="two">
+      <div>
+        <h3>Узлы спецификации <span class="muted">(упрощённо: без sid, text и полей, не нужных для вариантов)</span></h3>
+<pre><span class="c">// RecordType «Уведомление» — раздел «Уведомления»</span>
+{
+  "kind": "RecordType",
+  "title": "Уведомление",
+  "identifiedBy": "id",
+  "chosenBy": ["channel"],
+  "fields": [
+    { "name": "id",       "type": { "is": "text" } },
+    { "name": "channel",  "type": { "is": "one of",
+                                    "values": ["email", "sms", "app"] } },
+    { "name": "text",     "type": { "is": "text" } },
+    { "name": "delivery", "type": { "is": "variant" } }
+  ]
+}
+
+<span class="c">// Вариант «Уведомление по email» — тот же раздел</span>
+{
+  "kind": "RecordType",
+  "title": "Уведомление по email",
+  "answersTo": { "channel": "email" },
+  "fields": [
+    { "name": "address", "type": { "is": "email address" } }
+  ],
+  <span class="hl">"refs": [{ "type": "refines", "to": "&lt;sid «Уведомления»&gt;" }]</span>
+}                                   <span class="c">↑ эту связь проверяет 12.12.5</span></pre>
+      </div>
+      <div>
+        <h3>Записи данных</h3>
+<pre><span class="c">// channel = email: поля варианта — в delivery</span>
+{
+  "id": "n-1042",
+  "channel": "email",
+  "text": "Заказ отправлен",
+  "delivery": { "address": "anna@example.org" }
+}
+
+<span class="c">// channel = sms: в delivery — фрагмент «Номер телефона»</span>
+{
+  "id": "n-1043",
+  "channel": "sms",
+  "text": "Заказ отправлен",
+  "delivery": {
+    "phone": { "country": "+420", "number": "601234567" }
+  }
+}</pre>
+        <p class="muted">Каналу <code>app</code> вариант не нужен: значение не приносит полей (12.6).</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-checks">
+    <h2 id="h-checks">Проверки вариантов в таблице 12.12</h2>
+    <ul class="checks">
+      <li><span class="num">12.12.4</span><span class="pill ok">согласована</span><span class="txt">RecordType содержит не более одного поля типа <code>variant</code>, считая унаследованные.</span></li>
+      <li class="cur"><span class="num">12.12.5</span><span class="pill now">сейчас</span><span class="txt">Вариант RecordType ссылается через <code>refines</code> на RecordType, поля которого он дополняет. <span class="muted">Предложенная формулировка.</span></span></li>
+      <li><span class="num">12.12.6</span><span class="pill next">впереди</span><span class="txt">Вариант объявлен там же, где его RecordType. <span class="muted">Требование из принятого набора; одобренная строка говорит ещё по старому правилу.</span></span></li>
+      <li><span class="num">12.12.7</span><span class="pill next">впереди</span><span class="txt">У варианта есть собственные поля. <span class="muted">Требование из принятого набора.</span></span></li>
+      <li><span class="num">12.12.8</span><span class="pill next">впереди</span><span class="txt">Вариант называет по одному значению каждого поля, которое выбирает вариант. <span class="muted">Требование из принятого набора.</span></span></li>
+      <li><span class="num">12.12.9</span><span class="pill next">впереди</span><span class="txt">Никакие два варианта одного RecordType не соответствуют одним и тем же значениям. <span class="muted">Требование из принятого набора.</span></span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-practice">
+    <h2 id="h-practice">Решения и сложившаяся практика</h2>
+    <p>Шесть решений, из которых складывается устройство на схеме, сравнены с тем, как ту же задачу решают распространённые языки и форматы описания данных. Ниже матрица — затем по каждому решению плюсы и минусы.</p>
+    <div class="legend"><span><span class="m same">●</span> так же</span><span><span class="m part">◐</span> похоже или выражено иначе</span><span><span class="m diff">○</span> иначе</span><span><span class="m na">—</span> не о том</span></div>
+    <div class="scroll">
+      <table class="matrix">
+        <thead>
+          <tr><th class="dec">Решение</th><th>TypeScript</th><th>Kotlin, Java (sealed)</th><th>OpenAPI 3</th><th>JSON Schema</th><th>Protobuf</th><th>serde (Rust)</th><th>UML</th><th>DDD</th><th class="dec">Итог</th></tr>
+        </thead>
+        <tbody>
+          <tr><th class="dec"><b>Р1. Вариант сам ссылается на свой RecordType</b><span class="muted">12.6 · проверяет 12.12.5</span></th>
+            <td><span class="m diff">○</span></td><td><span class="m same">●</span></td><td><span class="m same">●</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m same">●</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill ok">как в наследовании</span></td></tr>
+          <tr><th class="dec"><b>Р2. Вариант сам называет свои значения</b><span class="muted">12.6 · 12.12.8, 12.12.9</span></th>
+            <td><span class="m same">●</span></td><td><span class="m part">◐</span></td><td><span class="m diff">○</span></td><td><span class="m part">◐</span></td><td><span class="m diff">○</span></td><td><span class="m same">●</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill ok">как в TypeScript, serde</span></td></tr>
+          <tr><th class="dec"><b>Р3. Поля варианта — в одном поле типа <code>variant</code></b><span class="muted">12.6 · 12.12.4</span></th>
+            <td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m part">◐</span></td><td><span class="m same">●</span></td><td><span class="m na">—</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill now">реже, чем плоско</span></td></tr>
+          <tr><th class="dec"><b>Р4. Вариант выбирают значения нескольких полей</b><span class="muted">12.6 · 12.12.8</span></th>
+            <td><span class="m part">◐</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m part">◐</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill bad">отступление</span></td></tr>
+          <tr><th class="dec"><b>Р5. Вариант объявлен там же, где его RecordType</b><span class="muted">12.6 · 12.12.6</span></th>
+            <td><span class="m same">●</span></td><td><span class="m same">●</span></td><td><span class="m part">◐</span></td><td><span class="m part">◐</span></td><td><span class="m same">●</span></td><td><span class="m same">●</span></td><td><span class="m na">—</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill ok">закрытая иерархия</span></td></tr>
+          <tr><th class="dec"><b>Р6. Ссылки только внутри своей части и на фрагменты из контрактов</b><span class="muted">12.1 · 12.10</span></th>
+            <td><span class="m na">—</span></td><td><span class="m part">◐</span></td><td><span class="m part">◐</span></td><td><span class="m part">◐</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td><td><span class="m na">—</span></td><td><span class="m same">●</span></td>
+            <td class="verdict"><span class="pill ok">как в DDD</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cards">
+      <article class="card cur">
+        <div class="top"><span class="id">Р1</span><h3>Вариант сам ссылается на свой RecordType через <code>refines</code></h3><span class="pill now">проверяет 12.12.5</span></div>
+        <ul class="prac">
+          <li><span class="m same">●</span><b>Kotlin, Java</b><span class="why">Подкласс сам называет родителя: <code>class Email : Notification()</code>, <code>extends</code>.</span></li>
+          <li><span class="m same">●</span><b>OpenAPI 3</b><span class="why">Схема варианта ссылается на базовую: <code>allOf: [$ref: Notification]</code>.</span></li>
+          <li><span class="m same">●</span><b>UML</b><span class="why">Стрелка обобщения идёт от частного к общему.</span></li>
+          <li><span class="m diff">○</span><b>TypeScript, JSON Schema, Protobuf, serde</b><span class="why">Наоборот: родитель перечисляет варианты в одном месте (<code>A | B</code>, <code>oneOf</code>, <code>oneof</code>, <code>enum</code>).</span></li>
+        </ul>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Новый вариант не меняет одобренный RecordType, и его не нужно одобрять заново.</li>
+            <li>У каждого варианта свой sid, своё одобрение и свои тесты, как у любого правила.</li>
+            <li>Список вариантов всё равно виден у RecordType: входящие связи <code>refines</code> строит <code>sheriff reindex</code>.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Можно записать вариант, который ни на что не ссылается. В Kotlin такой код не скомпилируется, а здесь нужна отдельная проверка — строка 12.12.5.</li>
+            <li>Чтобы увидеть все варианты, нужна свежая переиндексация.</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р2</span><h3>Каждый вариант сам называет значения, которым соответствует (<code>answersTo</code>)</h3></div>
+        <ul class="prac">
+          <li><span class="m same">●</span><b>TypeScript</b><span class="why">Каждый член union несёт свой литерал: <code>{ channel: "email"; … }</code>.</span></li>
+          <li><span class="m same">●</span><b>serde</b><span class="why">Значение тега задаётся на самом варианте: <code>#[serde(rename = "email")]</code>.</span></li>
+          <li><span class="m part">◐</span><b>Kotlin, Java</b><span class="why">Тег — сам класс; значение в данных задают на подклассе: <code>@SerialName</code>, <code>@JsonTypeName</code>.</span></li>
+          <li><span class="m part">◐</span><b>JSON Schema</b><span class="why"><code>const</code> на поле-дискриминаторе внутри каждой ветки <code>oneOf</code>.</span></li>
+          <li><span class="m part">◐</span><b>UML</b><span class="why">Дискриминатор набора обобщений; значения задаются через powertype, приём редкий.</span></li>
+          <li><span class="m diff">○</span><b>OpenAPI 3</b><span class="why">Таблица <code>discriminator.mapping</code> лежит у родителя.</span></li>
+          <li><span class="m diff">○</span><b>Protobuf</b><span class="why">Значения нет: вариант определяется тем, какое поле <code>oneof</code> заполнено.</span></li>
+        </ul>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Всё о варианте — в одном узле.</li>
+            <li>Новое значение с новыми полями не меняет RecordType.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Что два варианта не претендуют на одно значение, видно только по всем вариантам сразу. Поэтому нужна строка 12.12.9.</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р3</span><h3>Поля варианта в записи данных лежат в одном поле типа <code>variant</code>, а значение, выбирающее вариант, — в обычном поле рядом</h3></div>
+        <ul class="prac">
+          <li><span class="m same">●</span><b>serde</b><span class="why">Так называемый adjacently tagged: <code>{"t": "email", "c": {…}}</code> — один из четырёх способов serde.</span></li>
+          <li><span class="m part">◐</span><b>Protobuf</b><span class="why"><code>oneof</code> тоже держит вариант отдельно, но отдельного поля-тега нет.</span></li>
+          <li><span class="m diff">○</span><b>TypeScript, Kotlin, Java, OpenAPI, JSON Schema</b><span class="why">Обычно плоско: тег и поля варианта на одном уровне с общими полями.</span></li>
+        </ul>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Имена полей варианта не сталкиваются с полями RecordType.</li>
+            <li>Читатель, которому варианты не нужны, пропускает одно поле, а общие поля остаются неизменными.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Лишний уровень вложенности.</li>
+            <li>Что содержимое <code>delivery</code> соответствует значению <code>channel</code>, проверяет только сгенерированная проверка данных во время работы системы.</li>
+            <li>Генератор для плоских форматов (OpenAPI, TypeScript) должен перестраивать структуру.</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р4</span><h3>Вариант выбирают значения одного или нескольких полей, по одному варианту на сочетание</h3><span class="pill bad">отступление от практики</span></div>
+        <ul class="prac">
+          <li><span class="m part">◐</span><b>TypeScript</b><span class="why">Сужает тип и по двум полям, но на практике громоздко.</span></li>
+          <li><span class="m part">◐</span><b>JSON Schema</b><span class="why"><code>if</code>/<code>then</code> выражает любое условие, в том числе по нескольким полям.</span></li>
+          <li><span class="m part">◐</span><b>UML</b><span class="why">Несколько наборов обобщений с разными дискриминаторами, приём редкий.</span></li>
+          <li><span class="m diff">○</span><b>Kotlin, Java, OpenAPI, Protobuf, serde</b><span class="why">Один дискриминатор.</span></li>
+        </ul>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Описывает данные, у которых поля зависят сразу от двух признаков, без искусственного составного поля.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Нестандартно: разработчик не узнаёт привычный приём.</li>
+            <li>Число вариантов может расти как произведение числа значений.</li>
+            <li>Генерация в TypeScript и OpenAPI сложнее: нужен составной ключ или вложенные union.</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р5</span><h3>Вариант объявлен там же, где его RecordType: в том же разделе или в контрактах</h3></div>
+        <ul class="prac">
+          <li><span class="m same">●</span><b>Kotlin</b><span class="why">Прямые наследники sealed-класса — в том же пакете и модуле.</span></li>
+          <li><span class="m same">●</span><b>Java 17</b><span class="why">Разрешённые подклассы sealed-класса — в том же модуле.</span></li>
+          <li><span class="m same">●</span><b>TypeScript, Protobuf, serde</b><span class="why">Union, <code>oneof</code> и <code>enum</code> объявляются целиком в одном месте.</span></li>
+          <li><span class="m part">◐</span><b>OpenAPI 3, JSON Schema</b><span class="why">Варианты могут лежать в любом файле, на них ведут ссылки.</span></li>
+        </ul>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Тот, кто читает данные, находит все варианты там же, где RecordType, — как говорит обоснование 12.6.</li>
+            <li>Набор вариантов закрыт, поэтому генератор может построить исчерпывающий разбор по значениям.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Другая часть системы не может добавить свой вариант: ей нужен собственный RecordType.</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р6</span><h3>RecordType ссылается только на RecordType своей части системы и на фрагменты формата из контрактов</h3></div>
+        <ul class="prac">
+          <li><span class="m same">●</span><b>DDD</b><span class="why">Ограниченные контексты не делят модели. Фрагменты в контрактах — общее ядро (shared kernel), RecordType как часть API — опубликованный язык (published language).</span></li>
+          <li><span class="m part">◐</span><b>Kotlin, Java</b><span class="why">Границы модулей и видимость <code>internal</code> закрывают чужие типы, но только на уровне кода.</span></li>
+          <li><span class="m part">◐</span><b>OpenAPI, JSON Schema, Protobuf</b><span class="why">Импорт чужих типов разрешён; ограничение держится на договорённости.</span></li>
+        </ul>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Изменение формата одной части не ломает типы другой.</li>
+            <li>Фрагменты вроде адреса или телефона описаны один раз.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Части, которой нужны чужие данные, приходится хранить идентификатор как обычное значение, например <code>text</code>. Что он указывает на «Уведомление», спецификация уже не проверяет.</li>
+          </ul></div>
+        </div>
+      </article>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,314 @@
+{
+  "s-vp24dqydygztqbt": {
+    "source": "review-g2c-a.md",
+    "verdict": "not ready — ready after the author's three fixes, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ сверено с принципом «Deterministic checks hold every participant to the contract», с s-m4h279nbaqkpa3t (решения 2026-11-19), с s-epaw9sgyaajzn8g и s-94k7b6r5kf65udf (решения 2026-11-20), с s-nudrdn5xvcg262k (решение 2026-11-20), с s-nyh9yk22ba6g77q и s-a8fn72xa782wvbk.",
+      "целостность": "✓ после правки, предложенной рецензентом — пункт 3 называет только узел приложения, который реализует правило базовой спецификации, как s-4bwa4zepd4nwcv8, и одобрение узла о стеке ревью не запускает.",
+      "целесообразность": "✓ s-tnz9zgqx8c629a7.",
+      "избыточность": "✓ не найдена. Предложение о черновике пересекается с s-kgqxg4gunzynwsv, но без него первое предложение было бы неверно в черновике.",
+      "недостаточность": "✓ после правки, предложенной рецензентом — в черновике коммит отклоняется, только если вердикт перечисляет хотя бы одно другое замечание (s-68ds99w8wd67aae)."
+    },
+    "note": "Round d also changed \"one of its judgements\" to \"one of the reviewer's judgements\" in the reason, after the reader."
+  },
+  "new:tools-7-3-review-code": {
+    "source": "review-g2c-a.md",
+    "verdict": "not ready — ready after the author's two fixes, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ s-zn4vrdpnv9bch62 (todo 2026-11-20, отказ «naming the rule and the line»), s-7gab4ptjt2khfr5 (решение 2026-11-19), s-5z5gnu7pahr82xp, s-kgbzk2ph9e6jfb4, s-2jcmb9xe9d64t2t, s-zrsc6asgmhv8tnc (у теста один SpecTag).",
+      "целостность": "✓ s-vp24dqydygztqbt, s-nyh9yk22ba6g77q (предложение), s-68ds99w8wd67aae; s-2x58az67bm6cxq2 названа в п. 2 заметок.",
+      "целесообразность": "✓ строка 10.1.43.",
+      "избыточность": "✓ не найдена.",
+      "недостаточность": "✓ не найдена."
+    },
+    "note": "Round d also rewrote \"That is each of the following\" as \"That code consists of the following, each in full\" and \"anywhere other than in\" as \"outside\", after the reader."
+  },
+  "new:tools-7-3-review-statement": {
+    "source": "review-g2c-a.md",
+    "verdict": "not ready — ready after the author's fix, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ принцип, s-m4h279nbaqkpa3t, s-epaw9sgyaajzn8g, s-nudrdn5xvcg262k (решения 2026-11-20), s-qzthyh7yqvfhsa2, s-6fw72j65jkqrfpf.",
+      "целостность": "✓ s-vp24dqydygztqbt, s-68ds99w8wd67aae, s-nyh9yk22ba6g77q (пятый пункт без изменений), s-ddd2e96uke4y83j.",
+      "целесообразность": "✓ строка 10.1.43a.",
+      "избыточность": "✓ не найдена.",
+      "недостаточность": "✓ не найдена."
+    },
+    "note": "Round d also changed \"on such a finding\" to \"because of such a finding\", after the reader."
+  },
+  "new:tools-7-3-review-appendix": {
+    "source": "review-g2c-a.md",
+    "verdict": "not ready (Russian only) — ready after the author's fix to the Russian title, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ s-4p9amamvp2bry7b (решение 2026-11-20), s-m4h279nbaqkpa3t (решения 2026-11-19 и 2026-11-20), s-nyh9yk22ba6g77q (решение 2026-11-20), s-t5uw8zfxzhfdg86, s-v4qus7raqnwzneb.",
+      "целостность": "✓ s-kag2m9tzdnduxdx, s-qmmzf9nksfsa3qp, s-h6h25ctd3yryudh (у домена есть разделы вида `requests/2`), расположения `base/3.2` в согласованных черновиках.",
+      "целесообразность": "✓",
+      "избыточность": "✓ не найдена.",
+      "недостаточность": "✓ не найдена."
+    },
+    "note": "Round d also changed \"on such a finding\" to \"because of such a finding\" and \"is a section\" to \"means a section\", after the reader."
+  },
+  "new:tools-9-no-change-trailer": {
+    "source": "review-g2b-a.md",
+    "verdict": "not ready (one fix) — ready after the author's fix, which round c applied word for word",
+    "lines": {
+      "согласованность": "✓ решение 2026-11-19, s-ddd2e96uke4y83j, s-nudrdn5xvcg262k, s-qqs2svksmjct753.",
+      "целостность": "✓ s-kgqxg4gunzynwsv, s-txbwsthdqhvyzd2 (п. 4).",
+      "целесообразность": "✓",
+      "избыточность": "✓",
+      "недостаточность": "✓"
+    },
+    "note": "The fix (\"such a statement\" pointed back into another paragraph) was a checklist finding, not an «Оценка» line."
+  },
+  "new:tools-10-section": {
+    "source": "review-g2-b.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ Сравнено с разделами «The commands» (s-qk8ezwujq95er7x) и «SpecTags in the code and the tests» (s-6c4hyyrnprekk32). Текст построен по той же форме «How …».",
+      "целостность": "✓ Текст охватывает все семь дочерних узлов, от s-xr5xxa9cxf2mq5u до s-tnz9zgqx8c629a7.",
+      "целесообразность": "✓ Узел разделён по правилу 7.3.3, как узел «The commands».",
+      "избыточность": "✓ не найдено.",
+      "недостаточность": "✓ не найдено."
+    },
+    "note": "Not reviewed again in round c, since round b did not change it."
+  },
+  "s-xr5xxa9cxf2mq5u": {
+    "source": "review-g2b-b.md",
+    "verdict": "not ready — ready after the author's two fixes, which round c applied word for word",
+    "lines": {
+      "согласованность": "✓ сверено с new:tools-1-settings, s-zefk589ykh37b8u, с решениями узла от 2026-10-27, 2026-10-31 и 2026-11-02, с config.ts:118 и copy-assets.mjs:97.",
+      "целостность": "✓ new:tools-1-settings по-прежнему ссылается на этот узел верно. Ссылки из s-477gtdrkw34dzxw, s-zh2vcr3xjumppg5 и s-2pdy9gw2jrjvfb4 на настройки runner и на отметку о вопросе названы в п. 7 заметок.",
+      "целесообразность": "✓ пользователю с одним агентом не нужно выбирать runner.",
+      "избыточность": "✓ не найдено.",
+      "недостаточность": "✓ не найдено."
+    },
+    "note": "The fixes (a citation of rule 1.6.1, and \"no file `agent`\") were checklist findings."
+  },
+  "new:tools-10-verdict": {
+    "source": "review-g2c-a.md",
+    "verdict": "not ready — ready after the author's fix, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ s-94k7b6r5kf65udf (решения 2026-11-14 и 2026-11-20), s-m4h279nbaqkpa3t, s-vp24dqydygztqbt.",
+      "целостность": "✓ s-vp24dqydygztqbt (суждение в замечании нужно, чтобы не учитывать его в черновике), s-rd9nftptjuz6bwv, s-kgqxg4gunzynwsv, s-4bwa4zepd4nwcv8.",
+      "целесообразность": "✓",
+      "избыточность": "✓ не найдена.",
+      "недостаточность": "✓ не найдена."
+    },
+    "note": "Round d also changed \"decide the commit\" to \"decide the outcome of the commit\", after the reader."
+  },
+  "new:tools-10-start": {
+    "source": "review-g2c-b.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ сверено с 10.4 (s-nyh9yk22ba6g77q), 1.6.1 (s-m4h279nbaqkpa3t), s-xr5xxa9cxf2mq5u, s-u2n5hwwqkb6zk4z, s-3wh8uhgn9jr2k74, согласованным «Who runs the reviewer», review.ts (claudeArgs, codexArgs, ALLOWED).",
+      "целостность": "✓ s-xr5xxa9cxf2mq5u ссылается на узел в определении runner; изменение смысла первого пункта названо в поле `change`.",
+      "целесообразность": "✓ 10.4: рецензент ничего не получает из сессии.",
+      "избыточность": "✓ не найдено.",
+      "недостаточность": "✓ не найдено; хватает ли флагов `claude`, покажет тест этапа 3 (поле `stage3`)."
+    },
+    "note": ""
+  },
+  "new:tools-10-limit": {
+    "source": "review-g2b-b.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ сверено с 10.5 (s-94k7b6r5kf65udf, пример о пределе времени), с new:tools-1-settings и с todo от 2026-11-06.",
+      "целостность": "✓ s-xr5xxa9cxf2mq5u ссылается на этот узел. Изменение runCli в этапе 3 названо в поле stage3.",
+      "целесообразность": "✓ todo от 2026-11-06: на Windows Codex продолжал работать после предела.",
+      "избыточность": "✓ не найдено.",
+      "недостаточность": "✓ не найдено."
+    },
+    "note": ""
+  },
+  "new:tools-10-claude": {
+    "source": "review-g2b-b.md",
+    "verdict": "not ready — ready after the author's fix to the Russian, which round c applied word for word",
+    "lines": {
+      "согласованность": "✓ сверено с решением от 2026-11-02 (opus с переходом на sonnet), с s-tnz9zgqx8c629a7, s-avvnasjhsfkgajh и review.ts:132.",
+      "целостность": "✓ s-xr5xxa9cxf2mq5u и s-tnz9zgqx8c629a7 ссылаются на этот узел.",
+      "целесообразность": "✓",
+      "избыточность": "✓ не найдено.",
+      "недостаточность": "✓ не найдено."
+    },
+    "note": ""
+  },
+  "new:tools-10-codex": {
+    "source": "review-g2c-b.md",
+    "verdict": "not ready — ready after the author's cut, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ сверено с s-avvnasjhsfkgajh, s-tnz9zgqx8c629a7, s-3wh8uhgn9jr2k74, согласованным «Who runs the reviewer», review.ts (codexArgs, codexRunner).",
+      "целостность": "✓ s-avvnasjhsfkgajh ссылается на этот узел.",
+      "целесообразность": "✓",
+      "избыточность": "✓ после правки, предложенной рецензентом — предложение о пустом `codexModel`, которое повторяло общее правило s-tnz9zgqx8c629a7, вырезано.",
+      "недостаточность": "✓ не найдено."
+    },
+    "note": "Round d also changed \"its own home\" to \"its own home directory\" in the reason, after the reader."
+  },
+  "new:tools-10-settings": {
+    "source": "review-g2c-b.md",
+    "verdict": "not ready — ready after the author's fix, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ сверено с s-477gtdrkw34dzxw, s-zh2vcr3xjumppg5, s-2pdy9gw2jrjvfb4 (опции плагина, отметка о вопросе), s-3wh8uhgn9jr2k74, s-u2n5hwwqkb6zk4z, согласованным «Who runs the reviewer».",
+      "целостность": "✓ s-xr5xxa9cxf2mq5u, s-3wh8uhgn9jr2k74 и s-u2n5hwwqkb6zk4z ссылаются на этот узел; ссылки хуков и плагинов — п. 7 заметок.",
+      "целесообразность": "✓ прогон оплачивает пользователь, который делает коммит.",
+      "избыточность": "✓ не найдено (повтор с s-u2n5hwwqkb6zk4z снят вырезкой там).",
+      "недостаточность": "✓ не найдено."
+    },
+    "note": ""
+  },
+  "new:tools-8-section": {
+    "source": "review-g2-c.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ — сверено с s-sfjka4zc4rhfu67, s-hheus6f395ynqvc и с решением от 2026-11-13 у строки 10.1.26a: только код системы и его тесты содержат SpecTag.",
+      "целостность": "✓ — сверено с дочерними узлами s-5z5gnu7pahr82xp, s-33fw3ga4ctd94dq, s-5qdjyf6t898rsd4, s-trwczfskj5zmuft и s-zrsc6asgmhv8tnc.",
+      "целесообразность": "✓ — устроен так же, как new:tools-2-section, согласованный 2026-11-22.",
+      "избыточность": "✓",
+      "недостаточность": "✓"
+    },
+    "note": "Not reviewed again in round c, since round b did not change it."
+  },
+  "s-5z5gnu7pahr82xp": {
+    "source": "review-g2b-c.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ — 9.3, 10.10 (s-sfjka4zc4rhfu67), 1.2.7, 1.4.2, 8.6, 12.3a, 8.3, решение D3 от 2026-11-10, «`exempts` links».",
+      "целостность": "✓ — s-9rtrj24myzjvshu, s-rd9nftptjuz6bwv, s-utf4mbt7ref8g9c, s-36x8amvunmv2kp5, s-8wp7xm7g3u8gscq.",
+      "целесообразность": "✓ — сомнение D2 снято правилом 1.2.7.",
+      "избыточность": "✓",
+      "недостаточность": "✓"
+    },
+    "note": ""
+  },
+  "new:tools-8-symbol": {
+    "source": "review-g2b-c.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ — 1.5.2, решения от 2026-09-22 и 2026-10-08, code.ts:199 (записано в stage3).",
+      "целостность": "✓ — s-5qdjyf6t898rsd4, s-9rtrj24myzjvshu, s-utf4mbt7ref8g9c, s-zrsc6asgmhv8tnc; пробел в 1.5.2 записан в заметках (п. 10).",
+      "целесообразность": "✓",
+      "избыточность": "✓",
+      "недостаточность": "✓"
+    },
+    "note": ""
+  },
+  "new:tools-8-file-start": {
+    "source": "review-g2b-c.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ — 1.5.2 («как можно ближе к началу»), 9.1; пример согласуется с текстом.",
+      "целостность": "✓ — s-9rtrj24myzjvshu, s-trwczfskj5zmuft, s-33fw3ga4ctd94dq.",
+      "целесообразность": "✓",
+      "избыточность": "✓",
+      "недостаточность": "✓ — цена для формата с другой обязательной первой строкой названа в поле `change`."
+    },
+    "note": ""
+  },
+  "new:tools-8-bindings": {
+    "source": "review-g2b-c.md",
+    "verdict": "not ready — ready after the author's fix, which round c applied word for word",
+    "lines": {
+      "согласованность": "✓ — 1.5.2, 10.1.26b и решение от 2026-11-17, «Where the files are», «What the SpecSheriff tools read in the project's own guidelines».",
+      "целостность": "✓ — s-9rtrj24myzjvshu, s-36x8amvunmv2kp5, s-5qdjyf6t898rsd4; узлы, которые должны измениться, названы в заметках (п. 5, 6, 9).",
+      "целесообразность": "✓",
+      "избыточность": "✓",
+      "недостаточность": "✓ после правки, предложенной рецензентом — сказано, что проверка идёт при каждом коммите и в черновике."
+    },
+    "note": ""
+  },
+  "s-zrsc6asgmhv8tnc": {
+    "source": "review-g2b-c.md",
+    "verdict": "not ready — ready after the author's fix, which round c applied word for word",
+    "lines": {
+      "согласованность": "✓ — 1.4.2, 9.3, s-5z5gnu7pahr82xp, s-gb8s9657a65hqmv, решение от 2026-10-27.",
+      "целостность": "✓ — s-utf4mbt7ref8g9c, s-3xx2eukc8gtd2tx.",
+      "целесообразность": "✓",
+      "избыточность": "✓",
+      "недостаточность": "✓ после правки, предложенной рецензентом — пометка с `@spec none …` — ошибка: допускается только один SpecTag `@spec <sid>`."
+    },
+    "note": ""
+  },
+  "s-9rtrj24myzjvshu": {
+    "source": "review-g2c-b.md",
+    "verdict": "not ready — ready after the author's fix to the DOUBT, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ сверено со строкой 10.1.26 (s-k6dzuajejrw4cej) и её решениями от 2026-11-13 и 2026-11-17, 1.5.2, 9.1, s-5z5gnu7pahr82xp, s-33fw3ga4ctd94dq, s-5qdjyf6t898rsd4, s-trwczfskj5zmuft, s-36x8amvunmv2kp5.",
+      "целостность": "✓ после правки, предложенной рецензентом — отвергается каждый SpecTag кода, у которого есть `@spec none` вместе с другим SpecTag, поэтому неизменённый такой код получает результат правила 9.5 (s-kkbqcb9xrpaepwn), как требует решение от 2026-11-17.",
+      "целесообразность": "✓ строка 10.1.26.",
+      "избыточность": "✓ не найдено.",
+      "недостаточность": "✓ после правки, предложенной рецензентом — сказано, что SpecTag рядом с `@spec none` ничего не привязывает."
+    },
+    "note": "Round d also changed \"may stand\" to \"may be placed\", \"a text that opens with\" to \"text that begins with\" and \"has none of the forms\" to \"matches none of the forms\", after the reader."
+  },
+  "new:tools-7-2-no-node": {
+    "source": "review-g2b-d.md",
+    "verdict": "not ready — ready after the author's fix, which round c applied word for word",
+    "lines": {
+      "согласованность": "✓ после правки, предложенной рецензентом — «который этот SpecTag должен привязывать», как требуют 9.3 (s-8xw4mgvpexyvw5q) и обоснование самого узла. Сверено также с 9.1, строкой 10.1.28 и её решением от 2026-11-13, решением от 2026-11-20, s-w6gybeqn2ttydqx и s-gb8s9657a65hqmv.",
+      "целостность": "✓ пункт 3 заметок (s-m8nmfsxkcfu7cjp) назван.",
+      "целесообразность": "✓ удалённый узел оставляет SpecTag в коде, которого коммит не касается.",
+      "избыточность": "✓ не найдена.",
+      "недостаточность": "✓ не найдена."
+    },
+    "note": "Round d changed \"wherever that SpecTag stands\" to \"wherever that SpecTag is placed\" in the reason, after the reader."
+  },
+  "new:tools-7-2-outside": {
+    "source": "review-g2b-d.md",
+    "verdict": "not ready — ready after the author's two fixes, which round c applied word for word; the change to s-weuyx98r7c923ab is shown as a proposal of the group",
+    "lines": {
+      "согласованность": "✓ сверено с 9.5 (s-kkbqcb9xrpaepwn), 10.6, 10.7, решениями от 2026-11-17 по строкам 10.1.26 и 10.1.26a, s-9rtrj24myzjvshu и s-utf4mbt7ref8g9c.",
+      "целостность": "✓ после правки, предложенной рецензентом — связи `implements` со строками 10.1.26 и 10.1.26a добавлены (X1), строки сопоставлены и этому узлу в п. 16 заметок, а изменение s-weuyx98r7c923ab показано как предложение группы (proposal:s-weuyx98r7c923ab).",
+      "целесообразность": "✓ коммит может сам изменить статус и флаг.",
+      "избыточность": "✓ не найдена.",
+      "недостаточность": "✓ не найдена."
+    },
+    "note": "The title is the review's: \"Code and tests outside the commit that no SpecTag binds\"."
+  },
+  "s-utf4mbt7ref8g9c": {
+    "source": "review-g2b-d.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ строка 10.1.26a и её решения, 1.4.2, 9.4 и решение от 2026-11-10, 10.10 и решение от 2026-11-13, s-zrsc6asgmhv8tnc, s-5z5gnu7pahr82xp, s-gb8s9657a65hqmv.",
+      "целостность": "✓ пункты 2 и 8 заметок названы.",
+      "целесообразность": "✓ тест без SpecTag правила не засчитывается ни одному правилу (9.2).",
+      "избыточность": "✓ не найдена; к «Project-wide settings» узел добавляет только условие описания языка.",
+      "недостаточность": "✓ не найдена."
+    },
+    "note": "Round c changed only the `change` notes and the stage-3 field, to cite the owner's ruling of 2026-11-17 on row 10.1.26a in place of Q2."
+  },
+  "new:tools-7-2-rule-test": {
+    "source": "review-g2c-b.md",
+    "verdict": "not ready — ready after the author's fix, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ сверено со строкой 10.1.31 (s-m82tz4mp3f9r3fg), 1.4.1 (s-rah8b37kytb682y), решением от 2026-11-20, 12.3a (s-ktfstpv8rurznrp), s-zrsc6asgmhv8tnc, s-utf4mbt7ref8g9c, s-36x8amvunmv2kp5.",
+      "целостность": "✓ п. 2 и 16 заметок названы.",
+      "целесообразность": "✓ код правила без теста нарушает 1.4.1.",
+      "избыточность": "✓ не найдено.",
+      "недостаточность": "✓ не найдено."
+    },
+    "note": ""
+  },
+  "proposal:s-nyh9yk22ba6g77q": {
+    "source": "review-g2b-a.md",
+    "verdict": "ready",
+    "lines": {
+      "согласованность": "✓ 1.6.1, 9.1, обоснование 10.4, решения от 2026-11-01, 2026-11-04 и 2026-11-20.",
+      "целостность": "✓ пятый пункт передаёт материалы для суждения, которое рецензент выносит при любом статусе одобрения, как требуют правила 1.6.1 и 10.2 (s-nudrdn5xvcg262k, s-kgqxg4gunzynwsv).",
+      "целесообразность": "✓",
+      "избыточность": "✓",
+      "недостаточность": "✓"
+    },
+    "note": "Round c and round d changed nothing in this proposal. Review A of round c proposed a condition for its fifth item only under answer A, and the rulings already give answer B."
+  },
+  "proposal:s-weuyx98r7c923ab": {
+    "source": "review-g2c-a.md",
+    "verdict": "not ready — ready after the author's fixes and the example, which round d applied word for word",
+    "lines": {
+      "согласованность": "✓ после правки, предложенной рецензентом — ссылка ведёт на s-3xx2eukc8gtd2tx, признак привязки которого подходит и к тестам (s-zrsc6asgmhv8tnc). Сверено также с решениями 2026-11-17 по строкам 10.1.26 и 10.1.26a, с s-kkbqcb9xrpaepwn и s-3xx2eukc8gtd2tx.",
+      "целостность": "✓ после правки, предложенной рецензентом — согласованный узел s-f5rz6b7dhxejjts и формулировка s-kkbqcb9xrpaepwn («carries no SpecTag») названы в заметках среди изменений вне группы.",
+      "целесообразность": "✓ предупреждение по 9.5 называет эту команду, и она должна перечислять весь код, о котором оно предупреждает.",
+      "избыточность": "✓ не найдена.",
+      "недостаточность": "✓ после правки, предложенной рецензентом — тесты названы явно, а пример показывает, что команда перечисляет и код, SpecTag которого ничего не привязывает."
+    },
+    "note": "The example is review A's F3, added by the coordinator's ruling: an example proposed with a change to an agreed node is part of the proposal."
+  }
+}

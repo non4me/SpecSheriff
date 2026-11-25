@@ -1,0 +1,44 @@
+{
+  "s-jau82aq9juv9zzh": {
+    "verdict": "changed",
+    "issues": [
+      "Table 'The specification and the code', row 12 (input 'A list a node carries matches the declaration in the code, in the schema or in the settings it names'): the output says 'A `TextRule.list` matches the declaration ...'. The scope narrows from any node to a TextRule. RULES.md renames 'a rule's list', not 'a list a node carries'. A project's own NodeKind may declare a property `list`, and the extension schema does not refuse that name, because `list` is not among the properties every node holds. The tools check `list` on every node (binding.ts; tools 7.2.6 says 'each list a node holds'). Keep 'a list a node carries', or write it as a property without naming TextRule.",
+      "Same table, row 13 (input 'Each member of a list that is an object holds the property the list names'): the output says 'Each member of a `TextRule.list` that is an object ...'. The same narrowing from a list on any node to a TextRule's list.",
+      "Reason, the paragraph on drift: the input said 'The check of drift only reports, because a rule outrunning its tests or its code, or tests outrunning the code, is drift worth knowing about and not the fault of whoever's commit found it.' The output says 'The check of drift only reports. A rule outrunning ... is drift worth knowing about, and not the fault of whoever's commit found it.' The 'because' is gone. The reason no longer says that this is why the check of drift only reports. Restore the connective, e.g. 'The check of drift only reports, because ...' or '... So the check of drift only reports.'",
+      "Reason, the paragraph on the push: the input said 'The tests run at a push rather than at a commit, since a suite takes longer than a commit should wait, and a commit not yet pushed misleads nobody.' Both clauses stood under 'since'. The output says '... since a suite takes longer than a commit should wait. A commit not yet pushed misleads nobody.' The second ground is cut off from 'since' and is no longer said to be a ground for running the tests at a push. This is the same defect as the drift one and is fixed the same way.",
+      "Possibly minor, already raised as a doubt: in the table 'The specification on its own', the rows on the lists of values a domain adds ('has no list a domain adds to it'; 'A list of values a domain adds stands in a rule of that domain ... and names a field of type `one of`') keep a plain 'list'. They describe a rule's list property and its `of`. RULES.md would write that as `TextRule.list`, although 'do not overuse the notation' leaves room. No meaning moves.",
+      "Checked, no issue: every other row matches the input. 45 rows are identical, and 19 differ only by the renames RULES.md requires: the backticked link and field types, NodeKind, RuntimeChecks, and `meta.code` with `meta.tests`. Row 1 of the first table, 'one field two values' changed to 'one property two values', is a JSON key under either word. No row was lost, added or reordered: 43 rows in the first table and 23 in the second, in both input and output."
+    ]
+  },
+  "s-kkbqcb9xrpaepwn": { "verdict": "same", "issues": [] },
+  "s-xhcmchcngykvn2k": { "verdict": "same", "issues": [] },
+  "s-qzthyh7yqvfhsa2": { "verdict": "same", "issues": [] },
+  "s-2fau85dfyyeq66m": { "verdict": "same", "issues": [] },
+  "s-km4x4s26kv7pjze": { "verdict": "same", "issues": [] },
+  "s-sfjka4zc4rhfu67": { "verdict": "same", "issues": [] },
+  "s-pcnyfp7gev7syax": { "verdict": "same", "issues": [] },
+  "s-6hha5en226aj8hu": { "verdict": "same", "issues": [] },
+  "s-nyh9yk22ba6g77q": { "verdict": "same", "issues": [] },
+  "s-jsqxdx47wkkj7gp": {
+    "verdict": "changed",
+    "issues": [
+      "Text, second paragraph: the input said 'A procedure needed only once ... is removed once it is done, since it is idempotent only on the state of the specification it was written for.' The output says '... is removed once it is done. Such a procedure is idempotent only on the state of the specification it was written for.' The 'since' is gone. The ground for removing the procedure is now a standalone statement in the text. It reads as a concession beside the first paragraph's requirement, not as why the procedure is removed. Restore the connective, e.g. '... is removed once it is done, because it is idempotent only on ...'."
+    ]
+  },
+  "s-83ev4wwesbwnhnp": { "verdict": "same", "issues": [] },
+  "s-7anvune6h4f6mbr": { "verdict": "same", "issues": [] },
+  "s-3dgt5c94jr55j3z": { "verdict": "same", "issues": [] },
+  "s-ybq7wbhkrh5pjqs": { "verdict": "same", "issues": [] },
+  "s-hwnzhgw5b683fc7": { "verdict": "same", "issues": [] },
+  "s-ydzyh9nqm3x64h4": { "verdict": "same", "issues": [] },
+  "s-xtqebaxjrqjsjwn": { "verdict": "same", "issues": [] },
+  "s-hgdc2543ms5spwj": { "verdict": "same", "issues": [] },
+  "s-me9k7g34jqb4rzn": {
+    "verdict": "minor",
+    "issues": [
+      "Reason, last sentence: 'a field called type held a kind of request in one log, a user's action in another and a kind of error in a third' keeps the ordinary 'kind' twice. RULES.md section 4 says that where 'kind' means an ordinary sort, it is written 'sort' or rephrased. It gives no exception for examples: section 1 keeps an example, not its wording. 'a sort of request ... a sort of error' moves no meaning. The agent raised this as a doubt."
+    ]
+  },
+  "s-m6upmfq64kw5h4r": { "verdict": "same", "issues": [] },
+  "s-2jcmb9xe9d64t2t": { "verdict": "same", "issues": [] }
+}

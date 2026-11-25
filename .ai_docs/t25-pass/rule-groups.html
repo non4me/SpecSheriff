@@ -1,0 +1,172 @@
+<title>Группы правил SpecSheriff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header, then four bands (guidelines, the tools, the system's specification, what is not a rule), each a
+     table of its groups, then the decisions of the day and what is still to do. One dark look, as on the other pages. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --guide: #e8b75a; --tools: #5cb8d8; --system: #5fbf86; --other: #9fb6cf; --todo: #e07a6a;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+  header { display: grid; gap: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  h1 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.8rem; }
+  .hint { color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
+  section.band { display: grid; gap: 10px; border-left: 3px solid var(--c); padding-left: 14px; min-width: 0; }
+  .band.guide { --c: var(--guide); } .band.tools { --c: var(--tools); } .band.system { --c: var(--system); } .band.other { --c: var(--other); }
+  .band > .lead { color: var(--muted); font-size: 0.92rem; max-width: 90ch; }
+  .scroll { overflow-x: auto; min-width: 0; }
+  table { border-collapse: collapse; width: 100%; min-width: 860px; font-size: 0.92rem; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+  th { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.05em; color: var(--muted); font-weight: 400; text-transform: uppercase; background: var(--panel); }
+  td:first-child { width: 19%; }
+  td.name strong { display: block; color: var(--c); font-weight: 700; }
+  td.name .en { display: block; font-family: var(--mono); font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+  tr:hover td { background: var(--panel); }
+  code { font-family: var(--mono); font-size: 0.86em; color: var(--fg); background: var(--panel-2); padding: 0 4px; border-radius: 3px; overflow-wrap: anywhere; }
+  .node { font-family: var(--mono); font-size: 0.82em; color: var(--muted); white-space: nowrap; }
+  .new { font-family: var(--mono); font-size: 0.7rem; color: var(--bg); background: var(--guide); border-radius: 3px; padding: 0 5px; margin-left: 4px; white-space: nowrap; }
+  .boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .box { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .box.todo { border-left: 3px solid var(--todo); }
+  .box.done { border-left: 3px solid var(--guide); }
+  ol, ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+</style>
+<div class="wrap">
+  <header>
+    <h1>Группы правил SpecSheriff</h1>
+    <p class="sub">рабочая страница T25 · обновляется после каждого решения · состояние на 13 ноября 2026</p>
+    <p class="hint">Из каких групп правил состоит метод и какие части спецификации правилами не являются. Номера в скобках — узлы новой формы базы, с которыми вы согласились. Метка «решено 13.11» отмечает то, что ещё предстоит записать в узлы.</p>
+  </header>
+
+  <section class="band guide">
+    <h2>Guidelines — как спецификация ведётся и реализуется</h2>
+    <p class="lead">Почти не меняются. В проекте guidelines состоят из SpecSheriff guidelines, выбранных проектом расширений и собственных guidelines проекта.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Группа</th><th>Что говорит</th><th>Кто меняет и как часто</th><th>Где хранится</th><th>Как связана с другими</th></tr></thead>
+      <tbody>
+        <tr><td class="name"><strong>Правила SpecSheriff guidelines</strong><span class="en">SpecSheriff guidelines</span></td>
+          <td>Что хранится, что проверяется, когда и чего стоит сбой. Общие для всех проектов. Именно они говорят, что должны делать инструменты; например, таблица проверок <span class="node">(10.1)</span>.</td>
+          <td>Владельцы SpecSheriff, в репозитории SpecSheriff. Меняются редко.</td>
+          <td>Плагин SpecSheriff, <code>specs/_guidelines/spec.json</code>. Проект их не копирует <span class="node">(2.4)</span>.</td>
+          <td>Основа для всех остальных групп.</td></tr>
+        <tr><td class="name"><strong>Правила расширений guidelines</strong><span class="en">extensions of the guidelines</span></td>
+          <td>Правила для систем, которым они нужны: домены, генерация кода из узлов, адоптация существующего проекта.</td>
+          <td>Владельцы SpecSheriff. Проект берёт расширение только по своему выбору <span class="node">(12.1.1)</span>.</td>
+          <td>Плагин SpecSheriff. Каждое расширение — свой файл <code>specs/_guidelines/extensions/&lt;имя&gt;.json</code><span class="new">решено 13.11</span>; сейчас это часть 12.</td>
+          <td>Расширяют правила SpecSheriff guidelines или изменяют их связью <code>overrides</code> <span class="node">(12.1.2)</span>. Приходят со своими инструментами. Не входят в SpecSheriff guidelines<span class="new">решено 13.11</span>.</td></tr>
+        <tr><td class="name"><strong>Собственные guidelines проекта</strong><span class="en">a project's own guidelines</span></td>
+          <td>То, что нужно только этому проекту: ответственные, собственные типы узлов, собственные проверки и правило, которое их перечисляет, расширение схемы.</td>
+          <td>Владельцы проекта.</td>
+          <td>Проект, <code>specs/_guidelines/project.json</code>.</td>
+          <td>Только уточняют или расширяют правила SpecSheriff guidelines и никогда им не противоречат <span class="node">(2.3)</span>. Изменять их не могут.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="band tools">
+    <h2>Описание инструментов — как набор инструментов выполняет guidelines</h2>
+    <p class="lead">Отдельный документ вне guidelines<span class="new">решено 13.11</span>. Меняется так же часто, как техническое приложение: это и есть техническое приложение к guidelines.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Группа</th><th>Что говорит</th><th>Кто меняет и как часто</th><th>Где хранится</th><th>Как связана с другими</th></tr></thead>
+      <tbody>
+        <tr><td class="name"><strong>Описание инструментов SpecSheriff</strong><span class="en">appendix of the tools</span></td>
+          <td>Как один набор инструментов выполняет правила guidelines: его команды, хуки, где он хранит файлы, как читает код, кто запускает ревьюера <span class="node">(2.1)</span>. Для каждого расширения — свой раздел.</td>
+          <td>Владельцы SpecSheriff. Меняется с каждым выпуском инструментов.</td>
+          <td>Плагин SpecSheriff, <code>specs/_guidelines/tools.json</code>.</td>
+          <td>Реализует правила guidelines (<code>implements</code>) и никогда им не противоречит. Каждое его правило ссылается хотя бы на одно правило guidelines <span class="node">(2.2)</span>.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="band system">
+    <h2>Спецификация системы — что делает система и как она построена</h2>
+    <p class="lead">Цель всех остальных правил. Пишется по guidelines, и инструменты проверяют, что она им соответствует.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Группа</th><th>Что говорит</th><th>Кто меняет и как часто</th><th>Где хранится</th><th>Как связана с другими</th></tr></thead>
+      <tbody>
+        <tr><td class="name"><strong>Правила базовой спецификации</strong><span class="en">base specification</span></td>
+          <td>Что делает система: бизнес-логика без технических подробностей <span class="node">(1.1.4)</span>.</td>
+          <td>Владельцы проекта или ответственные за раздел. Меняются, только когда меняется бизнес-логика.</td>
+          <td>Проект, <code>specs/&lt;раздел&gt;/</code>; с расширением доменов — по домену на папку.</td>
+          <td>Подчиняются guidelines.</td></tr>
+        <tr><td class="name"><strong>Правила технического приложения</strong><span class="en">technical appendix</span></td>
+          <td>Как система построена: раздел на каждый раздел верхнего уровня базы и раздел стека <span class="node">(4.1)</span>.</td>
+          <td>Владельцы проекта. Меняются чаще всего.</td>
+          <td>Проект, <code>specs/tech/</code>.</td>
+          <td>Реализуют правила базовой спецификации.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="band other">
+    <h2>Не правила, но часть спецификации</h2>
+    <p class="lead">Их тоже ведут по guidelines, и инструменты их тоже проверяют.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Часть</th><th>Что это</th><th>Где хранится</th><th>Особенность</th></tr></thead>
+      <tbody>
+        <tr><td class="name"><strong>Контракты</strong><span class="en">contracts</span></td>
+          <td>Термины, каждый определён один раз <span class="node">(3.2)</span>.</td>
+          <td>Раздел спецификации, <code>specs/contracts/</code>; с несколькими доменами — отдельный документ.</td>
+          <td>Общие для всех частей спецификации системы. RecordType отсюда уходит в модели данных<span class="new">решено 13.11</span>.</td></tr>
+        <tr><td class="name"><strong>Модели данных</strong><span class="en">data models (RecordType)</span></td>
+          <td>Структура данных, которые домены передают друг другу или хранят: поля с именем, нейтральным типом, обязательностью и описанием <span class="node">(12.3.2, черновик)</span>.</td>
+          <td><code>specs/models/</code>, на стороне базовой спецификации<span class="new">решено 13.11</span>.</td>
+          <td>Только с расширением доменов. Из модели генерируются типы кода и JSON-схема для проверок во время выполнения <span class="node">(12.3.3)</span>. Конкретное представление — сериализация, хранилище, валидатор — описывает техническое приложение.</td></tr>
+        <tr><td class="name"><strong>Разделы и заголовки доменов</strong><span class="en">sections, domain headers</span></td>
+          <td>Структура спецификации. Заголовок домена есть только с расширением доменов.</td>
+          <td>Там же, где узлы под ними.</td>
+          <td>Их никто не одобряет: статус выводится из узлов под ними.</td></tr>
+        <tr><td class="name"><strong>Узлы собственных типов</strong><span class="en">nodes of a project's own kinds</span></td>
+          <td>Узлы типов, которые объявили собственные guidelines проекта.</td>
+          <td>Проект.</td>
+          <td>Нужна ли им реализация в коде, говорят собственные guidelines.</td></tr>
+        <tr><td class="name"><strong>Технический долг</strong><span class="en">technical debt</span></td>
+          <td>Описания осознанно принятых недостатков внутреннего качества реализации, при которых система всё равно делает то, что требуют правила.</td>
+          <td>Раздел технического приложения, <code>specs/tech/</code>.</td>
+          <td>Ничего не требует, поэтому реализации в коде не требует. Описание может не иметь обоснования.</td></tr>
+        <tr><td class="name"><strong>JSON-схема</strong><span class="en">schema</span></td>
+          <td>Структура каждого узла и каждого файла: базовая схема плюс расширение схемы проекта. Единственное описание структуры <span class="node">(5.1)</span>.</td>
+          <td>Базовая схема — в плагине; расширение схемы — в проекте.</td>
+          <td>Файл, который ей не соответствует, отклоняется.</td></tr>
+        <tr><td class="name"><strong>Записи о статусе одобрения спецификации</strong><span class="en">approval status entries</span></td>
+          <td>Кто из ответственных одобрил спецификацию целиком или вернул её в черновик <span class="node">(10.6)</span>.</td>
+          <td>Решается на шаге инструментов.</td>
+          <td>Последняя запись задаёт статус одобрения спецификации.</td></tr>
+        <tr><td class="name"><strong>Архив</strong><span class="en">archive</span></td>
+          <td>Удалённые узлы, которые когда-то одобряли, с причиной удаления и заменой <span class="node">(2.5)</span>.</td>
+          <td><code>specs/_archive/</code></td>
+          <td>Ни на что не влияет. У архивного узла нет своего sid.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="boxes">
+    <div class="box done">
+      <h2>Решено 13 ноября</h2>
+      <ol>
+        <li>Описание инструментов выходит из guidelines и становится отдельным документом. Что проверяется, когда и чего стоит сбой, остаётся в правилах guidelines.</li>
+        <li>Каждое расширение guidelines получает свой файл, чтобы агент проекта читал только выбранные расширения.</li>
+        <li>Термина «основное правило» больше нет. Вместо него — «правило SpecSheriff guidelines»: расширения в SpecSheriff guidelines не входят.</li>
+        <li>RecordType уходит из контрактов в отдельную часть — модели данных, <code>specs/models/</code>, на стороне базовой спецификации. RecordType остаётся машиночитаемой моделью в нейтральных типах.</li>
+        <li>Когда структура устоится, эта таблица войдёт в саму спецификацию и в описание страницы «Метод» для сайта SpecSheriff.</li>
+      </ol>
+    </div>
+    <div class="box todo">
+      <h2>Ещё предстоит</h2>
+      <ul>
+        <li>Узлы 2.1, 2.3 и 12.1.1 переписаны под решения 1–3 и согласованы. «Основное правило» заменено в узлах 6.1, 12.1.2, 12.1.3 и в проверках 10.1.20 и 10.1.20a.</li>
+        <li>Вернуться к новой проверке 10.1.20a.</li>
+        <li>Внести решение о моделях данных в узлы 12.3.1–12.3.3, когда дойдём до части 12.</li>
+        <li>На шаге переноса разложить файлы: расширения — каждое в свой файл, описание инструментов — отдельно.</li>
+      </ul>
+    </div>
+  </div>
+</div>

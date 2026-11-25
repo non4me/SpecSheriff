@@ -1,0 +1,239 @@
+{
+  "title": "The table of checks of the Domains extension, with what each failure costs",
+  "ruTitle": "Таблица проверок расширения «Домены» и цена непрохождения каждой из них",
+  "head": {
+    "sid": "s-rp2nxe3cga2p26x",
+    "kind": "TableRule",
+    "title": "The table of checks of the Domains extension",
+    "ruTitle": "Таблица проверок расширения «Домены»",
+    "text": "This table contains the complete list of the checks of the Domains extension (§s-h6h25ctd3yryudh) that run after an edit to the specification or to the code, including its tests.",
+    "ruText": "Эта таблица содержит полный список проверок расширения «Домены» (§s-h6h25ctd3yryudh), которые запускаются после правок как самой спецификации, так и кода, включая тесты.",
+    "reason": "The checks of the Domains extension bind only a project that has chosen the extension (§s-9ttvcwpqkehm58g). The main table of checks names no particular extension (§s-chk5hnzmcpeqj25), so these checks are listed here, beside the rules they enforce. In one table, every check of the extension can be seen at a glance, together with what its failure costs.",
+    "ruReason": "Проверки расширения «Домены» обязывают только проект, который выбрал это расширение (§s-9ttvcwpqkehm58g). Основная таблица проверок не называет ни одного конкретного расширения (§s-chk5hnzmcpeqj25), поэтому эти проверки перечислены здесь, рядом с правилами, которые они обеспечивают. В одной таблице все проверки расширения видны сразу, вместе с ценой непрохождения каждой.",
+    "refs": [
+      {
+        "type": "refines",
+        "to": "s-jau82aq9juv9zzh"
+      },
+      {
+        "type": "cites",
+        "to": "s-h6h25ctd3yryudh"
+      },
+      {
+        "type": "cites",
+        "to": "s-9ttvcwpqkehm58g"
+      },
+      {
+        "type": "cites",
+        "to": "s-chk5hnzmcpeqj25"
+      }
+    ],
+    "columns": [
+      {
+        "en": "What is checked",
+        "ru": "Что проверяется",
+        "holds": "a node: the check, its own sid, links and approval"
+      },
+      {
+        "en": "On failure",
+        "ru": "При непрохождении",
+        "holds": "text, part of the wording of the check in its row"
+      }
+    ],
+    "changes": [
+      "Новый узел, по вашему решению от 18 ноября: у каждого расширения свои проверки, в его собственном правиле-таблице с теми же столбцами, что в 10.1. Связь refines к 10.1.",
+      "Текст повторяет вашу шапку 10.1, с «проверок расширения «Домены»» вместо «проверок SpecSheriff guidelines». Ссылка на 11.1.1 объясняет, о каком расширении речь.",
+      "По рецензенту: убрана фраза «Эти проверки запускаются вместе с проверками из таблицы проверок». Когда запускаются проверки, говорит 10.2; правка 10.2, которая назовёт и таблицы, уточняющие 10.1, — следующим вопросом.",
+      "По рецензенту: в обосновании «ни одного конкретного расширения», как в 1.7.3.",
+      "Вы согласовали шапку 18 ноября («шапку я, по-моему, уже согласовывал… Давай дальше»): она только применяет ваше решение о таблицах проверок расширений.",
+      "19 ноября, по вашим названиям: заголовок «Таблица проверок расширения», в обосновании — «основная таблица проверок». Смысл не меняется, согласование сохраняется."
+    ],
+    "agreed": "2026-11-18"
+  },
+  "tables": [
+    {
+      "heading": "",
+      "ruHeading": "",
+      "rows": [
+        {
+          "n": 20,
+          "num": "11.3.1",
+          "was": "Every domain has a header, and the index in it is what the domain's sections produce | refused",
+          "en": "Every domain has exactly one header",
+          "cost": "refused",
+          "ru": "У каждого домена ровно один заголовок",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября: одобренная строка «Every domain has a header, and the index in it is what the domain's sections produce» делится на две, и эта строка — её первая половина. Вторая половина, об указателе, — строка 11.3.2. Вы согласовали 19 ноября («ок») уточнённую формулировку: у каждого домена ровно один заголовок. Заголовок, скопированный в другой документ разделённого домена, инструменты раньше пропускали.",
+          "rests": [
+            "s-yggv9myedprnaa7"
+          ],
+          "impl": [
+            "s-agc6fb3vx46pc23"
+          ],
+          "about": "Затрагивает каждый домен. Без заголовка тот, кто работает над доменом, не узнает из одного узла, за что домен отвечает и что он использует.",
+          "tests": [
+            "unit/validate.test.ts: refuses a domain without a header, and a header whose index its sections do not produce",
+            "unit/reindex.test.ts: rebuilds the index in a domain's header from the domain's sections"
+          ],
+          "agreed": "2026-11-19",
+          "decisions": [
+            {
+              "date": "2026-11-18",
+              "problem": "What a domain's header is, for the check that every domain has one.",
+              "ruling": "The owner: a domain's header is an auxiliary part of the domain that holds information about the domain itself, such as a brief description, the level assigned to the domain and a list of the titles of its sections."
+            }
+          ]
+        },
+        {
+          "n": 20.5,
+          "num": "11.3.2",
+          "was": "",
+          "en": "The header of each domain that has sections carries the index computed from those sections",
+          "cost": "refused",
+          "ru": "Заголовок каждого домена, у которого есть разделы, содержит указатель, вычисленный из этих разделов",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Вторая половина одобренной строки «Every domain has a header, and the index in it is what the domain's sections produce». «Вычисляется из» — ваше слово из согласованной 10.1.16 («вычисляются из исходящих») вместо «то, что дают». По вашему решению от 18 ноября указатель обязателен, только если у домена есть разделы: маленький домен может их не иметь. Вы согласовали её 18 ноября вместе с правкой 11.1.3: требование стоит в 11.1.3, а эта строка — его проверка, как в таблице 10.1.",
+          "rests": [
+            "s-2r59txnms5serdr",
+            "s-yggv9myedprnaa7"
+          ],
+          "impl": [
+            "s-agc6fb3vx46pc23"
+          ],
+          "tests": [
+            "unit/validate.test.ts: refuses a domain without a header, and a header whose index its sections do not produce",
+            "unit/reindex.test.ts: rebuilds the index in a domain's header from the domain's sections"
+          ],
+          "about": "Затрагивает указатель в заголовке каждого домена. Указатель, который не совпадает с разделами домена, сообщает о домене неверное.",
+          "decisions": [
+            {
+              "date": "2026-11-18",
+              "problem": "Whether every domain's header carries an index of sections.",
+              "ruling": "The owner: the index is required where the domain has sections; a small domain may have none."
+            }
+          ],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 23,
+          "num": "11.3.3",
+          "was": "A `consumes` link goes from a domain's header to a section of another domain | refused",
+          "en": "A `consumes` link goes from a domain's header to a section of another domain",
+          "cost": "refused",
+          "ru": "Связь `consumes` идёт от заголовка домена к разделу другого домена",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её без изменений 18 ноября.",
+          "rests": [
+            "s-yggv9myedprnaa7"
+          ],
+          "impl": [
+            "s-qvgzubkrafadqgf"
+          ],
+          "about": "Затрагивает каждую связь `consumes`. Связь, которая идёт не от заголовка домена или не к разделу другого домена, не говорит, какие разделы домен использует.",
+          "tests": [
+            "unit/validate.test.ts: refuses a consumes link that does not go from a header to a section of another domain"
+          ],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 25,
+          "num": "11.3.4",
+          "was": "The domains do not use one another in a cycle | refused",
+          "en": "The domains do not use one another in a cycle through the `consumes` links of their headers",
+          "cost": "refused",
+          "ru": "Домены не используют друг друга по кругу через связи `consumes` своих заголовков",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября с уточнением: Смысл тот же. Добавлено, по каким связям определяется круг: по вашему решению от 30 октября (одобренный 1.41) — только по связям `consumes` заголовков, а не по связям между правилами, которые свободно пересекают границы доменов. Отрицание оставлено, как в согласованном 11.1.3.",
+          "rests": [
+            "s-yggv9myedprnaa7"
+          ],
+          "impl": [
+            "s-vuujweu57sxsa58"
+          ],
+          "about": "Затрагивает связи `consumes` всех доменов вместе. Домены, которые используют друг друга по кругу, нельзя построить один за другим.",
+          "tests": [
+            "unit/validate.test.ts: refuses domains using one another in a cycle"
+          ],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 40,
+          "num": "11.3.5",
+          "was": "Every section of the technical appendix but those of the stack and of the technical debt stands under the name of a domain | refused",
+          "en": "Every section of the technical appendix other than the stack section and the technical debt section has the same name and the same place in the structure as a domain or a section of the base specification",
+          "cost": "refused",
+          "ru": "Каждый раздел технического приложения, кроме раздела стека и раздела технического долга, совпадает с доменом или разделом базовой спецификации по имени и по месту в структуре",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября в вашем смысле: Ваш смысл (18 ноября): приложение отвечает на вопрос «как» для правил базы, поэтому повторяет её структуру — домены и разделы, — но только по мере необходимости. Правило базы, которое не нужно уточнять, пары в приложении не получает, поэтому строка проверяет только одно направление: у каждого раздела приложения есть пара в базе. Стек и технический долг пары в базе не имеют. Названия двух исключений — как в согласованной 10.1.22. Только английский, после согласования, по замечанию читателя: «has the same name and the same place in the structure as» вместо «matches … in its name and in its place in the structure». Смысл и русский текст не менялись.",
+          "rests": [
+            "s-vj7ercem526zd6v",
+            "s-qmmzf9nksfsa3qp",
+            "s-h6h25ctd3yryudh"
+          ],
+          "impl": [
+            "s-gvafe6bnstwab8b"
+          ],
+          "about": "Затрагивает каждый раздел технического приложения. Раздел под именем, которого нет ни у одного домена, не относится ни к одной части базовой спецификации. Разделы стека и технического долга — исключение.",
+          "tests": [
+            "unit/validate.test.ts: refuses a section of the technical appendix standing under a name no domain has, the stack's and the technical debt's aside"
+          ],
+          "decisions": [
+            {
+              "date": "2026-11-18",
+              "problem": "What the check on the sections of the technical appendix requires.",
+              "ruling": "The owner: the technical appendix refines how the rules of the base specification are implemented, so its structure matches that of the base specification, its domains and their sections included, as far as needed. A base rule that needs no refinement has no counterpart in the appendix, and the stack and the technical debt have no counterpart in the base. The check has nothing to do with the contracts section."
+            }
+          ],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 22,
+          "num": "11.3.6",
+          "was": "Every domain's header names a level the project's own guidelines list | refused",
+          "en": "A domain's header may contain one of the levels, if the project's own guidelines define levels",
+          "cost": "refused",
+          "ru": "Заголовок домена может содержать один из уровней, если такие определены в собственных guidelines проекта",
+          "ruCost": "отклоняется",
+          "fate": "from 10.1",
+          "change": "Переходит сюда из таблицы 10.1 по вашему решению от 18 ноября. Вы согласовали её 18 ноября в вашей формулировке: Ваша формулировка (18 ноября): заголовок уровень содержит, а не называет; уровень необязателен (ваше решение от 8 ноября, согласованный 11.2.1). Проверка отклоняет заголовок, который содержит уровень не из списка собственных guidelines проекта или содержит уровень, когда список не задан. Заголовок без уровня проходит.",
+          "rests": [
+            "s-nkyty4dy9x2v2a4"
+          ],
+          "impl": [
+            "s-uxmkwbnpgtjzkgv"
+          ],
+          "about": "Затрагивает заголовок домена, который называет уровень. Уровень, которого нет в списке собственных guidelines проекта, не даёт домену места на схеме доменов.",
+          "tests": [
+            "unit/validate.test.ts: refuses a level the project's own guidelines do not list"
+          ],
+          "decisions": [
+            {
+              "date": "2026-11-18",
+              "problem": "How the check on a domain's level is worded.",
+              "ruling": "The owner: a domain's header contains a level rather than names it; it may contain one of the levels, if the project's own guidelines define levels, since a level is optional."
+            }
+          ],
+          "agreed": "2026-11-18"
+        }
+      ]
+    }
+  ],
+  "doubts": [],
+  "toolsRu": {
+    "s-agc6fb3vx46pc23": {
+      "title": "Указатели, входящие связи, собранные значения и статусы разделов и заголовков — пересобираются",
+      "text": "`sheriff validate` пересобирает их в памяти и сравнивает с тем, что в коммите:\n\n- указатель каждого заголовка домена — по заголовку, каким он сейчас стоит в файлах домена;\n- входящие связи;\n- значения, собранные рядом с каждым полем (§s-ju5vcanbjph7mgh);\n- статус каждого раздела и заголовка домена (§s-9kfdycuq34beqvs).",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-qvgzubkrafadqgf": {
+      "title": "Связи `consumes` и `exempts`",
+      "text": "`sheriff validate` проверяет, какие узлы стоят на концах каждой связи `consumes` и каждой связи `exempts`:\n\n- у связи `consumes` в начале должен быть заголовок домена, а в конце — раздел другого домена;\n- у связи `exempts` в начале должен быть узел `project.json`, а в конце — правило, узел собственного NodeKind проекта или раздел.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    }
+  }
+}

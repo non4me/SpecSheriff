@@ -1,0 +1,178 @@
+[
+  {
+    "sid": "s-jau82aq9juv9zzh",
+    "location": "_guidelines/spec/5.1",
+    "kind": "TextRule",
+    "title": "What is checked, when, and what a failure costs",
+    "text": "Two things are checked mechanically: that the specification holds together on its own, and that the specification and the code still describe each other. Every check is deterministic but one: whether the code does what the nodes it names say, and nothing they do not, is judged at every commit that changes code by an independent reviewer (§s-nyh9yk22ba6g77q). The checks run when a commit is made, and the tests of the system's code at a push while the specification is approved; each check reads the commit being made, and the history behind it where its row says so, never what the commit does not hold. A check refuses unless its row says otherwise.\n\n**The specification on its own**\n\n| What is checked | On failure |\n|---|---|\n| No file of the specification, of its archive or of its schema gives one field two values | refused |\n| Every file matches its schema | refused |\n| No two nodes share a sid | refused |\n| No two nodes share a location | refused |\n| Every node's location names where it is in the specification | refused |\n| Every term node stands in contracts | refused |\n| No two term nodes name the same term, whatever the case of its letters | refused |\n| No two RecordTypes share a name, whatever the case of its letters | refused |\n| Every node outside the SpecSheriff guidelines a project takes, but a section and a domain's header, is approved only where the latest record for it and its wording's fingerprint is an approval | refused |\n| Each approval a commit records names one of the owners of its node, as the commit holds them | refused |\n| The status of each section and domain's header is the one the nodes under it produce | refused |\n| A node a commit removes, outside the SpecSheriff guidelines a project takes, is deleted where it is a section or a domain's header or no approval of it was ever given, and otherwise stands in the archive with the reason for its removal | refused |\n| Every link names a node | refused |\n| A node citing another holds a link to it, and a link of type cites stands only where its node cites the node it names and holds no link of another type to it | refused |\n| No node cites another by its location outside text quoted as code | refused |\n| A term-relation or a uses link binds two terms, and no other type of link, cites included, binds two terms | refused, and settled with the specification's owners |\n| The incoming links are what the outgoing ones produce | refused |\n| No approved node, and no section or domain's header, sets three words or more running in capitals outside a name quoted from the code | refused |\n| Every section holds at least one rule | refused |\n| Every domain has a header, and the index in it is what the domain's sections produce | refused |\n| The values gathered beside a field are what their source produces | refused |\n| Every domain's header names a level the project's own guidelines list | refused |\n| A consumes link goes from a domain's header to a section of another domain | refused |\n| An exempts link goes from a node of the project's own guidelines to a rule, a node of a project's own kind or a section | refused |\n| The domains do not use one another in a cycle | refused |\n| A RecordType of a domain names a RecordType of another domain only where the named RecordType stands in a section its domain's header names in its consumes links | reported by the node's sid |\n| A RecordType variant refines the RecordType it is a variant of | refused |\n| A RecordType variant stands in the part of the specification that declares the value it answers to | refused |\n| A RecordType variant declares at least one field held neither by its RecordType nor by any field of type variant of that RecordType | refused |\n| A RecordType variant answers to values of exactly the fields its RecordType names as choosing the variant, each value one its choosing field's source declares | refused |\n| No two variants of one RecordType answer to the same values | refused |\n| Each value of a field of type one of is declared once, the values gathered beside it not counted | refused |\n| A field of type one of whose values are not those the domains add has no list a domain adds to it | refused |\n| A list of values a domain adds stands in a rule of that domain refining a RecordType described in contracts, and names a field of type one of of that RecordType whose values are those the domains add | refused |\n| A RecordType holds at most one field of type variant, the ones it inherits counted | refused |\n| Every field of type one of holds at least one value from its source | refused |\n| A field whose values are the sids of a kind's nodes names a kind of node that exists | refused |\n| A field of type identifier of names a RecordType that names the field identifying it, one of its fields, and the identifying fields it leads to, followed from one identifier to the next, end in a field of another type | refused |\n| Every node of the technical appendix but a section, outside the sections of the stack and of the technical debt, implements a node of the base specification, and every rule of the technical debt refines one | refused |\n| Every section of the technical appendix but those of the stack and of the technical debt stands under the name of a domain | refused |\n| Every rule of the appendix of the tools (§s-a4rbry4hsu34hy8) implements a node of the base of the guidelines | refused |\n| Every rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines | refused |\n| No project but the one the SpecSheriff guidelines are written in holds a copy of them or of their schema | refused |\n\n**The specification and the code**\n\n| What is checked | On failure |\n|---|---|\n| Every symbol of the system's code outside its tests carries a SpecTag naming the node it implements, or, where it implements none of the system's logic, the SpecTag that says so and gives its reason | refused, or reported by the symbol for one a commit does not change while the specification is a draft |\n| A commit that makes the specification approved, where before it was a draft, leaves no symbol of the system's code outside its tests, and no test, without a SpecTag | refused |\n| A commit that puts the specification back to draft records one of the specification's owners withdrawing the approval of the rule that approves it | refused |\n| Every SpecTag names a node that exists, and a SpecTag on a symbol whose code a commit changes an approved one | refused |\n| Every SpecTag on the code outside the tests stands on the symbol it binds | refused |\n| Every test of the system's code carries the SpecTag of a rule, a term or a node of a project's own kind that exists, and a test a commit adds or changes that of an approved one | refused, or reported by the test for one carrying no SpecTag that a commit does not change while the specification is a draft |\n| Every rule, or node of a project's own kind that needs code, whose code written for it a commit adds or changes has a test carrying its SpecTag | refused |\n| Every test of a project's own check or generator carries the SpecTag of the rule listing it, and a test a commit adds or changes that of an approved one | refused, or reported by the test for one carrying no SpecTag that a commit does not change while the specification is a draft |\n| Every project's own check or generator whose code a commit adds or changes has a test carrying the SpecTag of the rule listing it | refused |\n| A node's lists of code and tests are what the SpecTags on the code and on the tests produce | refused |\n| A node that names the symbols in a file is held to them | refused |\n| A list a node carries matches the declaration in the code, in the schema or in the settings it names | refused |\n| Each member of a list that is an object holds the property the list names | refused |\n| A check a project's own guidelines add (§s-2fau85dfyyeq66m) passes | refused, or reported where the rule listing it says so |\n| No file the repository keeps outside the specification and the fixtures of the tests of a check reading citations or locations (§s-6hha5en226aj8hu) names a node by its location | refused |\n| A citation in the code, the tests and the documents, those fixtures left out, names a node by its sid | refused |\n| Every copy generated from the nodes and kept in the repository, such as the types and runtime checks of the system's code, is exactly what the nodes produce now, or, while it waits for a draft node, left unchanged by the commit: neither edited by hand nor left behind nodes that are all approved | refused |\n| A copy of the system's code that waits for a draft node | reported by the node's sid |\n| A rule whose tests or code lag behind its text, or whose code lags behind its tests, as the history of the repository shows | reported by the node's sid |\n| An approved rule, or approved node of a project's own kind that needs code, outside the SpecSheriff guidelines, the project's own guidelines and the technical debt has a symbol and a test carrying its SpecTag, its own or that of a rule implementing it, or is exempted | reported by the node's sid |\n| A commit that changes code names every approved node the SpecTags on its changed symbols outside the tests name, and no header or section | refused |\n| The code does what the nodes it names say, and nothing they do not | refused, naming the node and the line |\n| The tests of the system's code and of a project's own checks and generators pass | the push is refused while the specification is approved |",
+    "reason": "A person asking whether a commit will go through must find the whole answer in one place: spread across several rules, the answer comes apart, and one rule ends up contradicting another without anybody seeing it.\n\nEvery check but the review is binary, so refusing costs nobody a judgement, and a check that sometimes refuses for a reason nobody can reproduce is bypassed at the first chance and never trusted again. The review is the one judgement, because whether code does only what its rules say cannot be decided by a script.\n\nA check reads the commit being made, because a judgement of anything else would pass or refuse what is not being committed. The tests run at a push rather than at a commit, since a suite takes longer than a commit should wait, and a commit not yet pushed misleads nobody.\n\nThe check of drift only reports, because a rule outrunning its tests or its code, or tests outrunning the code, is drift worth knowing about and not the fault of whoever's commit found it. An approved rule not implemented is reported rather than refused, since a rule is approved before its test and its code are written (§s-rah8b37kytb682y). A RecordType named across domains outside the sections used is reported for the reason §s-5yvpn4zhuqmv5bq gives, and a symbol or a test without a SpecTag that a commit leaves alone while the specification is a draft for the reason §s-kkbqcb9xrpaepwn gives. No test runs at a push while the specification is a draft for the reason §s-xhcmchcngykvn2k gives."
+  },
+  {
+    "sid": "s-kkbqcb9xrpaepwn",
+    "location": "_guidelines/spec/5.2",
+    "kind": "TextRule",
+    "title": "Code and tests without a SpecTag while the specification is a draft",
+    "text": "While a project's specification is a draft, a symbol of the system's code outside its tests, or a test, that carries no SpecTag is reported rather than refused where the commit does not change it.",
+    "reason": "A project taking up the method holds code and tests written before its rules, which are approved only as its owners review them. A SpecTag added to a symbol, or to a test that named no node, is a change that must then name an approved node (§s-kgbzk2ph9e6jfb4, §s-rah8b37kytb682y). Refusing every symbol and test without one would refuse every commit, the project's setup included, until all of them had their rules. While the specification is a draft, the work is above all on the specification, the code and the tests secondary in it.\n\nOnly what a commit leaves alone is relieved. So no draft node is implemented, and every change to code is reviewed."
+  },
+  {
+    "sid": "s-xhcmchcngykvn2k",
+    "location": "_guidelines/spec/5.3",
+    "kind": "TextRule",
+    "title": "Tests at a push while the specification is a draft",
+    "text": "While a project's specification is a draft, neither the tests of the system's code nor those of the project's own checks and generators are run at a push.",
+    "reason": "While the specification is a draft, the work is above all on the specification, the code and the tests secondary in it, and a push that waited for every test would slow that work. The tests of the project's own checks and generators go with those of the system's code, since a push runs them together (§s-jau82aq9juv9zzh)."
+  },
+  {
+    "sid": "s-qzthyh7yqvfhsa2",
+    "location": "_guidelines/spec/5.4",
+    "kind": "TextRule",
+    "title": "The specification's status is its owners' act",
+    "text": "A rule of the project's own guidelines refining this one states that the specification is approved. The specification is approved while that rule is approved, and a draft otherwise. Only the specification's owners approve that rule or withdraw its approval.\n\nA commit that makes the specification approved, where before it was a draft, is refused unless every symbol of the system's code outside its tests, and every test, carries a SpecTag. A commit that puts it back to draft is refused unless it records one of the specification's owners withdrawing the approval of that rule.",
+    "reason": "Whether the specification is approved decides how strictly the checks hold its code and tests (§s-kkbqcb9xrpaepwn, §s-xhcmchcngykvn2k), so its owners decide it, both ways. They must be able to put it back to draft, whatever leads them to it. While the specification changes at its core, as when another version of it is adopted or the system's architecture changes, the code and the tests are secondary. Approved while code or tests carry no SpecTag, it would refuse the next commit for code or tests that commit did not touch. Anyone could put its rule back to draft by an edit of its wording, or remove it. So only a withdrawal by one of the specification's owners puts the specification back."
+  },
+  {
+    "sid": "s-2fau85dfyyeq66m",
+    "location": "_guidelines/spec/5.5",
+    "kind": "TextRule",
+    "title": "A project's own checks join the shared ones",
+    "text": "A project's own guidelines may add checks, listed in a rule of theirs refining this one with what each checks and what a failure costs. Each counts among the checks of §s-jau82aq9juv9zzh: it is held to all that rule says of a check, runs wherever they run, and refuses unless that list says it reports.",
+    "reason": "A project's own kinds of node and fields carry requirements no check of the SpecSheriff guidelines knows. Run where the shared checks run and held to what they are held to, a project's check holds every participant as they do, rather than resting on whoever remembers to run it. Listed in one rule, the project's part of whether a commit goes through stands in one place, and what a failure costs is approved by one of the specification's owners (§s-67vekyup7y8smap)."
+  },
+  {
+    "sid": "s-km4x4s26kv7pjze",
+    "location": "_guidelines/spec/5.6",
+    "kind": "TextRule",
+    "title": "A project's own generators join the shared one",
+    "text": "A project's own guidelines may add generators of code, listed in a rule of theirs refining this one with what each writes from which nodes. A project's generator writes the same from the same nodes, and what it writes waits for that rule as for the nodes it is written from (§s-kh8qcd5kxgh9z3j).",
+    "reason": "Code generated from a project's own kinds of node and fields is written by no generator of the SpecSheriff guidelines. A copy is checked against what its nodes produce only where the same nodes always produce the same; code from a generator whose rule is a draft implements what nobody approved (§s-utvqbypzhmgndug)."
+  },
+  {
+    "sid": "s-sfjka4zc4rhfu67",
+    "location": "_guidelines/spec/5.7",
+    "kind": "TextRule",
+    "title": "A project's own checks and generators are tested against the rule listing them",
+    "text": "Every test of a project's own check or generator carries the SpecTag of the rule listing it (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze) and is written before the code it tests. A test a commit adds or changes carries that SpecTag only once the rule is approved, and each such check or generator whose code a commit adds or changes has a test carrying it.",
+    "reason": "A test is all that holds a project's check or generator to its rule: the code of the repository's tools is not the system's code and carries no SpecTag (§s-hheus6f395ynqvc), and what a generator writes owes no test (§s-rah8b37kytb682y) and is withheld from the reviewer (§s-nyh9yk22ba6g77q). The rule listing a check or generator says what it checks or writes, so its tests verify that rule; a test written first tests that rule rather than what the code happened to do, and one carrying the SpecTag of a draft rule would have the code implement what nobody approved (§s-utvqbypzhmgndug)."
+  },
+  {
+    "sid": "s-pcnyfp7gev7syax",
+    "location": "_guidelines/spec/5.8",
+    "kind": "TextRule",
+    "title": "At a commit and at a push, the project's own tools run after the SpecSheriff tools",
+    "text": "At a commit and at a push, the SpecSheriff tools run their checks first, and the project's own tools that run at that moment run after them. The project's own checks run among the checks of the SpecSheriff tools, not after them (§s-2fau85dfyyeq66m). The project's tools run whatever the checks find, and also where the SpecSheriff tools cannot run. The commit or the push goes through only where the checks and each of the project's tools pass. None of the project's tools changes what the commit holds.",
+    "reason": "A project may run tools of its own at a commit or a push, such as a scan that nothing internal reaches a public repository. The method governs the specification and the code bound to it (§s-efe2cmw9asrbt2g). A tool guarding anything else is the project's own concern, and taking up the method must not stop it. Such a tool makes no check of the method, so the table of checks does not list it. The SpecSheriff tools run first, since the project's tools may extend their checks but never override them. A tool that changed the commit would let through what no check read."
+  },
+  {
+    "sid": "s-6hha5en226aj8hu",
+    "location": "_guidelines/spec/5.9",
+    "kind": "TextRule",
+    "title": "The fixtures of a check's tests are left out of the checks of citations and locations",
+    "text": "The checks of citations and locations outside the specification leave out the files listed as fixtures of tests. The list is kept in a rule of the project's own guidelines that refines this one. It names only the fixtures of the tests of a check that reads citations or locations.",
+    "reason": "Such a test feeds its check a file holding a sid or a location as data, not as a citation of a node. A test of any other check has no use for such a file, so the list holds no other. Listed in one rule of the project's own guidelines, the files left out are approved by one of the specification's owners (§s-67vekyup7y8smap) rather than set in the settings."
+  },
+  {
+    "sid": "s-nyh9yk22ba6g77q",
+    "location": "_guidelines/spec/5.10",
+    "kind": "TextRule",
+    "title": "The reviewer sees only the change and the nodes it names",
+    "text": "The independent reviewer of a commit is given the commit's change, less the files generated from the specification, and the text and the reason of the nodes its message and the SpecTags on its symbols outside the tests name, a RecordType with its fields and a node of a project's own kind with those its kind declares (§s-vsh384ybt4w25a2) — and nothing of the session that wrote the code. Each file left out is named to it as holding the types and runtime checks generated from the RecordTypes, or what a project's generator wrote from the nodes it names (§s-km4x4s26kv7pjze), which the check of the generated copies compares with what the nodes produce. It refuses the commit where the code does something no named node's text states or leaves out what one requires, what a RecordType requires counted as carried out by the types and runtime checks generated from it (§s-e877bnfa559tvk9) and what the rule listing a project's generator says it writes by what that generator wrote, and names the node and the line of each finding. A review that cannot be held — no reviewer to run, a run that does not end, an answer that cannot be read — refuses the commit and says why.",
+    "reason": "Given nothing of the session that wrote the code, the reviewer reads the code against the nodes rather than against its author's intent, and a refusal naming the node and the line can be checked by anyone. A node's reason says what its rule protects, which tells the reviewer how to read a case its text leaves open. The generated files are left out because the check of the generated copies already compares them with what the nodes produce, so what a RecordType requires is decided there rather than judged. A reviewer judges what a commit leaves out only from what it is shown, so a file withheld from it, or one whose content it is not told is held elsewhere, reads to it as missing. A review that passes whenever it could not be held is a review nobody can rely on."
+  },
+  {
+    "sid": "s-jsqxdx47wkkj7gp",
+    "location": "_guidelines/spec/5.11",
+    "kind": "TextRule",
+    "title": "A procedure that writes the specification is idempotent",
+    "text": "Every procedure that writes the specification, or what is generated from it, is idempotent: run again on what its previous run left, it gives the same result and changes nothing, so running it again is always safe. A procedure needed only once, such as bringing existing documents into the model, is removed once it is done, since it is idempotent only on the state of the specification it was written for.",
+    "reason": "Whoever works on the specification may run such a procedure at any time, by hand or as part of a check, without knowing whether it has run before; one whose second run changed anything would damage the specification the next time it ran. A procedure written for one state of the specification can damage a later one."
+  },
+  {
+    "sid": "s-83ev4wwesbwnhnp",
+    "location": "_guidelines/spec/5.12",
+    "kind": "TextRule",
+    "title": "Where an agent writes, the checks run at each of its edits",
+    "text": "Where an agent writes the specification, the tests or the code, the checks of the specification and of the code run after each of its edits, and what they refuse is reported to the agent.\n\nBefore an edit is made, it is refused where it would leave a node approved, a section and a domain's header left out, over a wording for which no approval stands (§s-5ah25f6gy99panq), change the code written for a rule, or for a node of a project's own kind that needs code (§s-vsh384ybt4w25a2), that no test carries the SpecTag of (§s-rah8b37kytb682y), change the code of a project's own check or generator while no test carries the SpecTag of the rule listing it (§s-sfjka4zc4rhfu67), or change the approvals otherwise than through the procedure that records an approval or withdraws one.",
+    "reason": "An agent told of a refusal at the edit that caused it mends it there, rather than at the commit among every other.\n\nA node is approved by one of its owners, or in that owner's name by the agent working for them where its change states nothing new (§s-67vekyup7y8smap). So an agent that could set a status, or write an approval itself, could approve what none of its owners agreed to. Every later check takes the approvals as given, so they can be held only where they are written. The procedure that records an approval takes the wording the node already holds and refuses an approval by anyone who is none of the node's owners, and a withdrawal only makes a node a draft.\n\nA commit holds a test and its code together whichever was written first, so the order of the work can be held only where the edits are made."
+  },
+  {
+    "sid": "s-7anvune6h4f6mbr",
+    "location": "_guidelines/spec/6.1",
+    "kind": "TextRule",
+    "title": "The specification is written in English",
+    "text": "Every node of the specification is written in English, and so is everything generated from the nodes. A quotation, such as a name from the code or a text the system shows its users, keeps the language of what it quotes.",
+    "reason": "A specification that mixes two languages, in its nodes or in what is generated from them and read in their place, loses the line between what it states and what is an aside.\n\nThe language is English because a project's guidelines include the SpecSheriff guidelines, which a project takes as they are written and never changes (§s-bsya3febm6u64ab), and those are written in English: a project's own nodes in another language would mix two languages in one specification. English is also the language the readers of a specification are likeliest to share.\n\nA quotation must match what it quotes letter for letter, and, standing apart from the words around it, it does not blur what the node states."
+  },
+  {
+    "sid": "s-3dgt5c94jr55j3z",
+    "location": "_guidelines/spec/6.2",
+    "kind": "TextRule",
+    "title": "A rule names its subject and states what must hold",
+    "text": "A rule names the subject it binds and states what that subject must do: not “credentials are kept encrypted”, which binds nobody, but “the store of secrets keeps every credential encrypted”. A property is stated over what the specification declares, never over what happens not to exist yet: not “a timestamp needs no time zone while every user is in one”, but “a timestamp carries its time zone”. A rule of the technical debt names its subject the same way and states what that subject does while the problem stands (§s-2r7k2aeyusgy6fw).",
+    "reason": "Such a sentence is true when it is written and silently false afterwards: nothing breaks, no check can fire, and the next reader takes an observation for an obligation. Naming the subject is also what makes a rule gradeable at all, since a requirement with nobody to hold it is one nobody can be found to have broken. A rule of the technical debt describes on purpose, and is removed with its problem (§s-2r7k2aeyusgy6fw)."
+  },
+  {
+    "sid": "s-ybq7wbhkrh5pjqs",
+    "location": "_guidelines/spec/6.5",
+    "kind": "TextRule",
+    "title": "A name is quoted where the reader must reach it, a predicate where the rule must keep binding",
+    "text": "Where a rule binds a named thing, the name is quoted where the reader must reach the definition that owns it, and the predicate is stated where the rule must keep binding if that name changes: not “`deleted_users` is never searched”, which binds nothing once the table is renamed, but “a table holding the users who deleted their accounts — today `deleted_users` — is never searched”.",
+    "reason": "A sentence written against a name goes inert rather than failing when the name moves: nothing breaks, no test moves, and a requirement quietly becomes a statement about nothing. A sentence written against the predicate keeps binding whatever the thing is called, and is useless exactly where the reader needs to find the definition."
+  },
+  {
+    "sid": "s-hwnzhgw5b683fc7",
+    "location": "_guidelines/spec/6.6",
+    "kind": "TextRule",
+    "title": "A reason is no narrower than the rule it holds up",
+    "text": "A node's reason covers everything the node's text requires: a rule that refuses an upload too large to store and tells the user why gives a reason for both, not only for the refusal. Where the reason is narrower, either the reason is completed or the rule is cut back to what the reason carries.",
+    "reason": "A rule with a narrow reason is destroyed by the next author doing everything right: the change is checked against the stated reason, the reason still holds, and the property nobody wrote down is gone. A reviewer cannot defend what the node never said."
+  },
+  {
+    "sid": "s-ydzyh9nqm3x64h4",
+    "location": "_guidelines/spec/6.7",
+    "kind": "TextRule",
+    "title": "A reason gives its grounds and nothing more",
+    "text": "A reason states the ground its rule rests on, as a rule in its first sentence. Beyond that ground, a reason carries only a caveat for a case the ground does not reach, and further grounds that do not overlap it; what a mistake would cost and a restatement of the rule's text are left out.",
+    "reason": "Whatever a reason says beyond its grounds blurs them, until a reader can no longer tell which sentence the rule rests on. And a rule held up by grounds that do not overlap survives any one of them going stale."
+  },
+  {
+    "sid": "s-xtqebaxjrqjsjwn",
+    "location": "_guidelines/spec/6.8",
+    "kind": "TextRule",
+    "title": "No count in prose",
+    "text": "A node states no count of what the specification or a registry holds — of nodes, of states, of members, of commands — and a sentence correcting a count is a count. Where the number matters, it is produced by whatever holds the set: not “contracts holds 45 nodes”, which was true for one day, but the figure counted off the model each time it is shown.",
+    "reason": "A count is a second copy of a fact, and the copy is the one that goes stale. It goes stale silently and in the direction that reads as correct, because a number that is merely out of date looks exactly like a number that is right."
+  },
+  {
+    "sid": "s-hgdc2543ms5spwj",
+    "location": "_guidelines/spec/6.9",
+    "kind": "TextRule",
+    "title": "A restriction by list is chosen by which mistake would go unnoticed",
+    "text": "Where a rule restricts something by a list, it says whether the list names what is allowed or what is forbidden, and chooses by which mistake would go unnoticed: where something left out would go unnoticed, the list names what is forbidden, as the records a backup leaves out; where something let in would go unnoticed, it names what is allowed, as the fields a public API returns.",
+    "reason": "A list goes wrong on whatever nobody thought of when it was written: one naming what is allowed shuts out every newcomer, one naming what is forbidden lets every newcomer in, and for a given restriction only one of those two mistakes is noticed."
+  },
+  {
+    "sid": "s-me9k7g34jqb4rzn",
+    "location": "_guidelines/spec/6.10",
+    "kind": "TextRule",
+    "title": "A general word carries its object",
+    "text": "A rule names the concrete thing it means rather than a general word for it: not “a limit on how many records a listing shows”, which also let an export drop records, but “a limit on how many records a user interface shows”. Where a general word cannot be avoided — a model, a structure, a check — it carries its object in the same phrase: the structure of which record, the check at which moment comparing what with what, the model of what. A name the specification defines — a term, a RecordType, a field — is never a general word alone, such as type, action or item, but carries its object: userAction, not action.",
+    "reason": "A rule has no conversation around it to supply a missing object, and a general rule has the least context of all, so every reader supplies an object of their own and the rule binds whatever each of them chose. Nothing about the word itself looks wrong, which is why the ambiguity survives every reading. A defined name is read in every rule that uses it, far from its definition, and a general one there means whatever each rule's context suggests: a field called type held a kind of request in one log, a user's action in another and a kind of error in a third."
+  },
+  {
+    "sid": "s-m6upmfq64kw5h4r",
+    "location": "_guidelines/spec/6.11",
+    "kind": "TextRule",
+    "title": "No phrase or sentence is set in capitals",
+    "text": "A node is written in the ordinary case of its language, and a name quoted from the code keeps its spelling. Outside such a name, capitals may stand on one word or on two running (REST API); a phrase or a sentence, three words or more running, is never set in capitals: what must stand out is said in the words.",
+    "reason": "Set in capitals, a phrase reads as more binding than the words around it, although every word of a rule binds alike, and a reader who meets capitals on every line starts reading the capitals instead of the sentence. A style spreads by imitation, because a rule is written like the rules around it, so one rule in capitals is copied by its neighbours. A word or two in capitals are most often an abbreviation or a name keeping its own spelling, which no check tells from a word stressed, so they are left alone. Three words running are seldom anything but stress, and a run of abbreviations as long is rare enough to be worded around."
+  },
+  {
+    "sid": "s-2jcmb9xe9d64t2t",
+    "location": "_guidelines/spec/6.12",
+    "kind": "TextRule",
+    "title": "What no rule requires is not done",
+    "text": "Whatever no rule requires is not done, and needs no rule saying so. Where a rule's words would also cover a case they must not, the exception is written into that rule, so that the rule is exact where it is read.",
+    "reason": "A prohibition that answers no rule decides nothing, and each one written suggests that whatever it does not name is allowed. An exception kept apart from the rule it narrows is missed by whoever reads the rule alone."
+  }
+]

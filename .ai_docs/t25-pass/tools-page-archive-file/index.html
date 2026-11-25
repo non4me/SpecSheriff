@@ -1,0 +1,161 @@
+<title>Узел описания инструментов: Проверка файла архива</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Проверка файла архива <span style="color:var(--muted);font-weight:400">· Validation of a file of the archive</span></h1>
+<div class="sub">tools 7.1.7 (new, after "A removed node and the archive") · new:tools-7-1-archive-file · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Каждый инструмент SpecSheriff, который читает архив, опирается на структуру узлов, которые читает. Схема, ограниченная этой структурой, проверяет её и при этом допускает узел, который отправил в архив прежний выпуск.</div>
+  <div><div class="label">Reason</div>Each SpecSheriff tool that reads the archive relies on the structure of the nodes it reads. A schema limited to that structure checks it while admitting a node that an earlier release archived.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое.</p>
+
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-zefk589ykh37b8u s-gb8s9657a65hqmv">
+  <td class="en"><p><code>sheriff validate</code> and <code>sheriff reindex</code> validate each file of the archive only against <code>archive-file.schema.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>). They do so at the same points at which they validate the files of the specification. <code>sheriff reindex</code> does so after it has changed what an earlier release wrote (<span class="cite" data-sid="s-gb8s9657a65hqmv" title="unknown node">§s-gb8s9657a65hqmv</span>).</p></td>
+  <td class="ru"><p><code>sheriff validate</code> и <code>sheriff reindex</code> проверяют каждый файл архива только по <code>archive-file.schema.json</code> (<span class="cite" data-sid="s-zefk589ykh37b8u" title="Where the files are">§tools 1</span>). Они делают это в те же моменты, в какие проверяют файлы спецификации. <code>sheriff reindex</code> делает это после того, как изменил то, что записал прежний выпуск (<span class="cite" data-sid="s-gb8s9657a65hqmv" title="unknown node">§s-gb8s9657a65hqmv</span>).</p></td>
+  <td class="change">Новое, по вашему решению от 12 ноября: строка 10.1.2 не распространяется на архив, потому что архив может хранить узел в формате прежнего выпуска. Поэтому файл архива проверяется по своей схеме, без расширений схемы. <code>sheriff binding</code> архива не читает.</td>
+  <td class="links"><span class="cite" data-sid="s-zefk589ykh37b8u">Where the files are</span><span class="cite" data-sid="s-gb8s9657a65hqmv">s-gb8s9657a65hqmv</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="">
+  <td class="en"><p>The only things that schema requires of a node of the archive are the following:</p></td>
+  <td class="ru"><p>Эта схема требует от узла архива только следующего:</p></td>
+  <td class="change">Новое.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-kag2m9tzdnduxdx">
+  <td class="en"><div class="li">• it has a location (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>) and a kind;</div></td>
+  <td class="ru"><div class="li">• у него есть расположение (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>) и тип узла;</div></td>
+  <td class="change">Новое: по ним инструменты узнают запись удалённого узла.</td>
+  <td class="links"><span class="cite" data-sid="s-kag2m9tzdnduxdx">A node's location</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="s-f2b5zvc565s242f">
+  <td class="en"><div class="li">• it has an <code>archived</code> field that holds the date of the removal and the reason for it, and may also hold the sid of the node that replaced it (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>);</div></td>
+  <td class="ru"><div class="li">• у него есть поле <code>archived</code>, которое хранит дату удаления и его причину и может также хранить sid узла, который его заменил (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>);</div></td>
+  <td class="change">Новое: замена необязательна, по вашему решению от 21 ноября.</td>
+  <td class="links"><span class="cite" data-sid="s-f2b5zvc565s242f">The archive</span></td>
+</tr>
+<tr class="part" id="part-4" data-cites="s-bpdqd9v72wg7vsz">
+  <td class="en"><div class="li">• it holds no sid, no node under it and no link pointing at it (<span class="cite" data-sid="s-bpdqd9v72wg7vsz" title="Incoming links are built">§6.4</span>).</div></td>
+  <td class="ru"><div class="li">• у него нет sid, нет узлов под ним и нет связей, указывающих на него (<span class="cite" data-sid="s-bpdqd9v72wg7vsz" title="Incoming links are built">§6.4</span>).</div></td>
+  <td class="change">Новое: это запреты правил 2.6 и 6.4. Раздел не попадает в архив, поэтому у узла архива нет узлов под ним.</td>
+  <td class="links"><span class="cite" data-sid="s-bpdqd9v72wg7vsz">Incoming links are built</span></td>
+</tr>
+<tr class="part" id="part-5" data-cites="">
+  <td class="en"><p>The schema admits every other property of the node in any form.</p></td>
+  <td class="ru"><p>Любое другое свойство узла схема допускает в любом виде.</p></td>
+  <td class="change">Новое: так узел, отправленный в архив прежним выпуском, проходит проверку.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-6" data-cites="">
+  <td class="en"><p>Where the schema refuses a file of the archive, <code>sheriff validate</code> and <code>sheriff reindex</code> name that file, with every refusal in it. Each of these commands then stops, and <code>sheriff reindex</code> leaves every file unchanged.</p></td>
+  <td class="ru"><p>Если схема отвергает файл архива, <code>sheriff validate</code> и <code>sheriff reindex</code> называют этот файл и каждый отказ в нём. После этого каждая из этих команд останавливается, а <code>sheriff reindex</code> оставляет каждый файл без изменений.</p></td>
+  <td class="change">Новое: так же, как с файлом спецификации в согласованном узле «Validation against the schema before a command works on the files».</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-qb79dcw694x2h63"><span class="loc">реализует · 10.1.11</span> <b>A removed node that has ever been approved is placed in the archive with the reason for its removal. A section, and a node that was never approved, are deleted outright and do not go to the archive. The check leaves out the nodes of the SpecSheriff guidelines that a project uses</b><br><span class="meta">guidelines · s-qb79dcw694x2h63</span></li>
+<li class="node" data-sid="s-f2b5zvc565s242f"><span class="loc">реализует · 2.6</span> <b>The archive</b><br><span class="rut">Архив</span><br><span class="meta">guidelines · s-f2b5zvc565s242f</span></li>
+<li class="node" data-sid="s-bpdqd9v72wg7vsz"><span class="loc">реализует · 6.4</span> <b>Incoming links are built</b><br><span class="rut">Входящие связи строятся</span><br><span class="meta">guidelines · s-bpdqd9v72wg7vsz</span></li>
+<li class="node" data-sid="s-zefk589ykh37b8u"><span class="loc">ссылается · tools 1</span> <b>Where the files are</b><br><span class="meta">appendix of the tools · s-zefk589ykh37b8u</span></li>
+<li class="node" data-sid="s-gb8s9657a65hqmv"><span class="loc">ссылается · ?</span> <b>?</b><br><span class="meta">? · s-gb8s9657a65hqmv</span></li>
+<li class="node" data-sid="s-kag2m9tzdnduxdx"><span class="loc">ссылается · 8.5</span> <b>A node's location</b><br><span class="rut">Расположение узла</span><br><span class="meta">guidelines · s-kag2m9tzdnduxdx</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «A removed node and the archive»</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Одобренная формулировка узла «A removed node and the archive», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre>`sheriff validate` ищет в одобрениях каждый sid, который коммит удаляет из спецификации.
+
+- Узел, которому когда-либо давалось одобрение, ищется в архиве вместе с причиной удаления, если это не раздел и не заголовок домена.
+- Любой другой узел отвергается, если он стоит в архиве.
+
+Обоснования у узла нет.</pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate` looks up in the approvals each sid a commit removes from the specification.
+
+- A node an approval was ever given for is looked up in the archive, with the reason for its removal, unless it is a section or a domain's header.
+- Any other node is refused where it stands in the archive.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

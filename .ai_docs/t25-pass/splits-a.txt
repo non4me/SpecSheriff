@@ -1,0 +1,156 @@
+
+=== 1.2 s-eferktypcj7njt5 [TextRule] The structure of the specification is defined by its schema
+  -> 5.1 split | The structure of the specification is defined by its schema | Структуру спецификации задаёт её схема
+  -> 5.2 part | part of 1.2: The structure of the specification is defined by its schema | уходит сюда: Расширение схемы проектом только добавляет
+  -> 5.3 part | part of 1.2: The structure of the specification is defined by its schema | уходит сюда: Схема объясняет, почему каждая часть структуры такова
+TEXT:
+The structure of every node and every file of the specification is defined by its schema. That schema is the schema of the SpecSheriff guidelines, with the extension a project's own guidelines add to it.
+
+The extension changes no definition the schema of the SpecSheriff guidelines holds. It may add only:
+
+- NodeKinds (§s-vsh384ybt4w25a2);
+- properties of an existing NodeKind, which the nodes of the SpecSheriff guidelines need not hold;
+- properties of a file or of a link.
+
+A file that does not match the schema is refused. The refusal names the property that is wrong.
+
+Why each part of the structure is as it is, is written in the schema beside it.
+REASON:
+A structure stated in prose can be broken without anyone noticing. Stated as a schema that every file is checked against, it cannot. The schema is therefore the only description of the structure. A rule that names a part of it, to say what that part means, is compared with the schema by machine.
+
+A project needs NodeKinds, and properties of nodes, of files and of links, that the SpecSheriff guidelines cannot foresee. They are held as the shared ones are only where they stand in the schema every file is checked against. An extension that changes no definition of the shared schema keeps every structure the SpecSheriff guidelines define the same in every project. So a tool or a reader relying on one of those structures is never wrong there.
+
+=== 1.5 s-5ah25f6gy99panq [TextRule] What a node's status says
+  -> 9.1 split | What a node's status says | Что говорит статус узла
+  -> 9.2 part | part of 1.5: What a node's status says | уходит сюда: Кто может отозвать одобрение
+TEXT:
+A node's status is `draft` or `approved`. The status of a section and of a domain's header is built from the nodes under it (§s-9kfdycuq34beqvs). What follows holds of every other node.
+
+A node is approved when one of its owners (§s-67vekyup7y8smap) approved its present wording. That wording is its title, text and reason, and the values its NodeKind adds beside them, such as `RecordType.fields`. Otherwise the node is a draft.
+
+Any change to that wording, an owner's own included, makes the node a draft until one of its owners approves the wording it then holds. So does a withdrawal of its approval. A withdrawal names whoever made it.
+
+Anyone may withdraw the approval of a node, except that of:
+
+- a node of the SpecSheriff guidelines a project takes (§s-bsya3febm6u64ab);
+- the rule that approves the specification (§s-qzthyh7yqvfhsa2).
+
+The status stays as it is through a change to:
+
+- the node's links or its metadata;
+- who its owners are;
+- what is built into it from other nodes, such as the values gathered beside a field (§s-ju5vcanbjph7mgh);
+- where it stands.
+REASON:
+An approved status claims that one of the node's owners agreed to what it now states. A status that survived a rewrite would certify words nobody approved. A draft node asks for no code (§s-utvqbypzhmgndug). It tells its owners that it waits for their approval.
+
+A change of owners changes who reads a part, not what a rule states. An owner leaving, or a node moving, takes back nothing that was agreed. Links, metadata and what is built from other nodes are not what an owner approved. They change as the specification grows around a rule.
+
+A withdrawal gives no agreement in anyone's name. It only makes a node a draft, as a change to its wording by anyone does. So whoever finds an approved rule wrong can keep any further change to its code or its tests from being committed (§s-utvqbypzhmgndug) without waiting for its owners. The withdrawal names whoever made it, which tells the owners whom to ask.
+
+A project takes the SpecSheriff guidelines as they were approved where they are written (§s-bsya3febm6u64ab), so their approval is not the project's to withdraw. Whether the rule that approves the specification is approved decides how strictly the checks hold all code and tests. That is the specification's owners' choice (§s-qzthyh7yqvfhsa2).
+LIST: {"of":"the values a node's status can take","members":["draft","approved"],"declaredIn":{"file":"specs/_schema/node.schema.json","declaration":"#/$defs/status"}}
+
+=== 1.19 s-vj7ercem526zd6v [TextRule] The technical appendix stands beside the base specification
+  -> 4.1 split | The technical appendix stands beside the base specification | Техническое приложение стоит рядом с базовой спецификацией
+  -> 4.2 part | part of 1.19: The technical appendix stands beside the base specification | уходит сюда: Узел приложения реализует узлы базы во всех деталях и не противоречит им
+  -> 4.3 part | part of 1.19: The technical appendix stands beside the base specification | уходит сюда: Инстанс меняет приложение через настройки со значениями по умолчанию
+TEXT:
+The technical appendix describes how this repository builds the system: its stack, how each domain is built and how the user interface looks. It describes them in the detail an instance needs to repeat them. Every part but the appendix and the guidelines is the base specification.
+
+The appendix is no domain and stands at no level. It stands beside the domains, as contracts does. It holds:
+
+- a section for each domain it implements, under that domain's name;
+- a section for the stack;
+- while any problem is set aside, a section for its technical debt (§s-2r7k2aeyusgy6fw).
+
+The appendix never contradicts a rule of the base specification but extends and refines it. A rule too narrow for an implementation is widened in the base, and its detail goes to the technical appendix.
+
+A node of the appendix describes how the nodes of the base specification it implements are to be carried out. It does so in enough detail to be read only one way: exact values, examples and the edge cases of that implementation. It never restates what they state.
+
+Each node of the appendix implements at least one node of the base specification, except:
+
+- a section, which requires nothing (§s-7445ahgjck2aefg);
+- a choice covering the whole system, which stands in the section of the stack;
+- the technical debt (§s-2r7k2aeyusgy6fw).
+
+An instance changes the technical appendix for itself. What instances vary within it is a setting, described with its default.
+REASON:
+The base specification stays stable while an implementation adapts to an instance's infrastructure and requirements, so only the technical appendix changes with an instance.
+
+A part allowed to contradict the base would leave the base binding nowhere, since no rule could be relied on without reading the implementation too.
+
+Read beside the nodes it implements, an appendix node restating them would be a second copy, and a copy drifts from what it copies.
+
+How a rule is carried out has no other home, since the base names no technology. Described less exactly, it would leave a choice to whoever implements it. The code would then hold that choice, and the specification would not.
+
+The appendix is no subject area of the system but the way every one of them is built, which no level can place. A node bound to the rule it implements is found when that rule changes and is read beside it. Divided as the base is, the implementation of a rule is looked for in one place.
+
+The problems set aside are read as one list, so they stand in one section, which spans the domains as the stack does. A problem is not how a rule is carried out but where carrying it out falls short.
+
+The repository holds nothing of any one instance, so what one instance chooses within the appendix is a setting, not a rule.
+
+=== 1.21 s-a4rbry4hsu34hy8 [TextRule] The guidelines hold their base and the appendix of their tools
+  -> 2.3 split | The guidelines hold their base and the appendix of their tools | Guidelines состоят из базы и описания инструментов
+  -> 2.4 part | part of 1.21: The guidelines hold their base and the appendix of their tools | уходит сюда: Каждое правило описания инструментов реализует узел базы
+TEXT:
+The guidelines are divided as the specification is, into their base and the appendix of their tools.
+
+The base of the guidelines states what is held, what is checked, when, and what a failure costs. It names no technology.
+
+The appendix of the tools describes how one toolset carries that base out:
+
+- its commands;
+- its hooks;
+- where it keeps the files;
+- how it reads code;
+- who runs its reviewer.
+
+Each rule of that appendix implements at least one node of the base.
+
+The appendix of the tools is not the technical appendix. The technical appendix describes how the system is built, never the tools of the specification.
+REASON:
+The guidelines require every base specification to name no technology (§s-5x737t9nee4zgaa), and they are held to it themselves. A rule naming its tool goes stale when the tool changes. Another toolset, written in another language, could not implement that rule.
+
+The tools hold the specification and the code to each other rather than make up the system. That is why they are described apart from the technical appendix.
+
+Bound to the node of the base it implements, a rule of the appendix is found when that node changes.
+
+=== 1.22 s-bsya3febm6u64ab [TextRule] A project's own guidelines refine or implement the SpecSheriff guidelines
+  -> 2.5 split | A project's own guidelines refine or implement the SpecSheriff guidelines | Собственные guidelines проекта уточняют или реализуют SpecSheriff guidelines
+  -> 2.6 part | part of 1.22: A project's own guidelines refine or implement the SpecSheriff guidelines | уходит сюда: Проект берёт SpecSheriff guidelines целиком и не держит их копии
+TEXT:
+The guidelines are made of the SpecSheriff guidelines and of a part each project holds as its own:
+
+- the SpecSheriff guidelines, made of their base, which every project shares, and the appendix of the toolset the project uses;
+- the project's own guidelines, which hold what only its specification needs, such as the specification's owners or the list of levels its domains stand at.
+
+Each rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines. It never contradicts that rule.
+
+A project holds no copy of the SpecSheriff guidelines. They come whole with the skills that apply them and are updated with those skills. They are changed only where they are written.
+REASON:
+The SpecSheriff guidelines, shared by every project, let a tool, a skill or a reader carry from one project to the next. A project also needs what they cannot foresee.
+
+Refining or implementing the SpecSheriff guidelines and never contradicting them, a project's own rules extend them as the technical appendix extends the base. A rule of the SpecSheriff guidelines can then be relied on in every project without reading that project's own.
+
+Because they come whole with the skills, the SpecSheriff guidelines read the same in every project working by one release. For the same reason, they stand approved there as they were approved where they are written. A copy changed in one project would be a second version that nobody who writes them reads.
+
+=== 1.24 s-e877bnfa559tvk9 [TextRule] Data structures are described in the specification
+  -> 8.1 split | Data structures are described in the specification | Структуры данных описываются в спецификации
+  -> 11.3 part | part of 1.24: Data structures are described in the specification | уходит сюда: Типы и RuntimeChecks генерируются из RecordType
+TEXT:
+A structure of data the domains pass to one another or keep in a store is described by a node of its own, a RecordType. The RecordType states:
+
+- its name;
+- what it is;
+- each of its fields, with the field's type in neutral words, any bounds on the field's value included, whether the field is required and what it says;
+- what happens to a field nobody declared;
+- where another RecordType refers to it by an identifier, the field that identifies it.
+
+The rules that bind one field to another are rules linked to the RecordType.
+
+The implementation's types and RuntimeChecks are generated from the RecordTypes and never written beside them. Which mechanism performs the RuntimeChecks is described in the technical appendix.
+REASON:
+A structure is part of what the system is, so it belongs in the specification rather than in the code. The bounds a value may take are part of its type. An identifier of a record has the type of the field that identifies it, so that field is named where its RecordType is described.
+
+Written beside the description, a type or a RuntimeCheck is a second copy of the same structure and drifts from it. Generated, the two cannot disagree.

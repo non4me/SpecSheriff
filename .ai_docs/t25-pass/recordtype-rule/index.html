@@ -1,0 +1,242 @@
+<title>RecordType в цепочке</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header with the main thought; where a RecordType is kept, with an example node split into its two halves;
+     the chain from the node to the code and the test as a vertical run of steps; what has to change; the three
+     variants side by side; the question. One dark look, as on the owner's other pages. */
+  :root {
+    --bg: #0f171c;
+    --panel: #17232b;
+    --panel-2: #1d2b35;
+    --fg: #eef1f3;
+    --muted: #a3b0b9;
+    --rule: #2c3a44;
+    --purpose: #e8b75a;
+    --format: #5cb8d8;
+    --tag: #5fbf86;
+    --warn: #e07a6a;
+    --display: "PT Serif", Georgia, serif;
+    --body: "PT Sans", "Segoe UI", Arial, sans-serif;
+    --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+  .wrap {
+    max-width: 980px; margin: 0 auto;
+    padding-block: 20px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid; gap: 30px;
+  }
+  header { display: grid; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 18px; }
+  h1 { font-family: var(--display); font-size: 1.55rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.2rem; margin: 0; text-wrap: balance; }
+  h3 { font-size: 1rem; margin: 0; }
+  p { margin: 0; max-width: 72ch; }
+  ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 72ch; }
+  .as-of { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+  .lead { font-size: 1.08rem; }
+  section { display: grid; gap: 12px; min-width: 0; }
+  code, .mono { font-family: var(--mono); font-size: 0.88em; }
+  .ref { font-family: var(--mono); font-size: 0.82em; color: var(--muted); white-space: nowrap; }
+  .note { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 6px; max-width: 76ch; }
+  .note h3 { color: var(--muted); font-size: 0.9rem; letter-spacing: 0.02em; }
+
+  /* The example node: its two halves marked by colour. */
+  .example { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 760px) { .example { grid-template-columns: minmax(0, 1fr); } }
+  .code-box { overflow-x: auto; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; }
+  pre { margin: 0; padding: 12px 14px; font-family: var(--mono); font-size: 0.82rem; line-height: 1.45; }
+  .h-purpose { color: var(--purpose); }
+  .h-format { color: var(--format); }
+  .h-dim { color: var(--muted); }
+  .legend { display: grid; gap: 10px; }
+  .key { border-left: 3px solid var(--rule); padding-left: 10px; display: grid; gap: 2px; }
+  .key.purpose { border-left-color: var(--purpose); }
+  .key.format { border-left-color: var(--format); }
+  .key b { font-weight: 700; }
+  .caption { color: var(--muted); font-size: 0.85rem; }
+
+  /* The chain: a vertical run of steps joined by a line. */
+  ol.chain { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  ol.chain > li { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 0 12px; }
+  .dot { display: grid; justify-items: center; grid-template-rows: auto 1fr; }
+  .dot span { width: 2rem; height: 2rem; border-radius: 50%; border: 2px solid var(--muted); display: grid; place-items: center; font-family: var(--mono); font-size: 0.9rem; background: var(--bg); }
+  .dot::after { content: ""; width: 2px; background: var(--rule); margin-top: 2px; }
+  ol.chain > li:last-child .dot::after { display: none; }
+  .step { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 10px 14px; margin-bottom: 14px; display: grid; gap: 6px; min-width: 0; }
+  .who { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  .tag { justify-self: start; font-family: var(--mono); font-size: 0.8rem; color: var(--tag); border: 1px solid var(--tag); border-radius: 3px; padding: 1px 8px; overflow-wrap: anywhere; }
+  .tag.other { color: var(--muted); border-color: var(--muted); }
+  li.node-step .dot span { border-color: var(--purpose); color: var(--purpose); }
+  li.gen-step .dot span { border-color: var(--format); color: var(--format); }
+  li.test-step .dot span, li.code-step .dot span { border-color: var(--tag); color: var(--tag); }
+
+  /* The variants. */
+  .table-box { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.92rem; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+  th { color: var(--muted); font-weight: 400; }
+  tr.rec td:first-child { border-left: 3px solid var(--tag); }
+  td:first-child { font-weight: 700; min-width: 11rem; }
+  .rec-mark { display: inline-block; margin-top: 4px; font-family: var(--mono); font-size: 0.75rem; font-weight: 400; color: var(--tag); border: 1px solid var(--tag); border-radius: 3px; padding: 0 6px; }
+  .loss { color: var(--warn); }
+
+  .ask { border: 1px solid var(--tag); border-radius: 4px; padding: 14px 16px; display: grid; gap: 8px; background: var(--panel-2); max-width: 76ch; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>RecordType: где он хранится и как связан с тестом и кодом</h1>
+    <span class="as-of">20 ноября 2026 · T25 · к вопросу «является ли RecordType правилом»</span>
+    <p class="lead">RecordType — один узел базовой спецификации, в котором записаны и назначение данных, и их формат. Если считать его правилом, его sid несут код, сгенерированный из него, и хотя бы один тест, как у любого другого правила.</p>
+  </header>
+
+  <section aria-labelledby="where-h">
+    <h2 id="where-h">Где хранится RecordType</h2>
+    <p>RecordType — узел базовой спецификации, а не технического приложения. Он стоит в разделе той части системы, где данные этого формата появляются впервые <span class="ref">12.1, согласовано 18 ноября</span>. Фрагменты формата, например адрес, стоят в разделе контрактов, и их может использовать любой раздел.</p>
+    <p>Узел состоит из двух половин. Это и есть та связка «правило плюс JSON-схема», о которой вы пишете:</p>
+    <ul>
+      <li><span class="h-purpose">заголовок и текст</span> — имя формата и то, для чего он нужен <span class="ref">12.2</span>;</li>
+      <li><span class="h-format">поле <code>schema</code></span> — сам формат. Он записан словами JSON Schema 2020-12 <span class="ref">ваше решение 19 ноября</span> и несколькими словами словаря SpecSheriff: какое поле идентифицирует запись, какие поля выбирают вариант, откуда приходят значения поля.</li>
+    </ul>
+
+    <div class="example">
+      <div class="code-box" role="figure" aria-label="Пример узла RecordType">
+<pre><span class="h-dim">{
+  "sid": "s-7rq2wd4kmh9vx3p",
+  "kind": "RecordType",
+  "status": "approved",</span>
+<span class="h-purpose">  "title": "Request",
+  "text": "A request that a user submits to an operator.",</span>
+<span class="h-format">  "identifiedBy": "requestId",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "requestId": { "type": "string",
+        "description": "Identifies the request." },
+      "submittedAt": { "type": "string", "format": "date-time",
+        "description": "When the user submitted the request." },
+      "state": { "enum": ["open", "closed"],
+        "description": "Whether the operator has closed the request." }
+    },
+    "required": ["requestId", "submittedAt", "state"]
+  }</span>
+<span class="h-dim">}</span></pre>
+      </div>
+      <div class="legend">
+        <div class="key purpose"><b>Назначение</b><span>Что это за данные и зачем они нужны. Эту половину вы называете правилом базовой спецификации.</span></div>
+        <div class="key format"><b>Формат</b><span>Поля, их типы и границы, гарантировано ли значение и что поле означает. Эту половину вы называете JSON-схемой.</span></div>
+        <p class="caption">Имя, sid и поля придуманы для примера.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <h3>Про отдельный документ</h3>
+      <p>Отдельного документа с JSON-схемами нет: JSON Schema — язык, на котором формат записан внутри узла. Отдельным документом хранится раздел контрактов, если спецификация разделена на домены <span class="ref">11.1.2</span>, и фрагменты формата лежат в нём. Файлы JSON-схем появляются только на выходе генератора, как часть кода системы.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="chain-h">
+    <h2 id="chain-h">Цепочка от узла к тесту и коду</h2>
+    <p>Так я вижу путь одного RecordType, если он правило. Зелёным отмечено, чей sid несёт каждое звено.</p>
+    <ol class="chain">
+      <li class="node-step">
+        <div class="dot"><span>1</span></div>
+        <div class="step">
+          <h3>Узел RecordType</h3>
+          <span class="who">пишет автор, одобряет владелец</span>
+          <p>Правка имени, назначения или формата возвращает узел в черновик, как правка любого правила. Пока узел черновик, сгенерированные файлы остаются такими, какими их дала последняя одобренная формулировка <span class="ref">10.15</span>.</p>
+          <span class="tag other">sid узла: s-7rq2wd4kmh9vx3p</span>
+        </div>
+      </li>
+      <li class="gen-step">
+        <div class="dot"><span>2</span></div>
+        <div class="step">
+          <h3>Сгенерированный код</h3>
+          <span class="who">пишут инструменты SpecSheriff</span>
+          <p>Из одобренной формулировки генерируются типы для TypeScript и Python и RuntimeCheck — JSON-схема, по которой запись проверяется во время работы системы. Каким механизмом выполняется проверка, говорит техническое приложение <span class="ref">12.3</span>. Руками эти файлы никто не правит.</p>
+          <p>Для TypeScript и Python инструменты делают так уже сейчас: каждое сгенерированное объявление несёт sid своего RecordType. В сгенерированной JSON-схеме sid станет меткой каждого определения. Это уже запланировано в шаге, который меняет инструменты.</p>
+          <span class="tag">sid s-7rq2wd4kmh9vx3p на каждом объявлении</span>
+        </div>
+      </li>
+      <li class="test-step">
+        <div class="dot"><span>3</span></div>
+        <div class="step">
+          <h3>Тест формата</h3>
+          <span class="who">пишет автор кода, до кода из шага 4</span>
+          <p>Проверяет, что часть системы не выдаёт и не сохраняет запись не по формату <span class="ref">12.4</span>: например, заявка без времени подачи не сохраняется. Тест проходит, только если часть системы действительно вызывает RuntimeCheck.</p>
+          <span class="tag">@spec s-7rq2wd4kmh9vx3p в имени теста</span>
+        </div>
+      </li>
+      <li class="code-step">
+        <div class="dot"><span>4</span></div>
+        <div class="step">
+          <h3>Код части системы</h3>
+          <span class="who">пишет автор кода</span>
+          <p>Функция, которая сохраняет заявку, вызывает RuntimeCheck перед записью. Она реализует бизнес-правило, например «пользователь подаёт заявку», и несёт SpecTag этого правила. Называть RecordType ей не нужно: код, привязанный к RecordType, уже есть, это сгенерированный код.</p>
+          <span class="tag">@spec &lt;sid бизнес-правила&gt;</span>
+        </div>
+      </li>
+      <li>
+        <div class="dot"><span>5</span></div>
+        <div class="step">
+          <h3>Проверки при коммите</h3>
+          <span class="who">выполняют инструменты SpecSheriff</span>
+          <ul>
+            <li>сгенерированные файлы совпадают с тем, что даёт одобренный RecordType;</li>
+            <li>у одобренного RecordType есть привязанный код и проходящий тест <span class="ref">9.2</span>;</li>
+            <li>каждый SpecTag называет правило <span class="ref">10.1.26</span>.</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="change-h">
+    <h2 id="change-h">Что для этого нужно поменять</h2>
+    <ul>
+      <li><b>Расширение RecordType</b> получает одно предложение: RecordType — правило раздела, в котором он объявлен, и ему нужна реализация в коде. Это предложение может стоять только в расширении, потому что SpecSheriff guidelines расширений не называют <span class="ref">1.7.3</span>.</li>
+      <li><b>Инструменты.</b> Сейчас тест с SpecTag RecordType отклоняется, и тест для RecordType не требуется. Станет наоборот: такой тест разрешён, а у одобренного RecordType обязателен.</li>
+      <li><b>Цена</b> — по тесту на каждый RecordType. Вариант и фрагмент формата — тоже RecordType, поэтому им тоже нужен тест: например, закрытая заявка без времени закрытия не сохраняется.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="var-h">
+    <h2 id="var-h">Три варианта</h2>
+    <div class="table-box">
+      <table>
+        <thead>
+          <tr><th>Вариант</th><th>Чей sid несёт сгенерированный код</th><th>Тест формата</th><th>Что теряется</th></tr>
+        </thead>
+        <tbody>
+          <tr class="rec">
+            <td>А. RecordType — правило<br><span class="rec-mark">рекомендую</span></td>
+            <td>Самого RecordType</td>
+            <td>Обязателен, хотя бы один на RecordType</td>
+            <td>Ничего. Цена — тест на каждый формат.</td>
+          </tr>
+          <tr>
+            <td>Б. Отдельное правило «для чего формат» и RecordType только с JSON-схемой</td>
+            <td>Этого правила</td>
+            <td>На это правило</td>
+            <td class="loss">Назначение и формат одних данных лежат в двух узлах, их одобряют порознь, и со временем они расходятся. Именно этого не допускает 12.1. В нашей схеме они уже один узел, поэтому разносить их незачем.</td>
+          </tr>
+          <tr>
+            <td>В. RecordType — не правило</td>
+            <td>Правила 12.3, одного для всех форматов</td>
+            <td>Не требуется</td>
+            <td class="loss">По SpecTag не найти код конкретного формата. Ничто не проверяет, что часть системы отклоняет запись не по формату.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="ask" aria-labelledby="ask-h">
+    <h2 id="ask-h">Вопрос к вам</h2>
+    <p>Согласны с вариантом А? Тогда я напишу предложение в расширение RecordType, проверю его рецензентом и покажу вам целиком.</p>
+  </section>
+</div>

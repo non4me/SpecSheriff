@@ -1,0 +1,130 @@
+<title>Узел описания инструментов: Ключ, записанный больше одного раза в одном объекте</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Ключ, записанный больше одного раза в одном объекте <span style="color:var(--muted);font-weight:400">· A key written more than once in one object</span></h1>
+<div class="sub">tools 7.1.1 · s-7zqsstgnuc772ba · предложение от 2026-11-22 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Парсер JSON оставляет одно из значений, записанных под ключом, и молча отбрасывает остальные, поэтому ключ, записанный больше одного раза, виден только в тексте файла.</div>
+  <div><div class="label">Reason</div>A JSON parser keeps one of the values written under a key and silently drops the others, so only the file's text shows a key written more than once.</div>
+</div>
+<p class="hint" style="margin-top:8px">Как было; «twice» заменено на «more than once», как в согласованном узле о слиянии.</p>
+
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-w5wg69pvvhedsws">
+  <td class="en"><p><code>sheriff validate</code> refuses each key written more than once in one object, naming the file, the key and the line number of each of its values. Each such refusal also states that <code>sheriff reindex</code> merges such values whenever it can keep all of them (<span class="cite" data-sid="s-w5wg69pvvhedsws" title="Keys written more than once">§tools 2.4 (new)</span>).</p></td>
+  <td class="ru"><p><code>sheriff validate</code> отвергает каждый ключ, записанный больше одного раза в одном объекте, называя файл, ключ и номер строки каждого его значения. Каждый такой отказ добавляет, что <code>sheriff reindex</code> объединяет такие значения везде, где может сохранить их все (<span class="cite" data-sid="s-w5wg69pvvhedsws" title="Keys written more than once">§tools 2.4 (new)</span>).</p></td>
+  <td class="change">Было: «<code>sheriff validate</code> читает каждый файл, который проверяет, как текст и считает ключи каждого объекта». Теперь узел начинается с того, что отвергается и что называет отказ: так делает код, и это проверяют тесты. Подсказка о <code>sheriff reindex</code> — новое: согласованный узел о слиянии объединяет такие ключи.</td>
+  <td class="links"><span class="cite" data-sid="s-w5wg69pvvhedsws">Keys written more than once</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-f2b5zvc565s242f s-eferktypcj7njt5 s-xm8rz4uupb73gu5">
+  <td class="en"><p><code>sheriff validate</code> finds a key written more than once by reading as text each file of the specification, of its archive (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>) and of its schema (<span class="cite" data-sid="s-eferktypcj7njt5" title="The structure of the specification is defined by its machine-readable schema">§5.1</span>) that the repository keeps, the project's extension of the schema included (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>). It refuses each of these files whose text is not valid JSON, naming the file and the line at which parsing failed.</p></td>
+  <td class="ru"><p><code>sheriff validate</code> находит ключ, записанный больше одного раза, читая как текст каждый файл спецификации, её архива (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>) и её схемы (<span class="cite" data-sid="s-eferktypcj7njt5" title="The structure of the specification is defined by its machine-readable schema">§5.1</span>), который хранит репозиторий, в том числе расширение схемы проекта (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>). Каждый из этих файлов, текст которого нарушает синтаксис JSON, он отвергает, называя файл и строку, на которой чтение не удалось.</p></td>
+  <td class="change">Файлы названы так, как в строке 10.1.1, и как их читает код. Отказ файлу, который не JSON, — новое в тексте: так делает код, и это проверяет тест.</td>
+  <td class="links"><span class="cite" data-sid="s-f2b5zvc565s242f">The archive</span><span class="cite" data-sid="s-eferktypcj7njt5">The structure of the specification is defined by its machine-readable schema</span><span class="cite" data-sid="s-xm8rz4uupb73gu5">How a project may extend the schema</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="">
+  <td class="en"><p>Where <code>sheriff validate</code> refuses a key or a file, it stops before it runs any check that reads the nodes.</p></td>
+  <td class="ru"><p>Если <code>sheriff validate</code> отверг ключ или файл, он останавливается до любой проверки, которая читает узлы.</p></td>
+  <td class="change">Новое в тексте: так делает код.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>The <code>implements</code> link to the main table of checks (<span class="cite" data-sid="s-jau82aq9juv9zzh" title="The main table of checks">§10.1</span>): the node implements row 10.1.1 (<span class="cite" data-sid="s-d5cgda5bdsn7bzy" title="No object in a file of the specification, of its archive or of its schema assigns two values to one property">§10.1.1</span>), as the agreed drafts of this stage implement their rows. The link to <span class="cite" data-sid="s-eferktypcj7njt5" title="The structure of the specification is defined by its machine-readable schema">§5.1</span> was <code>cites</code> and is now <code>implements</code>.</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-d5cgda5bdsn7bzy"><span class="loc">реализует · 10.1.1</span> <b>No object in a file of the specification, of its archive or of its schema assigns two values to one property</b><br><span class="meta">guidelines · s-d5cgda5bdsn7bzy</span></li>
+<li class="node" data-sid="s-eferktypcj7njt5"><span class="loc">реализует · 5.1</span> <b>The structure of the specification is defined by its machine-readable schema</b><br><span class="rut">Структуру спецификации задаёт её машиночитаемая схема</span><br><span class="meta">guidelines · s-eferktypcj7njt5</span></li>
+<li class="node" data-sid="s-w5wg69pvvhedsws"><span class="loc">ссылается · tools 2.4 (new)</span> <b>Keys written more than once</b><br><span class="rut">Ключи, записанные больше одного раза</span><br><span class="meta">draft of the appendix of the tools · s-w5wg69pvvhedsws</span></li>
+<li class="node" data-sid="s-f2b5zvc565s242f"><span class="loc">ссылается · 2.6</span> <b>The archive</b><br><span class="rut">Архив</span><br><span class="meta">guidelines · s-f2b5zvc565s242f</span></li>
+<li class="node" data-sid="s-xm8rz4uupb73gu5"><span class="loc">ссылается · 5.2</span> <b>How a project may extend the schema</b><br><span class="rut">Как проект может расширить схему</span><br><span class="meta">guidelines · s-xm8rz4uupb73gu5</span></li>
+</ul>
+
+<h2>Тесты, привязанные к узлу сейчас</h2>
+<ul class="plain">
+<li><code>finds a key an object holds twice, naming the key and both lines</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+<li><code>finds nothing where every key is held once</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+<li><code>refuses text that is not JSON, naming the line</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка</h2>
+<p class="hint">Пока вы не согласились с предложением, текстом узла остаётся одобренная формулировка.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate` reads each file it validates as text and counts the keys of each object.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

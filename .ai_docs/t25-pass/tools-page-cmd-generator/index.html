@@ -1,0 +1,248 @@
+<title>Узел описания инструментов: Как запускается собственный генератор кода проекта</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Как запускается собственный генератор кода проекта <span style="color:var(--muted);font-weight:400">· How a project's own code generator is run</span></h1>
+<div class="sub">tools 2.6 (new) · new:tools-2-generator · предложение от 2026-11-22 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Собственный генератор проекта — программа, которую инструменты SpecSheriff не писали, но то, что он печатает, становится кодом системы. Поэтому <code>sheriff types</code> решает, что генератор читает и что из напечатанного им записывается, чтобы порождённый код реализовывал только то, что одобрили ответственные (<span class="cite" data-sid="s-qyjw8xez6t6adc3" title="Code generated from approved wordings">§10.15</span>).</div>
+  <div><div class="label">Reason</div>A project's own generator is a program that the SpecSheriff tools did not write, yet what it prints becomes the system's code. <code>sheriff types</code> therefore decides what the generator reads and which of its output is written, so that the generated code implements only what the owners have approved (<span class="cite" data-sid="s-qyjw8xez6t6adc3" title="Code generated from approved wordings">§10.15</span>).</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое.</p>
+
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-km4x4s26kv7pjze">
+  <td class="en"><p><code>sheriff types</code> runs each of the project's own code generators (<span class="cite" data-sid="s-km4x4s26kv7pjze" title="A project's own code generators">§10.9</span>) with the command that <code>sheriff.config.json</code> names for it. It runs a generator only while the rule that lists the generator is approved.</p></td>
+  <td class="ru"><p><code>sheriff types</code> запускает каждый собственный генератор кода проекта (<span class="cite" data-sid="s-km4x4s26kv7pjze" title="A project's own code generators">§10.9</span>) командой, которую для него называет <code>sheriff.config.json</code>. Генератор он запускает, только пока правило, которое перечисляет этот генератор, одобрено.</p></td>
+  <td class="change">Из узла «The commands»; новое — генератор ждёт только одобрения правила, которое его перечисляет, как требует правило 10.9.</td>
+  <td class="links"><span class="cite" data-sid="s-km4x4s26kv7pjze">A project's own code generators</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-w6gybeqn2ttydqx s-a8fn72xa782wvbk">
+  <td class="en"><p><code>sheriff types</code> passes the generator, on its standard input, a model of the specification in the form that <code>sheriff json</code> prints (<span class="cite" data-sid="s-w6gybeqn2ttydqx" title="The model of the specification">§tools 2.6 (new)</span>). That model holds each section and each domain's header as the files hold them. Of the other nodes, it holds only those that code can be generated from, each in its last approved wording (<span class="cite" data-sid="s-a8fn72xa782wvbk" title="What `sheriff types` generates">§tools 2.5 (new)</span>).</p></td>
+  <td class="ru"><p><code>sheriff types</code> передаёт генератору на стандартный вход модель спецификации в том виде, в каком её печатает <code>sheriff json</code> (<span class="cite" data-sid="s-w6gybeqn2ttydqx" title="The model of the specification">§tools 2.6 (new)</span>). В этой модели каждый раздел и каждый заголовок домена — такими, какими их хранят файлы. Из остальных узлов в ней только те, из которых можно порождать код, каждый в последней одобренной формулировке (<span class="cite" data-sid="s-a8fn72xa782wvbk" title="What `sheriff types` generates">§tools 2.5 (new)</span>).</p></td>
+  <td class="change">Новое: так генератор не может реализовать то, что не одобрено (правило 10.15).</td>
+  <td class="links"><span class="cite" data-sid="s-w6gybeqn2ttydqx">The model of the specification</span><span class="cite" data-sid="s-a8fn72xa782wvbk">What `sheriff types` generates</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="">
+  <td class="en"><p>The generator prints a JSON array holding one object per generated file. The object's <code>path</code> is the file's path from the root of the repository, its <code>content</code> is the file's text, and its <code>sids</code> lists the sids of the nodes that the file is generated from.</p></td>
+  <td class="ru"><p>Генератор печатает список в JSON с объектом на каждый файл. <code>path</code> объекта — путь файла от корня репозитория, <code>content</code> — текст файла, <code>sids</code> — sid узлов, из которых файл написан.</p></td>
+  <td class="change">Как было; ключи объекта теперь названы.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-3" data-cites="">
+  <td class="en"><p><code>sheriff types</code> refuses a generator in each of these cases:</p></td>
+  <td class="ru"><p><code>sheriff types</code> отвергает генератор в каждом из этих случаев:</p></td>
+  <td class="change">Как было: так делает код сейчас.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-4" data-cites="">
+  <td class="en"><div class="li">• the rule that <code>sheriff.config.json</code> names for the generator lists no generator of that name;</div></td>
+  <td class="ru"><div class="li">• правило, которое для генератора называет <code>sheriff.config.json</code>, не перечисляет генератора с таким именем;</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-5" data-cites="">
+  <td class="en"><div class="li">• the generator exits with a non-zero status;</div></td>
+  <td class="ru"><div class="li">• генератор завершается с ошибкой;</div></td>
+  <td class="change">Как было.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-6" data-cites="">
+  <td class="en"><div class="li">• the generator prints anything other than a JSON array of objects holding <code>path</code>, <code>content</code> and <code>sids</code>;</div></td>
+  <td class="ru"><div class="li">• генератор печатает что-либо, кроме списка в JSON из объектов с <code>path</code>, <code>content</code> и <code>sids</code>;</div></td>
+  <td class="change">Строже, чем сейчас: код проверяет только, что это список в JSON, и пишет объект без <code>content</code> как пустой файл. Код меняется на этапе 3.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-7" data-cites="s-hheus6f395ynqvc">
+  <td class="en"><div class="li">• a path that the generator prints lies outside the system's code (<span class="cite" data-sid="s-hheus6f395ynqvc" title="What is considered the system's code">§9.1</span>);</div></td>
+  <td class="ru"><div class="li">• путь, который печатает генератор, лежит вне кода системы (<span class="cite" data-sid="s-hheus6f395ynqvc" title="What is considered the system's code">§9.1</span>);</div></td>
+  <td class="change">Новое, по вашему решению от 22 ноября: прежний перечень запрещённых путей пропускал бы, например, <code>.githooks/pre-commit</code> или <code>sheriff.config.json</code>. Код меняется на этапе 3.</td>
+  <td class="links"><span class="cite" data-sid="s-hheus6f395ynqvc">What is considered the system's code</span></td>
+</tr>
+<tr class="part" id="part-8" data-cites="">
+  <td class="en"><div class="li">• the <code>sids</code> of a file that the generator prints name a node outside the model that the generator is handed.</div></td>
+  <td class="ru"><div class="li">• <code>sids</code> файла, который печатает генератор, называют узел вне модели, переданной генератору.</div></td>
+  <td class="change">Новое, по вашему решению от 22 ноября: файлы больше не ждут черновиков, и без этого отказа <code>sids</code> ни для чего бы не служили. Код меняется на этапе 3.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-km4x4s26kv7pjze"><span class="loc">реализует · 10.9</span> <b>A project's own code generators</b><br><span class="rut">Собственные генераторы кода проекта</span><br><span class="meta">guidelines · s-km4x4s26kv7pjze</span></li>
+<li class="node" data-sid="s-w6gybeqn2ttydqx"><span class="loc">ссылается · tools 2.6 (new)</span> <b>The model of the specification</b><br><span class="rut">Модель спецификации</span><br><span class="meta">draft of the appendix of the tools · s-w6gybeqn2ttydqx</span></li>
+<li class="node" data-sid="s-a8fn72xa782wvbk"><span class="loc">ссылается · tools 2.5 (new)</span> <b>What `sheriff types` generates</b><br><span class="rut">Что порождает `sheriff types`</span><br><span class="meta">draft of the appendix of the tools · s-a8fn72xa782wvbk</span></li>
+<li class="node" data-sid="s-qyjw8xez6t6adc3"><span class="loc">ссылается · 10.15</span> <b>Code generated from approved wordings</b><br><span class="rut">Код, сгенерированный из одобренных формулировок</span><br><span class="meta">guidelines · s-qyjw8xez6t6adc3</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «The commands»</h2>
+<ul class="plain">
+<li><code>sheriff types refuses a path a project's generator prints into git's own directory, or naming the repository itself, and then writes no file</code><br><span class="meta">skills/tools/test/unit/types.test.ts</span></li>
+<li><code>sheriff types writes the files a project's own generator prints, and refuses a path under specs/</code><br><span class="meta">skills/tools/test/unit/types.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка узла «The commands», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the rules of §s-4kd2pave7vm4hmd describe them.
+
+`sheriff init` sets a repository up for the SpecSheriff tools (§s-7unxytshhc4md54). `sheriff remove` takes SpecSheriff out of it (§s-7unxytshhc4md54).
+
+`sheriff reindex` is run after every change to the specification. It does the following:
+
+- it gives a sid to every node that has none;
+- it computes every node's location from where it is;
+- it empties every incoming list and rebuilds it from the outgoing ones;
+- it rebuilds the index in every domain's header from the domain's sections;
+- beside each field of type `one of`, it writes the values gathered for it from elsewhere in the specification, each with the sid of the node it comes from (§s-ju5vcanbjph7mgh);
+- it makes a draft each approved node whose latest line for it and its wording's fingerprint is not an approval. It leaves out of this a section, a domain's header and the SpecSheriff guidelines the project takes.
+
+It then writes the status of each section and domain's header from the nodes under it (§s-9kfdycuq34beqvs).
+
+`sheriff reindex` adds the rule `sheriff init` writes, as a draft, at every run where `project.json` holds no rule refining §s-qzthyh7yqvfhsa2 (§s-7unxytshhc4md54).
+
+Before anything else, `sheriff reindex` renames each key and value an earlier release of the SpecSheriff tools wrote under another name. In every file of the specification and of its archive, it renames:
+
+- the key `id` to `location`;
+- the key `rationale` to `reason`;
+- the NodeKinds `record` and `recordType` to `RecordType`;
+- the NodeKind `rule` to `TextRule`;
+- the NodeKind `domain` to `header`;
+- a node's status `""` to `draft`;
+- a node's status `checked` to `approved`;
+- the key `owner` of a domain's header or a section, holding an email, to `owners`, holding a list holding that email.
+
+A renamed key keeps its place among the node's keys. `sheriff reindex` renames those NodeKinds also where a field's values are the sids of a NodeKind's nodes, and where the project's extension of the schema adds properties to a NodeKind.
+
+A field of type `one of` whose own list an earlier release wrote empty takes the values the domains add as its source instead. Under that release, the empty list stood for those values.
+
+`sheriff reindex` also renames `specs/_confirmations.jsonl` to `specs/_approvals.jsonl`. In each line of that file, it renames the key `owner` to `by`. Where `specs/_approvals.jsonl` already stands, it appends those lines to it and removes the old file.
+
+Then, in every file it rewrites, `sheriff reindex` merges the values an object holds under one key, each into those written before it:
+
+- two lists into one, holding the members of the first and then those of the second that the first does not hold;
+- two objects key by key in the same way, each key where it was first written;
+- two values JSON Schema holds equal into one.
+
+It names every key it merged, with the file and each value's line. It refuses any other two values under one key, naming the file, the key and each one's line and value. It then writes no file.
+
+`sheriff reindex` also rewrites each test that names its node by a bare sid, the form an earlier release of the SpecSheriff tools read. A bare sid is a word of the form of a sid that stands in one of these places:
+
+- it opens the test's name, followed by a space or the name's end;
+- it stands alone as the argument of the test's mark.
+
+In the files the settings name as the tests of the system's code or of a project's own check or generator, `sheriff reindex` puts `@spec ` before that sid. Each node's `meta.tests` then names the test by its new name. `sheriff reindex` names each file it rewrites.
+
+`sheriff approve` records an approval or its withdrawal (§s-v4qus7raqnwzneb).
+
+`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).
+
+`sheriff guide` prints the following:
+
+- every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says;
+- the figures counted off the model as it prints: how many nodes each part holds and how many of them are approved;
+- whether the specification is approved.
+
+`sheriff show` prints a node, found by its sid or its location, as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff model` prints as JSON the model of the specification where it runs. The model holds every node as its file holds it, with its location, the part and the file it stands in, and the owners named nearest above it. A project's own check or generator is handed the model on its standard input (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze).
+
+`sheriff todos` prints, as text, every item of `meta.todos` in the specification where it runs, the archive left out, and the SpecSheriff guidelines too where the project takes them. The items come the newest first, and those of one day in the order the specification reads. Each item comes with its date, who its author is, what is to be done, and the sid, location and title of its node (§s-t28j22vbdmmeqnh).
+
+`sheriff types` generates the following:
+
+- from the RecordTypes, the types and the RuntimeChecks of the system's code, where the technical appendix says they stand;
+- the files each generator the project's own guidelines add prints.
+
+A project's generator is run by the command the settings name for it, and is handed what `sheriff model` prints on its standard input. It prints as JSON each file's path, its content and the sids of the nodes the file is written from (§s-km4x4s26kv7pjze).
+
+`sheriff types` writes a file only where the file is missing or holds, line endings aside, anything other than what it generates. It names each file it writes.
+
+`sheriff types` names each refusal and writes no file where one of the following holds:
+
+- the check of generated copies refuses the list of the files it generates, or a RecordType (§s-dbk2vyeg8z5jxna);
+- a project's generator ends with an exit code other than zero.
+
+`sheriff types` writes a file only once every node that file is generated from is approved. It names each node it waits for:
+
+- the types and RuntimeChecks wait for every RecordType;
+- a file a project's generator prints waits for the nodes it is written from and for the rule listing that generator.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

@@ -1,0 +1,1723 @@
+{
+  "title": "The main table of checks, with what each failure costs",
+  "ruTitle": "Основная таблица проверок и цена непрохождения каждой из них",
+  "intro": [
+    {
+      "en": "Every check, with what its failure costs, is a row of the tables below. Wherever a row speaks of a rule, a rule of a project's own kind is included.",
+      "ru": "Каждая проверка вместе с ценой её непрохождения — строка таблиц ниже. Где строка говорит о правиле, правило собственного типа в проекте тоже входит.",
+      "was": "Two things are checked mechanically: … (§s-nyh9yk22ba6g77q). The checks run when a commit is made. The tests of the system's code run at a push while the specification is approved.",
+      "change": "Что проверяется механически, детерминированность, рецензия и когда запускаются проверки — всё это теперь в согласованном 1.6.1; здесь осталась одна фраза о том, что держат таблицы. По рецензенту: «правило» включает правило собственного типа в проекте, по вашему решению от 11 ноября; «отказ» стал «непрохождением», как в согласованном 1.6.1."
+    },
+    {
+      "en": "Each check reads one of these, as the commit being made:\n- at a commit, what is staged;\n- after an agent's edit, the working tree.\n\nIt also reads the history behind it where its row says so. It reads nothing else.",
+      "ru": "Каждая проверка читает как создаваемый коммит одно из следующего:\n- при коммите — то, что подготовлено к нему (staged);\n- после правки агента — рабочее дерево.\n\nИсторию за ним она читает там, где так сказано в её строке. Больше она ничего не читает.",
+      "was": "Each check reads the commit being made, and the history behind it where its row says so. It never reads what the commit does not hold.",
+      "change": "Было «Each check reads the commit being made…»: после правки агента коммита ещё нет. По рецензенту: проверка читает как создаваемый коммит то, что подготовлено к коммиту, или, после правки агента, рабочее дерево (описание инструментов, узел 6); `validate` читает все файлы, а не только разницу."
+    },
+    {
+      "en": "",
+      "ru": "",
+      "was": "A check refuses unless its row says otherwise.",
+      "change": "Удаляется: это говорит согласованный 1.6.1, и каждая строка сама называет цену отказа."
+    }
+  ],
+  "tables": [
+    {
+      "heading": "The specification alone",
+      "ruHeading": "Только спецификация",
+      "rows": [
+        {
+          "n": 1,
+          "was": "No file of the specification, of its archive or of its schema gives one property two values | refused",
+          "en": "No object in a file of the specification, of its archive or of its schema assigns two values to one property",
+          "cost": "refused",
+          "ru": "Ни один объект в файле спецификации, её архива или её схемы не задаёт одному свойству двух значений",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "«No file … gives one property two values» стало «No object in a file … gives one property two values»: «одному свойству» не говорило, какого объекта. Добавлено обоснование.",
+          "rests": [
+            "s-eferktypcj7njt5"
+          ],
+          "num": "10.1.1",
+          "impl": [
+            "s-7zqsstgnuc772ba"
+          ],
+          "about": "Затрагивает каждый файл спецификации, её архива и схемы, то есть всё, что читают остальные проверки. Если ключ записан в объекте дважды, парсер молча оставляет одно значение, и проверки работали бы не с тем, что написано в файле.",
+          "reason": "Where one property is given two values, a JSON parser silently keeps one of them. The SpecSheriff tools then read something other than what the file says.",
+          "ruReason": "Если одному свойству задано два значения, парсер JSON молча оставляет одно из них. Тогда инструменты SpecSheriff читают не то, что написано в файле.",
+          "tests": [
+            "skills/tools/test/unit/validate.test.ts: refuses a file giving one field two values"
+          ],
+          "agreed": "2026-11-12"
+        },
+        {
+          "n": 2,
+          "was": "Every file matches its schema | refused",
+          "en": "Every file of the specification complies with its JSON Schema",
+          "cost": "refused",
+          "ru": "Каждый файл спецификации соответствует своей JSON-схеме",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Было «Every file matches its schema». Теперь ваши слова: «Каждый файл спецификации соответствует своей JSON-схеме», по-английски по смыслу — «complies with».",
+          "rests": [
+            "s-eferktypcj7njt5",
+            "s-xm8rz4uupb73gu5"
+          ],
+          "num": "10.1.2",
+          "impl": [
+            "s-xzcw3hv4hmxz7h7"
+          ],
+          "about": "Затрагивает каждый файл спецификации и её архива: его форму сверяют со схемой SpecSheriff guidelines вместе с расширением проекта, а само расширение — со схемой расширения. Все остальные проверки и команды рассчитаны на эту форму, поэтому файл другой формы отклоняется до них, с указанием, что в нём не так.",
+          "tests": [
+            "unit/validate.test.ts: refuses a file that does not match its schema",
+            "unit/validate.test.ts: refuses an extension the schema of an extension refuses, naming it, and takes a project's extension as no copy of the schema",
+            "unit/validate.test.ts: refuses an extension that is no JSON, or whose kind's schema is no JSON Schema, naming it rather than failing on it",
+            "unit/schema.test.ts: composes a project's extension with the schema: its kinds, the fields it adds to a kind, the properties of a file and of a link",
+            "unit/schema.test.ts: refuses an extension that does more than add, and then composes nothing",
+            "unit/binding.test.ts: sheriff binding refuses a file the schema refuses before it checks anything, naming the file and every refusal in it",
+            "unit/binding.test.ts: sheriff binding refuses where the schema of an extension refuses the project's extension, naming it, and checks nothing more",
+            "unit/reindex.test.ts: the reindex refuses a file the schema refuses, naming the file and every refusal in it, and then writes no file",
+            "unit/reindex.test.ts: the reindex refuses a sid that is not one, since only a sid a node lacks is left out of the validation",
+            "unit/reindex.test.ts: the reindex validates once it has changed what an earlier release wrote, and leaves out what it writes itself",
+            "unit/reindex.test.ts: the reindex refuses where the schema of an extension refuses the project's extension, naming it, and then writes no file",
+            "e2e/commands.test.ts: sheriff reindex and sheriff binding refuse a file the schema refuses, naming it, rather than fail on it"
+          ],
+          "noReason": "Своего обоснования нет: зачем эта проверка, говорит обоснование согласованного 5.1, которое она охраняет, — оно показано ниже.",
+          "agreed": "2026-11-12"
+        },
+        {
+          "n": 3,
+          "was": "No two nodes share a sid | refused",
+          "en": "No two nodes of the specification share a sid",
+          "cost": "refused",
+          "ru": "Никакие два узла спецификации не имеют одного sid",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "«No two nodes share a sid» стало «No two nodes, including those in the archive, share a sid»: рядом с 10.1.4, где те же слова означают только узлы вне архива, не было видно, входит ли архив. Добавлено обоснование: почему sid архивного узла не отдают другому. Оба предложения приняты вами 2026-11-12. По замечанию рецензента первое предложение обоснования заменено, принято вами 2026-11-12: теперь оно называет и ссылки в коде, тестах и документах, а не только связь `supersedes`. В английском обоснования «may name» заменено на «can name»: «may» здесь читалось бы как разрешение. Русский текст не изменился. После решения по архиву (2026-11-12) вы приняли оба новых предложения: архив из проверки ушёл, текст говорит об узлах спецификации; обоснование теперь объясняет, зачем нужна проверка, словами правила 1.2.2.",
+          "rests": [
+            "s-9spq78kdwsxr759"
+          ],
+          "num": "10.1.3",
+          "impl": [
+            "s-vke5hakwf3uyrjs"
+          ],
+          "about": "Затрагивает sid каждого узла спецификации. sid — единственный способ сослаться на узел, поэтому два узла с одним sid сделали бы двусмысленной каждую ссылку на него: в связях, в коде, в тестах и в коммитах.",
+          "tests": [
+            "unit/validate.test.ts: refuses two nodes sharing a sid, and two sharing a location"
+          ],
+          "reason": "A node is cited by its sid, so a sid that two nodes shared would name both of them.",
+          "ruReason": "На узел ссылаются по его sid, поэтому sid, общий для двух узлов, называл бы сразу оба.",
+          "agreed": "2026-11-12"
+        },
+        {
+          "n": 4,
+          "was": "No two nodes share a location | refused",
+          "en": "",
+          "cost": "refused",
+          "ru": "",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется (вы, 2026-11-12): требование следует из 10.1.5. Если у каждого узла спецификации расположение такое, какое даёт его место, два узла получают одно расположение только при ручной правке, и её отклоняет 10.1.5. Одинаково названные термины отклоняет своя проверка. На шаге инструментов 7.1.3 перестаёт считать расположения.",
+          "rests": [
+            "s-kag2m9tzdnduxdx"
+          ],
+          "num": null,
+          "impl": [
+            "s-vke5hakwf3uyrjs"
+          ],
+          "about": "Затрагивает расположение каждого узла спецификации. Расположение говорит читателю, где находится узел; его вычисляет `sheriff reindex` по месту узла в дереве. Архивный узел хранит расположение, которое у него было при удалении, и позже это расположение может занять другой узел.",
+          "tests": [
+            "unit/validate.test.ts: refuses two nodes sharing a sid, and two sharing a location"
+          ]
+        },
+        {
+          "n": 5,
+          "was": "Every node's location names where it is in the specification | refused",
+          "en": "The location of each node of the specification names where that node is in the specification",
+          "cost": "refused",
+          "ru": "Расположение каждого узла спецификации называет, где этот узел находится в спецификации",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "«Every node's location names where it is in the specification» стало «The location of each node of the specification names where that node is in the specification»: архивный узел хранит расположение, которое у него было при удалении. Принято вами 2026-11-12; проверка 10.1.4 удалена как следствие этой.",
+          "rests": [
+            "s-kag2m9tzdnduxdx"
+          ],
+          "num": "10.1.5",
+          "impl": [
+            "s-stxmhq3hgfndvn6"
+          ],
+          "about": "Затрагивает расположение каждого узла спецификации: совпадает ли расположение, записанное в файле, с тем, которое даёт место узла в дереве. Расположение пишет `sheriff reindex`, вручную его не пишет никто; проверка ловит файл, который правили в обход reindex. Отсюда же следует, что никакие два узла спецификации не имеют одного расположения: поэтому отдельная проверка 10.1.4 удалена.",
+          "tests": [
+            "unit/validate.test.ts: refuses a location other than the one its place gives",
+            "e2e/commands.test.ts: sheriff validate passes what holds together and refuses what does not, naming where",
+            "e2e/hooks.test.ts: the pre-commit hook refuses a commit whose specification does not hold together"
+          ],
+          "agreed": "2026-11-12"
+        },
+        {
+          "n": 6,
+          "was": "Every term node stands in contracts | refused",
+          "en": "Every term node of the specification is in the contracts section",
+          "cost": "refused",
+          "ru": "Каждый узел термина в спецификации находится в contracts",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Английский «is in the contracts section» вместо «stands in contracts», по смыслу русского. «Of the specification» добавлено по вашему решению (2026-11-12): архивный узел-термин лежит в архиве. Согласовано для базы без доменов. Расширение для доменов расширит правило: термин, который нужен нескольким доменам, определяется в contracts, а термин, который нужен одному домену, — в самом домене.",
+          "rests": [
+            "s-ypa92gpcj3f5zj8"
+          ],
+          "num": "10.1.6",
+          "impl": [
+            "s-vke5hakwf3uyrjs"
+          ],
+          "about": "Затрагивает каждый узел-термин спецификации: он должен стоять в разделе contracts. Термин определяется один раз, в contracts (правило 3.2); узел-термин в другом разделе значил бы, что этот раздел вводит свои слова.",
+          "tests": [
+            "unit/validate.test.ts: refuses a term node standing outside contracts"
+          ],
+          "agreed": "2026-11-12"
+        },
+        {
+          "n": 7,
+          "was": "No two term nodes name the same term, whatever the case of its letters | refused",
+          "en": "No two term nodes of the specification name the same term, regardless of letter case",
+          "cost": "refused",
+          "ru": "Никакие два узла термина в спецификации не называют одного и того же термина, без учёта регистра букв",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "«Of the specification» добавлено: удалённый термин лежит в архиве, и новый термин может взять его имя. Принято и согласовано вами 2026-11-12.",
+          "rests": [
+            "s-ypa92gpcj3f5zj8"
+          ],
+          "num": "10.1.7",
+          "impl": [
+            "s-vke5hakwf3uyrjs"
+          ],
+          "about": "Затрагивает имя каждого узла-термина спецификации. Термин определяется один раз (правило 3.2), поэтому два узла с одним именем — это один термин, определённый дважды. Регистр букв не учитывается: «User» и «user» — одно имя. Архивный узел-термин имя не занимает: позже новый термин может взять это имя.",
+          "tests": [
+            "unit/validate.test.ts: refuses two term nodes naming one term, and two RecordTypes sharing a name",
+            "unit/validate.test.ts: refuses two term nodes, or two RecordTypes, whose names differ only in the case of their letters"
+          ],
+          "agreed": "2026-11-12"
+        },
+        {
+          "n": 8,
+          "was": "No two RecordTypes share a name, whatever the case of its letters | refused",
+          "en": "No two RecordTypes share a name, whatever the case of its letters",
+          "cost": "refused",
+          "ru": "Никакие два RecordType не имеют одного имени, без учёта регистра букв",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены»: RecordType — его предмет, а основное правило не называет расширений (12.1.3).",
+          "rests": [
+            "s-7vm323mhry2enx3"
+          ],
+          "num": null
+        },
+        {
+          "n": 9,
+          "was": "Every node outside the SpecSheriff guidelines a project takes, but a section and a domain's header, is approved only where the latest record for it and its wording's fingerprint is an approval | refused",
+          "en": "Every node of the specification outside the SpecSheriff guidelines that a project uses and the extensions that it has chosen, except a section, is approved only while an approval of its current wording is in force",
+          "cost": "refused",
+          "ru": "Каждый узел спецификации вне SpecSheriff guidelines, которые использует проект, и вне выбранных им расширений, кроме раздела, одобрен, только пока в силе одобрение его нынешней формулировки",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли все три предложения и согласовали проверку (2026-11-12): заголовок домена ушёл в расширение «Домены»; «uses», как в 2.4 и 1.3.7; слова 1.3.3 вместо «отпечатка»; «узел спецификации», так как у архивного узла нет sid. Как хранится одобрение — в журнале или, после T28, в самом узле, — решает описание инструментов. Только английский, после согласования, по замечанию читателя: «that a project uses» вместо «a project uses». 18 ноября вы приняли («ок»): «и вне выбранных им расширений».",
+          "rests": [
+            "s-9g7jj8z4yf9kq93",
+            "s-5ah25f6gy99panq"
+          ],
+          "num": "10.1.8",
+          "impl": [
+            "s-95w92rnjuv3sst8"
+          ],
+          "about": "Затрагивает каждый одобренный узел спецификации, кроме узлов SpecSheriff guidelines, узлов выбранных проектом расширений и разделов. Статус «одобрен» держится, только пока в силе одобрение его нынешней формулировки: узел, формулировку которого изменили без нового одобрения, проверка не даёт записать как одобренный.",
+          "tests": [
+            "unit/validate.test.ts: refuses an approved node no approval stands for"
+          ],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 10,
+          "was": "Each approval a commit records names one of the owners of its node, as the commit holds them | refused",
+          "en": "Each approval added in a commit names one of the owners of its node as of that commit",
+          "cost": "refused",
+          "ru": "Каждое одобрение, добавленное в коммите, называет одного из ответственных за его узел на момент этого коммита",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Коммит больше не действующее лицо, и проверяются только одобрения, добавленные в коммите. Принято и согласовано вами 2026-11-12.",
+          "rests": [
+            "s-67vekyup7y8smap"
+          ],
+          "num": "10.1.9",
+          "impl": [
+            "s-95w92rnjuv3sst8"
+          ],
+          "about": "Затрагивает каждое одобрение, которое появляется в коммите: тот, кого оно называет, должен быть среди ответственных за узел, по составу ответственных в этом же коммите. Одобрение правила, которое одобряет всю спецификацию, судят по ответственным за спецификацию. Одобрения, записанные раньше, проверка не пересматривает, даже если ответственные с тех пор сменились.",
+          "tests": [
+            "unit/validate.test.ts: refuses an approval the commit records by someone none of the node's owners, as the commit holds them, and judges the rule approving the specification by the specification's owners"
+          ],
+          "agreed": "2026-11-12"
+        },
+        {
+          "n": 11,
+          "was": "The status of each section and domain's header is the one the nodes under it produce | refused",
+          "en": "The approval status of a section is derived from the approval statuses of all the nodes in it",
+          "cost": "refused",
+          "ru": "Статус одобрения раздела консолидирует статус входящих в него узлов",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Ваша формулировка (2026-11-13): «Статус одобрения раздела — консолидирует статус входящих в него узлов»; тире перед глаголом убрано. Она включает оба предложения: заголовка домена больше нет, речь о статусе одобрения. Английский написан по смыслу русского. Только английский, после согласования, по замечанию читателя: «is derived from» вместо «combines», которое читалось как «перечисляет»; так же сказано в согласованном 1.3.8.",
+          "rests": [
+            "s-9kfdycuq34beqvs"
+          ],
+          "num": "10.1.10",
+          "impl": [
+            "s-agc6fb3vx46pc23"
+          ],
+          "about": "Затрагивает статус одобрения каждого раздела. Раздел ничего не требует и сам не одобряется: его статус выводится из узлов под ним, на любой глубине, кроме самих разделов (правило 1.3.8). Проверка пересчитывает этот статус и отклоняет файл, где у раздела записан другой. Вручную статус раздела не ставит никто, его пишет `sheriff reindex`.",
+          "tests": [
+            "unit/validate.test.ts: refuses a section or a domain's header whose status is not the one the nodes under it produce",
+            "unit/model.test.ts: builds a section's status from the nodes under it that are no section, and a domain's header's from every node of the domain"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 12,
+          "was": "A node a commit removes, outside the SpecSheriff guidelines a project takes, is deleted where it is a section or a domain's header or no approval of it was ever given, and otherwise stands in the archive with the reason for its removal | refused",
+          "en": "A removed node that has ever been approved is placed in the archive with the reason for its removal. A section, and a node that was never approved, are deleted outright and do not go to the archive. The check leaves out the nodes of the SpecSheriff guidelines that a project uses",
+          "cost": "refused",
+          "ru": "Удалённый узел, которому когда-либо давали одобрение, помещается в архив вместе с причиной удаления. Раздел и узел, которому одобрения не давали, удаляются окончательно и в архив не попадают. Узлы SpecSheriff guidelines, которые использует проект, эта проверка не затрагивает",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Проще, по вашему вопросу (2026-11-13): главное первым, исключения отдельно. Коммит не действующее лицо; заголовок домена ушёл в расширение «Домены». Смысл согласованного 2.5 сохранён: в архив идёт узел, которому одобрение давали хоть раз, а не только одобренный в момент удаления. Ваша правка (2026-11-13): «помещается в архив» вместо «находится в архиве». В английском также «has ever been approved», по замечанию читателя.",
+          "rests": [
+            "s-f2b5zvc565s242f"
+          ],
+          "num": "10.1.11",
+          "impl": [
+            "s-j4webte36gkraju"
+          ],
+          "about": "Затрагивает каждый узел, который исчез из спецификации в коммите. Узел, которому когда-либо давали одобрение, должен оказаться в архиве вместе с причиной удаления (правило 2.5). Раздел и узел, которому одобрения не давали, удаляются окончательно: в архиве им не место. У архивного узла нет sid, поэтому удалённый узел находят в архиве по его последней формулировке; давали ли ему одобрение, видно по его sid в предыдущем коммите, а после T28 — по одобрению в самом узле.",
+          "tests": [
+            "unit/validate.test.ts: deletes a section outright, an approval given for it under an earlier release aside, and refuses one standing in the archive"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 13,
+          "was": "Every link names a node | refused",
+          "en": "Every link names a node of the specification by its sid",
+          "cost": "refused",
+          "ru": "Каждая связь называет узел спецификации по его sid",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Ваша формулировка (2026-11-13): «Каждая связь называет узел спецификации по его sid». Узел спецификации — так как у архивного узла нет sid (2.5), а supersedes ушёл (6.1); «по его sid» — как в согласованном 1.2.2.",
+          "rests": [
+            "s-yku67x4mehbmv6f",
+            "s-sn6au3vcr9uy5pm"
+          ],
+          "num": "10.1.12",
+          "impl": [
+            "s-qzyacnqwvaeaps4"
+          ],
+          "about": "Затрагивает каждую связь, которую узел пишет сам (исходящую): sid, на который она указывает, должен быть у какого-то узла. Связь на sid, которого нет ни у одного узла, отклоняется. Входящие связи строит `sheriff reindex`; что они совпадают с исходящими, проверяет другая строка таблицы.",
+          "tests": [
+            "unit/validate.test.ts: refuses a link to no node, and a citation without a link or a cites link without a citation",
+            "unit/validate.test.ts: refuses a node of the archive holding a link pointing at it"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 14,
+          "was": "A node citing another holds a link to it, and a link of type `cites` stands only where its node cites the node it names and holds no link of another type to it | refused",
+          "en": "A node of the specification that cites another node declares a link to it. A link of type `cites` is valid only where the node that declares it cites the node the link names, and declares no link of any other type to that node",
+          "cost": "refused",
+          "ru": "Узел спецификации, который ссылается на другой узел, объявляет связь с ним. Связь типа `cites` допустима, только если её узел ссылается на узел, который она называет, и не объявляет к этому узлу связи другого типа",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Две фразы вместо одной (7.5); «узел спецификации» — архивный узел освобождён согласованным 6.3; «объявляет связь», как в 6.3; «допустима». Принято и согласовано вами 2026-11-13. Только английский, после согласования, по замечанию читателя: «the node that declares it» вместо «its node», запятая и «any other».",
+          "rests": [
+            "s-cxtt6jvhqcey2k9"
+          ],
+          "num": "10.1.13",
+          "impl": [
+            "s-qzyacnqwvaeaps4"
+          ],
+          "about": "Затрагивает каждую ссылку `§sid` в узле спецификации и каждую связь `cites`. Ссылка без связи отклоняется, связь `cites` без ссылки тоже. Связь `cites` рядом со связью другого типа к тому же узлу отклоняется: другой тип уже говорит, как узлы связаны (правило 6.3 и тип `cites` в 6.1). Архивный узел этому правилу не подчиняется (6.3).",
+          "tests": [
+            "unit/validate.test.ts: refuses a link to no node, and a citation without a link or a cites link without a citation",
+            "unit/validate.test.ts: refuses a cites link beside a link of another type to the same node"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 15,
+          "was": "No node cites another by its location outside text quoted as code | refused",
+          "en": "No node of the specification cites another node by location. A § followed by a location and formatted as code is not considered a citation",
+          "cost": "refused",
+          "ru": "Ни один узел спецификации не ссылается на другой по его расположению. Знак § с расположением, оформленный как код, ссылкой не считается",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Правило и исключение разделены по вашему замечанию; исключение сказано через то, что видно в тексте; «узел спецификации»; добавлено обоснование исключения. Принято и согласовано вами 2026-11-13. Только английский, после согласования, по замечаниям читателя: «another node by location»; в обосновании «forbidden», как в русском «запрещённая».",
+          "rests": [
+            "s-9spq78kdwsxr759",
+            "s-kag2m9tzdnduxdx"
+          ],
+          "num": "10.1.14",
+          "impl": [
+            "s-qzyacnqwvaeaps4"
+          ],
+          "about": "Затрагивает каждую ссылку `§` в узле спецификации, за которой стоит не sid, а расположение. Расположение меняется, когда узлы переставляют, и такая ссылка указала бы на другой узел; поэтому ссылаются только по sid (правило 1.2.2). Внутри обратных кавычек, то есть в тексте, процитированном как код, такая запись допустима: узел может показать, как выглядит отклоняемая ссылка.",
+          "tests": [
+            "unit/validate.test.ts: refuses a node citing another by its location"
+          ],
+          "reason": "This lets a node show what a forbidden citation looks like.",
+          "ruReason": "Так узел может показать, как выглядит запрещённая ссылка.",
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 16,
+          "was": "A `term-relation` or a `uses` link binds two terms, and no other type of link, `cites` included, binds two terms | refused, and settled with the specification's owners",
+          "en": "Terms of the specification are linked to one another only by links of type `term-relation` or `uses`, which are reserved for terms",
+          "cost": "refused, and settled with the specification's owners",
+          "ru": "Термины спецификации могут быть связаны только связями типа `term-relation` или `uses`, которые предназначены исключительно для терминов",
+          "ruCost": "отклоняется и решается с ответственными за спецификацию",
+          "fate": "stays",
+          "change": "Ваша формулировка (2026-11-13). Она покрывает обе половины проверки: термины связываются только этими двумя типами, и эти типы — только для терминов. «Термины спецификации» — как в согласованном 6.5. Только английский, после согласования, по замечанию читателя: «reserved for terms» вместо «meant for terms alone», чтобы читалось как ограничение, как в вашем «исключительно».",
+          "rests": [
+            "s-76dutms9uv6uha2"
+          ],
+          "num": "10.1.15",
+          "impl": [
+            "s-pvnnr844f3y964m"
+          ],
+          "about": "Затрагивает связи между терминами. Только `term-relation` и `uses` связывают два термина, и каждая из них связывает именно термины. Связь другого типа между двумя терминами, даже `cites`, отклоняется: термин, ссылающийся на другой термин, объявляет `term-relation` или `uses` (правило 6.5). Какую из двух выбрать и с каким соотношением, решают с ответственными за спецификацию; поэтому цена — отказ и решение вместе с ними.",
+          "tests": [
+            "unit/validate.test.ts: refuses a term-relation not binding two terms, and a link of another type binding two"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 17,
+          "was": "The incoming links are what the outgoing ones produce | refused",
+          "en": "The incoming links are those computed from the outgoing ones",
+          "cost": "refused",
+          "ru": "Входящие связи — те, что вычисляются из исходящих",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Ваша формулировка (2026-11-13): «вычисляются из исходящих»; из двух ваших слов взято «вычисляются», как «computed» в согласованном 8.5 о расположении.",
+          "rests": [
+            "s-bpdqd9v72wg7vsz"
+          ],
+          "num": "10.1.16",
+          "impl": [
+            "s-agc6fb3vx46pc23"
+          ],
+          "about": "Затрагивает входящие связи каждого узла. Вручную их никто не пишет: `sheriff reindex` строит их заново из исходящих связей других узлов (правило 6.4). Проверка пересобирает их в памяти и отклоняет файл, где они другие: значит, их правили вручную или не запустили reindex. У архивного узла входящих связей нет; узел SpecSheriff guidelines держит только входящие связи из самих guidelines.",
+          "tests": [
+            "unit/validate.test.ts: refuses incoming links the outgoing ones do not produce"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 18,
+          "was": "No approved node, and no section or domain's header, sets three words or more running in capitals outside a name quoted from the code | refused",
+          "en": "No sentence of the specification is written in capital letters. The only exceptions are abbreviations, constants and special designations, such as part numbers. The deterministic check uses this criterion: no sentence contains three or more consecutive words written in capital letters",
+          "cost": "refused",
+          "ru": "В спецификации запрещено писать предложения заглавными буквами. Исключение только для аббревиатур, констант и специальных обозначений (например, артикулов). Для детерминированной проверки используется правило: в предложении не может быть трёх и более слов подряд, написанных заглавными буквами",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Ваша формулировка (2026-11-13). «Трёх и более», как в согласованном 7.13 (вы писали «более трёх»); «артикулов» вместо «артиклей». Проверка теперь охватывает всю спецификацию, черновики тоже; инструменты изменятся на шаге инструментов. Только английский, после согласования, по замечаниям читателя: «capital letters», «special designations, such as part numbers», «uses this criterion», «contains».",
+          "rests": [
+            "s-m6upmfq64kw5h4r"
+          ],
+          "num": "10.1.17",
+          "impl": [
+            "s-e2vdhfsndy5stq9"
+          ],
+          "about": "Затрагивает заголовок, текст и обоснование каждого одобренного узла спецификации и каждого раздела. Фраза заглавными буквами — три слова подряд и больше — отклоняется: выделять нужно формулировкой (правило 7.13). Одно или два слова заглавными допустимы (REST API); имена из кода и всё в кавычках не учитываются. Черновик проверка не трогает: пока узел правят, заглавные могут стоять временно.",
+          "tests": [
+            "unit/validate.test.ts: refuses an approved node, and any section or header, setting three words or more running in capitals, two words and a quoted name left out",
+            "unit/validate.test.ts: refuses three words or more running in capitals, letters beyond ASCII included, two words left out"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 19,
+          "was": "Every section holds at least one rule | refused",
+          "en": "Every section contains at least one rule",
+          "cost": "refused",
+          "ru": "Каждый раздел содержит хотя бы одно правило",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "без изменений",
+          "rests": [
+            "s-7445ahgjck2aefg",
+            "s-pctqj9wqaq8762t"
+          ],
+          "num": "10.1.18",
+          "impl": [
+            "s-zhen42p6mnaxu7w"
+          ],
+          "about": "Затрагивает каждый раздел. Раздел ничего не требует сам, он собирает правила (правило 8.1), поэтому раздел без единого правила — пустая рамка, и проверка его отклоняет. Правилом раздела считаются и термин в нём, и узел собственного вида проекта, и правило вложенного раздела (8.2). Статус раздела значения не имеет.",
+          "tests": [
+            "unit/validate.test.ts: refuses every section holding no rule, whatever its status",
+            "unit/validate.test.ts: counts a node of a project's own kind as a rule of its section, and lets an exempts link reach it"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 20,
+          "was": "Every domain has a header, and the index in it is what the domain's sections produce | refused",
+          "en": "Every domain has a header, and the index in it is what the domain's sections produce",
+          "cost": "refused",
+          "ru": "У каждого домена есть заголовок, и указатель в нём — тот, что дают разделы домена",
+          "ruCost": "отклоняется",
+          "fate": "to 11.3 Domains checks",
+          "change": "Уходит в расширение «Домены». По рецензенту: в 12.2 «Домены: деление на домены».",
+          "rests": [
+            "s-yggv9myedprnaa7",
+            "s-2r59txnms5serdr"
+          ],
+          "num": null
+        },
+        {
+          "n": 21,
+          "was": "The values gathered beside a field are what their source produces | refused",
+          "en": "The values gathered beside a field are what their source produces",
+          "cost": "refused",
+          "ru": "Значения, собранные рядом с полем, — те, что даёт их источник",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены»: поля RecordType — его предмет.",
+          "rests": [
+            "s-ju5vcanbjph7mgh"
+          ],
+          "num": null
+        },
+        {
+          "n": 22,
+          "was": "Every domain's header names a level the project's own guidelines list | refused",
+          "en": "A domain's header that names a level names one the project's own guidelines list",
+          "cost": "refused",
+          "ru": "Заголовок домена, который называет уровень, называет один из уровней, перечисленных в собственных guidelines проекта",
+          "ruCost": "отклоняется",
+          "fate": "to 11.3 Domains checks",
+          "change": "Уходит в расширение «Домены»; уровень домена необязателен (ваше решение от 8 ноября), поэтому строка проверяет только названный уровень. По рецензенту: в 12.4 «Домены: уровни».",
+          "rests": [
+            "s-nkyty4dy9x2v2a4"
+          ],
+          "num": null
+        },
+        {
+          "n": 23,
+          "was": "A `consumes` link goes from a domain's header to a section of another domain | refused",
+          "en": "A `consumes` link goes from a domain's header to a section of another domain",
+          "cost": "refused",
+          "ru": "Связь `consumes` идёт от заголовка домена к разделу другого домена",
+          "ruCost": "отклоняется",
+          "fate": "to 11.3 Domains checks",
+          "change": "Уходит в расширение «Домены». По рецензенту: в 12.2 «Домены: деление на домены».",
+          "rests": [
+            "s-yggv9myedprnaa7"
+          ],
+          "num": null
+        },
+        {
+          "n": 24,
+          "was": "An `exempts` link goes from a node of the project's own guidelines to a rule, a node of a project's own NodeKind or a section | refused",
+          "en": "An `exempts` link goes from a node of the project's own guidelines to a rule, including a rule of a project's own kind, or to a section. The text of a node that declares an `exempts` link cites the node the link names",
+          "cost": "refused",
+          "ru": "Связь `exempts` идёт от узла собственных guidelines проекта к правилу, в том числе к правилу собственного типа в проекте, или к разделу. Текст узла, который объявляет связь `exempts`, ссылается на узел, который эта связь называет",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли оба предложения (2026-11-13): «к правилу, в том числе к правилу собственного типа в проекте, или к разделу» вместо «к правилу, узлу собственного NodeKind проекта или разделу»; второе предложение о ссылке в тексте — требование согласованного 9.7, сформулированное так же, как в согласованной 10.1.13.",
+          "rests": [
+            "s-gf6n8ge4mke3pr2"
+          ],
+          "num": "10.1.19",
+          "impl": [
+            "s-qvgzubkrafadqgf"
+          ],
+          "about": "Затрагивает каждую связь `exempts`, то есть каждое освобождение правила от реализации (правило 9.7). Такую связь может объявить только узел собственных guidelines проекта, и вести она может только к правилу или к разделу. Текст освобождающего узла ссылается на цель связи: одобряя узел, ответственный видит в его тексте, что именно освобождается. Инструменты сейчас проверяют только концы связи; проверку ссылки добавим на шаге инструментов.",
+          "tests": [
+            "unit/validate.test.ts: passes an exempts link from a node of the project's own guidelines to a rule or a section, and refuses one standing elsewhere or reaching anything else",
+            "unit/validate.test.ts: counts a node of a project's own kind as a rule of its section, and lets an exempts link reach it"
+          ],
+          "agreed": "2026-11-13",
+          "todos": [
+            {
+              "date": "2026-11-13",
+              "by": "the owner",
+              "text": "At the tools step, `sheriff validate` (tools 7.1.12, s-qvgzubkrafadqgf) checks the second sentence as the agent explained it to the owner: for every node that declares an `exempts` link, it looks for `§<the target's sid>` in that node's text, and refuses the node where the citation is missing. A citation in the node's title or reason does not count, since 9.7 names the text. The test is written first and seen failing."
+            }
+          ]
+        },
+        {
+          "n": 67,
+          "was": "",
+          "en": "An `overrides` link goes from a node of an extension of the guidelines to a rule of the SpecSheriff guidelines. The text of a node that declares an `overrides` link cites the node the link names",
+          "cost": "refused",
+          "ru": "Связь `overrides` идёт от узла расширения guidelines к правилу SpecSheriff guidelines. Текст узла, который объявляет связь `overrides`, ссылается на узел, который эта связь называет",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Уходит по вашему решению от 16 ноября: расширение больше не меняет правил SpecSheriff guidelines, только добавляет и уточняет (1.7.2), и связи `overrides` нет.",
+          "rests": [
+            "s-sn6au3vcr9uy5pm",
+            "s-e6stjaxkn44ys4m"
+          ],
+          "num": "10.1.20",
+          "impl": [],
+          "about": "Затрагивает каждую связь `overrides`, то есть каждое изменение правила SpecSheriff guidelines расширением guidelines (правила 12.1.2 и 6.1). Такую связь может объявить только узел расширения guidelines, и вести она может только к правилу SpecSheriff guidelines. Текст узла расширения ссылается на правило, которое он изменяет, поэтому связь сверена с одобренной формулировкой. По этой связи тот, кто читает правило SpecSheriff guidelines, видит, что в проекте с расширением оно действует иначе. Инструменты этого пока не проверяют: ни один узел описания инструментов эту проверку не реализует, тестов нет. Добавим на шаге инструментов.",
+          "tests": [],
+          "todos": [
+            {
+              "date": "2026-11-13",
+              "by": "the reviewer",
+              "text": "At the tools step, a node of the appendix of the tools implements this check and says where the nodes of an extension are kept. Its test is written first and seen failing."
+            }
+          ],
+          "agreed": "2026-11-13",
+          "reason": "The link is allowed only from a node of an extension of the SpecSheriff guidelines, because the SpecSheriff tools are guaranteed to support only those extensions.",
+          "ruReason": "Эта связь разрешена только узлам расширений SpecSheriff guidelines, потому что гарантированно поддержать инструментами SpecSheriff можно только эти расширения."
+        },
+        {
+          "n": 71,
+          "num": "10.1.20a",
+          "fate": "stays",
+          "rests": [
+            "s-chk5hnzmcpeqj25"
+          ],
+          "impl": [],
+          "change": "Новая проверка, вы приняли её (2026-11-13): второе предложение согласованного 12.1.3, за которым раньше не следила ни одна проверка. Номер временный.",
+          "about": "Затрагивает каждую связь, которую объявляет правило SpecSheriff guidelines. Расширение может исчезнуть или быть черновиком, и правило, которое от него зависит, оказалось бы неверным (обоснование 12.1.3). Узел, который цитирует другой узел, обязан иметь и связь с ним, поэтому проверка отклоняет и цитату узла расширения. Называет ли текст правила расширение словами, детерминированно не проверить. Сейчас этот запрет нарушает согласованный 9.1: он цитирует 12.5.2 (s-km4x4s26kv7pjze); это исправим, когда дойдём до 9.1.",
+          "tests": [],
+          "todos": [
+            "На шаге инструментов: узел описания инструментов реализует эту проверку; её тест пишется первым и сначала падает."
+          ],
+          "en": "A rule of the SpecSheriff guidelines declares no link to a node of an extension of the guidelines (§s-chk5hnzmcpeqj25)",
+          "cost": "refused",
+          "ru": "Правило SpecSheriff guidelines не объявляет связей с узлами расширения guidelines (§s-chk5hnzmcpeqj25)",
+          "ruCost": "отклоняется",
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 68,
+          "was": "",
+          "en": "No node of a project's own guidelines holds an `overrides` link",
+          "cost": "refused",
+          "ru": "Ни один узел собственных guidelines проекта не держит связи `overrides`",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется (вы, 2026-11-13): согласованная 10.1.20 уже отклоняет каждую связь `overrides`, которую отклоняла эта строка. Строка новая и ни разу не одобрялась, поэтому удаляется, а не уходит в архив.",
+          "rests": [
+            "s-e6stjaxkn44ys4m"
+          ],
+          "num": null,
+          "impl": [],
+          "about": "Затрагивает каждый узел собственных guidelines проекта: такой узел не объявляет связь `overrides` (правило 12.1.2). Проверка 10.1.20 уже отклоняет такую связь: она допускает связь `overrides` только от узла расширения guidelines, а узел собственных guidelines проекта узлом расширения не бывает (12.1.1). Ни один узел описания инструментов эту проверку не реализует, тестов нет.",
+          "tests": []
+        },
+        {
+          "n": 25,
+          "was": "The domains do not use one another in a cycle | refused",
+          "en": "The domains do not use one another in a cycle",
+          "cost": "refused",
+          "ru": "Домены не используют друг друга по кругу",
+          "ruCost": "отклоняется",
+          "fate": "to 11.3 Domains checks",
+          "change": "Уходит в расширение «Домены». По рецензенту: в 12.2 «Домены: деление на домены».",
+          "rests": [
+            "s-yggv9myedprnaa7"
+          ],
+          "num": null
+        },
+        {
+          "n": 26,
+          "was": "A RecordType of a domain names a RecordType of another domain only where the named RecordType stands in a section its domain's header names in its `consumes` links | reported by the node's sid",
+          "en": "A RecordType of a domain names a RecordType of another domain only where the named RecordType stands in a section its domain's header names in its `consumes` links",
+          "cost": "reported by the node's sid",
+          "ru": "RecordType домена называет RecordType другого домена, только если названный RecordType стоит в разделе, который заголовок его домена называет в своих связях `consumes`",
+          "ruCost": "сообщается по sid узла",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-7vm323mhry2enx3"
+          ],
+          "num": null
+        },
+        {
+          "n": 27,
+          "was": "A RecordType variant refines the RecordType it is a variant of | refused",
+          "en": "A RecordType variant refines the RecordType it is a variant of",
+          "cost": "refused",
+          "ru": "Вариант RecordType уточняет RecordType, вариантом которого он является",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "num": null
+        },
+        {
+          "n": 28,
+          "was": "A RecordType variant stands in the part of the specification that declares the value it answers to | refused",
+          "en": "A RecordType variant stands in the part of the specification that declares the value it answers to",
+          "cost": "refused",
+          "ru": "Вариант RecordType стоит в той части спецификации, которая объявляет значение, на которое он отвечает",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-z3dnru6qqdf9m6j",
+            "s-xfwuvd3funutmsw"
+          ],
+          "num": null
+        },
+        {
+          "n": 29,
+          "was": "A RecordType variant declares at least one field held neither by its RecordType nor by any field of type `variant` of that RecordType | refused",
+          "en": "A RecordType variant declares at least one field held neither by its RecordType nor by any field of type `variant` of that RecordType",
+          "cost": "refused",
+          "ru": "Вариант RecordType объявляет хотя бы одно поле, которого нет ни у его RecordType, ни у какого-либо поля типа `variant` этого RecordType",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "num": null
+        },
+        {
+          "n": 30,
+          "was": "A RecordType variant answers to values of exactly the fields its RecordType names as choosing the variant, each value one its choosing field's source declares | refused",
+          "en": "A RecordType variant answers to values of exactly the fields its RecordType names as choosing the variant, each value one its choosing field's source declares",
+          "cost": "refused",
+          "ru": "Вариант RecordType отвечает на значения ровно тех полей, которые его RecordType называет выбирающими вариант, и каждое значение — одно из объявленных источником выбирающего поля",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "num": null
+        },
+        {
+          "n": 31,
+          "was": "No two variants of one RecordType answer to the same values | refused",
+          "en": "No two variants of one RecordType answer to the same values",
+          "cost": "refused",
+          "ru": "Никакие два варианта одного RecordType не отвечают на одни и те же значения",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "num": null
+        },
+        {
+          "n": 32,
+          "was": "Each value of a field of type `one of` is declared once, the values gathered beside it not counted | refused",
+          "en": "Each value of a field of type `one of` is declared once, the values gathered beside it not counted",
+          "cost": "refused",
+          "ru": "Каждое значение поля типа `one of` объявлено один раз, не считая значений, собранных рядом с ним",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-xfu2gpzddjnmgks",
+            "s-xfwuvd3funutmsw"
+          ],
+          "num": null
+        },
+        {
+          "n": 33,
+          "was": "A field of type `one of` whose values are not those the domains add has no list a domain adds to it | refused",
+          "en": "A field of type `one of` whose values are not those the domains add has no list a domain adds to it",
+          "cost": "refused",
+          "ru": "У поля типа `one of`, значения которого — не те, что добавляют домены, нет списка, который к нему добавляет домен",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-gzfq3x8hesj227e"
+          ],
+          "num": null
+        },
+        {
+          "n": 34,
+          "was": "A list of values a domain adds stands in a rule of that domain refining a RecordType described in contracts, and names a field of type `one of` of that RecordType whose values are those the domains add | refused",
+          "en": "A list of values a domain adds stands in a rule of that domain refining a RecordType described in contracts, and names a field of type `one of` of that RecordType whose values are those the domains add",
+          "cost": "refused",
+          "ru": "Список значений, который добавляет домен, стоит в правиле этого домена, уточняющем RecordType, описанный в contracts, и называет поле типа `one of` этого RecordType, значения которого — те, что добавляют домены",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-96df5fcfqsvex9d",
+            "s-gzfq3x8hesj227e"
+          ],
+          "num": null
+        },
+        {
+          "n": 35,
+          "was": "A RecordType holds at most one field of type `variant`, the ones it inherits counted | refused",
+          "en": "A RecordType holds at most one field of type `variant`, the ones it inherits counted",
+          "cost": "refused",
+          "ru": "RecordType содержит не больше одного поля типа `variant`, считая унаследованные",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-z3dnru6qqdf9m6j"
+          ],
+          "num": null
+        },
+        {
+          "n": 36,
+          "was": "Every field of type `one of` holds at least one value from its source | refused",
+          "en": "Every field of type `one of` holds at least one value from its source",
+          "cost": "refused",
+          "ru": "Каждое поле типа `one of` содержит хотя бы одно значение из своего источника",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-xfu2gpzddjnmgks"
+          ],
+          "num": null
+        },
+        {
+          "n": 37,
+          "was": "A field whose values are the sids of a NodeKind's nodes names a NodeKind that exists | refused",
+          "en": "A field whose values are the sids of the nodes of a project's own kind names a kind that exists",
+          "cost": "refused",
+          "ru": "Поле, значения которого — sid узлов собственного типа в проекте, называет существующий тип",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены»; NodeKind заменён на собственный тип в проекте (ваше решение от 10 ноября).",
+          "rests": [
+            "s-mt6auv3jz8m5gzh"
+          ],
+          "num": null
+        },
+        {
+          "n": 38,
+          "was": "A field of type `identifier of` names a RecordType that names the field identifying it, one of its fields, and the identifying fields it leads to, followed from one identifier to the next, end in a field of another type | refused",
+          "en": "A field of type `identifier of` names a RecordType that names the field identifying it, one of its fields, and the identifying fields it leads to, followed from one identifier to the next, end in a field of another type",
+          "cost": "refused",
+          "ru": "Поле типа `identifier of` называет RecordType, который называет идентифицирующее его поле, одно из своих полей, и идентифицирующие поля, к которым оно ведёт, если идти от одного идентификатора к следующему, заканчиваются полем другого типа",
+          "ruCost": "отклоняется",
+          "fate": "to 12.12 RecordType checks",
+          "change": "Уходит в расширение «Домены».",
+          "rests": [
+            "s-7vm323mhry2enx3"
+          ],
+          "num": null
+        },
+        {
+          "n": 39,
+          "was": "Every node of the technical appendix but a section, outside the sections of the stack and of the technical debt, implements a node of the base specification, and every rule of the technical debt refines one | refused",
+          "en": "Every node of the technical appendix other than a section implements a node of the base specification. Nodes in the section on the stack and in the technical debt section are exempt from this requirement",
+          "cost": "refused",
+          "ru": "Каждый узел технического приложения, кроме раздела, реализует узел базовой спецификации. Узлы в разделе стека и в разделе технического долга от этого освобождены",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли предложение (2026-11-13): ушло «, и каждое правило технического долга уточняет такой узел», потому что по согласованному 4.4 описание недостатка может уточнять узел, но не обязано. По вашей просьбе формулировка переписана: раздел исключён по типу узла в первом предложении, узлы двух разделов освобождены по месту во втором.",
+          "rests": [
+            "s-mm2de262g3jkapu",
+            "s-2r7k2aeyusgy6fw"
+          ],
+          "num": "10.1.22",
+          "impl": [
+            "s-yprj7d6tnvauggr"
+          ],
+          "about": "Затрагивает каждый узел технического приложения проекта. Каждый такой узел реализует хотя бы один узел базовой спецификации (правило 4.2): так узел приложения находят и читают рядом с правилом, когда это правило меняется. Исключения — раздел, который ничего не требует, узлы раздела стека, где описаны выборы на всю систему, и описания недостатков в разделе технического долга (4.4). Сейчас инструменты ещё требуют, чтобы каждое описание технического долга уточняло узел базы. По согласованному 4.4 это не обязательно; на шаге инструментов это требование уйдёт.",
+          "tests": [
+            "unit/validate.test.ts: refuses a node of the technical appendix outside the stack implementing no node of the base"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 40,
+          "was": "Every section of the technical appendix but those of the stack and of the technical debt stands under the name of a domain | refused",
+          "en": "Every section of the technical appendix but those of the stack and of the technical debt stands under the name of a domain",
+          "cost": "refused",
+          "ru": "Каждый раздел технического приложения, кроме разделов стека и технического долга, находится под именем домена",
+          "ruCost": "отклоняется",
+          "fate": "to 11.3 Domains checks",
+          "change": "По вашему решению от 11 ноября строка вернулась к прежнему смыслу и уходит в расширение «Домены» (12.2): инструменты сверяют имя файла приложения с именем домена. В основных правилах её место держит согласованный 1.1.2.",
+          "rests": [
+            "s-qmmzf9nksfsa3qp",
+            "s-vj7ercem526zd6v"
+          ],
+          "num": null
+        },
+        {
+          "n": 41,
+          "was": "Every rule of the appendix of the tools (§s-a4rbry4hsu34hy8) implements a node of the base of the guidelines | refused",
+          "en": "Every rule of the appendix of the tools implements a rule for keeping the specification",
+          "cost": "refused",
+          "ru": "Каждое правило описания инструментов реализует правило ведения спецификации",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли формулировку (2026-11-13). Убрана ссылка: требование теперь стоит в 2.2, с которым проверка связана связью `checks`. «узел базы guidelines» → «правило ведения спецификации»: базы guidelines больше нет (ваше решение от 2026-11-08), а «правила ведения спецификации» — имя этой части guidelines в 2.1.",
+          "rests": [
+            "s-uxtyyen92jygth4"
+          ],
+          "num": "10.1.23",
+          "impl": [
+            "s-yprj7d6tnvauggr"
+          ],
+          "about": "Затрагивает каждое правило описания инструментов SpecSheriff. Каждое такое правило реализует хотя бы одно правило guidelines вне описания инструментов (правило 2.2): так правило описания инструментов находят и читают рядом с правилом, которое оно реализует, когда то меняется.",
+          "tests": [
+            "unit/validate.test.ts: refuses a rule of the appendix of the tools implementing no node of the base of the guidelines"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 42,
+          "was": "Every rule of a project's own guidelines refines or implements a rule of the SpecSheriff guidelines | refused",
+          "en": "Every rule of a project's own guidelines refines or extends a rule of the SpecSheriff guidelines or of an extension that the project has chosen (§s-9ttvcwpqkehm58g)",
+          "cost": "refused",
+          "ru": "Каждое правило собственных guidelines проекта уточняет или расширяет правило SpecSheriff guidelines или выбранного проектом расширения (§s-9ttvcwpqkehm58g)",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли формулировку (2026-11-13): «реализует» → «расширяет». Собственные guidelines проекта никогда не реализуют SpecSheriff guidelines (ваше решение от 2026-11-08); «уточняет или расширяет» — слова согласованного 2.3, оба случая обозначает одна связь `refines` (ваше решение от 2026-11-11). 18 ноября вы приняли («ок»): «или выбранного проектом расширения», по 2.3 и 1.7.5.",
+          "rests": [
+            "s-u7tw6m8npxmv5tu"
+          ],
+          "num": "10.1.24",
+          "impl": [
+            "s-yprj7d6tnvauggr"
+          ],
+          "about": "Затрагивает каждое правило собственных guidelines проекта. Каждое такое правило уточняет или расширяет правило SpecSheriff guidelines и связано с ним связью `refines` (правило 2.3). Так на правило SpecSheriff guidelines можно положиться в любом проекте, а собственное правило проекта находят рядом с правилом, которое оно уточняет. Это касается любого правила собственных guidelines, в том числе узла, который освобождает правило от реализации (9.7). Сейчас инструменты принимают и связь `implements`; на шаге инструментов они перестанут её принимать.",
+          "tests": [
+            "unit/validate.test.ts: refuses a rule of a project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines"
+          ],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 43,
+          "was": "No project but the one the SpecSheriff guidelines are written in holds a copy of them or of their schema | refused",
+          "en": "No project other than SpecSheriff itself keeps a copy of the guidelines, including their JSON Schema",
+          "cost": "refused",
+          "ru": "Ни один проект, кроме самого SpecSheriff, не хранит копию guidelines, включая его JSON-схему",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Ваша формулировка (2026-11-13). Смысл прежний: копию SpecSheriff guidelines и их JSON-схемы хранит только SpecSheriff, где они пишутся (2.4).",
+          "rests": [
+            "s-bsya3febm6u64ab"
+          ],
+          "num": "10.1.25",
+          "impl": [
+            "s-6bmnsbskg6en4nf"
+          ],
+          "about": "Затрагивает каждый проект, кроме самого SpecSheriff. Проект пользуется SpecSheriff guidelines и их схемой из плагина SpecSheriff и не хранит их копий (правило 2.4). Копией инструменты считают `spec.json` и `tools.json` в `specs/_guidelines/` и любой файл в `specs/_schema/`, кроме `project.schema.json`. Копия, изменённая в одном проекте, стала бы второй версией guidelines, которую не читает никто из их авторов.",
+          "tests": [
+            "unit/validate.test.ts: refuses, outside the repository the SpecSheriff guidelines are written in, a copy of them or of their schema"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 77,
+          "num": "10.1.25a",
+          "fate": "new",
+          "en": "A node of the technical appendix (§s-qmmzf9nksfsa3qp) that is approved in a commit and has an `implements` link (§s-sn6au3vcr9uy5pm) to a rule of the base specification refines the rules of the base specification that it implements. Such a node contradicts no rule of the base specification",
+          "cost": "refused, naming the node and each rule of the base specification that the node contradicts, or that it implements without refining it",
+          "ru": "Узел технического приложения (§s-qmmzf9nksfsa3qp), который одобрен в коммите и имеет связь `implements` (§s-sn6au3vcr9uy5pm) с правилом базовой спецификации, уточняет реализуемые им правила базовой спецификации. Такой узел не противоречит ни одному правилу базовой спецификации",
+          "ruCost": "отклоняется с названием узла и каждого правила базовой спецификации, которому узел противоречит или которое он реализует, не уточняя его",
+          "reason": "An agent may approve such a node on an owner's behalf (§s-t5uw8zfxzhfdg86), and code is then written from the node. Without this check, no one but the node's author would compare it with the base specification before code written from it is committed.",
+          "ruReason": "Агент может одобрить такой узел от имени ответственного (§s-t5uw8zfxzhfdg86), и затем по узлу пишется код. Без этой проверки никто, кроме автора узла, не сравнил бы его с базовой спецификацией до того, как код, написанный по нему, попадёт в коммит.",
+          "rests": [
+            "s-m4h279nbaqkpa3t",
+            "s-t5uw8zfxzhfdg86",
+            "s-nyh9yk22ba6g77q"
+          ],
+          "impl": [
+            "s-vp24dqydygztqbt"
+          ],
+          "about": "Затрагивает каждый коммит, в котором одобряется узел технического приложения со связью `implements` с правилом базы, кто бы его ни одобрил. Рецензент получает узел, реализуемые им правила базы, правила, связанные с ними, и правила того же раздела верхнего уровня (10.4).",
+          "tests": [],
+          "change": "Новая строка, по согласованным 1.6.1 и 10.2: третье суждение рецензента. Отклоняется всегда, как 10.1.43: противоречие базе — дефект и в черновике спецификации. Рецензент правил проверил строку: она не читает код, поэтому стоит в группе «Только спецификация» как 10.1.25a; текст разделён на два предложения; добавлены ссылки на узлы о структуре спецификации и о связях. Предложена после того, как вы согласовали третий пункт принципа о суждениях рецензента (20 ноября): он, как и эта строка, говорит только об узле, реализующем правило базовой спецификации. Вы согласовали строку 20 ноября («ок»).",
+          "agreed": "2026-11-20"
+        }
+      ]
+    },
+    {
+      "heading": "The specification and the code",
+      "ruHeading": "Спецификация и код",
+      "rows": [
+        {
+          "n": 44,
+          "was": "Every symbol of the system's code outside its tests carries a SpecTag naming the node it implements, or, where it implements none of the system's logic, the SpecTag that says so and gives its reason | refused, or reported by the symbol for one a commit does not change while the specification is a draft",
+          "en": "The system's implementing code (§s-hheus6f395ynqvc) is bound by SpecTags in one of the ways that §s-kgbzk2ph9e6jfb4 names: each symbol that the checks can identify, by a SpecTag directly before it; any other file, by SpecTags at its start or by an entry in the bindings file. Each SpecTag names a rule implemented by the code that it binds, or says that the code implements none",
+          "cost": "refused; for a symbol that the commit leaves unchanged, the result is what §s-kkbqcb9xrpaepwn says",
+          "ru": "Реализующий код системы (§s-hheus6f395ynqvc) привязан SpecTag одним из способов, которые называет §s-kgbzk2ph9e6jfb4: каждый символ, который проверки могут определить, — SpecTag непосредственно перед ним; любой другой файл — SpecTag в его начале или записью в файле привязок. Каждый SpecTag называет правило, которое реализует привязанный им код, или говорит, что этот код не реализует никакого правила",
+          "ruCost": "отклоняется; для символа, который коммит не меняет, — как говорит §s-kkbqcb9xrpaepwn",
+          "fate": "stays",
+          "change": "Проверка разделена по вашему решению (2026-11-13): эта — только о коде, «реализующий код системы» (9.1); в неё вошла 10.1.29. Вы приняли эту формулировку в тот же день. 17 ноября вы согласовали новую цену («ок»): для кода, который коммит не меняет, — как говорит 9.5. 17 ноября вы приняли правку под 1.5.2 («принимаю»): «код, который привязывает SpecTag» вместо «символа».",
+          "rests": [
+            "s-kgbzk2ph9e6jfb4",
+            "s-8xw4mgvpexyvw5q",
+            "s-hheus6f395ynqvc"
+          ],
+          "num": "10.1.26",
+          "impl": [
+            "s-9rtrj24myzjvshu"
+          ],
+          "about": "Затрагивает каждый символ кода системы вне тестов: функцию, класс или его член, тип, константу, компонент (правило 1.5.2). По SpecTag видно, какое правило символ реализует; по ним же находят код, потерявший связь со спецификацией. Тесты несут SpecTag в имени или в метке и здесь не читаются. Конфигурация репозитория и его собственные инструменты кодом системы не являются.",
+          "tests": [
+            "unit/binding.test.ts: refuses a symbol of the system's code carrying no tag",
+            "unit/binding.test.ts: refuses a tag naming no node, and a tag naming a draft node on a symbol a commit changes",
+            "unit/binding.test.ts: refuses a tag that stands on no symbol"
+          ],
+          "dictated": {
+            "ru": "У каждого символа в коде системы и в названии теста есть SpecTag, который ссылается на реализуемое правило. Вложенный символ покрыт SpecTag того символа, внутри которого он стоит.",
+            "date": "2026-11-13"
+          },
+          "agreed": "2026-11-17"
+        },
+        {
+          "n": 70,
+          "num": "10.1.26a",
+          "fate": "stays",
+          "rests": [
+            "s-8xw4mgvpexyvw5q",
+            "s-nrjxfvpkq3m8hzm"
+          ],
+          "impl": [
+            "s-utf4mbt7ref8g9c",
+            "s-zrsc6asgmhv8tnc"
+          ],
+          "change": "Новая проверка, по вашему решению (2026-11-13): только о тестах; место SpecTag — как его ставит описание инструментов для языка теста (узел 9). Вы приняли эту формулировку в тот же день. По вашему решению от 13 ноября убрано «кода системы»: проверка охватывает любой тест, и тесты собственных проверок проекта тоже. По согласованному 10.8 «кода системы» возвращено: SpecTag есть только в коде и тестах системы. 17 ноября вы согласовали новую цену («ок»): для кода, который коммит не меняет, — как говорит 9.5.",
+          "about": "Затрагивает каждый тест кода системы. Тест связан с правилом, которое проверяет, через SpecTag. Где тест несёт SpecTag, сказано один раз, в узле 9 описания инструментов: в TypeScript и JavaScript — в начале названия теста, в Python — в метке pytest на тесте. Вспомогательные символы в файлах тестов SpecTag не несут.",
+          "tests": [
+            "unit/binding.test.ts: refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying a draft node's sid (первая часть)"
+          ],
+          "en": "Every test of the system's code carries a SpecTag that names the rule it tests. The SpecTag is placed where the appendix of the tools prescribes for the test's language",
+          "cost": "refused; for a test that the commit leaves unchanged, the result is what §s-kkbqcb9xrpaepwn says",
+          "ru": "У каждого теста кода системы есть SpecTag, который ссылается на правило, которое тест проверяет. SpecTag стоит там, где его ставит описание инструментов для языка теста",
+          "ruCost": "отклоняется; для теста, который коммит не меняет, — как говорит §s-kkbqcb9xrpaepwn",
+          "agreed": "2026-11-17"
+        },
+        {
+          "n": 73,
+          "num": "10.1.26b",
+          "fate": "new",
+          "en": "Each entry in the bindings file names a file that exists",
+          "cost": "refused",
+          "ru": "Каждая запись в файле привязок называет существующий файл",
+          "ruCost": "отклоняется",
+          "change": "Новая строка, по согласованному 1.5.2: при каждом коммите проверки проходят по файлу привязок и убеждаются, что каждый названный в нём файл существует, — так ловится перенесённый или переименованный файл (ваше решение 17 ноября). Вы согласовали её 17 ноября («принимаю»).",
+          "rests": [
+            "s-kgbzk2ph9e6jfb4"
+          ],
+          "impl": [],
+          "about": "Затрагивает каждый коммит. Запись о файле, который перенесли или переименовали, ничего не привязывала бы, а сам файл остался бы без привязки.",
+          "tests": [],
+          "agreed": "2026-11-17"
+        },
+        {
+          "n": 45,
+          "was": "A commit that makes the specification approved, where before it was a draft, leaves no symbol of the system's code outside its tests, and no test, without a SpecTag | refused",
+          "en": "A commit in which the specification becomes approved, where before it was a draft, holds no symbol of the system's code outside its tests, and no test, without a SpecTag",
+          "cost": "refused",
+          "ru": "Коммит, в котором спецификация становится одобренной, а до того была черновиком, не содержит ни символа кода системы вне его тестов, ни теста без SpecTag",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется (17 ноября), по вашему решению: запрет одобрять спецификацию, пока у кода нет SpecTag, снят. Вместо него процедура одобрения показывает сообщения проверок и просит подтверждения (10.6), а при включённом флаге strict отказывает (10.7). Строка ни разу не одобрялась в новой форме, поэтому удаляется, а не уходит в архив.",
+          "rests": [
+            "s-qzthyh7yqvfhsa2",
+            "s-kkbqcb9xrpaepwn"
+          ],
+          "num": null
+        },
+        {
+          "n": 46,
+          "was": "A commit that puts the specification back to draft records one of the specification's owners withdrawing the approval of the rule that approves it | refused",
+          "en": "Each new entry recording the specification's approval status names one of the specification's owners as of the commit that adds it. No commit removes or changes such an entry",
+          "cost": "refused",
+          "ru": "Каждая новая запись о статусе одобрения спецификации называет одного из ответственных за спецификацию, какими их указывает добавивший её коммит. Ни один коммит не удаляет и не меняет такую запись",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13). По согласованному 10.6 спецификацию одобряет или возвращает в черновик отдельная запись её ответственного, правила-посредника нет. Первое предложение проверяет, что запись сделал ответственный; второе не даёт изменить статус, удалив или поправив последнюю запись. Охраняет теперь только 10.6.",
+          "rests": [
+            "s-qzthyh7yqvfhsa2"
+          ],
+          "num": "10.1.27",
+          "impl": [
+            "s-j9r8z4xdrfkfs47"
+          ],
+          "about": "Затрагивает каждый коммит, который добавляет, удаляет или меняет запись о статусе одобрения спецификации. От этого статуса зависит, запускаются ли тесты при push и учитывают ли проверки код за пределами коммита без SpecTag (10.6, 9.5). Одобрить спецификацию или вернуть её в черновик может только её ответственный; запись называет его. Без запрета удалять или менять записи любой изменил бы статус, удалив последнюю запись.",
+          "tests": [
+            "unit/binding.test.ts: refuses a commit putting the specification back to draft by an edit of its rule's wording or by its removal, and passes one recording an owner's withdrawal",
+            "unit/binding.test.ts: counts a withdrawal of the rule's approval of whichever wording, by one of the specification's owners as the commit holds them",
+            "unit/approve.test.ts: refuses to approve the rule that approves the specification, or to withdraw its approval, to anyone but the specification's owners"
+          ],
+          "todos": [
+            "На шаге инструментов: тесты ниже проверяют прежний механизм — правило-посредник и его отзыв. Их переписать под запись о статусе одобрения спецификации, вместе с 7.2.3, approve.ts, binding.ts, approvals.ts и model.ts."
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 72,
+          "num": "10.1.27a",
+          "fate": "new",
+          "en": "Each new entry that sets the specification's `strict` flag names one of the specification's owners as of the commit that adds it. No commit removes or changes such an entry",
+          "cost": "refused",
+          "ru": "Каждая новая запись, которая задаёт флаг `strict` спецификации, называет одного из ответственных за спецификацию, какими их указывает добавивший её коммит. Ни один коммит не удаляет и не меняет такую запись",
+          "ruCost": "отклоняется",
+          "change": "Новая строка, по согласованному 10.7: записи флага strict проверяются так же, как записи о статусе одобрения спецификации (10.1.27). Вы согласовали её 17 ноября («ок»).",
+          "rests": [
+            "s-q3pfzyaxvpr2zj2"
+          ],
+          "impl": [],
+          "about": "Затрагивает каждый коммит, который добавляет, удаляет или меняет запись флага strict. Включить или выключить флаг может только ответственный за спецификацию; запись называет его. Без запрета удалять или менять записи любой изменил бы флаг, удалив или поправив последнюю запись.",
+          "tests": [],
+          "agreed": "2026-11-17"
+        },
+        {
+          "n": 74,
+          "num": "10.1.27b",
+          "fate": "new",
+          "en": "Each new entry that records the choice of an extension, or the withdrawal of that choice, names one of the specification's owners as of the commit that adds it. No commit removes or changes such an entry",
+          "cost": "refused",
+          "ru": "Каждая новая запись о выборе расширения или об отмене этого выбора называет одного из ответственных за спецификацию, какими их указывает добавивший её коммит. Ни один коммит не удаляет и не меняет такую запись",
+          "ruCost": "отклоняется",
+          "change": "Новая строка, по согласованному 1.7.5: записи о выборе расширений проверяются так же, как записи флага strict (10.1.27a). Вы согласовали её 18 ноября («ок»).",
+          "rests": [
+            "s-9ttvcwpqkehm58g"
+          ],
+          "impl": [],
+          "about": "Затрагивает каждый коммит, который добавляет, удаляет или меняет запись о выборе расширения. Выбрать расширение или отменить выбор может только ответственный (1.7.5), сам или через агента по своей просьбе.",
+          "tests": [],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 75,
+          "num": "10.1.27c",
+          "fate": "new",
+          "en": "The installed release of the SpecSheriff plugin delivers every extension that the project has chosen",
+          "cost": "refused, naming the extension",
+          "ru": "Установленный выпуск плагина SpecSheriff поставляет каждое расширение, которое выбрал проект",
+          "ruCost": "отклоняется, с названием расширения",
+          "change": "Новая строка, по согласованным 1.7.1 и 1.7.5: проект выбирает из расширений, которые поставляет плагин. Вы согласовали её 18 ноября («ок»).",
+          "rests": [
+            "s-9ttvcwpqkehm58g",
+            "s-mbmnsnxenmavu3z"
+          ],
+          "impl": [],
+          "about": "Затрагивает каждый коммит в проекте, который выбрал хотя бы одно расширение. Если выпуск плагина, установленный у участника, не поставляет выбранное расширение, правила этого расширения некому проверить, поэтому коммит отклоняется и проверка называет расширение.",
+          "tests": [],
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 47,
+          "was": "Every SpecTag names a node that exists, and a SpecTag on a symbol whose code a commit changes an approved one | refused",
+          "en": "Every SpecTag that names a rule names one that exists",
+          "cost": "refused",
+          "ru": "Каждый SpecTag, который называет правило, называет существующее правило",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13). Проверка разделена по вашему решению: здесь только существование правила, запрет реализовывать черновик — в новой 10.1.28a. «Узел» → «правило»; «который называет правило» — по согласованному 10.1.26 SpecTag может говорить, что символ не реализует никакого правила.",
+          "rests": [
+            "s-8xw4mgvpexyvw5q"
+          ],
+          "num": "10.1.28",
+          "impl": [
+            "s-9rtrj24myzjvshu"
+          ],
+          "about": "Затрагивает каждый SpecTag на коде системы и в названиях тестов. SpecTag, который называет несуществующее правило, не связывает код ни с каким правилом. SpecTag, который говорит, что символ не реализует никакого правила, правила не называет и здесь не проверяется.",
+          "tests": [
+            "unit/binding.test.ts: refuses a tag naming no node, and a tag naming a draft node on a symbol a commit changes (первая часть)",
+            "unit/binding.test.ts: refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying a draft node's sid (первая часть)"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 69,
+          "num": "10.1.28a",
+          "fate": "stays",
+          "rests": [
+            "s-utvqbypzhmgndug"
+          ],
+          "impl": [
+            "s-2x58az67bm6cxq2",
+            "s-9rtrj24myzjvshu",
+            "s-utf4mbt7ref8g9c"
+          ],
+          "change": "Новая проверка, по вашему решению от 13 ноября; вы приняли её формулировку в тот же день. Черновик не реализуют — со стороны правила (согласованный 1.3.2). Других проверок с этим требованием нет; 10.1.30 и 10.1.32 повторяют его кусками и потеряют эти куски, когда дойдём до них. Номер временный. 17 ноября вы приняли правку под 1.5.2 («принимаю»): «код, который привязывает SpecTag» вместо «символа».",
+          "about": "Затрагивает каждый коммит, который добавляет или меняет символ кода системы или тест. Проверяет согласованный 1.3.2 и принцип «Неодобренное не реализуется»: для правила-черновика не пишут и не меняют ни кода, ни теста. Символ или тест, который коммит не трогает, сохраняет SpecTag правила, вернувшегося в черновик. Что считается изменением, говорит согласованный 9.4. Ту же оговорку повторяют 10.1.30 и 10.1.32; оттуда её уберём, когда дойдём до них.",
+          "tests": [
+            "unit/binding.test.ts: refuses a tag naming no node, and a tag naming a draft node on a symbol a commit changes (вторая часть)",
+            "unit/binding.test.ts: lets a symbol the commit leaves unchanged keep a tag naming a draft node",
+            "unit/binding.test.ts: refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying a draft node's sid (вторая часть)",
+            "unit/binding.test.ts: counts a change to a tag as a change to the symbol's code"
+          ],
+          "en": "A draft rule is not implemented: no commit adds or changes code or a test that a SpecTag naming the rule binds",
+          "cost": "refused",
+          "ru": "Правило-черновик не реализуют: ни один коммит не добавляет и не меняет код или тест, которые привязывает его SpecTag",
+          "ruCost": "отклоняется",
+          "agreed": "2026-11-17"
+        },
+        {
+          "n": 48,
+          "was": "Every SpecTag on the code outside the tests stands on the symbol it binds | refused",
+          "en": "Every SpecTag in the system's code, except in a test, immediately precedes a symbol",
+          "cost": "refused",
+          "ru": "Каждый SpecTag в коде системы, кроме тестов, стоит непосредственно перед символом",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется (вы, 2026-11-13): её требование — последнее предложение новой 10.1.26. Строка ни разу не одобрялась в новой форме, поэтому удаляется, а не уходит в архив.",
+          "rests": [
+            "s-kgbzk2ph9e6jfb4"
+          ],
+          "num": null,
+          "impl": [
+            "s-9rtrj24myzjvshu"
+          ],
+          "about": "Затрагивает каждый SpecTag в коде системы вне тестов. SpecTag, который не стоит ни на одном символе, ничего не связывает: например, он остался в комментарии после того, как символ удалили. Тесты несут SpecTag в названии, поэтому здесь не проверяются.",
+          "tests": [
+            "unit/binding.test.ts: refuses a tag that stands on no symbol"
+          ]
+        },
+        {
+          "n": 49,
+          "was": "Every test of the system's code carries the SpecTag of a rule, a term or a node of a project's own NodeKind that exists, and a test a commit adds or changes that of an approved one | refused, or reported by the test for one carrying no SpecTag that a commit does not change while the specification is a draft",
+          "en": "Every test of the system's code carries the SpecTag of a rule, a term or a node of a project's own NodeKind that exists, and a test a commit adds or changes that of an approved one",
+          "cost": "refused, or reported by the test for one carrying no SpecTag that a commit does not change while the specification is a draft",
+          "ru": "Каждый тест кода системы несёт SpecTag существующего правила, термина или узла собственного NodeKind проекта, а тест, который коммит добавляет или меняет, — SpecTag одобренного",
+          "ruCost": "отклоняется, а пока спецификация — черновик, по тесту без SpecTag, который коммит не меняет, — сообщается",
+          "fate": "deleted",
+          "change": "Удаляется (вы, 2026-11-13): всё, что она требовала, держат согласованные 10.1.26 (SpecTag теста), 10.1.28 (правило существует) и 10.1.28a (не тест черновика); цена в черновике — в 9.5, который по вашему решению от 17 ноября остался в базе. Строка ни разу не одобрялась в новой форме, поэтому удаляется, а не уходит в архив.",
+          "rests": [
+            "s-8xw4mgvpexyvw5q",
+            "s-nrjxfvpkq3m8hzm",
+            "s-9j2mmnuuwmx5ksn",
+            "s-khqsmy6mhejkrhg"
+          ],
+          "num": null,
+          "impl": [
+            "s-utf4mbt7ref8g9c"
+          ],
+          "about": "Затрагивает каждый тест кода системы. Всё, что эта строка требует, теперь требуют согласованные проверки: SpecTag в названии теста — 10.1.26, существование правила — 10.1.28, запрет на тест черновика — 10.1.28a. Цена в черновике — в 9.5, который по вашему решению от 17 ноября остался в базе.",
+          "tests": [
+            "unit/binding.test.ts: refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying a draft node's sid",
+            "unit/binding.test.ts: counts a test whose only change is its sid as a test the commit changes"
+          ]
+        },
+        {
+          "n": 50,
+          "was": "Every rule, or node of a project's own NodeKind that needs code, whose code written for it a commit adds or changes has a test carrying its SpecTag | refused",
+          "en": "Every rule whose code is added or changed in a commit has a test that carries its SpecTag",
+          "cost": "refused",
+          "ru": "У каждого правила, код которого добавлен или изменён в коммите, есть тест с его SpecTag",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13): «узел собственного NodeKind» → «правило»; коммит не действующее лицо; короче по 7.17.",
+          "rests": [
+            "s-rah8b37kytb682y"
+          ],
+          "num": "10.1.31",
+          "impl": [
+            "s-utf4mbt7ref8g9c",
+            "s-2x58az67bm6cxq2"
+          ],
+          "about": "Затрагивает каждый коммит, который добавляет или меняет код, реализующий правило. Это детерминированная часть согласованного 1.4.1: тест пишется первым, код — вторым. Проверить порядок написания нельзя, но можно проверить, что у правила, чей код меняется, тест уже есть.",
+          "tests": [
+            "unit/binding.test.ts: refuses a rule whose code a commit adds or changes with no test carrying its sid"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 51,
+          "was": "Every test of a project's own check or generator carries the SpecTag of the rule listing it, and a test a commit adds or changes that of an approved one | refused, or reported by the test for one carrying no SpecTag that a commit does not change while the specification is a draft",
+          "en": "Every test of a project's own check carries the SpecTag of the rule that lists the check",
+          "cost": "refused",
+          "ru": "У каждого теста собственной проверки проекта есть SpecTag правила, которое перечисляет эту проверку",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется (вы, 2026-11-13): собственная проверка проекта считается кодом правила, которое её перечисляет (черновик 10.8), поэтому её код и тесты держат общие проверки 10.1.26a, 10.1.28a и 10.1.31. Строка ни разу не одобрялась в новой форме, поэтому удаляется, а не уходит в архив.",
+          "rests": [
+            "s-sfjka4zc4rhfu67"
+          ],
+          "num": null,
+          "impl": [
+            "s-utf4mbt7ref8g9c"
+          ],
+          "about": "Затрагивает каждый тест собственной проверки проекта. Собственные проверки — не код системы (9.1), поэтому 10.1.26a их тесты не охватывает. Тест связывают с правилом, которое перечисляет проверку: так видно, какое требование проверка выполняет.",
+          "tests": [],
+          "todos": [
+            "Тестов у этой проверки в таблице не названо; на шаге инструментов найти или написать тест для 7.2.4 о тестах собственных проверок."
+          ]
+        },
+        {
+          "n": 52,
+          "was": "Every project's own check or generator whose code a commit adds or changes has a test carrying the SpecTag of the rule listing it | refused",
+          "en": "Every project's own check or generator whose code a commit adds or changes has a test carrying the SpecTag of the rule listing it",
+          "cost": "refused",
+          "ru": "У каждой собственной проверки или генератора проекта, код которых коммит добавляет или меняет, есть тест с SpecTag правила, которое их перечисляет",
+          "ruCost": "отклоняется",
+          "fate": "deleted",
+          "change": "Удаляется (вы, 2026-11-13): собственная проверка проекта считается кодом правила, которое её перечисляет (черновик 10.8), поэтому её код и тесты держат общие проверки 10.1.26a, 10.1.28a и 10.1.31. Строка ни разу не одобрялась в новой форме, поэтому удаляется, а не уходит в архив.",
+          "rests": [
+            "s-sfjka4zc4rhfu67"
+          ],
+          "num": null,
+          "impl": [
+            "s-utf4mbt7ref8g9c"
+          ],
+          "about": "Затрагивает каждый коммит, который добавляет или меняет код собственной проверки проекта. Это та же часть «тест первым» (1.4.1), что 10.1.31 для кода системы: код собственной проверки не связан SpecTag (9.1), поэтому тест ищут по правилу, которое перечисляет проверку.",
+          "tests": [],
+          "todos": [
+            "Тестов у этой проверки в таблице не названо; на шаге инструментов найти или написать тест."
+          ]
+        },
+        {
+          "n": 53,
+          "was": "A node's `meta.code` and `meta.tests` are what the SpecTags on the code and on the tests produce | refused",
+          "en": "A node's `meta.code` refers to every code file that a SpecTag naming the node binds, and to no other file. Its `meta.tests` refers to every test file that holds a test with a SpecTag naming the node, and to no other file",
+          "cost": "refused",
+          "ru": "`meta.code` узла ссылается на все файлы кода, которые привязывает SpecTag этого узла, и ни на какие другие. `meta.tests` узла ссылается на все файлы тестов, где есть тест с его SpecTag, и ни на какие другие",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13): списки содержат ссылки на все файлы кода и тестов с SpecTag узла и ни на какие другие. 17 ноября вы приняли правку под 1.5.2 («принимаю»): «код, который привязывает SpecTag» вместо «символа».",
+          "rests": [
+            "s-rwqzepmrt77rv35"
+          ],
+          "num": "10.1.34",
+          "impl": [
+            "s-t383grkn3q68dpf"
+          ],
+          "about": "Затрагивает каждый узел, к которому SpecTag привязывают код или тесты. По согласованному 9.6 списки `meta.code` и `meta.tests` строят инструменты SpecSheriff, вручную их не пишут. Проверка ловит списки, которые отстали от SpecTag или которые поправили вручную.",
+          "tests": [
+            "unit/binding.test.ts: refuses a node's lists of code and tests that the tags and the tests' sids do not produce",
+            "unit/binding.test.ts: holds a node naming the symbols in a file to them",
+            "unit/binding.test.ts: refuses a node naming the symbols in a file that leaves out one its tag stands on"
+          ],
+          "agreed": "2026-11-17"
+        },
+        {
+          "n": 54,
+          "was": "A node that names the symbols in a file is held to them | refused",
+          "en": "",
+          "cost": "",
+          "ru": "",
+          "ruCost": "",
+          "fate": "deleted",
+          "change": "Удаляется: строка проверяла список, написанный вручную; по согласованному 9.6 списки строят инструменты, и что они перечисляют, проверяет предыдущая строка.",
+          "rests": [
+            "s-rwqzepmrt77rv35"
+          ],
+          "num": null
+        },
+        {
+          "n": 55,
+          "was": "A list a node carries matches the declaration in the code, in the schema or in the settings it names | refused",
+          "en": "Each value listed in `TextRule.list` is valid against the JSON Schema at the place that `TextRule.list.jsonSchema` points to. Where the schema at that place gives an exact enumeration (`enum`), the enumeration contains nothing beyond what `TextRule.list` lists. The code symbol that `TextRule.list.valueList` points to declares exactly the values listed in `TextRule.list`",
+          "cost": "refused",
+          "ru": "Каждое значение, перечисленное в `TextRule.list`, соответствует JSON-схеме в месте, на которое указывает `TextRule.list.jsonSchema`. Если схема в этом месте задаёт точное перечисление (`enum`), в нём нет ничего сверх перечисленного в `TextRule.list`. Символ кода, на который указывает `TextRule.list.valueList`, объявляет ровно те значения, что перечислены в `TextRule.list`",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13). `declaredIn` заменён двумя свойствами списка, `jsonSchema` и `valueList`. Схема описывает формат, а не значения, поэтому проверка идёт от списка к схеме; точное перечисление (`enum`) не шире списка правила.",
+          "rests": [
+            "s-eferktypcj7njt5",
+            "s-hhnahzmhahf8jht"
+          ],
+          "num": "10.1.35",
+          "impl": [
+            "s-5hb9k2e34dgn284"
+          ],
+          "about": "Затрагивает каждое правило, чей список (`TextRule.list`) повторяет перечисление, объявленное в коде, в схеме или в настройках. Без проверки список в спецификации и объявление расходятся незаметно: в коде добавили значение, а правило о нём молчит.",
+          "tests": [
+            "unit/binding.test.ts: compares a list whose members are objects by the property it names, and a JSON object by its keys"
+          ],
+          "todos": [
+            "На шаге инструментов, по вашим решениям от 2026-11-13: в node.schema.json заменить `TextRule.list.declaredIn` двумя свойствами `TextRule.list` — `jsonSchema` ({file, pointer}) и `valueList` ({file, symbol}); в `binding.ts` проверять каждое значение списка по схеме в месте `pointer` (через ajv, который инструменты уже используют), а если там `enum` — ещё и отсутствие в нём лишних значений; убрать сравнение с ключами произвольного JSON-объекта (функция `declaration`); перевести на новые свойства узлы 1.3.1 и 6.1 spec.json и узел 10 tools.json; записать решение в `meta.decisions` правила о списках."
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 56,
+          "was": "Each member of a list that is an object holds the property the list names | refused",
+          "en": "Each member of `TextRule.list` that is an object has the property that `TextRule.list.property` names",
+          "cost": "refused",
+          "ru": "У каждого члена `TextRule.list`, который является объектом, есть свойство, которое называет `TextRule.list.property`",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13): свойство называет ключ `TextRule.list.property`, а не «список».",
+          "rests": [
+            "s-eferktypcj7njt5"
+          ],
+          "num": "10.1.36",
+          "impl": [
+            "s-cdachayybfvg4na"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 57,
+          "was": "A check a project's own guidelines add (§s-2fau85dfyyeq66m) passes | refused, or reported where the rule listing it says so",
+          "en": "A check a project's own guidelines add (§s-2fau85dfyyeq66m) passes",
+          "cost": "refused, or reported where the rule listing it says so",
+          "ru": "Проверка, которую добавляют собственные guidelines проекта (§s-2fau85dfyyeq66m), проходит",
+          "ruCost": "отклоняется или сообщается, если так говорит правило, которое её перечисляет",
+          "fate": "stays",
+          "change": "Вы согласились с проверкой без изменений (2026-11-13).",
+          "rests": [
+            "s-2fau85dfyyeq66m"
+          ],
+          "num": "10.1.37",
+          "impl": [
+            "s-7pk89t8z6wymmj9"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 58,
+          "was": "No file the repository keeps outside the specification and the fixtures of the tests of a check reading citations or locations (§s-6hha5en226aj8hu) names a node by its location | refused",
+          "en": "No file in the repository, other than the specification and the test fixtures of a check that reads citations or locations (§s-6hha5en226aj8hu), names a node by its location",
+          "cost": "refused",
+          "ru": "Ни один файл репозитория, кроме спецификации и fixtures тестов проверки, которая читает ссылки или расположения (§s-6hha5en226aj8hu), не называет узел по его расположению",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы согласились с проверкой без изменений (2026-11-13); русский перевод выровнен по английскому.",
+          "rests": [
+            "s-9spq78kdwsxr759",
+            "s-6hha5en226aj8hu"
+          ],
+          "num": "10.1.38",
+          "impl": [
+            "s-nh8b2hjvzasdxmd"
+          ],
+          "agreed": "2026-11-13"
+        },
+        {
+          "n": 59,
+          "was": "A citation in the code, the tests and the documents, those fixtures left out, names a node by its sid | refused",
+          "en": "Each citation in the code, the tests or the documentation names a node of the specification by its sid. The fixtures of the tests of a check that reads citations or locations (§s-6hha5en226aj8hu) are not checked",
+          "cost": "refused",
+          "ru": "Каждая ссылка в коде, тестах или документации называет узел спецификации по его sid. Fixtures тестов проверки, которая читает ссылки или расположения (§s-6hha5en226aj8hu), не проверяются",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13): fixtures названы полностью, ссылка называет узел спецификации; под «по его sid» подпадают обе формы, SpecTag и `§<sid>`. 20 ноября вы приняли («ок») «документацию» вместо «документов»: слово «документ» остаётся только в смысле 11.1.2, файла, в котором хранится часть спецификации.",
+          "rests": [
+            "s-9spq78kdwsxr759"
+          ],
+          "num": "10.1.39",
+          "impl": [
+            "s-m8nmfsxkcfu7cjp",
+            "s-nh8b2hjvzasdxmd"
+          ],
+          "todos": [
+            "На шаге инструментов: `sheriff citations` перестаёт искать sid среди узлов архива, поскольку у узла в архиве нет своего sid (узел 2.5)."
+          ],
+          "agreed": "2026-11-20"
+        },
+        {
+          "n": 60,
+          "was": "Every copy generated from the nodes and kept in the repository, such as the types and RuntimeChecks of the system's code, is exactly what the nodes produce now, or, while it waits for a draft node, left unchanged by the commit: neither edited by hand nor left behind nodes that are all approved | refused",
+          "en": "Every copy of the system's code generated from the nodes and kept in the repository is exactly what the approved wordings of its nodes produce",
+          "cost": "refused",
+          "ru": "Каждая копия кода системы, сгенерированная из узлов и хранимая в репозитории, — ровно то, что дают одобренные формулировки её узлов",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Остаётся в таблице: генерация кода возвращается в guidelines (вы, 17 ноября). 18 ноября вы приняли правку по 10.15 («ок»).",
+          "rests": [
+            "s-qyjw8xez6t6adc3",
+            "s-kh8qcd5kxgh9z3j"
+          ],
+          "num": null,
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 61,
+          "was": "A copy of the system's code that waits for a draft node | reported by the node's sid",
+          "en": "A node from which nothing is generated, because its approved wording relies on a node that has never been approved",
+          "cost": "reported by the node's sid",
+          "ru": "Узел, из которого ничего не генерируется, потому что его одобренная формулировка опирается на узел, который ни разу не одобряли",
+          "ruCost": "сообщается по sid узла",
+          "fate": "stays",
+          "change": "Остаётся в таблице: генерация кода возвращается в guidelines (вы, 17 ноября). 18 ноября вы приняли правку по 10.15 («ок»).",
+          "rests": [
+            "s-qyjw8xez6t6adc3"
+          ],
+          "num": null,
+          "agreed": "2026-11-18"
+        },
+        {
+          "n": 62,
+          "was": "A rule whose tests or code lag behind its text, or whose code lags behind its tests, as the history of the repository shows | reported by the node's sid",
+          "en": "Where the wording of an approved rule changes in a commit, the tests and the code already bound to that rule change in the same commit. Where the tests of an approved rule change in a commit, the code already bound to that rule changes in the same commit. Instead of these changes, the commit message may state that the rule's implementation needs no change.",
+          "cost": "refused, naming the rule, while the specification is approved; passes while it is a draft",
+          "ru": "Если в коммите меняется формулировка одобренного правила, в том же коммите меняются и тесты и код, уже привязанные к этому правилу. Если в коммите меняются тесты одобренного правила, в том же коммите меняется и код, уже привязанный к этому правилу. Вместо этих изменений в сообщении коммита может быть сказано, что реализацию правила менять не нужно.",
+          "ruCost": "отклоняется с названием правила, пока спецификация одобрена; проходит, пока она черновик",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-19, «ок»). Она следует из решений опроса 19 ноября. Формулировка, тесты и код меняются в коммите, а не коммит меняет их. Проверка смотрит только правила, которые меняются в коммите. Вместо изменений в сообщении коммита может быть сказано, что реализацию правила менять не нужно. Пока спецификация одобрена, отставание отклоняется; пока она черновик, о нём сообщается. 20 ноября вы решили: пока спецификация — черновик, проверки связи нового кода с правилами работают, а все проверки законченности молчат. Поэтому в черновике строка теперь проходит, а не сообщает, теми же словами, что согласованная 10.1.41.",
+          "rests": [
+            "s-4gk82vt7zhzp4jt",
+            "s-rah8b37kytb682y"
+          ],
+          "num": "10.1.40",
+          "impl": [
+            "s-txbwsthdqhvyzd2"
+          ],
+          "agreed": "2026-11-19",
+          "todos": [
+            "На шаге инструментов: `sheriff binding` не сообщает об отставании правила-черновика (функция `drift` сейчас проверяет и черновики).",
+            "На шаге, который меняет инструменты SpecSheriff: проверка (s-txbwsthdqhvyzd2) смотрит только правила, формулировка или тесты которых меняются в коммите; сравнивает тесты и символы кода, привязанные к правилу, а не файлы целиком; читает трейлер в сообщении коммита; отклоняет коммит, пока спецификация одобрена."
+          ],
+          "reason": "Without this check, an approved rule can enter the commit history with tests and code written for its earlier wording, and nobody notices. While the specification is a draft, the work is focused on the specification itself, so a rule whose tests and code lag behind its wording passes.",
+          "ruReason": "Без этой проверки одобренное правило может попасть в историю коммитов с тестами и кодом, написанными для прежней формулировки, и этого никто не заметит. Пока спецификация черновик, работа сосредоточена на самой спецификации, поэтому правило, тесты и код которого отстают от его формулировки, проходит проверку."
+        },
+        {
+          "n": 63,
+          "was": "An approved rule that the system's code must implement (§s-6fw72j65jkqrfpf) is bound to code of the system outside its tests and to a test not marked as skipped. Code or a test bound to a rule that implements it, directly or through a chain of `implements` links, also counts as bound to that rule | reported under the rule's sid while the specification is approved",
+          "en": "An approved rule that the system's code (§s-hheus6f395ynqvc) must implement (§s-6fw72j65jkqrfpf) is bound to a test that is not marked as skipped or as expected to fail and to code of the system other than tests. Code or a test bound to a node that has an `implements` link (§s-sn6au3vcr9uy5pm) to the approved rule, directly or through a chain of such links, also counts as bound to the approved rule.\n\nThe check applies only to the approved rules that a commit includes. A commit includes an approved rule if any of the following happens in that commit:\n- the rule's approval is added;\n- a test or code changes that is bound to the rule before the commit or after it;\n- an `implements` link through which a test or code is bound to the rule is removed.",
+          "cost": "refused, naming the rule, while the specification is approved; passes while it is a draft",
+          "ru": "Одобренное правило, которое код системы (§s-hheus6f395ynqvc) должен реализовывать (§s-6fw72j65jkqrfpf), привязано к тесту, не помеченному как пропускаемый или как ожидаемо падающий, и к коду системы помимо тестов. Код или тест, привязанный к узлу, у которого есть связь `implements` (§s-sn6au3vcr9uy5pm) с одобренным правилом, напрямую или через цепочку таких связей, тоже считается привязанным к одобренному правилу.\n\nПроверка относится только к одобренным правилам, которые входят в коммит. Одобренное правило входит в коммит, если в этом коммите происходит одно из следующего:\n- добавляется одобрение правила;\n- меняется тест или код, привязанный к правилу до коммита или после него;\n- удаляется связь `implements`, через которую тест или код привязан к правилу.",
+          "ruCost": "отклоняется с названием правила, пока спецификация одобрена; проходит, пока она черновик",
+          "fate": "stays",
+          "change": "Вы приняли эту формулировку (2026-11-13): вернулось то, что засчитываются символ и тест правила, которое реализует данное правило, как в его одобренном тексте и в узле 9.2. 17 ноября вы приняли правку под 1.5.2 («принимаю»): «код, который привязывает SpecTag» вместо «символа». 20 ноября вы отклонили предложенное обоснование: фраза из прежнего обоснования 10.1 говорит, что неисполненное одобренное правило только сообщается, а по вашему смыслу коммит с таким правилом отклоняется, пока спецификация одобрена, и ничего не сообщается, пока она черновик. Строка будет предложена заново. 20 ноября, при разборе строки по предложениям, вы решили: оговорка о тесте, не помеченном как пропускаемый, остаётся, а обоснование строки её объясняет. Тестовый прогон считает пропущенный тест не упавшим, поэтому без оговорки правило, у которого есть только пропущенный тест, прошло бы и эту проверку, и проверку тестов при push. Вы приняли новую формулировку строки 20 ноября («ок»): первое предложение — с «или как ожидаемо падающий» и без «вне его тестов»; второе — со связью implements, засчёт в одну сторону; охват — только правила, которые входят в коммит, списком; отклоняется, пока спецификация одобрена; проходит, пока черновик; обоснование объясняет оговорку о пропускаемом тесте; пример новый. После согласования поправлен английский по отчёту читателя EngStickler; смысл и русский текст не менялись.",
+          "rests": [
+            "s-6fw72j65jkqrfpf",
+            "s-gf6n8ge4mke3pr2",
+            "s-sn6au3vcr9uy5pm",
+            "s-hheus6f395ynqvc"
+          ],
+          "num": "10.1.41",
+          "impl": [
+            "s-jgejd5rpd9d43pd"
+          ],
+          "agreed": "2026-11-20",
+          "reason": "An approved rule committed without its test or its code would let the specification state what the system does not do, and nobody would notice. A test run does not count a skipped test, or a failing test expected to fail, as failed. So, if such a test counted, a rule whose only test is marked in either of these ways would pass this check and the test run while nothing checks the rule. While the specification is a draft, the work is focused on the specification itself, so an approved rule may still lack its test or its code.",
+          "ruReason": "Одобренное правило, попавшее в коммит без теста или кода, позволило бы спецификации утверждать то, чего система не делает, и никто бы этого не заметил. Прогон тестов не считает упавшим ни пропущенный тест, ни ожидаемо падающий тест, который падает. Поэтому правило, единственный тест которого помечен так, прошло бы и эту проверку, и прогон тестов, хотя правило ничем не проверяется. Пока спецификация — черновик, работа сосредоточена на самой спецификации, поэтому у одобренного правила может ещё не быть теста или кода.",
+          "examples": [
+            "The specification is approved. Code and a test not marked as skipped are bound to node N, which has an `implements` link to rule R. That code changes in a commit, so the commit includes R, and the commit passes. But not: the commit is refused because no SpecTag names R itself."
+          ],
+          "ruExamples": [
+            "Спецификация одобрена. Код и тест, не помеченный как пропускаемый, привязаны к узлу N, у которого есть связь `implements` с правилом R. Этот код меняется в коммите, поэтому R входит в коммит и проходит проверку. Но не так: R отклоняется, потому что ни один SpecTag не называет само правило R."
+          ]
+        },
+        {
+          "n": 64,
+          "was": "A commit that changes code names every approved node the SpecTags on its changed symbols outside the tests name, and no header or section | refused",
+          "en": "For each node to which a SpecTag binds code added or changed in a commit, the message of that commit names the node by its sid. Code in the tests is not counted",
+          "cost": "refused",
+          "ru": "Сообщение коммита называет по sid каждый узел, к которому SpecTag привязывает код, добавленный или изменённый в этом коммите, не считая тестов",
+          "ruCost": "отклоняется",
+          "fate": "stays",
+          "change": "Вы согласились с проверкой без изменений (2026-11-13). 17 ноября вы приняли правку под 1.5.2 («принимаю»): «код, который привязывает SpecTag» вместо «символа».",
+          "rests": [
+            "s-ef93u6cnbs2sevr"
+          ],
+          "num": "10.1.42",
+          "impl": [
+            "s-qqs2svksmjct753",
+            "s-2x58az67bm6cxq2"
+          ],
+          "agreed": "2026-11-17"
+        },
+        {
+          "n": 65,
+          "was": "The code does what the nodes it names say, and nothing they do not | refused, naming the node and the line",
+          "en": "The code changed in a commit does what the rules it names say, and nothing they do not",
+          "cost": "refused, naming the rule and the line",
+          "ru": "Код, изменённый в коммите, делает то, что говорят названные им правила, и ничего сверх этого",
+          "ruCost": "отклоняется с указанием правила и строки",
+          "fate": "stays",
+          "change": "Вы согласились с проверкой без изменений (2026-11-13): она говорит, что проверяется, а как это делает инструмент, сказано в описании инструментов (s-vp24dqydygztqbt).",
+          "rests": [
+            "s-nyh9yk22ba6g77q",
+            "s-m4h279nbaqkpa3t"
+          ],
+          "num": "10.1.43",
+          "impl": [
+            "s-vp24dqydygztqbt"
+          ],
+          "agreed": "2026-11-13",
+          "todos": [
+            "На шаге инструментов: передавать ревьюеру и изменённые тесты кода системы, а не только символы вне тестов, поскольку «код» в этой проверке включает тесты; тест, который проверяет то, чего правило не говорит, — тоже дефект."
+          ]
+        },
+        {
+          "n": 76,
+          "num": "10.1.43a",
+          "fate": "new",
+          "en": "Where a commit message states that a rule's implementation needs no change, the tests and the code bound to that rule, directly or through a chain of `implements` links (§s-sn6au3vcr9uy5pm), do what the rule's wording after the commit says and do nothing that it does not say",
+          "cost": "refused, naming the rule, while the specification is approved; passes while it is a draft",
+          "ru": "Если в сообщении коммита сказано, что реализацию правила менять не нужно, тесты и код, привязанные к этому правилу напрямую или через цепочку связей `implements` (§s-sn6au3vcr9uy5pm), делают то, что говорит формулировка правила после коммита, и ничего сверх этого",
+          "ruCost": "отклоняется с названием правила, пока спецификация одобрена; проходит, пока она черновик",
+          "reason": "Without this check, a commit could leave a rule's tests and code lagging behind its new wording, and avoid the cost of that lag, merely by stating that the rule's implementation needs no change.",
+          "ruReason": "Без этой проверки коммит мог бы оставить тесты и код правила отстающими от его новой формулировки и избежать цены этого отставания, просто заявив, что реализацию правила менять не нужно.",
+          "rests": [
+            "s-m4h279nbaqkpa3t",
+            "s-nyh9yk22ba6g77q"
+          ],
+          "impl": [
+            "s-vp24dqydygztqbt"
+          ],
+          "about": "Затрагивает каждый коммит, в сообщении которого сказано, что реализацию правила менять не нужно (10.1.40). Рецензент получает формулировку правила до и после коммита, его тесты и код (10.4).",
+          "tests": [],
+          "change": "Новая строка, по согласованным 1.6.1 и 10.2: второе суждение рецензента. Цена — как у 10.1.40, потому что утверждение заменяет изменения, которых требует 10.1.40. Рецензент правил проверил строку: добавлена ссылка на узел о связях; обоснование говорит одной фразой и о проверке, и о цене. Вы согласовали строку 20 ноября («ок»). После согласования поправлен английский по отчёту читателя EngStickler; смысл и русский текст не менялись. 20 ноября вы решили: пока спецификация — черновик, проверки связи нового кода с правилами работают, а все проверки законченности молчат. Поэтому в черновике строка теперь проходит, а не сообщает, теми же словами, что согласованная 10.1.41.",
+          "agreed": "2026-11-20"
+        },
+        {
+          "n": 66,
+          "was": "The tests of the system's code and of a project's own checks and generators pass | the push is refused while the specification is approved",
+          "en": "The tests of the system's code and of a project's own checks and generators pass",
+          "cost": "the push is refused while the specification is approved, where the project's own guidelines name a push as the moment at which the tests run",
+          "ru": "Тесты кода системы и собственных проверок и генераторов проекта проходят",
+          "ruCost": "push отклоняется, пока спецификация одобрена, если собственные guidelines проекта называют push моментом запуска тестов",
+          "fate": "stays",
+          "change": "Вы согласились с проверкой без изменений (2026-11-13). 17 ноября вы приняли правку под 1.6.1 («ок»): push отклоняется, только если guidelines проекта называют push местом запуска тестов. 18 ноября вы приняли правку («ок»): «и генераторов» возвращено, потому что генераторы проекта снова в guidelines (10.9).",
+          "rests": [
+            "s-utvqbypzhmgndug",
+            "s-m4h279nbaqkpa3t",
+            "s-sfjka4zc4rhfu67"
+          ],
+          "num": "10.1.44",
+          "impl": [
+            "s-b6qdtghnyha3fhk"
+          ],
+          "agreed": "2026-11-18"
+        }
+      ]
+    }
+  ],
+  "reason": {
+    "en": "A person asking whether a commit will go through must find the whole answer in one place. Spread across several rules, the answer comes apart. One rule then ends up contradicting another without anybody seeing it.",
+    "ru": "Человек, который спрашивает, пройдёт ли коммит, должен найти весь ответ в одном месте. Разнесённый по нескольким правилам, ответ распадается. Тогда одно правило начинает противоречить другому, а никто этого не видит."
+  },
+  "doubts": [],
+  "head": {
+    "sid": "s-jau82aq9juv9zzh",
+    "kind": "TableRule",
+    "title": "The main table of checks",
+    "ruTitle": "Основная таблица проверок",
+    "text": "This table contains the complete list of the checks of the SpecSheriff guidelines that run after an edit to the specification or to the code, including its tests.",
+    "ruText": "Эта таблица содержит полный список проверок SpecSheriff guidelines, которые запускаются после правок как самой спецификации, так и кода, включая тесты.",
+    "reason": "In one table, every check can be seen at a glance, together with what its failure costs. Gathered in one place, the checks are easier to read and to compare with one another than when spread across separate rules.",
+    "ruReason": "В одной таблице все проверки видны сразу, вместе с ценой непрохождения каждой. Так проверки проще читать и сравнивать друг с другом, чем когда они разнесены по отдельным правилам.",
+    "columns": [
+      {
+        "en": "What is checked",
+        "ru": "Что проверяется",
+        "holds": "a node: the check, its own sid, links and approval"
+      },
+      {
+        "en": "On failure",
+        "ru": "При непрохождении",
+        "holds": "text, part of the wording of the check in its row"
+      }
+    ],
+    "groups": [
+      {
+        "en": "The specification alone",
+        "ru": "Только спецификация"
+      },
+      {
+        "en": "The specification and the code",
+        "ru": "Спецификация и код"
+      }
+    ],
+    "changes": [
+      "Тип. Был обычный текстовый узел с двумя таблицами в тексте; теперь TableRule — одна таблица, строки в двух группах. Заголовки групп — бывшие заголовки двух таблиц.",
+      "Заголовок. Был «What is checked, when, and what a failure costs»; теперь «The table of checks», по вашим словам.",
+      "Текст. Весь прежний текст заменён одной фразой, вашими словами. Ушло: что проверяется механически и когда (это в согласованном 1.6.1); «A check refuses unless its row says otherwise» (тоже в 1.6.1, а цену каждая строка называет сама); «Each check reads the commit being made… It never reads what the commit does not hold» (что читает каждый хук, говорит описание инструментов, узел 6 «The hooks»; то, что проверка отвечает одинаково на одно и то же, — согласованный 1.6.1).",
+      "Обоснование. Было пять абзацев о том, что ответ, разнесённый по правилам, распадается, и о причинах отдельных проверок; теперь — что в одной таблице все проверки видны сразу и их проще читать и сравнивать, по вашему смыслу. Абзацы о двоичных проверках и о тестах при push — в обосновании согласованного 1.6.1; почему некоторые проверки только сообщают, перейдёт в обоснования этих проверок.",
+      "Вы приняли 18 ноября («ок») правку по решению о таблицах проверок расширений: «полный список проверок SpecSheriff guidelines». По вашему решению от 18 ноября у каждого расширения свои проверки, в его собственном правиле-таблице, уточняющем 10.1. Без этой оговорки «полный список» противоречил бы таблицам расширений и согласованному 10.8, по которому собственные guidelines проекта добавляют свои проверки. Согласование сохраняется.",
+      "19 ноября, по вашему названию: заголовок «Основная таблица проверок». Смысл не меняется, согласование сохраняется.",
+      "19 ноября, при переносе черновиков в файлы спецификации: остаётся эта шапка. Черновик 10.1 в newform.json — прежний текстовый узел; 17 ноября вы согласовали в нём правки обоснования. Абзацы этого обоснования переходят туда, где их обещал этот список изменений: о расхождении — в обоснование строки 10.1.40; о несделанном одобренном правиле — в обоснование строки 10.1.41; о том, что проверка читает делаемый коммит, — в обоснование узла описания инструментов «The hooks», когда до него дойдёт очередь. Абзац о коде и тестах без SpecTag не переносится: его причины даёт 9.5, на который ссылаются строки 10.1.26 и 10.1.26a."
+    ],
+    "agreed": "2026-11-11"
+  },
+  "toolsRu": {
+    "s-7zqsstgnuc772ba": {
+      "title": "Ключ, записанный в одном объекте дважды",
+      "text": "`sheriff validate` читает каждый проверяемый файл как текст и считает ключи каждого объекта.",
+      "reason": "Парсер оставляет одно из двух значений и молча отбрасывает другое, поэтому ключ, записанный дважды, виден только в тексте."
+    },
+    "s-xzcw3hv4hmxz7h7": {
+      "title": "Схема и расширение проекта",
+      "text": "`sheriff validate` проверяет каждый файл валидатором JSON Schema по базовой схеме SpecSheriff guidelines, составленной вместе с расширением проекта (§s-eferktypcj7njt5).\n\nСначала проверяется само расширение — по схеме расширения. Эта схема позволяет расширению добавлять только NodeKind, свойства существующего NodeKind и свойства файла или связи.\n\nДобавленное расширением входит в базовую схему:\n- его NodeKind — в NodeKind, которые может иметь узел;\n- его условия — в те, которым подчиняется каждый узел;\n- его свойства файла и связи — в те, что могут быть у файла и у связи.\n\n`sheriff binding` проверяет каждый файл по той же схеме, прежде чем проверять что-либо ещё.\n\n`sheriff reindex` проверяет каждый файл после того, как слил каждый ключ, записанный дважды, и изменил то, что записал прежний выпуск, как говорит §s-f5rz6b7dhxejjts. Он делает это прежде, чем что-либо вычислять. Из этой проверки он исключает только то, что пишет сам:\n- связи, указывающие на узел;\n- вне архива — sid, которого у узла нет, все location, индекс разделов в заголовке домена, значения, собранные рядом с полем, и статус раздела и заголовка домена.\n\nЕсли схема отклоняет файл или схема расширения отклоняет расширение проекта, каждая из этих двух команд называет файл или расширение и каждую причину отказа в нём. Дальше она ничего не проверяет. `sheriff reindex` тогда не пишет ни одного файла.",
+      "reason": "Каждая команда рассчитана на ту форму, которую схема задаёт файлу. Только проверка по схеме называет, где файл отходит от этой формы и что там не так. `sheriff reindex` строит каждый файл из всех файлов, поэтому если записать только часть, файлы разошлись бы между собой.\n\nКлюч, записанный дважды, сливается первым, потому что файл, прочитанный без слияния, хранит только последнее значение. То, что записал прежний выпуск, меняется первым, потому что схема отклоняет его старые имена. То, что `sheriff reindex` пишет сам, исключается, потому что в узле, написанном вручную, этого нет, пока команда не запущена."
+    },
+    "s-vke5hakwf3uyrjs": {
+      "title": "Sid, location, термины и имена RecordType — подсчёт",
+      "text": "`sheriff validate` собирает каждый sid, location, термин и имя RecordType и подсчитывает, сколько раз встречается каждое.\n\n- Термин и имя RecordType подсчитываются в нижнем регистре.\n- Для каждого узла-термина определяется часть спецификации, в которой он стоит.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-stxmhq3hgfndvn6": {
+      "title": "Расположения вычисляются заново",
+      "text": "`sheriff validate` вычисляет в памяти расположение каждого узла по его месту и сравнивает его с расположением, записанным в его файле.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-95w92rnjuv3sst8": {
+      "title": "Одобрение одобренного узла",
+      "text": "`sheriff validate` ищет каждый одобренный узел в одобрениях. Последняя строка для sid узла и отпечатка его формулировки должна быть одобрением. Не рассматриваются:\n\n- узлы SpecSheriff guidelines, которые берёт проект;\n- раздел и заголовок домена.\n\n`sheriff validate` ищет того, кого называет строка одобрения, среди ответственных за её узел — такими, какими их хранит коммит. Так делается для каждого одобрения, которое коммит добавляет к одобрениям своего родителя. Одобрения родителя читаются так, как их переписал бы `sheriff reindex` (§s-f5rz6b7dhxejjts).",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-agc6fb3vx46pc23": {
+      "title": "Указатели, входящие связи, собранные значения и статусы разделов и заголовков — пересобираются",
+      "text": "`sheriff validate` пересобирает их в памяти и сравнивает с тем, что в коммите:\n\n- указатель каждого заголовка домена — по заголовку, каким он сейчас стоит в файлах домена;\n- входящие связи;\n- значения, собранные рядом с каждым полем (§s-ju5vcanbjph7mgh);\n- статус каждого раздела и заголовка домена (§s-9kfdycuq34beqvs).",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-j4webte36gkraju": {
+      "title": "Удалённый узел и архив",
+      "text": "`sheriff validate` ищет в одобрениях каждый sid, который коммит убирает из спецификации.\n\n- Узел, которому когда-либо давали одобрение, ищется в архиве вместе с причиной удаления, если это не раздел и не заголовок домена.\n- Любой другой узел отклоняется, если он стоит в архиве.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-qzyacnqwvaeaps4": {
+      "title": "Исходящие связи и ссылки",
+      "text": "`sheriff validate` ищет цель каждой исходящей связи среди существующих sid.\n\nОн читает ссылки в каждом узле и сопоставляет их со связями, которые узел делает:\n\n- `§`, за которым идёт sid, а после него не строчная буква и не цифра, — ссылка на этот sid.\n- `§`, за которым идёт что-то другое, до пробела, запятой, точки с запятой или закрывающей скобки, — ссылка по расположению.\n- Текст в обратных кавычках проверка читает как любой другой текст, кроме ссылки по расположению (§s-bpdqd9v72wg7vsz).\n- Указатель заголовка и значения, собранные рядом с полем, не читаются.",
+      "reason": "Узел может показать в обратных кавычках, как выглядит отклоняемая ссылка."
+    },
+    "s-pvnnr844f3y964m": {
+      "title": "Типы узлов на концах связи",
+      "text": "`sheriff validate` определяет тип узла (NodeKind) на каждом конце каждой исходящей связи и сопоставляет его с типом связи.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-e2vdhfsndy5stq9": {
+      "title": "Слова, идущие подряд заглавными буквами",
+      "text": "`sheriff validate` читает заголовок, текст и обоснование каждого одобренного узла, каждого раздела и заголовка домена и ищет три слова или больше подряд, написанных заглавными.\n\n- Каждое такое слово — из двух знаков или больше.\n- Слова разделены только пробелами или табуляциями.\n- Всё, что в обратных или двойных кавычках, не учитывается.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-zhen42p6mnaxu7w": {
+      "title": "Раздел, в котором есть правило",
+      "text": "`sheriff validate` читает узлы под каждым разделом и под каждым вложенным в него разделом и ищет узел, который считается правилом (§s-7445ahgjck2aefg).",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-qvgzubkrafadqgf": {
+      "title": "Связи `consumes` и `exempts`",
+      "text": "`sheriff validate` проверяет, какие узлы стоят на концах каждой связи `consumes` и каждой связи `exempts`:\n\n- у связи `consumes` в начале должен быть заголовок домена, а в конце — раздел другого домена;\n- у связи `exempts` в начале должен быть узел `project.json`, а в конце — правило, узел собственного NodeKind проекта или раздел.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-yprj7d6tnvauggr": {
+      "title": "Связи `implements` и `refines` приложений и собственных guidelines проекта",
+      "text": "`sheriff validate` находит цель каждой исходящей связи `implements` и `refines` каждого узла, кроме раздела, и смотрит, в какой части спецификации эта цель находится.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-6bmnsbskg6en4nf": {
+      "title": "Никаких копий SpecSheriff guidelines",
+      "text": "`sheriff validate` отклоняет копию SpecSheriff guidelines или их схемы вне репозитория, в котором они пишутся. Копия — это:\n\n- `spec.json` или `tools.json` в `specs/_guidelines/`;\n- любой файл в `specs/_schema/`, кроме `project.schema.json`.",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-9rtrj24myzjvshu": {
+      "title": "SpecTag на коде системы",
+      "text": "`sheriff binding` читает SpecTag каждого символа кода системы. SpecTag связывает символ с узлом, который символ реализует. Код системы — это код, реализующий спецификацию, вместе с его тестами.\n\n- Тест несёт SpecTag в своём имени или в метке на нём (§s-zrsc6asgmhv8tnc), поэтому символы тестов не читаются.\n- Конфигурация репозитория, его собственные инструменты и их тесты не код системы (§s-hheus6f395ynqvc) и не читаются.\n- Вложенный символ покрыт SpecTag символа, внутри которого он стоит.\n- sid в SpecTag ищется среди узлов. sid в SpecTag на изменённом символе ищется среди одобренных узлов. Символ изменён, если строка, которую меняет коммит, относится к нему (§s-2x58az67bm6cxq2).\n- Пока коммит оставляет спецификацию черновиком (§s-j9r8z4xdrfkfs47), о символе без SpecTag, который коммит не меняет, сообщается по символу, а не отказывается (§s-kkbqcb9xrpaepwn).",
+      "reason": "У этого узла нет обоснования — пробел, допишем на шаге инструментов."
+    },
+    "s-j9r8z4xdrfkfs47": {
+      "title": "От черновика к одобренной спецификации и обратно",
+      "text": "`sheriff binding` следит за переходом спецификации из черновика в одобренную и обратно (§s-qzthyh7yqvfhsa2). Правило, которое одобряет спецификацию, он находит в `project.json`.\n\nСпецификацию до коммита он берёт такой, какой её держит первый родитель коммита, прочитанной так, как её переписал бы `sheriff reindex` (§s-f5rz6b7dhxejjts). Если у коммита нет родителя, спецификация до коммита считается черновиком.\n\nПока коммит оставляет спецификацию черновиком, `sheriff binding` сообщает о каждом из следующего, а не отклоняет, если коммит этого не меняет (§s-kkbqcb9xrpaepwn):\n\n- символ кода системы вне его тестов, у которого нет SpecTag;\n- тест, у которого нет SpecTag.\n\nПока коммит оставляет спецификацию одобренной, оба отклоняются.\n\nКоммит, который возвращает спецификацию в черновик, проходит, только если добавляет к одобрениям отзыв одобрения этого правила, какой бы ни была его формулировка, сделанный одним из ответственных за спецификацию, какими их держит сам коммит."
+    },
+    "s-2x58az67bm6cxq2": {
+      "title": "Символы, которые меняет коммит",
+      "text": "`sheriff binding` находит, какие символы кода системы вне его тестов меняет коммит.\n\n- Изменённая строка засчитывается символу, в котором она стоит. Изменение в любом месте символа — изменение всего символа.\n- Строка с SpecTag, до коммита или после него, засчитывается символу, который этот SpecTag помечает, даже если она стоит вне тела символа.\n\nСимвол не считается изменённым, если каждая его изменённая строка:\n\n- не является строкой с SpecTag;\n- отличается от строки, которую заменяет, только комментарием, sid в ссылке или идентификатором, который коммит переименовывает везде."
+    }
+  }
+}

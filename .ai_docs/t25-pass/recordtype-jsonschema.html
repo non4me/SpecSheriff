@@ -1,0 +1,613 @@
+<title>RecordType по JSON Schema</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: the gist first, then the structure drawn after the change, the correspondence of each construct to
+     JSON Schema, the node and the generated schema now and after, the wording of the rules, the decisions weighed
+     against JSON Schema first and other practices after it, and what the change costs. One dark look, as on every
+     page made for the owner. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --ok: #5fbf86; --now: #e8b75a; --next: #5cb8d8; --bad: #e07a6a; --part: #8fb0cf;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; margin: 0; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 18px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 30px; }
+  header { display: grid; gap: 8px; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.15rem; margin: 0; text-wrap: balance; }
+  h3 { font-size: 1rem; margin: 0; }
+  p { margin: 0; max-width: 85ch; }
+  .muted { color: var(--muted); }
+  code, .mono { font-family: var(--mono); font-size: 0.88em; }
+  section { display: grid; gap: 12px; min-width: 0; }
+  .scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
+  svg.arch { display: block; min-width: 1080px; width: 100%; height: auto; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; }
+  .two > div { min-width: 0; display: grid; gap: 8px; align-content: start; }
+  pre { margin: 0; padding: 12px 14px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow-x: auto; font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; color: var(--fg); }
+  pre .c { color: var(--muted); } pre .hl { color: var(--now); } pre .x { color: var(--bad); text-decoration: line-through; } pre .ok { color: var(--ok); }
+  .gist { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .gist li { background: var(--panel); border: 1px solid var(--rule); border-left: 3px solid var(--next); border-radius: 4px; padding: 9px 12px; }
+  .gist li.key { border-left-color: var(--now); }
+  table.map, table.matrix { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  table.map { min-width: 900px; }
+  table.map th, table.map td { border-bottom: 1px solid var(--rule); padding: 7px 9px; text-align: left; vertical-align: top; }
+  table.map thead th { font-size: 0.8rem; color: var(--muted); background: var(--panel-2); font-weight: 700; }
+  table.map td:nth-child(2), table.map td:nth-child(3) { font-family: var(--mono); font-size: 0.8rem; }
+  table.map tr.chg td { background: rgba(232, 183, 90, 0.07); }
+  table.matrix { min-width: 960px; }
+  table.matrix th, table.matrix td { border-bottom: 1px solid var(--rule); padding: 8px 8px; text-align: center; vertical-align: middle; }
+  table.matrix thead th { font-weight: 700; font-size: 0.8rem; color: var(--muted); background: var(--panel-2); }
+  table.matrix thead th.main { color: var(--fg); background: #24394a; }
+  table.matrix td.main { background: rgba(92, 184, 216, 0.06); }
+  table.matrix th.dec { text-align: left; font-weight: 400; min-width: 270px; }
+  table.matrix th.dec b { display: block; }
+  table.matrix td.verdict { text-align: left; }
+  .m { font-size: 1.1rem; line-height: 1; }
+  .m.same { color: var(--ok); } .m.part { color: var(--now); } .m.diff { color: var(--bad); } .m.na { color: var(--rule); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.88rem; color: var(--muted); }
+  .pill { font-family: var(--mono); font-size: 0.74rem; padding: 1px 8px; border: 1px solid currentColor; border-radius: 10px; white-space: nowrap; display: inline-block; }
+  .pill.ok { color: var(--ok); } .pill.now { color: var(--now); } .pill.next { color: var(--next); } .pill.bad { color: var(--bad); } .pill.mute { color: var(--muted); }
+  .node { background: var(--panel); border: 1px solid var(--now); border-radius: 6px; padding: 14px 16px; display: grid; gap: 10px; }
+  .node .lbl { font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  .node p { max-width: 90ch; }
+  .node ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+  ol.changes { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+  ul.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  ul.rows li { display: grid; grid-template-columns: 6.4rem 9rem 1fr; gap: 10px; align-items: baseline; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px; }
+  ul.rows li.chg { border-color: var(--now); }
+  ul.rows li .was { display: block; color: var(--muted); }
+  ul.rows li .was s { color: var(--muted); }
+  @media (max-width: 680px) { ul.rows li { grid-template-columns: 6.4rem 1fr; } ul.rows li .txt { grid-column: 1 / -1; } }
+  .num { font-family: var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .cards { display: grid; gap: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 10px; min-width: 0; }
+  .card.cur { border-color: var(--now); }
+  .card .top { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+  .card .id { font-family: var(--mono); color: var(--muted); }
+  .card .js { border-left: 3px solid var(--next); padding-left: 10px; }
+  .pm { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .pm > div { min-width: 0; display: grid; gap: 4px; align-content: start; }
+  .pm h4 { margin: 0; font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .pm .plus h4 { color: var(--ok); } .pm .minus h4 { color: var(--bad); }
+  .pm ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+  .note { border-left: 3px solid var(--now); padding-left: 12px; }
+  ul.plain { margin: 0; padding-left: 20px; display: grid; gap: 5px; max-width: 95ch; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>RecordType по JSON Schema</h1>
+    <p class="muted">Вариант для вашего решения: как изменятся устройство RecordType и тексты правил, если всё привести к JSON Schema 2020-12. В черновиках ничего не изменено.</p>
+    <p class="note">Инструменты SpecSheriff уже сейчас генерируют из RecordType схему JSON Schema 2020-12 и проверяют ею файлы узлов. Поэтому почти всё в RecordType совпадает с JSON Schema один к одному. По сути расходится одно устройство — поле типа <code>variant</code>.</p>
+  </header>
+
+  <section aria-labelledby="h-gist">
+    <h2 id="h-gist">Главное</h2>
+    <ul class="gist">
+      <li class="key"><b>По сути меняется одно.</b> Поля варианта переезжают из поля типа <code>variant</code> к полям самой записи данных. В JSON Schema так и устроено: условие <code>if</code>/<code>then</code> добавляет поля в тот же объект. Тип <code>variant</code>, особый признак «гарантировано, когда есть значение» и строка 12.12.4 уходят.</li>
+      <li><b>Запись узла.</b> Тип поля пишется словами JSON Schema: <code>type</code>, <code>format</code>, <code>enum</code>, <code>items</code>, <code>$ref</code>. Смысл каждого типа остаётся тем же: генератор и сейчас переводит слова RecordType в эти слова один к одному.</li>
+      <li><b>Своё остаётся своим.</b> Чего в JSON Schema нет — идентификатор записи, выбирающие поля, значения варианта, собранные значения, — остаётся словами SpecSheriff. JSON Schema 2020-12 даёт для этого стандартный механизм — собственный словарь (<code>$vocabulary</code>).</li>
+      <li><b>Генерация.</b> Вместо <code>oneOf</code> из вариантов и члена «прочее» схема получает пары <code>if</code>/<code>then</code>. Так json-schema.org сам показывает поля, которые зависят от значения другого поля.</li>
+      <li><b>Проверено.</b> Схема ниже прогнана на Ajv 2020, валидаторе, которым пользуются инструменты: 13 записей из 13 приняты или отклонены как ожидалось. Среди них — выбор варианта по двум полям сразу и ссылка по sid через <code>$anchor</code>.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-scheme">
+    <h2 id="h-scheme">Схема после правки</h2>
+    <div class="scroll">
+      <svg class="arch" viewBox="0 0 1120 560" role="img" aria-labelledby="svg-t svg-d">
+        <title id="svg-t">RecordType «Уведомление» и два его варианта, записанные словами JSON Schema</title>
+        <desc id="svg-d">Варианты по email и по SMS ссылаются через refines на RecordType «Уведомление». Поле delivery типа variant убрано. Записи данных содержат поля варианта рядом с полями RecordType. Вариант по SMS ссылается на фрагмент формата «Номер телефона» из контрактов.</desc>
+        <defs>
+          <marker id="gen" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="14" markerHeight="14" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+            <path d="M1,1 L13,7 L1,13 z" fill="#17232b" stroke="#eef1f3" stroke-width="1.5"/>
+          </marker>
+          <marker id="okarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#5fbf86"/>
+          </marker>
+        </defs>
+        <rect x="0" y="0" width="1120" height="560" fill="#17232b"/>
+
+        <!-- Part of the system -->
+        <rect x="16" y="20" width="640" height="524" rx="8" fill="#0f171c" stroke="#8fb0cf" stroke-dasharray="6 5"/>
+        <text x="32" y="46" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="16" font-weight="700">Часть системы «Уведомления»</text>
+        <text x="32" y="66" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="13">узлы спецификации; каждый узел — одна запись <tspan font-family="PT Mono, Consolas, monospace">$defs</tspan> в сгенерированной схеме</text>
+
+        <!-- RecordType -->
+        <rect x="40" y="86" width="420" height="216" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="40" y="86" width="420" height="34" rx="6" fill="#2c3a44"/>
+        <text x="56" y="109" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="15" font-weight="700">RecordType «Уведомление»</text>
+        <text x="56" y="144" fill="#a3b0b9" font-family="PT Mono, Consolas, monospace" font-size="12.5">identifiedBy: id · chosenBy: channel</text>
+        <g font-family="PT Mono, Consolas, monospace" font-size="13" fill="#eef1f3">
+          <text x="56" y="174">id</text><text x="140" y="174" fill="#a3b0b9">type: string</text>
+          <text x="56" y="200">channel</text><text x="140" y="200" fill="#a3b0b9">enum: email · sms · app</text>
+          <text x="56" y="226">text</text><text x="140" y="226" fill="#a3b0b9">type: string</text>
+          <text x="56" y="252" fill="#e07a6a">delivery</text><text x="140" y="252" fill="#e07a6a">variant</text>
+          <text x="56" y="286" fill="#a3b0b9">unevaluatedProperties: false</text>
+        </g>
+        <line x1="52" y1="248" x2="212" y2="248" stroke="#e07a6a" stroke-width="1.6"/>
+        <g font-family="PT Sans, Segoe UI, sans-serif" font-size="12.5" fill="#a3b0b9" text-anchor="end">
+          <text x="448" y="174">идентифицирует запись</text>
+          <text x="448" y="200">выбирает вариант</text>
+          <text x="448" y="252" fill="#e07a6a">убрано</text>
+          <text x="448" y="286">лишнее поле отклоняется</text>
+        </g>
+
+        <!-- Variant: email -->
+        <rect x="40" y="372" width="290" height="112" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="40" y="372" width="290" height="32" rx="6" fill="#2c3a44"/>
+        <text x="54" y="394" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="14" font-weight="700">Вариант «по email»</text>
+        <text x="54" y="428" fill="#a3b0b9" font-family="PT Mono, Consolas, monospace" font-size="12.5">answersTo: channel = email</text>
+        <g font-family="PT Mono, Consolas, monospace" font-size="13">
+          <text x="54" y="458" fill="#e8b75a">address</text><text x="130" y="458" fill="#a3b0b9">string, format: email</text>
+        </g>
+
+        <!-- Variant: sms -->
+        <rect x="350" y="372" width="290" height="112" rx="6" fill="#1d2b35" stroke="#eef1f3"/>
+        <rect x="350" y="372" width="290" height="32" rx="6" fill="#2c3a44"/>
+        <text x="364" y="394" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="14" font-weight="700">Вариант «по SMS»</text>
+        <text x="364" y="428" fill="#a3b0b9" font-family="PT Mono, Consolas, monospace" font-size="12.5">answersTo: channel = sms</text>
+        <g font-family="PT Mono, Consolas, monospace" font-size="13">
+          <text x="364" y="458" fill="#e8b75a">phone</text><text x="420" y="458" fill="#a3b0b9">$ref → «Номер телефона»</text>
+        </g>
+
+        <!-- refines arrows -->
+        <path d="M185,372 L185,302" fill="none" stroke="#eef1f3" stroke-width="1.5" marker-end="url(#gen)"/>
+        <path d="M495,372 L495,337 L400,337 L400,302" fill="none" stroke="#eef1f3" stroke-width="1.5" marker-end="url(#gen)"/>
+        <text x="194" y="342" fill="#eef1f3" font-family="PT Mono, Consolas, monospace" font-size="12.5">refines</text>
+        <text x="508" y="356" fill="#eef1f3" font-family="PT Mono, Consolas, monospace" font-size="12.5">refines</text>
+        <text x="40" y="520" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="13">У значения <tspan font-family="PT Mono, Consolas, monospace">app</tspan> варианта нет: оно не приносит полей (12.6).</text>
+
+        <!-- Data records -->
+        <rect x="680" y="20" width="424" height="300" rx="8" fill="#0f171c" stroke="#2c3a44"/>
+        <text x="696" y="48" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="15" font-weight="700">Записи данных</text>
+        <text x="696" y="68" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="13">поля варианта — рядом с полями RecordType</text>
+        <g font-family="PT Mono, Consolas, monospace" font-size="13.5">
+          <text x="696" y="106" fill="#a3b0b9" font-size="12">channel = email</text>
+          <text x="696" y="128" fill="#eef1f3">{ id, channel, text, <tspan fill="#e8b75a">address</tspan> }</text>
+          <text x="696" y="166" fill="#a3b0b9" font-size="12">channel = sms</text>
+          <text x="696" y="188" fill="#eef1f3">{ id, channel, text, <tspan fill="#e8b75a">phone</tspan> }</text>
+          <text x="696" y="226" fill="#a3b0b9" font-size="12">channel = app</text>
+          <text x="696" y="248" fill="#eef1f3">{ id, channel, text }</text>
+        </g>
+        <text x="696" y="290" fill="#a3b0b9" font-family="PT Sans, Segoe UI, sans-serif" font-size="13">Было: <tspan font-family="PT Mono, Consolas, monospace">{ id, channel, text, delivery: { address } }</tspan></text>
+
+        <!-- Contracts -->
+        <rect x="680" y="372" width="424" height="112" rx="8" fill="#0f171c" stroke="#5fbf86" stroke-dasharray="6 5"/>
+        <text x="696" y="398" fill="#eef1f3" font-family="PT Sans, Segoe UI, sans-serif" font-size="14" font-weight="700">Контракты: фрагмент «Номер телефона»</text>
+        <g font-family="PT Mono, Consolas, monospace" font-size="13">
+          <text x="696" y="430" fill="#eef1f3">country</text><text x="790" y="430" fill="#a3b0b9">type: string</text>
+          <text x="696" y="456" fill="#eef1f3">number</text><text x="790" y="456" fill="#a3b0b9">type: string</text>
+        </g>
+        <path d="M640,452 L676,440" fill="none" stroke="#5fbf86" stroke-width="1.6" marker-end="url(#okarrow)"/>
+      </svg>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-map">
+    <h2 id="h-map">Соответствие: RecordType и JSON Schema 2020-12</h2>
+    <p class="muted">Строки, выделенные цветом, — то, что меняется по сути. Остальное меняет только запись.</p>
+    <div class="scroll">
+      <table class="map">
+        <thead><tr><th>Что</th><th>Сейчас в узле</th><th>По JSON Schema</th><th>Вывод</th></tr></thead>
+        <tbody>
+          <tr><td>RecordType</td><td>узел RecordType</td><td>запись $defs, $anchor = sid узла</td><td><span class="pill ok">совпадает</span></td></tr>
+          <tr><td>Поле: имя, гарантировано ли, что означает</td><td>fields[]: name, required, text</td><td>properties.&lt;имя&gt;, required[], description</td><td><span class="pill ok">совпадает</span> другая запись того же</td></tr>
+          <tr><td>Текст, целое число, число, да/нет</td><td>is: text, whole number, number, yes/no</td><td>type: string, integer, number, boolean</td><td><span class="pill ok">совпадает</span></td></tr>
+          <tr><td>Адрес email, момент времени, дата, длительность</td><td>is: email address, instant, date, duration</td><td>type: string + format: email, date-time, date, duration</td><td><span class="pill ok">совпадает</span> генератор уже так пишет</td></tr>
+          <tr><td>Любое значение</td><td>is: any value</td><td>{}</td><td><span class="pill ok">совпадает</span></td></tr>
+          <tr><td>Границы значения и числа элементов</td><td>minimum … maxItems</td><td>те же слова</td><td><span class="pill ok">совпадает</span> ваше решение: названы, как в JSON Schema</td></tr>
+          <tr><td>Одно из: свой список</td><td>is: one of, values</td><td>enum</td><td><span class="pill ok">совпадает</span></td></tr>
+          <tr><td>Одно из: значения из другого места</td><td>from, kind, gathered</td><td>enum, который записывают инструменты SpecSheriff, и своё слово об источнике</td><td><span class="pill now">своё слово</span> в JSON Schema enum — только готовый список</td></tr>
+          <tr><td>Список, словарь</td><td>is: list of / map of, of</td><td>type: array, items / type: object, additionalProperties</td><td><span class="pill ok">совпадает</span></td></tr>
+          <tr><td>Вложенная запись</td><td>is: record, record: &lt;sid&gt;</td><td>$ref: "#&lt;sid&gt;"</td><td><span class="pill ok">совпадает</span> ссылка по sid — стандартный $anchor</td></tr>
+          <tr><td>Идентификатор другой записи</td><td>is: identifier of; identifiedBy</td><td>своё слово identifierOf; тип берётся $ref на идентифицирующее поле</td><td><span class="pill now">своё слово</span> ссылок между записями в JSON Schema нет</td></tr>
+          <tr><td>Поле, которого RecordType не описывает</td><td>unknown: refused / kept</td><td>unevaluatedProperties: false / true</td><td><span class="pill ok">совпадает</span></td></tr>
+          <tr><td>RecordType уточняет другой RecordType</td><td>связь refines</td><td>связь остаётся связью спецификации; в схеме — allOf с $ref или, как сейчас, копия унаследованных полей</td><td><span class="pill ok">совпадает</span></td></tr>
+          <tr><td>Поля, которые выбирают вариант</td><td>chosenBy</td><td>своё слово chosenBy; в JSON Schema выбор записан только в условиях if</td><td><span class="pill now">своё слово</span> ближе всего discriminator в OpenAPI, но там одно поле</td></tr>
+          <tr><td>Значения, которым соответствует вариант</td><td>answersTo</td><td>своё слово answersTo; генерируется в if: { channel: { const: "email" } }</td><td><span class="pill ok">совпадает</span> по смыслу</td></tr>
+          <tr class="chg"><td><b>Где лежат поля варианта</b></td><td>в единственном поле типа variant</td><td>рядом с полями записи: then добавляет их в тот же объект</td><td><span class="pill bad">расходится</span> предлагаю как в JSON Schema</td></tr>
+          <tr class="chg"><td><b>«Гарантировано, когда есть значение»; поля «при любом варианте»</b></td><td>required: "where it holds a value"; type.fields</td><td>не нужны</td><td><span class="pill bad">уходят</span> вместе с типом variant</td></tr>
+          <tr class="chg"><td><b>Значение без варианта</b></td><td>генерируется член «прочее» с not anyOf</td><td>ничего: if не срабатывает, лишнее отклоняет unevaluatedProperties</td><td><span class="pill ok">проще</span></td></tr>
+          <tr><td>Вариант выбирают несколько полей</td><td>сочетание значений</td><td>if с несколькими const</td><td><span class="pill ok">совпадает</span> обычная запись</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-node">
+    <h2 id="h-node">Узел: сейчас и по JSON Schema</h2>
+    <p class="muted">Упрощённо: без sid, статуса, текста правила и обоснования.</p>
+    <div class="two">
+      <div>
+        <h3>Сейчас</h3>
+<pre><span class="c">// RecordType «Уведомление»</span>
+{
+  "kind": "RecordType",
+  "title": "Notification",
+  "identifiedBy": "id",
+  "chosenBy": ["channel"],
+  "unknown": "refused",
+  "fields": [
+    { "name": "id", "type": { "is": "text" },
+      "required": true, "text": "…" },
+    { "name": "channel",
+      "type": { "is": "one of",
+                "values": ["email", "sms", "app"] },
+      "required": true, "text": "…" },
+    { "name": "text", "type": { "is": "text" },
+      "required": true, "text": "…" },
+    <span class="x">{ "name": "delivery", "type": { "is": "variant" },</span>
+    <span class="x">  "required": "where it holds a value", "text": "…" }</span>
+  ]
+}
+
+<span class="c">// Вариант «по email»</span>
+{
+  "kind": "RecordType",
+  "title": "Notification by email",
+  "refs": [{ "type": "refines", "to": "&lt;sid «Уведомления»&gt;" }],
+  "answersTo": { "channel": "email" },
+  "unknown": "refused",
+  "fields": [
+    { "name": "address", "type": { "is": "email address" },
+      "required": true, "text": "…" }
+  ]
+}</pre>
+      </div>
+      <div>
+        <h3>По JSON Schema</h3>
+<pre><span class="c">// RecordType «Уведомление»</span>
+{
+  "kind": "RecordType",
+  "title": "Notification",
+  "identifiedBy": "id",
+  "chosenBy": ["channel"],
+  <span class="hl">"schema": {</span>
+    "type": "object",
+    "properties": {
+      "id":      { "type": "string", "description": "…" },
+      "channel": { "enum": ["email", "sms", "app"],
+                   "description": "…" },
+      "text":    { "type": "string", "description": "…" }
+    },
+    "required": ["id", "channel", "text"],
+    "unevaluatedProperties": false
+  }
+}
+
+<span class="c">// Вариант «по email»</span>
+{
+  "kind": "RecordType",
+  "title": "Notification by email",
+  "refs": [{ "type": "refines", "to": "&lt;sid «Уведомления»&gt;" }],
+  "answersTo": { "channel": "email" },
+  <span class="hl">"schema": {</span>
+    "properties": {
+      "address": { "type": "string", "format": "email",
+                   "description": "…" }
+    },
+    "required": ["address"]
+  }
+}
+<span class="c">// Вариант не пишет unevaluatedProperties:</span>
+<span class="c">// лишние поля отклоняет его RecordType.</span></pre>
+      </div>
+    </div>
+    <div class="two">
+      <div>
+        <h3>Запись данных сейчас</h3>
+<pre>{
+  "id": "n-1042",
+  "channel": "email",
+  "text": "Заказ отправлен",
+  <span class="x">"delivery": { "address": "anna@example.org" }</span>
+}</pre>
+      </div>
+      <div>
+        <h3>Запись данных по JSON Schema</h3>
+<pre>{
+  "id": "n-1042",
+  "channel": "email",
+  "text": "Заказ отправлен",
+  <span class="hl">"address": "anna@example.org"</span>
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-gen">
+    <h2 id="h-gen">Что генерируется: сейчас и по JSON Schema</h2>
+    <p class="muted">Сгенерированная схема для того же примера; вариант по SMS сокращён.</p>
+    <div class="two">
+      <div>
+        <h3>Сейчас: <code>oneOf</code> и член «прочее»</h3>
+<pre>"Notification": { "oneOf": [
+  { "$ref": "#/$defs/NotificationByEmail" },
+  { "$ref": "#/$defs/NotificationBySms" },
+  { "$ref": "#/$defs/NotificationOther" } ] },
+
+"NotificationByEmail": {
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "channel": { "const": "email" },
+    "text": { "type": "string" },
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "address": { "type": "string", "format": "email" } },
+      "required": ["address"],
+      "additionalProperties": false } },
+  "required": ["id", "channel", "text", "delivery"],
+  "additionalProperties": false },
+
+<span class="c">"NotificationBySms": { … все поля ещё раз … },</span>
+
+"NotificationOther": {
+  "type": "object",
+  "properties": { <span class="c">… id, channel, text ещё раз …</span> },
+  "required": ["id", "channel", "text"],
+  "additionalProperties": false,
+  "not": { "anyOf": [
+    { "properties": { "channel": { "const": "email" } },
+      "required": ["channel"] },
+    { "properties": { "channel": { "const": "sms" } },
+      "required": ["channel"] } ] } }</pre>
+      </div>
+      <div>
+        <h3>По JSON Schema: пары <code>if</code>/<code>then</code></h3>
+<pre>"Notification": {
+  "$anchor": "&lt;sid «Уведомления»&gt;",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "channel": { "enum": ["email", "sms", "app"] },
+    "text": { "type": "string" } },
+  "required": ["id", "channel", "text"],
+  "allOf": [
+    { "if": { "properties": { "channel": { "const": "email" } },
+              "required": ["channel"] },
+      "then": { "$ref": "#/$defs/NotificationByEmail" } },
+    { "if": { "properties": { "channel": { "const": "sms" } },
+              "required": ["channel"] },
+      "then": { "$ref": "#/$defs/NotificationBySms" } } ],
+  "unevaluatedProperties": false },
+
+"NotificationByEmail": {
+  "properties": {
+    "address": { "type": "string", "format": "email" } },
+  "required": ["address"] },
+
+<span class="c">"NotificationBySms": { … только phone … }</span>
+
+<span class="c">// Два выбирающих поля — то же условие с двумя const:</span>
+<span class="c">// "if": { "properties": { "method": { "const": "card" },</span>
+<span class="c">//                         "country": { "const": "CZ" } } }</span></pre>
+      </div>
+    </div>
+    <p class="muted">Что показала проверка на Ajv 2020: запись по email без <code>address</code> отклонена («нет обязательного поля address»); запись по email с лишним <code>phone</code> отклонена; запись <code>app</code> без лишних полей принята, а с <code>address</code> — отклонена; при двух выбирающих полях запись <code>card</code> + <code>CZ</code> без <code>cardToken</code> отклонена, а <code>card</code> + <code>DE</code> с <code>cardToken</code> отклонена как лишнее поле.</p>
+  </section>
+
+  <section aria-labelledby="h-rules">
+    <h2 id="h-rules">Тексты правил</h2>
+    <p class="muted">Тексты — по-русски. Английский я напишу, когда вы согласуете русский, как обычно.</p>
+
+    <div class="node">
+      <span class="lbl">12.6 · новая редакция</span>
+      <h3>Варианты RecordType</h3>
+      <p>Вариант RecordType объявляет поля, которые запись данных RecordType (§s-7vm323mhry2enx3) содержит из-за значений некоторых полей этого RecordType. Эти поля — поля, которые выбирают вариант RecordType. Их называет сам RecordType или RecordType, который он уточняет. Каждое сочетание их значений, по одному значению каждого поля, имеет свой вариант RecordType, если это сочетание приносит собственные поля, и только тогда.</p>
+      <p>Вариант RecordType — это RecordType, который:</p>
+      <ul>
+        <li>объявлен там же, где RecordType, вариантом которого он является: в том же разделе базовой спецификации или в контрактах (§s-z6tq6a3btnvvwx7);</li>
+        <li>ссылается через связь <code>refines</code> (§s-sn6au3vcr9uy5pm) на этот RecordType;</li>
+        <li>называет значения, которым он соответствует, по одному значению каждого поля, которое выбирает вариант.</li>
+      </ul>
+      <p>Запись данных содержит поля своего варианта рядом с полями своего RecordType. Имя каждого поля варианта отличается от имён полей его RecordType, считая унаследованные.</p>
+      <span class="lbl">Обоснование</span>
+      <p>Когда значения одних полей определяют, какие ещё поля содержит запись данных, сам RecordType описывает не все поля, которых могут ожидать части системы, читающие его записи данных. Остальное описывают его варианты RecordType. Поскольку варианты объявлены там же, где RecordType, эти части системы находят полное описание записей данных там, где ищут сам RecordType (§s-7vm323mhry2enx3).</p>
+      <span class="lbl">Примеры</span>
+      <ul>
+        <li>RecordType уведомления называет своё поле <code>channel</code> полем, которое выбирает его вариант. Значение <code>email</code> приносит поле <code>address</code>, поэтому вариант RecordType для <code>email</code> объявляет <code>address</code>. Запись данных уведомления по email содержит <code>address</code> рядом с <code>channel</code> и <code>text</code>. Значение <code>app</code> не приносит полей, поэтому варианта RecordType у него нет.</li>
+        <li>В базовой спецификации, разделённой на домены, домен аудита хранит RecordType записи журнала аудита. Значения его поля <code>domain</code> — имена доменов. Записи о заказах содержат ещё номер заказа. Значение <code>orders</code> приходит из домена заказов, а его вариант RecordType объявлен в домене аудита.</li>
+      </ul>
+      <span class="lbl">Что изменилось</span>
+      <ol class="changes">
+        <li>Последний абзац. Было: «Поля своего варианта запись данных содержит в единственном поле типа <code>variant</code> своего RecordType». Стало: «Запись данных содержит поля своего варианта рядом с полями своего RecordType».</li>
+        <li>Добавлено предложение: «Имя каждого поля варианта отличается от имён полей его RecordType, считая унаследованные». Без него поле варианта могло бы совпасть по имени с полем RecordType, и запись не могла бы содержать оба.</li>
+        <li>В первый пример добавлено предложение: «Запись данных уведомления по email содержит <code>address</code> рядом с <code>channel</code> и <code>text</code>».</li>
+      </ol>
+    </div>
+
+    <h3>Строки таблицы 12.12</h3>
+    <ul class="rows">
+      <li><span class="num">12.12.1–3</span><span class="pill mute">без изменений</span><span class="txt">Уникальность имён и две строки о полях <code>identifier of</code>. Идентификатор остаётся своим словом SpecSheriff, поэтому строки нужны как есть.</span></li>
+      <li class="chg"><span class="num">12.12.4</span><span class="pill bad">убирается</span><span class="txt"><span class="was"><s>RecordType содержит не более одного поля типа <code>variant</code>, считая унаследованные.</s></span>Типа <code>variant</code> больше нет, поэтому проверять нечего.</span></li>
+      <li><span class="num">12.12.5</span><span class="pill now">ждёт решения</span><span class="txt">Предложенная формулировка не меняется: «Вариант RecordType ссылается через <code>refines</code> на RecordType, поля которого он дополняет». Теперь вариант дополняет поля RecordType буквально: его поля стоят рядом с ними.</span></li>
+      <li><span class="num">12.12.6</span><span class="pill next">своя правка</span><span class="txt">Правка по согласованному 12.6 (вариант объявлен там же, где его RecordType) остаётся, как была запланирована; этот вариант её не меняет.</span></li>
+      <li class="chg"><span class="num">12.12.7</span><span class="pill now">меняется</span><span class="txt"><span class="was">Было: «Вариант RecordType объявляет хотя бы одно поле, которого нет ни у его RecordType, ни у какого-либо поля типа <code>variant</code> этого RecordType».</span>Стало: «Вариант RecordType объявляет хотя бы одно поле». Что поле новое, теперь для каждого поля проверяет следующая строка.</span></li>
+      <li class="chg"><span class="num">после 12.12.7</span><span class="pill now">новая</span><span class="txt">«Имя каждого поля варианта RecordType отличается от имён полей его RecordType, считая унаследованные». Проверяет новое предложение 12.6.</span></li>
+      <li><span class="num">12.12.8–9</span><span class="pill mute">без изменений</span><span class="txt">Значения ровно выбирающих полей; никакие два варианта не соответствуют одним и тем же значениям. Вторая строка становится важнее: только она не даёт двум парам <code>if</code>/<code>then</code> сработать сразу.</span></li>
+      <li><span class="num">12.12.10–16</span><span class="pill mute">без изменений</span><span class="txt">Строки о значениях поля типа <code>one of</code> и о ссылках между частями системы этот вариант не затрагивает. Их собственные правки (12.12.12, 12.12.13, 12.12.16) остаются в очереди.</span></li>
+    </ul>
+
+    <h3>Остальные правила раздела 12</h3>
+    <ul class="plain">
+      <li><b>12.1, 12.3, 12.4, 12.5, 12.7–12.11 — без изменений.</b> Гарантированное поле (12.5) и есть <code>required</code> в JSON Schema; отклонение поля, которого RecordType не описывает (пример 12.4), — <code>unevaluatedProperties: false</code>.</li>
+      <li><b>12.2 — без изменений.</b> Он говорит «тип поля нейтральными словами». Слова JSON Schema не принадлежат ни одному языку программирования, поэтому остаются нейтральными. Само имя JSON Schema называет только описание инструментов: база руководства не называет технологий (1.21, §s-a4rbry4hsu34hy8).</li>
+    </ul>
+
+    <h3>Описание инструментов и код — на шаге правки инструментов</h3>
+    <ul class="plain">
+      <li>Формат узла RecordType в <code>node.schema.json</code>: поле <code>schema</code> по JSON Schema вместо <code>fields</code> и <code>unknown</code>; тип <code>variant</code> и <code>required: "where it holds a value"</code> убираются; у варианта в <code>schema</code> нет <code>unevaluatedProperties</code>.</li>
+      <li>Генерация в <code>types.ts</code>: JSON Schema — пары <code>if</code>/<code>then</code> и <code>$anchor</code> по sid; TypeScript и Python — плоское размеченное объединение, без вложенного объекта.</li>
+      <li><code>validate.ts</code> и правило tools/7.1.16 (s-c2r9jndrjbtbsv6): проверка имён полей варианта вместо подсчёта полей типа <code>variant</code>; заодно — отказ варианту без связи <code>refines</code>, который уже записан в продолжении.</li>
+      <li>Правило описания инструментов о нейтральных типах: слова JSON Schema 2020-12 и собственный словарь SpecSheriff.</li>
+      <li>Тесты инструментов на варианты; узлы RecordType в saloon переписываются один раз.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-practice">
+    <h2 id="h-practice">Решения: сначала JSON Schema, затем остальная практика</h2>
+    <p>Девять решений, из которых складывается устройство после правки. Основной ориентир — JSON Schema 2020-12: для него показано, как решение выглядит сейчас и после правки. Остальные практики — для сравнения, уже после правки.</p>
+    <div class="legend"><span><span class="m same">●</span> так же</span><span><span class="m part">◐</span> похоже или выражено иначе</span><span><span class="m diff">○</span> иначе</span><span><span class="m na">—</span> не о том</span></div>
+    <div class="scroll">
+      <table class="matrix">
+        <thead>
+          <tr><th class="dec">Решение</th><th class="main">JSON Schema<br>сейчас</th><th class="main">JSON Schema<br>после</th><th>OpenAPI 3.1</th><th>TypeScript</th><th>Protobuf</th><th>serde (Rust)</th><th class="dec">Итог</th></tr>
+        </thead>
+        <tbody>
+          <tr><th class="dec"><b>Р1. Вариант ссылается на свой RecordType через <code>refines</code></b><span class="muted">без изменений · 12.12.5</span></th>
+            <td class="main"><span class="m part">◐</span></td><td class="main"><span class="m part">◐</span></td><td><span class="m same">●</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td>
+            <td class="verdict"><span class="pill ok">ссылку в схеме строят инструменты</span></td></tr>
+          <tr><th class="dec"><b>Р2. Вариант называет свои значения (<code>answersTo</code>)</b><span class="muted">без изменений · 12.12.8, 12.12.9</span></th>
+            <td class="main"><span class="m part">◐</span></td><td class="main"><span class="m same">●</span></td><td><span class="m diff">○</span></td><td><span class="m same">●</span></td><td><span class="m diff">○</span></td><td><span class="m same">●</span></td>
+            <td class="verdict"><span class="pill ok">становится if</span></td></tr>
+          <tr><th class="dec"><b>Р3. Поля варианта — рядом с полями RecordType</b><span class="muted">меняется · было: в поле типа <code>variant</code></span></th>
+            <td class="main"><span class="m diff">○</span></td><td class="main"><span class="m same">●</span></td><td><span class="m same">●</span></td><td><span class="m same">●</span></td><td><span class="m part">◐</span></td><td><span class="m same">●</span></td>
+            <td class="verdict"><span class="pill ok">главное изменение</span></td></tr>
+          <tr><th class="dec"><b>Р4. Вариант выбирают значения нескольких полей</b><span class="muted">без изменений · 12.6</span></th>
+            <td class="main"><span class="m same">●</span></td><td class="main"><span class="m same">●</span></td><td><span class="m diff">○</span></td><td><span class="m part">◐</span></td><td><span class="m diff">○</span></td><td><span class="m diff">○</span></td>
+            <td class="verdict"><span class="pill ok">в JSON Schema — обычная запись</span></td></tr>
+          <tr><th class="dec"><b>Р5. Вариант объявлен там же, где его RecordType</b><span class="muted">без изменений · 12.12.6</span></th>
+            <td class="main"><span class="m part">◐</span></td><td class="main"><span class="m part">◐</span></td><td><span class="m part">◐</span></td><td><span class="m same">●</span></td><td><span class="m same">●</span></td><td><span class="m same">●</span></td>
+            <td class="verdict"><span class="pill ok">держит правило 12.6</span></td></tr>
+          <tr><th class="dec"><b>Р6. Ссылки только внутри своей части и на фрагменты из контрактов</b><span class="muted">без изменений · 12.10</span></th>
+            <td class="main"><span class="m part">◐</span></td><td class="main"><span class="m part">◐</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill ok">держит правило 12.10</span></td></tr>
+          <tr><th class="dec"><b>Р7. Тип поля записан словами JSON Schema</b><span class="muted">новое · смысл типов тот же</span></th>
+            <td class="main"><span class="m part">◐</span></td><td class="main"><span class="m same">●</span></td><td><span class="m same">●</span></td><td><span class="m na">—</span></td><td><span class="m na">—</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill ok">одни слова в узле и в схеме</span></td></tr>
+          <tr><th class="dec"><b>Р8. Чего JSON Schema не выражает — собственным словарём SpecSheriff</b><span class="muted">новое · identifiedBy, identifierOf, chosenBy, answersTo, источник значений</span></th>
+            <td class="main"><span class="m part">◐</span></td><td class="main"><span class="m part">◐</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill now">стандартный механизм, свои проверки</span></td></tr>
+          <tr><th class="dec"><b>Р9. Схема генерируется парами <code>if</code>/<code>then</code></b><span class="muted">новое · было: <code>oneOf</code> и член «прочее»</span></th>
+            <td class="main"><span class="m part">◐</span></td><td class="main"><span class="m same">●</span></td><td><span class="m part">◐</span></td><td><span class="m na">—</span></td><td><span class="m na">—</span></td><td><span class="m na">—</span></td>
+            <td class="verdict"><span class="pill ok">как на json-schema.org</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cards">
+      <article class="card">
+        <div class="top"><span class="id">Р1</span><h3>Вариант ссылается на свой RecordType через <code>refines</code></h3><span class="pill mute">без изменений</span></div>
+        <p class="js">JSON Schema: в схеме ссылку держит RecordType — <code>then: { $ref: вариант }</code>. Инструменты SpecSheriff строят её из входящих связей <code>refines</code>. OpenAPI делает так же, как сейчас SpecSheriff: схема варианта ссылается на базовую через <code>allOf</code>.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul><li>Новый вариант не меняет одобренный RecordType.</li><li>У варианта свой sid, своё одобрение и свои тесты.</li></ul></div>
+          <div class="minus"><h4>Минусы</h4><ul><li>Нужна проверка, что вариант ссылается на свой RecordType (12.12.5).</li></ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р2</span><h3>Вариант называет свои значения (<code>answersTo</code>)</h3><span class="pill mute">без изменений</span></div>
+        <p class="js">JSON Schema: <code>answersTo</code> становится условием <code>if</code> с <code>const</code> для каждого выбирающего поля. Сейчас то же значение записано как <code>const</code> внутри полной копии всех полей.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul><li>Условие стоит в узле рядом с полями, которые оно приносит.</li><li>Генерация прямая: одно значение — один <code>const</code>.</li></ul></div>
+          <div class="minus"><h4>Минусы</h4><ul><li><code>answersTo</code> — своё слово SpecSheriff; в самой схеме оно записано длиннее, через <code>if</code>.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="card cur">
+        <div class="top"><span class="id">Р3</span><h3>Поля варианта — рядом с полями RecordType</h3><span class="pill now">меняется</span></div>
+        <p class="js">JSON Schema: <code>then</code> добавляет свойства в тот же объект. Так json-schema.org показывает формат почтового индекса, который зависит от страны. OpenAPI, TypeScript и serde (внутренняя метка) тоже кладут поля варианта рядом с остальными.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Убирает единственное устройство RecordType, которого нет в JSON Schema.</li>
+            <li>Уходят тип <code>variant</code>, признак «гарантировано, когда есть значение», поля «при любом варианте» и строка 12.12.4.</li>
+            <li>Сгенерированные типы TypeScript и Python становятся обычным размеченным объединением, без вложенного объекта.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Поля варианта и поля RecordType делят одни имена: нужна новая проверка, что имена не совпадают.</li>
+            <li>Пересматриваются согласованные сегодня абзац 12.6 и строка 12.12.4, а также ваше решение от 31 октября о единственном поле типа <code>variant</code>.</li>
+            <li>По записи данных не видно, какие поля принёс вариант: это видно только по узлу варианта.</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р4</span><h3>Вариант выбирают значения нескольких полей</h3><span class="pill mute">без изменений</span></div>
+        <p class="js">JSON Schema: условие <code>if</code> с несколькими <code>const</code> — обычная запись, проверено на Ajv. На прошлой странице я поставил JSON Schema ◐ — это была ошибка. С JSON Schema как основным ориентиром это решение — уже не отступление от практики.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul><li>Сочетание полей, например способа оплаты и страны, не требует искусственного поля только для выбора варианта.</li></ul></div>
+          <div class="minus"><h4>Минусы</h4><ul><li><code>discriminator</code> в OpenAPI, Protobuf и serde выбирают вариант по одному полю. В сгенерированном коде для них сочетание полей выразить труднее.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р5</span><h3>Вариант объявлен там же, где его RecordType</h3><span class="pill mute">без изменений</span></div>
+        <p class="js">JSON Schema: варианты — записи <code>$defs</code> в той же схеме. Сама JSON Schema этого не требует: <code>$ref</code> может вести в любую схему.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul><li>Полное описание записей данных находится там, где ищут сам RecordType.</li></ul></div>
+          <div class="minus"><h4>Минусы</h4><ul><li>Держит только правило 12.6 и проверка 12.12.6, а не сама схема.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р6</span><h3>Ссылки только внутри своей части системы и на фрагменты из контрактов</h3><span class="pill mute">без изменений</span></div>
+        <p class="js">JSON Schema: <code>$ref</code> внутри схемы части системы и на общую схему контрактов. Границ частей системы JSON Schema не знает.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul><li>Граница видна в схеме: кроме контрактов, ссылок наружу нет.</li></ul></div>
+          <div class="minus"><h4>Минусы</h4><ul><li>Держит только правило 12.10 и его проверка.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="card cur">
+        <div class="top"><span class="id">Р7</span><h3>Тип поля записан словами JSON Schema</h3><span class="pill now">новое</span></div>
+        <p class="js">JSON Schema: <code>type</code>, <code>format</code>, <code>enum</code>, <code>items</code>, <code>additionalProperties</code>, <code>$ref</code>, <code>required</code>, <code>description</code>, <code>unevaluatedProperties</code>. OpenAPI 3.1 пользуется теми же словами.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Узел и сгенерированная схема записаны одними словами: таблица перевода из <code>email address</code> в <code>format: email</code> не нужна.</li>
+            <li>Эти слова знают и агенты, и разработчики. Узел можно проверить метасхемой JSON Schema.</li>
+            <li>Продолжает ваши решения: границы уже названы, как в JSON Schema, а дата проверяется форматом <code>date</code> JSON Schema.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Человеку без технической подготовки <code>{"type": "string", "format": "email"}</code> читать труднее, чем <code>email address</code>. Просмотрщику спецификации понадобится показывать типы словами.</li>
+            <li>Все узлы RecordType переписываются: в тестах инструментов и в saloon.</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р8</span><h3>Чего JSON Schema не выражает — собственным словарём SpecSheriff</h3><span class="pill now">новое</span></div>
+        <p class="js">JSON Schema 2020-12: собственный словарь, объявленный через <code>$vocabulary</code>, — стандартный способ добавить свои слова. В словарь SpecSheriff входят <code>identifiedBy</code>, <code>identifierOf</code>, <code>chosenBy</code>, <code>answersTo</code> и слово об источнике собранных значений.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul><li>Всё своё собрано в одном объявленном словаре, а не разбросано по формату узла.</li></ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Обычный валидатор JSON Schema эти слова пропускает: их по-прежнему проверяют инструменты SpecSheriff.</li>
+            <li>Ссылок между записями в JSON Schema нет совсем, поэтому идентификатор остаётся устройством SpecSheriff (12.12.2, 12.12.3).</li>
+          </ul></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="top"><span class="id">Р9</span><h3>Схема генерируется парами <code>if</code>/<code>then</code></h3><span class="pill now">новое</span></div>
+        <p class="js">JSON Schema: <code>allOf</code> из пар <code>if</code>/<code>then</code> — запись, которой json-schema.org описывает поля, зависящие от значения другого поля. OpenAPI 3.1 её допускает, но для вариантов чаще пишет <code>oneOf</code> с <code>discriminator</code>.</p>
+        <div class="pm">
+          <div class="plus"><h4>Плюсы</h4><ul>
+            <li>Значению без варианта не нужен член «прочее» с <code>not anyOf</code>: условие не срабатывает, лишние поля отклоняет <code>unevaluatedProperties</code>.</li>
+            <li>Ошибка называет поле: «нет обязательного поля address», а не «не подошёл ни один из трёх вариантов».</li>
+            <li>Вариант в схеме содержит только свои поля, а не полную копию полей RecordType.</li>
+          </ul></div>
+          <div class="minus"><h4>Минусы</h4><ul>
+            <li>Сама схема не мешает двум парам сработать сразу. Это по-прежнему держит проверка 12.12.9.</li>
+            <li>Нужен валидатор JSON Schema 2019-09 или новее, из-за <code>unevaluatedProperties</code>. Сгенерированная схема и так объявлена как 2020-12.</li>
+          </ul></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-cost">
+    <h2 id="h-cost">Что это меняет в работе</h2>
+    <ul class="plain">
+      <li>Согласованные сегодня абзац 12.6 о поле типа <code>variant</code> и строка 12.12.4 пересогласуются: 12.6 — в новой редакции выше, 12.12.4 убирается.</li>
+      <li>Ваше решение от 31 октября в 1.26 заменяется в части «не более одного поля типа <code>variant</code>». Его вторая часть остаётся: две независимые развилки — это две записи данных, у каждой свои выбирающие поля.</li>
+      <li>Строка 12.12.5 не меняется и по-прежнему ждёт вашего решения.</li>
+      <li>Шаг правки инструментов растёт: формат узла, генерация для трёх языков, проверки, правила описания инструментов и тесты. Предварительно это ещё 5–7 часов.</li>
+    </ul>
+  </section>
+</div>

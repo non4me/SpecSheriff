@@ -1,0 +1,76 @@
+{
+  "s-5z5gnu7pahr82xp": {
+    "verdict": "same",
+    "issues": [
+      "Note (no meaning moved): the input's 'one standing first in a run of re-exports … says it for the whole run' is now 'Where such a symbol stands first in a run of re-exports …, it says so for the whole run'. 'such a symbol' is the symbol that implements no rule, the only antecedent the input's 'one … says it' has.",
+      "Note (outside the rewrite, input and output alike): skills/tools/src/code.ts:204-207 carries any SpecTag of the first re-export over the run, `@spec <sid>` included, not only `@spec none`. The only test is for `@spec none` (skills/tools/test/unit/code.test.ts:36). The node and the code differ in scope. The owner may want to know."
+    ]
+  },
+  "s-zrsc6asgmhv8tnc": { "verdict": "same", "issues": [] },
+  "s-xr5xxa9cxf2mq5u": {
+    "verdict": "same",
+    "issues": [
+      "Note (no meaning moved), answering the rewriter's second doubt: the reason's first paragraph now opens with 'A runner judges the code against the nodes alone …', then 'So how it is started keeps from it everything of the session …'. The input stated this as a purpose ('so that it judges …'). In this specification's indicative register it reads as the reviewer's task. The isolation still serves it. The ground is the same.",
+      "Note (no meaning moved), answering the first doubt: keeping 'An agent sets variables of its own for the session it runs, and a new release may add more' whole is right. Splitting it would have to name whose release, which the input leaves open.",
+      "Note (no meaning moved): the input's 'the default written as any other value' is now 'Where the user answers with the default, they write it as any other value'. Both say the answered default is written, and only on an answer. This matches §s-477gtdrkw34dzxw ('the value the user answers, the default included')."
+    ]
+  },
+  "s-v4qus7raqnwzneb": {
+    "verdict": "same",
+    "issues": [
+      "Note (referent kept, but weaker): the output breaks the withdrawal's paragraph after 'It makes the node a draft.' The new paragraph opens 'Where no approval stands for any wording of the node, it appends nothing. Anyone may run it. It refuses:'. Its 'it' still means `sheriff approve --withdraw`, the subject of the paragraph before. But the paragraph no longer names its subject, and the first paragraph of the text, about `sheriff approve`, also ends in 'It refuses:'. 'Anyone may run it' must not be read as `sheriff approve`, which refuses one who is no owner. A safe form: keep these sentences in the withdrawal's paragraph, or open the new one with 'Where no approval stands for any wording of the node, `sheriff approve --withdraw` appends nothing.'",
+      "Note, answering the doubts: 'It makes the node a draft' and 'make a draft every node' are ordinary nouns, rightly left without backticks. The status values are backticked where they stand as values ('its status to `approved`', 'with the status `approved`'). 'An owner is named by an email' standing alone moves nothing."
+    ]
+  },
+  "s-4mej6ccn7xu3d3p": { "verdict": "same", "issues": [] },
+  "s-n4m5zvh96yb299p": {
+    "verdict": "same",
+    "issues": [
+      "Note (no meaning moved), answering the second doubt: the input named 'each such tool' (ending with an exit status other than zero) and 'it' (the one changing the staged files or the message). The output says 'The hook names each of the project's tools that makes it fail'. That is the same set: a refusal of the checks names no tool in either. The list after 'The hook fails where:' keeps the input's 'or': each case alone fails the hook."
+    ]
+  },
+  "s-zh2vcr3xjumppg5": {
+    "verdict": "changed",
+    "issues": [
+      "Text, the skill `spec-init`: the input says it offers each setting 'to confirm or replace, writing what they answer and marking it asked (§s-xr5xxa9cxf2mq5u)'. Its 'it' may be the setting or the runner. The output resolves it, without a doubt, as a per-setting step: 'For each other setting, it: … marks the setting asked'. The mark is per runner. §s-477gtdrkw34dzxw says 'It asks so once for each runner on each machine, and marks it asked in the git configuration, as `specsheriff.review.claudeAsked` or `specsheriff.review.codexAsked`'. skills/claude-code/hooks/session-start.sh:86 and :101 read and write `specsheriff.review.${runner}Asked`. skills/claude-code/skills/spec-init/SKILL.md step 5 says to set the one mark after the settings are written. No per-setting mark exists. The output now requires one, which the input did not. Suggested: keep 'offers' and 'writes' per setting, and take the mark out of the list: 'It then marks the runner asked (§s-xr5xxa9cxf2mq5u).' Otherwise keep the input's unresolved 'marking it asked' and report it as a doubt.",
+      "Note (no meaning moved): 'It passes over each setting the user's git configuration holds or the user was asked for' then 'For each other setting' is the input's 'that their git configuration does not hold and they were not asked for', by De Morgan."
+    ]
+  },
+  "s-2pdy9gw2jrjvfb4": {
+    "verdict": "changed",
+    "issues": [
+      "Text, the skill `spec-init`: the same defect as in §s-zh2vcr3xjumppg5. The input's 'writing what they answer and marking it asked (§s-xr5xxa9cxf2mq5u)' is now the per-setting step '- marks the setting asked'. The mark is per runner, `specsheriff.review.codexAsked` (§s-477gtdrkw34dzxw; skills/codex/hooks/session-start.sh:86 and :101; skills/codex/skills/spec-init/SKILL.md step 5). Suggested: 'It then marks the runner asked (§s-xr5xxa9cxf2mq5u)', outside the per-setting list, or the input's 'marking it asked' kept as it stood.",
+      "Note (no meaning moved): the reason's 'so neither waits on the other, and each can change for its agent alone' is now 'So neither plugin waits on the other. Each can also change for its agent alone.' 'neither plugin' is the reading that the input's parallel 'each can change for its agent alone' forces."
+    ]
+  },
+  "s-n76wt2bkqdmh78x": {
+    "verdict": "same",
+    "issues": [
+      "Note, answering the doubt: the input also gave the three script names as one run after 'a call to the plugin's script for that hook', not paired with each hook. Nothing moved."
+    ]
+  },
+  "s-pvzms7d8kxb8dk2": {
+    "verdict": "minor",
+    "issues": [
+      "Rename missed, text and reason: the list of the files of types is a rule's list. skills/tools/src/types.ts:54 and :62 find a node of the stack holding `list` that `implements` §s-e877bnfa559tvk9, and read `list.members`. RULES.md section 4 writes a rule's list as `TextRule.list`. The g3 rewrite did so for the analogous levels of the domains ('the members of the `TextRule.list` carried by its rule that refines …'). The text's 'The list of those files is defined in the rule that describes …' could be '… is defined as the `TextRule.list` of the rule that describes …'. The reason's 'Defined as a list in one rule' could be 'Defined as a `TextRule.list` in one rule'. Its 'from a list in the project's own guidelines' could be 'from a `TextRule.list` in the project's own guidelines' (skills/tools/src/model.ts:235 reads the levels from `list.members` too).",
+      "Note (no meaning moved): 'is defined in the section …, in the rule …' is now 'is defined in the rule …. That rule stands in the section … the stack.' types.ts:58 looks for the rule in the stack's file only. In this register, 'That rule stands' is as binding as the input's placement. On the doubt: 'as the rule on data structures requires' still stands right after the rule, as in the input. The ambiguity is kept, not resolved."
+    ]
+  },
+  "s-suv42g8r3ra2h6b": {
+    "verdict": "same",
+    "issues": [
+      "Note (no meaning moved), answering the doubt: the output's 'That type of its own … carries a SpecTag with the same sid' is the reading skills/tools/src/types.ts:308 implements. There `typedDict` writes `# @spec ${sid}`, the RecordType's sid, above the object's own type too. The other reading, the Python type itself, is already stated by 'Each type carries a SpecTag with the sid of its RecordType'. Nothing is lost.",
+      "Note (no rename missed): 'the fields of every RecordType above the node' and 'the node's own fields' stay words. They speak of the fields a generated type holds. `RecordType.fields` would mislead in the reason's 'holds that one's fields': a refining RecordType's own `fields` do not hold the inherited ones. 'the link from each type to its node' becoming 'the binding' follows RULES.md ('links' → 'binds')."
+    ]
+  },
+  "s-nk8td3ez58gahc4": { "verdict": "same", "issues": [] },
+  "s-4npdup7mjkva69y": {
+    "verdict": "minor",
+    "issues": [
+      "Rename missed, reason, fourth paragraph: '… keeps its type and passes the same check'. That check is the RuntimeCheck generated for the field: the table's row 'identifier of' gives in JSON Schema 'what the field identifying that RecordType gives'. REVIEW.md keeps 'check' only where it is not such a runtime check. The same reason renames 'the runtime checks' two paragraphs earlier. Suggested: '… keeps its type and passes the same RuntimeCheck.'",
+      "Rename possibly missed (weaker), text, the order of gathered values: '- the members of one list in their order.' The values the domains add are the `members` of a rule's list (skills/tools/src/values.ts:39 and :53-55). RULES.md writes that as `TextRule.list` with its part `members`. The g4 rewrite wrote 'the members of each `TextRule.list` a rule of a domain adds to it'. Suggested: '- the members of one `TextRule.list` in their order.'",
+      "Note, answering the doubt: the table's first column names values the schema holds (specs/_schema/node.schema.json:557-560). Backticking them would follow RULES.md section 4, and its table rule allows names renamed. Left plain, no meaning moves. The table is identical cell for cell."
+    ]
+  },
+  "s-p92k6vfe3ju27at": { "verdict": "same", "issues": [] }
+}

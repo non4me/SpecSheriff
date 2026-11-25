@@ -1,0 +1,148 @@
+<title>Узел описания инструментов: Повторяющиеся sid, термины и имена RecordType</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Повторяющиеся sid, термины и имена RecordType <span style="color:var(--muted);font-weight:400">· Duplicate sids, terms and names of RecordTypes</span></h1>
+<div class="sub">tools 7.1.3 · s-vke5hakwf3uyrjs · предложение от 2026-11-22 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div>Узлы с одним и тем же sid, термином или именем RecordType могут храниться в разных файлах, поэтому каждый повтор находится, только если прочитать все узлы спецификации.</div>
+  <div><div class="label">Reason</div>Nodes that hold the same sid, term or name of a RecordType may be kept in different files, so each duplicate can be found only by reading every node of the specification.</div>
+</div>
+<p class="hint" style="margin-top:8px">Новое, предложено рецензентом: у прежнего узла не было обоснования.</p>
+
+<div class="reason">
+  <div><div class="label">Пример</div>В ячейке <code>TableRule</code> лежит узел, sid которого скопирован из правила в другом файле. <code>sheriff validate</code> отвергает этот sid и называет оба узла. Ближайшая ошибка — сравнивать только узлы вне ячеек: тогда этот повтор пропускается.</div>
+  <div><div class="label">Example</div>A cell of a <code>TableRule</code> holds a node whose sid was copied from a rule in another file. <code>sheriff validate</code> refuses that sid and names both nodes. The easiest mistake to make is to compare only the nodes outside cells, and such a comparison misses this duplicate.</div>
+</div>
+<p class="hint" style="margin-top:8px"></p>
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-kag2m9tzdnduxdx">
+  <td class="en"><p><code>sheriff validate</code> refuses each of the following, naming the file and the location (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>) of every node that holds it:</p></td>
+  <td class="ru"><p><code>sheriff validate</code> отвергает каждое из перечисленного ниже и называет файл и расположение (<span class="cite" data-sid="s-kag2m9tzdnduxdx" title="A node's location">§8.5</span>) каждого узла, у которого оно есть:</p></td>
+  <td class="change">Было: «<code>sheriff validate</code> собирает каждый sid, расположение, термин и имя RecordType и пересчитывает каждое». Теперь узел начинается с того, что отвергается. Узел назван файлом и расположением: два узла с одним sid по sid не различить.</td>
+  <td class="links"><span class="cite" data-sid="s-kag2m9tzdnduxdx">A node's location</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="s-5fewsp22mmdz7y6 s-vsu97qk96ugyh2t">
+  <td class="en"><div class="li">• a sid that more than one node of the specification holds, including a node in a cell of a <code>TableRule</code> (<span class="cite" data-sid="s-5fewsp22mmdz7y6" title="A rule may be a table">§8.6</span>, <span class="cite" data-sid="s-vsu97qk96ugyh2t" title="No two nodes of the specification share a sid">§10.1.3</span>);</div></td>
+  <td class="ru"><div class="li">• sid, который есть больше чем у одного узла спецификации, в том числе у узла в ячейке <code>TableRule</code> (<span class="cite" data-sid="s-5fewsp22mmdz7y6" title="A rule may be a table">§8.6</span>, <span class="cite" data-sid="s-vsu97qk96ugyh2t" title="No two nodes of the specification share a sid">§10.1.3</span>);</div></td>
+  <td class="change">Строка 10.1.3. Узел архива больше не хранит sid, поэтому архив не пересчитывается. Узлы в ячейках упомянуты только здесь: у узла в ячейке нет заголовка, а значит, нет ни термина, ни имени.</td>
+  <td class="links"><span class="cite" data-sid="s-5fewsp22mmdz7y6">A rule may be a table</span><span class="cite" data-sid="s-vsu97qk96ugyh2t">No two nodes of the specification share a sid</span></td>
+</tr>
+<tr class="part" id="part-2" data-cites="s-ypa92gpcj3f5zj8 s-bfzm4w6xveq8fbx">
+  <td class="en"><div class="li">• a term (<span class="cite" data-sid="s-ypa92gpcj3f5zj8" title="A term is defined once, in the contracts section">§3.2</span>) that more than one term node of the specification names, regardless of letter case (<span class="cite" data-sid="s-bfzm4w6xveq8fbx" title="No two term nodes of the specification name the same term, regardless of letter case">§10.1.7</span>);</div></td>
+  <td class="ru"><div class="li">• термин (<span class="cite" data-sid="s-ypa92gpcj3f5zj8" title="A term is defined once, in the contracts section">§3.2</span>), который назван больше чем в одном узле-термине спецификации, без учёта регистра букв (<span class="cite" data-sid="s-bfzm4w6xveq8fbx" title="No two term nodes of the specification name the same term, regardless of letter case">§10.1.7</span>);</div></td>
+  <td class="change">Строка 10.1.7; как было.</td>
+  <td class="links"><span class="cite" data-sid="s-ypa92gpcj3f5zj8">A term is defined once, in the contracts section</span><span class="cite" data-sid="s-bfzm4w6xveq8fbx">No two term nodes of the specification name the same term, regardless of letter case</span></td>
+</tr>
+<tr class="part" id="part-3" data-cites="s-7vm323mhry2enx3 s-jh85u42agh5k73x s-hzuzn8hbq6q9q4s">
+  <td class="en"><div class="li">• a name that more than one RecordType (<span class="cite" data-sid="s-7vm323mhry2enx3" title="RecordType">§12.1</span>) has, regardless of letter case (<span class="cite" data-sid="s-jh85u42agh5k73x" title="RecordType names are unique across the specification, regardless of letter case">§12.12.1</span>), where the project has chosen the RecordType extension (<span class="cite" data-sid="s-hzuzn8hbq6q9q4s" title="RecordType">§12</span>).</div></td>
+  <td class="ru"><div class="li">• имя, которое есть больше чем у одного RecordType (<span class="cite" data-sid="s-7vm323mhry2enx3" title="RecordType">§12.1</span>), без учёта регистра букв (<span class="cite" data-sid="s-jh85u42agh5k73x" title="RecordType names are unique across the specification, regardless of letter case">§12.12.1</span>), если проект выбрал расширение RecordType (<span class="cite" data-sid="s-hzuzn8hbq6q9q4s" title="RecordType">§12</span>).</div></td>
+  <td class="change">Строка 12.12.1 таблицы проверок расширения RecordType; как было.</td>
+  <td class="links"><span class="cite" data-sid="s-7vm323mhry2enx3">RecordType</span><span class="cite" data-sid="s-jh85u42agh5k73x">RecordType names are unique across the specification, regardless of letter case</span><span class="cite" data-sid="s-hzuzn8hbq6q9q4s">RecordType</span></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+<li>Counting locations: no row asks for it any longer. Row 10.1.5 (<span class="cite" data-sid="s-tvxhtjbj7mmpmnx" title="The location of each node of the specification names where that node is in the specification">§10.1.5</span>) checks each node's location, which makes the check that no two nodes share a location redundant (the owner, 2026-11-12).</li>
+<li>Counting the sids of the archive: an archived node holds no sid (<span class="cite" data-sid="s-f2b5zvc565s242f" title="The archive">§2.6</span>).</li>
+<li>The <code>implements</code> link to the main table of checks (<span class="cite" data-sid="s-jau82aq9juv9zzh" title="The main table of checks">§10.1</span>): the node implements its rows, as the agreed drafts of this stage do.</li>
+<li>The check of term nodes outside the contracts section: it moved to the new node "Term nodes outside the contracts section" (<span class="cite" data-sid="s-yauyedny2yzvs4c" title="Term nodes outside the contracts section">§tools 7.1.3a (new)</span>).</li>
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-vsu97qk96ugyh2t"><span class="loc">реализует · 10.1.3</span> <b>No two nodes of the specification share a sid</b><br><span class="meta">guidelines · s-vsu97qk96ugyh2t</span></li>
+<li class="node" data-sid="s-bfzm4w6xveq8fbx"><span class="loc">реализует · 10.1.7</span> <b>No two term nodes of the specification name the same term, regardless of letter case</b><br><span class="meta">guidelines · s-bfzm4w6xveq8fbx</span></li>
+<li class="node" data-sid="s-jh85u42agh5k73x"><span class="loc">реализует · 12.12.1</span> <b>RecordType names are unique across the specification, regardless of letter case</b><br><span class="meta">extension recordtype · s-jh85u42agh5k73x</span></li>
+<li class="node" data-sid="s-5fewsp22mmdz7y6"><span class="loc">ссылается · 8.6</span> <b>A rule may be a table</b><br><span class="rut">Правило может быть таблицей</span><br><span class="meta">guidelines · s-5fewsp22mmdz7y6</span></li>
+<li class="node" data-sid="s-ypa92gpcj3f5zj8"><span class="loc">ссылается · 3.2</span> <b>A term is defined once, in the contracts section</b><br><span class="rut">Термин определяется один раз, в контрактах</span><br><span class="meta">guidelines · s-ypa92gpcj3f5zj8</span></li>
+<li class="node" data-sid="s-hzuzn8hbq6q9q4s"><span class="loc">ссылается · 12</span> <b>RecordType</b><br><span class="meta">extension recordtype · s-hzuzn8hbq6q9q4s</span></li>
+<li class="node" data-sid="s-7vm323mhry2enx3"><span class="loc">ссылается · 12.1</span> <b>RecordType</b><br><span class="rut">RecordType</span><br><span class="meta">extension recordtype · s-7vm323mhry2enx3</span></li>
+<li class="node" data-sid="s-kag2m9tzdnduxdx"><span class="loc">ссылается · 8.5</span> <b>A node's location</b><br><span class="rut">Расположение узла</span><br><span class="meta">guidelines · s-kag2m9tzdnduxdx</span></li>
+</ul>
+
+<h2>Тесты, привязанные к узлу сейчас</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Одобренная формулировка</h2>
+<p class="hint">Пока вы не согласились с предложением, текстом узла остаётся одобренная формулировка.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate` collects every sid, location, term and RecordType's name, and counts each.
+
+- A term and a RecordType's name are counted in lower case.
+- For each term node, the part it stands in is looked up.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>

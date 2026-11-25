@@ -1,0 +1,1199 @@
+<title>Английский: правки</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header with the counts, then one card per node holding its proposals, each the sentence as it stands
+     beside the sentence proposed, and why. One dark look, as every page the owner reads. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --was: #e07a6a; --now: #5fbf86; --accent: #e8b75a;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 16px; }
+  h1 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.05rem; margin: 0; }
+  p { margin: 0; }
+  .muted { color: var(--muted); max-width: 80ch; }
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 10px; min-width: 0; }
+  .card .num { font-family: var(--mono); color: var(--muted); font-size: 0.85rem; }
+  ol { margin: 0; padding-left: 20px; display: grid; gap: 12px; }
+  .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .kind, .field { font-family: var(--mono); font-size: 0.75rem; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--rule); }
+  .k-calque { color: var(--was); border-color: var(--was); }
+  .k-collocation { color: var(--accent); border-color: var(--accent); }
+  .field { color: var(--muted); }
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .pair > div { min-width: 0; }
+  .lab { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .was { border-left: 3px solid var(--was); padding-left: 8px; }
+  .now { border-left: 3px solid var(--now); padding-left: 8px; }
+  .why { color: var(--muted); font-size: 0.92rem; }
+  code { font-family: var(--mono); font-size: 0.86em; }
+  .note { font-size: 0.9rem; color: var(--accent); }
+  .dropped .now { text-decoration: line-through; opacity: 0.6; }
+  details.card > summary { cursor: pointer; display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+</style>
+<div class="wrap">
+  <header style="display:grid; gap:8px">
+    <h1>Английский: подстрочники и неидиоматичные места</h1>
+    <p class="muted">Предложения по английскому текстам черновиков новой формы и таблицы проверок 10.1. <b>Применены 12 ноября по вашему решению все, кроме зачёркнутых</b>; статусы узлов не менялись, русский не менялся. Затем по всей спецификации выровнены «the contracts section» и «on a commit / on a push».</p>
+    <p class="muted">Всего: 355; из них в повторяющихся группах 94, остальные 261 в 97 узлах — подстрочник 149, сочетание слов 94, грамматика 53, двусмысленность 59.</p>
+  </header>
+  <h2 style="margin-top:8px">Решения на всю спецификацию — повторяющиеся места</h2>
+  <p class="muted">Каждая группа решается один раз: принять для всех её мест или нет. Раскройте группу, чтобы увидеть места.</p>
+  <details class="card"><summary><b>«holds» в значении «содержит» → «contains». В спецификации «hold» значит ещё и «быть верным» (a reason holds), и два смысла путаются.</b> <span class="field">мест: 20</span></summary><ol><li class="f"><div class="meta"><span class="field">1.1.4 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">It may also hold any further business information needed to understand the rule exactly</p></div><div><p class="now">It may also contain any further business information needed to understand the rule precisely</p></div></div></li><li class="f"><div class="meta"><span class="field">1.1.5 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">It also holds all the technical detail needed</p></div><div><p class="now">It also contains all the technical detail needed</p></div></div></li><li class="f"><div class="meta"><span class="field">1.2.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">One node holds only one numbered rule.</p></div><div><p class="now">A node contains only one numbered rule.</p></div></div></li><li class="f"><div class="meta"><span class="field">1.2.6 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The code implements it and holds nothing of its own.</p></div><div><p class="now">The code implements it and contains nothing of its own.</p></div></div></li><li class="f"><div class="meta"><span class="field">1.5.2 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Code that is technical, holding no business logic, must</p></div><div><p class="now">Technical code, which contains no business logic, must</p></div></div></li><li class="f"><div class="meta"><span class="field">1.6.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">can be seen only at the edits, since a commit holds the test and the code together</p></div><div><p class="now">can be seen only edit by edit, since a commit contains the test and the code together</p></div></div></li><li class="f"><div class="meta"><span class="field">4.1 · title</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">What the technical appendix holds</p></div><div><p class="now">What the technical appendix contains</p></div></div></li><li class="f"><div class="meta"><span class="field">4.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The technical appendix holds:</p></div><div><p class="now">The technical appendix contains:</p></div></div></li><li class="f"><div class="meta"><span class="field">6.3 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">when any of its properties holds <code>§</code> followed by that node's sid, text quoted as code included.</p></div><div><p class="now">when any of its properties contains <code>§</code> followed by that node's sid, even in text formatted as code.</p></div></div></li><li class="f"><div class="meta"><span class="field">7.7 · title</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A node holds what is applied together, and nothing applied apart</p></div><div><p class="now">A node contains what is applied together, and nothing applied separately</p></div></div></li><li class="f"><div class="meta"><span class="field">7.7 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">a node that holds requirements carried out apart does not say which of them the code carries out.</p></div><div><p class="now">a node that contains requirements carried out separately does not say which of them the code implements.</p></div></div></li><li class="f"><div class="meta"><span class="field">8.1 · title</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A section holds rules</p></div><div><p class="now">A section contains rules</p></div></div></li><li class="f"><div class="meta"><span class="field">8.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A section is a node that holds a group of rules. It holds at least one rule.</p></div><div><p class="now">A section is a node that contains a group of rules. It contains at least one rule.</p></div></div></li><li class="f"><div class="meta"><span class="field">8.2 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">for the requirement that the section holds at least one rule:</p></div><div><p class="now">for the purposes of the requirement that the section contains at least one rule:</p></div></div></li><li class="f"><div class="meta"><span class="field">8.2 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">- a term the section holds;</p></div><div><p class="now">- a term the section contains;</p></div></div></li><li class="f"><div class="meta"><span class="field">8.2 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">- a node of a project's own kind that the section holds;</p></div><div><p class="now">- a node of a project's own kind that the section contains;</p></div></div></li><li class="f"><div class="meta"><span class="field">8.2 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">a section holding only terms, nodes of a project's own kind or sections would be considered to hold no rule.</p></div><div><p class="now">a section containing only terms, nodes of a project's own kind or sections would be considered to contain no rules.</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1 (head) · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">This table holds the complete list</p></div><div><p class="now">This table contains the complete list</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.27 · text</span></div><div class="pair"><div><p class="was">goes back to draft holds a withdrawal</p></div><div><p class="now">goes back to draft contains a withdrawal</p></div></div></li><li class="f"><div class="meta"><span class="field">10.3 · reason</span></div><div class="pair"><div><p class="was">A commit holds a test and its code together whichever was written first, so the order of the work can be held only where the edits are made.</p></div><div><p class="now">A commit contains a test and its code together, whichever was written first, so the order of the work can be enforced only where the edits are made.</p></div></div></li></ol></details>
+  <details class="card"><summary><b>«stands in / on» в значении «находится» → «is in», «is kept in», «is set out in». По-английски «stand in» значит «замещать».</b> <span class="field">мест: 25</span></summary><ol><li class="f"><div class="meta"><span class="field">1.2.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">belong to that node rather than standing beside it</p></div><div><p class="now">belong to that node rather than to nodes beside it</p></div></div></li><li class="f"><div class="meta"><span class="field">1.3.5 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">An approval stands through a change to:</p></div><div><p class="now">An approval survives a change to:</p></div></div></li><li class="f"><div class="meta"><span class="field">1.5.2 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">covered by the SpecTag of the one it stands in</p></div><div><p class="now">covered by the SpecTag of the symbol that encloses it</p></div></div></li><li class="f"><div class="meta"><span class="field">2.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The requirements for the tools stand in the appendix of the tools.</p></div><div><p class="now">The requirements for the tools are set out in the appendix of the tools.</p></div></div></li><li class="f"><div class="meta"><span class="field">2.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The tools can change while the rule they carry out stays, so the requirements for them stand apart from the rules.</p></div><div><p class="now">The tools can change while the rule they implement stays the same, so the requirements for them are kept apart from the rules.</p></div></div></li><li class="f"><div class="meta"><span class="field">3.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">It stands as a section of its own within the base specification.</p></div><div><p class="now">It is a section of its own within the base specification.</p></div></div></li><li class="f"><div class="meta"><span class="field">4.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">so they stand in one section, which spans the system as the stack does</p></div><div><p class="now">so they are kept in one section, which spans the whole system as the stack does</p></div></div></li><li class="f"><div class="meta"><span class="field">4.2 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">which stands in the section of the stack;</p></div><div><p class="now">which goes in the section on the stack;</p></div></div></li><li class="f"><div class="meta"><span class="field">6.3 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The link stands in the node's <code>refs</code> list, apart from the citation.</p></div><div><p class="now">The link is kept in the node's <code>refs</code> list, apart from the citation.</p></div></div></li><li class="f"><div class="meta"><span class="field">6.4 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">They stand in the same list as the links the node declares</p></div><div><p class="now">They are kept in the same list as the links the node declares</p></div></div></li><li class="f"><div class="meta"><span class="field">7.3 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">while the shortcoming stands</p></div><div><p class="now">while the shortcoming persists</p></div></div></li><li class="f"><div class="meta"><span class="field">7.6 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">More than one qualification of one kind, such as conditions, exceptions or steps, stands as a bulleted list in the text.</p></div><div><p class="now">Where there is more than one qualification of the same kind, such as conditions, exceptions or steps, they are set out as a bulleted list in the text.</p></div></div></li><li class="f"><div class="meta"><span class="field">7.7 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Requirements that a reader needs together, to carry out any one of them rightly, stand in one node.</p></div><div><p class="now">Requirements that a reader needs together to carry out any one of them correctly belong in one node.</p></div></div></li><li class="f"><div class="meta"><span class="field">7.7 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A requirement carried out rightly without the other requirements of its node stands in a node of its own.</p></div><div><p class="now">A requirement that can be carried out correctly without the other requirements of its node belongs in a node of its own.</p></div></div></li><li class="f"><div class="meta"><span class="field">7.7 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A requirement it needs that stands in another node</p></div><div><p class="now">A requirement it needs that is stated in another node</p></div></div></li><li class="f"><div class="meta"><span class="field">7.13 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">capitals may stand on one word or on two running (REST API).</p></div><div><p class="now">one word, or two in a row (REST API), may be set in capitals.</p></div></div></li><li class="f"><div class="meta"><span class="field">9.7 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">An <code>exempts</code> link stands only where</p></div><div><p class="now">An <code>exempts</code> link is allowed only where</p></div></div></li><li class="f"><div class="meta"><span class="field">9.7 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">would be reported for as long as it stands</p></div><div><p class="now">would be reported as unimplemented for as long as it exists</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.6 · text</span></div><div class="pair"><div><p class="was">stands in contracts</p></div><div><p class="now">is in contracts</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.8 · text</span></div><div class="pair"><div><p class="was">while an approval stands for its present wording</p></div><div><p class="now">while an approval of its current wording is in force</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.11 · text</span></div><div class="pair"><div><p class="was">Otherwise it stands in the archive</p></div><div><p class="now">Otherwise it is in the archive</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.13 · text</span></div><div class="pair"><div><p class="was">A link of type <code>cites</code> stands only where</p></div><div><p class="now">A link of type <code>cites</code> is valid only where</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.29 · text</span></div><div class="pair"><div><p class="was">stands on the symbol it binds</p></div><div><p class="now">is placed on the symbol it binds</p></div></div></li><li class="f"><div class="meta"><span class="field">12.1.3 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">stand as a draft</p></div><div><p class="now">be a draft</p></div></div></li><li class="f"><div class="meta"><span class="field">12.4.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">the higher its domains stand on the diagram</p></div><div><p class="now">the higher its domains appear on the diagram</p></div></div></li></ol></details>
+  <details class="card"><summary><b>«carries out» о правилах → «implements».</b> <span class="field">мест: 11</span></summary><ol><li class="f"><div class="meta"><span class="field">1.1.5 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">How a rule is carried out has no other home</p></div><div><p class="now">How a rule is implemented has no other home</p></div></div></li><li class="f"><div class="meta"><span class="field">2.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">the tools that ensure those rules are carried out</p></div><div><p class="now">the tools that enforce those rules</p></div></div></li><li class="f"><div class="meta"><span class="field">2.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">It describes how one toolset carries those rules out:</p></div><div><p class="now">It describes how one toolset implements those rules:</p></div></div></li><li class="f"><div class="meta"><span class="field">2.2 · title</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The appendix of the tools carries out the guidelines</p></div><div><p class="now">The appendix of the tools implements the guidelines</p></div></div></li><li class="f"><div class="meta"><span class="field">2.2 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">the rules of the guidelines it carries out</p></div><div><p class="now">the rules of the guidelines it implements</p></div></div></li><li class="f"><div class="meta"><span class="field">2.2 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">the rules it carries out can drift apart unseen</p></div><div><p class="now">the rules it implements can drift apart unnoticed</p></div></div></li><li class="f"><div class="meta"><span class="field">4.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A shortcoming is not how a rule is carried out</p></div><div><p class="now">A shortcoming is not how a rule is implemented</p></div></div></li><li class="f"><div class="meta"><span class="field">9.2 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">the system's code does not carry out</p></div><div><p class="now">the system's code does not implement</p></div></div></li><li class="f"><div class="meta"><span class="field">9.7 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A rule the system's code cannot carry out</p></div><div><p class="now">A rule that the system's code cannot implement</p></div></div></li><li class="f"><div class="meta"><span class="field">12.1.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">that carry its rules out</p></div><div><p class="now">that implement its rules</p></div></div></li><li class="f"><div class="meta"><span class="field">12.1.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The rules of an extension are carried out by tools</p></div><div><p class="now">The rules of an extension are implemented by tools</p></div></div></li></ol></details>
+  <details class="card"><summary><b>«answers for» → «is accountable for» / «is responsible for».</b> <span class="field">мест: 5</span></summary><ol><li class="f"><div class="meta"><span class="field">1.1.6 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">those who answer for a rule</p></div><div><p class="now">those accountable for a rule</p></div></div></li><li class="f"><div class="meta"><span class="field">1.1.6 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Each of them answers for all of it.</p></div><div><p class="now">Each of them is accountable for all of it.</p></div></div></li><li class="f"><div class="meta"><span class="field">1.3.4 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">someone who answers for a rule</p></div><div><p class="now">someone accountable for a rule</p></div></div></li><li class="f"><div class="meta"><span class="field">12.2.3 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">who answers for its wording</p></div><div><p class="now">who is responsible for its wording</p></div></div></li><li class="f"><div class="meta"><span class="field">12.3.1 · reason</span></div><div class="pair"><div><p class="was">answers for the new format</p></div><div><p class="now">is responsible for the new format</p></div></div></li></ol></details>
+  <details class="card"><summary><b>«at a push / at a commit» → «on a push». Решить одну форму на всю спецификацию.</b> <span class="field">мест: 4</span></summary><ol><li class="f"><div class="meta"><span class="field">1.3.2 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Only what a commit leaves alone is relieved</p></div><div><p class="now">Only what a commit leaves alone may keep its earlier form</p></div></div></li><li class="f"><div class="meta"><span class="field">1.6.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">run at a push if the specification</p></div><div><p class="now">run on a push if the specification</p></div></div></li><li class="f"><div class="meta"><span class="field">1.6.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The tests run at a push rather than at a commit</p></div><div><p class="now">The tests run on a push rather than on a commit</p></div></div></li><li class="f"><div class="meta"><span class="field">1.6.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">No test runs at a push while</p></div><div><p class="now">No test runs on a push while</p></div></div></li></ol></details>
+  <details class="card"><summary><b>Безглагольное «So not X, but Y» в правилах о том, как писать узел → «So a rule says not X but Y».</b> <span class="field">мест: 7</span></summary><ol><li class="f"><div class="meta"><span class="field">7.3 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">So not “credentials are kept encrypted”, which binds nobody, but</p></div><div><p class="now">So a rule says not “credentials are kept encrypted”, which binds nobody, but</p></div></div></li><li class="f"><div class="meta"><span class="field">7.6 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">So not “the system refuses</p></div><div><p class="now">So a node's text says not “the system refuses</p></div></div></li><li class="f"><div class="meta"><span class="field">7.8 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">So never just a structure, a check or a model, but</p></div><div><p class="now">So a rule never names just a structure, a check or a model, but</p></div></div></li><li class="f"><div class="meta"><span class="field">7.8 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">So not “a limit on how many records a listing shows”</p></div><div><p class="now">So a rule says not “a limit on how many records a listing shows”</p></div></div></li><li class="f"><div class="meta"><span class="field">7.10 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">So not “an operator</p></div><div><p class="now">So a definition says not “an operator</p></div></div></li><li class="f"><div class="meta"><span class="field">7.12 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">So not “contracts holds 45 nodes”, which was true for one day, but the figure counted off the specification's nodes each time it is shown.</p></div><div><p class="now">So a node does not say “contracts holds 45 nodes”, which was true for one day. Instead, the figure is counted from the specification's nodes each time it is shown.</p></div></div></li><li class="f"><div class="meta"><span class="field">7.16 · examples</span></div><div class="pair"><div><p class="was">So not: the request</p></div><div><p class="now">But not: the request</p></div></div></li></ol></details>
+  <details class="card"><summary><b>«the one source of truth» → «the single source of truth», устойчивое выражение.</b> <span class="field">мест: 4</span></summary><ol><li class="f"><div class="meta"><span class="field">1.2.6 · title</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The one source of truth is the specification</p></div><div><p class="now">The single source of truth is the specification</p></div></div></li><li class="f"><div class="meta"><span class="field">1.2.6 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">The one source of truth about the system</p></div><div><p class="now">The single source of truth about the system</p></div></div></li><li class="f"><div class="meta"><span class="field">1.5.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">ensures the code's agreement with the specification and gives certainty that there is always one source of truth</p></div><div><p class="now">keeps the code in agreement with the specification and ensures that there is always a single source of truth</p></div></div></li><li class="f"><div class="meta"><span class="field">10.12 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">the one source of truth</p></div><div><p class="now">the single source of truth</p></div></div></li></ol></details>
+  <details class="card"><summary><b>«contracts» как имя части с глаголом в единственном числе («Contracts agrees») → «the contracts section». Решение на всю спецификацию.</b> <span class="field">мест: 7</span></summary><ol><li class="f"><div class="meta"><span class="field">3.1 · title</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">What the sections share is agreed in contracts</p></div><div><p class="now">What the sections share is agreed in the contracts section</p></div></div></li><li class="f"><div class="meta"><span class="field">3.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Contracts agrees what the sections of the specification share:</p></div><div><p class="now">The contracts section agrees on what the sections of the specification share:</p></div></div></li><li class="f"><div class="meta"><span class="field">3.1 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Contracts exists where the rules of the specification share something</p></div><div><p class="now">The contracts section exists where the rules of the specification share something</p></div></div></li><li class="f"><div class="meta"><span class="field">3.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Holding in contracts only what binds more than one section keeps contracts from answering for</p></div><div><p class="now">Keeping in the contracts section only what binds more than one section keeps that section from answering for</p></div></div></li><li class="f"><div class="meta"><span class="field">3.1 · reason</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">Contracts exists only to agree what the parts</p></div><div><p class="now">The contracts section exists only to agree on what the parts</p></div></div></li><li class="f"><div class="meta"><span class="field">3.2 · title</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">A term is defined once, in contracts</p></div><div><p class="now">A term is defined once, in the contracts section</p></div></div></li><li class="f"><div class="meta"><span class="field">3.2 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">they are added to contracts</p></div><div><p class="now">they are added to the contracts section</p></div></div></li></ol></details>
+  <details class="card"><summary><b>Абсолютные обороты «a section left out», «… included» → «except …», «including …».</b> <span class="field">мест: 8</span></summary><ol><li class="f"><div class="meta"><span class="field">9.7 · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">a rule of a project's own kind included</p></div><div><p class="now">including a rule of a project's own kind</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1 (head) · text</span><span class="field">согласован</span></div><div class="pair"><div><p class="was">after an edit of the specification or of the code, the tests included</p></div><div><p class="now">after an edit to the specification or to the code, including its tests</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.3 · proposals</span></div><div class="pair"><div><p class="was">those of the archive included</p></div><div><p class="now">including those in the archive</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.8 · text</span></div><div class="pair"><div><p class="was">a section left out,</p></div><div><p class="now">except a section,</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.39 · text</span></div><div class="pair"><div><p class="was">A citation in the code, the tests and the documents, those fixtures left out,</p></div><div><p class="now">A citation in the code, the tests or the documents, except in those fixtures,</p></div></div></li><li class="f"><div class="meta"><span class="field">10.3 · text</span></div><div class="pair"><div><p class="was">a section left out;</p></div><div><p class="now">unless the node is a section;</p></div></div></li><li class="f"><div class="meta"><span class="field">10.3 · text</span></div><div class="pair"><div><p class="was">a rule of a project's own kind included (§s-vsh384ybt4w25a2)</p></div><div><p class="now">including a rule of a project's own kind (§s-vsh384ybt4w25a2)</p></div></div></li><li class="f"><div class="meta"><span class="field">12.3.2 · text</span></div><div class="pair"><div><p class="was">any bounds on the field's value included</p></div><div><p class="now">including any bounds on the field's value</p></div></div></li></ol></details>
+  <details class="card"><summary><b>«what … produce» о построенных значениях → «derived from».</b> <span class="field">мест: 3</span></summary><ol><li class="f"><div class="meta"><span class="field">10.1.10 · text</span></div><div class="pair"><div><p class="was">is the one the nodes under it produce</p></div><div><p class="now">is the one derived from the nodes under it</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.16 · text</span></div><div class="pair"><div><p class="was">are what the outgoing ones produce</p></div><div><p class="now">are those derived from the outgoing ones</p></div></div></li><li class="f"><div class="meta"><span class="field">10.1.34 · text</span></div><div class="pair"><div><p class="was">are what the SpecTags on the code and on the tests produce</p></div><div><p class="now">are those derived from the SpecTags on the code and on the tests</p></div></div></li></ol></details>
+  <h2 style="margin-top:8px">Остальные места — по узлам</h2>
+  <section class="card" aria-label="1.1.1"><h2><span class="num">1.1.1</span> The specification is the set of its nodes <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Where it needs to, a node also refers to other nodes, by links of several types.</p></div><div><div class="lab">Предлагается</div><p class="now">Where needed, a node also refers to other nodes through links of various types.</p></div></div>
+      <p class="why">«Where it needs to» и «by links of several types» — дословный перенос; носитель скажет «Where needed» и «through links of various types».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.1.2"><h2><span class="num">1.1.2</span> The basic structure of the specification <span class="field">согласован</span></h2><ol><li class="f dropped">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The basic structure of the specification</p></div><div><div class="lab">Предлагается</div><p class="now">The overall structure of the specification</p></div></div>
+      <p class="why">«basic structure» — калька «базовая структура»: читается как «примитивная структура» и путается с base specification.</p><p class="note">Моё мнение: не ошибка, оставить. «basic structure» — обычное английское выражение.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The specification is made of three main parts</p></div><div><div class="lab">Предлагается</div><p class="now">The specification consists of three main parts</p></div></div>
+      <p class="why">«is made of» говорят о материале, а о составе документа — «consists of».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">may be divided into parts, as sections</p></div><div><div class="lab">Предлагается</div><p class="now">may be divided into sections</p></div></div>
+      <p class="why">«into parts, as sections» — калька «на части в виде разделов»; по-английски достаточно «into sections».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">With the appendix divided as the base is, the implementation of a rule is looked for in one place.</p></div><div><div class="lab">Предлагается</div><p class="now">With the appendix divided the same way as the base, there is only one place to look for a rule's implementation.</p></div></div>
+      <p class="why">Безличное «ищут» передано пассивом «is looked for», который по-английски звучит неуклюже.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.1.3"><h2><span class="num">1.1.3</span> What the guidelines govern <span class="field">согласован</span></h2><ol><li class="f dropped">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A particular project may extend</p></div><div><div class="lab">Предлагается</div><p class="now">A project may extend</p></div></div>
+      <p class="why">«particular» — калька «конкретный»: в английском слово лишнее и намекает на некий особый проект.</p><p class="note">Моё мнение: не ошибка, оставить. «A particular project» — естественно.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.1.4"><h2><span class="num">1.1.4</span> The base specification states what the system does <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">may be named by example</p></div><div><div class="lab">Предлагается</div><p class="now">may be named as an example</p></div></div>
+      <p class="why">«by example» значит «собственным примером», а «в качестве примера» — «as an example».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">on another technical stack</p></div><div><div class="lab">Предлагается</div><p class="now">on another technology stack</p></div></div>
+      <p class="why">Устойчивый термин — «technology stack», а «technical stack» звучит как калька.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.1.5"><h2><span class="num">1.1.5</span> The technical appendix describes how the rules are implemented <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It describes them in the detail an agent needs to implement them.</p></div><div><div class="lab">Предлагается</div><p class="now">It describes them in as much detail as an agent needs to implement them.</p></div></div>
+      <p class="why">«in the detail an agent needs» неидиоматично; нужна конструкция «in as much detail as».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Described less exactly</p></div><div><div class="lab">Предлагается</div><p class="now">Described less precisely</p></div></div>
+      <p class="why">С «described» носитель скажет «precisely», а «exactly» звучит неестественно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The code would then hold that choice, and the specification would not.</p></div><div><div class="lab">Предлагается</div><p class="now">That choice would then be recorded in the code, not in the specification.</p></div></div>
+      <p class="why">«the code would hold that choice» — калька «выбор держал бы код»; код выбор не «держит», а в нём он записан.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.1.6"><h2><span class="num">1.1.6</span> The owners <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">take the place of the owners above for every node within it</p></div><div><div class="lab">Предлагается</div><p class="now">take the place of the owners at the level above for every node within it</p></div></div>
+      <p class="why">«the owners above» можно прочесть как «названные выше в тексте».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">beyond what one person reads</p></div><div><div class="lab">Предлагается</div><p class="now">beyond what one person can read</p></div></div>
+      <p class="why">Без модального глагола теряется смысл «сколько один человек способен прочесть».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The owners of one part share its reading.</p></div><div><div class="lab">Предлагается</div><p class="now">The owners of one part share the work of reading it.</p></div></div>
+      <p class="why">«its reading» читается как «её толкование».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.2.1"><h2><span class="num">1.2.1</span> One node, one rule <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">would invent a second set of locations</p></div><div><div class="lab">Предлагается</div><p class="now">would create a second set of locations</p></div></div>
+      <p class="why">«invent» значит «выдумать», а речь о том, что второй набор расположений появился бы.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.2.2"><h2><span class="num">1.2.2</span> A node is cited by its sid <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A node, and so the rule, is cited</p></div><div><div class="lab">Предлагается</div><p class="now">A node, and so its rule, is cited</p></div></div>
+      <p class="why">«the rule» не говорит, какое правило; нужно «its rule».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A specification that grows is reordered</p></div><div><div class="lab">Предлагается</div><p class="now">As a specification grows, it is reordered</p></div></div>
+      <p class="why">«A specification that grows is reordered» звучит как определение особого вида спецификаций, а не как описание процесса.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">moving a node changes its location but never the sid itself, which means that no reference using the sid breaks</p></div><div><div class="lab">Предлагается</div><p class="now">moving a node changes its location but never its sid, so no reference by sid breaks</p></div></div>
+      <p class="why">«the sid itself» и «which means that» — кальки «сам sid» и «а значит, что», и предложение выходит длиннее нужного.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.2.3"><h2><span class="num">1.2.3</span> A rule is made of its text and its reason <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Nobody sees that a reason has stopped holding</p></div><div><div class="lab">Предлагается</div><p class="now">Nobody notices that a reason no longer holds</p></div></div>
+      <p class="why">«has stopped holding» — калька «перестало держаться»; идиоматично «no longer holds».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.2.4"><h2><span class="num">1.2.4</span> Everything that bears on a node is kept in that node <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">None of it is kept in a document of its own.</p></div><div><div class="lab">Предлагается</div><p class="now">None of it is kept in a separate document.</p></div></div>
+      <p class="why">«a document of its own» двусмысленно (собственный документ у узла или у каждого пункта); носитель скажет «a separate document».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.2.5"><h2><span class="num">1.2.5</span> A todo is kept on a node it concerns <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A todo is work put off that concerns</p></div><div><div class="lab">Предлагается</div><p class="now">A todo is deferred work that concerns</p></div></div>
+      <p class="why">«work put off that» — разорванная калька «отложенная работа»; естественно «deferred work».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">an item of the <code>meta.todos</code></p></div><div><div class="lab">Предлагается</div><p class="now">an item in the <code>meta.todos</code></p></div></div>
+      <p class="why">Об элементе списка говорят «an item in», а не «an item of».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">what still waits on it</p></div><div><div class="lab">Предлагается</div><p class="now">what work on it is still pending</p></div></div>
+      <p class="why">«waits on» по-английски значит «обслуживает» или «зависит от», а не «ещё ждёт по нему».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Left once done or given up, it shows work waiting that no longer waits.</p></div><div><div class="lab">Предлагается</div><p class="now">Left in place once done or given up, it still shows the work as pending.</p></div></div>
+      <p class="why">«shows work waiting that no longer waits» — калька, вызывающая улыбку, а «Left» без «in place» читается как «ушедший».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">it leaves no copy behind to show work that no longer waits</p></div><div><div class="lab">Предлагается</div><p class="now">it leaves behind no copy that would still show the work as pending</p></div></div>
+      <p class="why">«work that no longer waits» — та же калька «работа, которая больше не ждёт»; работа по-английски не «ждёт».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.2.6"><h2><span class="num">1.2.6</span> The one source of truth is the specification, not the code <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It is repaired when the rule is revised.</p></div><div><div class="lab">Предлагается</div><p class="now">The defect is fixed when the rule is revised.</p></div></div>
+      <p class="why">Дефект по-английски «fix», а не «repair», и «It» можно отнести и к правилу, и к дефекту.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">which of them holds</p></div><div><div class="lab">Предлагается</div><p class="now">which of them is right</p></div></div>
+      <p class="why">«holds» для «верен» неясно: читается как «какой из них держится».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the disagreement is found by a machine</p></div><div><div class="lab">Предлагается</div><p class="now">any disagreement is found by a machine</p></div></div>
+      <p class="why">Определённый артикль указывает на конкретное расхождение, которого в тексте нет; нужно «any».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.2.7"><h2><span class="num">1.2.7</span> Only what the rules require is done <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the glue a framework needs</p></div><div><div class="lab">Предлагается</div><p class="now">the glue code a framework needs</p></div></div>
+      <p class="why">«glue» без «code» — жаргон; термин — «glue code».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Technical code adds nothing the system does.</p></div><div><div class="lab">Предлагается</div><p class="now">Technical code adds nothing to what the system does.</p></div></div>
+      <p class="why">Без «to what» фраза грамматически неполна и читается как «добавляет ничего из того, что система делает».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.1"><h2><span class="num">1.3.1</span> The approval status <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">what still waits for them</p></div><div><div class="lab">Предлагается</div><p class="now">what still awaits their decision</p></div></div>
+      <p class="why">«waits for them» — калька «их ждёт»; звучит, будто что-то ждёт владельцев лично.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.2"><h2><span class="num">1.3.2</span> What a draft means <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the status indicates the combined state of the whole group of rules inside it</p></div><div><div class="lab">Предлагается</div><p class="now">the status sums up the state of all the rules inside it</p></div></div>
+      <p class="why">«indicates the combined state of the whole group» — нагромождение существительных, калька «является индикатором совокупного состояния».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the whole group has that status</p></div><div><div class="lab">Предлагается</div><p class="now">the section is a draft too</p></div></div>
+      <p class="why">Статус принадлежит разделу, а не «группе», и «has that status» — калька.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">, the code and the tests secondary in it.</p></div><div><div class="lab">Предлагается</div><p class="now">, with the code and the tests secondary.</p></div></div>
+      <p class="why">Оборот без глагола и с лишним «in it» читается как ошибка.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">implementing it would fix its incompleteness in the code, or the code would be built on guesses</p></div><div><div class="lab">Предлагается</div><p class="now">implementing it would either lock its gaps into the code or build the code on guesses</p></div></div>
+      <p class="why">«fix» — ложный друг «закрепить»: по-английски это «исправить», и фраза читается наоборот.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">also holds code and tests written earlier, which must be brought to the form the method describes</p></div><div><div class="lab">Предлагается</div><p class="now">also has code and tests written earlier, which must be brought into the form the method describes</p></div></div>
+      <p class="why">«holds code» — калька «содержит»; проект код «has», а к форме приводят «into».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A status of their own for sections and nodes lets</p></div><div><div class="lab">Предлагается</div><p class="now">Giving sections and nodes a status of their own lets</p></div></div>
+      <p class="why">Подлежащее «A status of their own for sections and nodes» — калька, носитель построит фразу от действия.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">without withdrawing its status</p></div><div><div class="lab">Предлагается</div><p class="now">without withdrawing its approval</p></div></div>
+      <p class="why">Статус не «withdraw»; отзывают одобрение, как и говорит сам метод.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.3"><h2><span class="num">1.3.3</span> When the status is approved <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">how strictly the checks hold its code and tests</p></div><div><div class="lab">Предлагается</div><p class="now">how strictly the checks apply to its code and tests</p></div></div>
+      <p class="why">«hold» — калька «держат»; проверки «apply to» код и тесты.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.4"><h2><span class="num">1.3.4</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Only its owners approve a node</p></div><div><div class="lab">Предлагается</div><p class="now">Only a node's owners approve it</p></div></div>
+      <p class="why">Местоимение «its» стоит раньше слова, к которому относится, и заголовок спотыкается.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Named, whoever approved is compared with the node's owners.</p></div><div><div class="lab">Предлагается</div><p class="now">A named approver is checked against the node's owners.</p></div></div>
+      <p class="why">Висящее «Named,» и «compared with» — кальки; сверку по-английски выражают «checked against».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.5"><h2><span class="num">1.3.5</span> What an approval covers <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the fields the node's kind adds beside them</p></div><div><div class="lab">Предлагается</div><p class="now">the fields the node's kind adds alongside them</p></div></div>
+      <p class="why">«adds beside them» неидиоматично; естественно «alongside them».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.6"><h2><span class="num">1.3.6</span> An agent approves in an owner's name a wording that states nothing new <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">where its wording changes only:</p></div><div><div class="lab">Предлагается</div><p class="now">where the node's wording changes only:</p></div></div>
+      <p class="why">«its» можно отнести к агенту или к ответственному; надёжнее назвать узел.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">leaves the owners nothing to choose</p></div><div><div class="lab">Предлагается</div><p class="now">leaves the owners nothing to decide</p></div></div>
+      <p class="why">«nothing to choose» неидиоматично; естественно «nothing to decide».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">would only spend their attention</p></div><div><div class="lab">Предлагается</div><p class="now">would only waste their attention</p></div></div>
+      <p class="why">«spend their attention» — калька «потратить внимание»; по-английски внимание «waste».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.7"><h2><span class="num">1.3.7</span> Who may withdraw a node's approval <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It names whoever made it.</p></div><div><div class="lab">Предлагается</div><p class="now">The withdrawal names whoever made it.</p></div></div>
+      <p class="why">Два «it» подряд, и первое можно прочесть как узел из предыдущего предложения.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">So neither is anyone's to withdraw.</p></div><div><div class="lab">Предлагается</div><p class="now">So neither is for just anyone to withdraw.</p></div></div>
+      <p class="why">«neither is anyone's to withdraw» по-английски значит «никто не вправе отозвать», а по смыслу — «отозвать может не всякий».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.3.8"><h2><span class="num">1.3.8</span> How a section's approval status is determined <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The SpecSheriff tools build a section's approval status</p></div><div><div class="lab">Предлагается</div><p class="now">The SpecSheriff tools derive a section's approval status</p></div></div>
+      <p class="why">Статус по-английски не «строят»; его «derive» или «compute».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">They build it anew after every change</p></div><div><div class="lab">Предлагается</div><p class="now">They recompute it after every change</p></div></div>
+      <p class="why">«build it anew» — калька «строят заново»; о вычисляемом значении говорят «recompute».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Nobody writes it by hand.</p></div><div><div class="lab">Предлагается</div><p class="now">Nobody sets it by hand.</p></div></div>
+      <p class="why">Статус не «пишут», а «set».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.4.2"><h2><span class="num">1.4.2</span> A test's reference to its rule <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">survives the refactoring that moves</p></div><div><div class="lab">Предлагается</div><p class="now">survives refactoring that moves</p></div></div>
+      <p class="why">Определённый артикль указывает на конкретный рефакторинг, а речь о любом.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.5.1"><h2><span class="num">1.5.1</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Code changes only as a consequence of the specification</p></div><div><div class="lab">Предлагается</div><p class="now">Code changes only as a result of a change to the specification</p></div></div>
+      <p class="why">«as a consequence of the specification» — калька «вслед за спецификацией»; следствие вызывает изменение спецификации, а не она сама.</p><p class="note">Я поправил предложение рецензента. «after» теряет причинность: код меняется не просто после, а вследствие изменения спецификации.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">only as a consequence of the specification, not by changing the code directly</p></div><div><div class="lab">Предлагается</div><p class="now">only as a result of a change to the specification, not by editing the code directly</p></div></div>
+      <p class="why">Та же калька «вслед за спецификацией»; поведение меняется после изменения спецификации.</p><p class="note">Я поправил предложение рецензента. «after» теряет причинность.</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.5.2"><h2><span class="num">1.5.2</span> Every code symbol has a SpecTag <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">to find gaps at once</p></div><div><div class="lab">Предлагается</div><p class="now">to find gaps immediately</p></div></div>
+      <p class="why">«at once» двусмысленно: «сразу» или «все одновременно».</p>
+    </li></ol></section>
+  <section class="card" aria-label="1.6.1"><h2><span class="num">1.6.1</span> What the checks hold, and when they run <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">What the checks hold, and when they run</p></div><div><div class="lab">Предлагается</div><p class="now">What the checks enforce, and when they run</p></div></div>
+      <p class="why">«hold» — калька «держат»; проверки по-английски «enforce».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Every check is deterministic but the review of the code.</p></div><div><div class="lab">Предлагается</div><p class="now">Every check except the review of the code is deterministic.</p></div></div>
+      <p class="why">«but» после сказуемого сначала читается как «но», и фраза спотыкается.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">those rules of the guidelines the table of checks lists</p></div><div><div class="lab">Предлагается</div><p class="now">the rules of the guidelines that the table of checks lists</p></div></div>
+      <p class="why">Два именных оборота подряд без «that» читаются с запинкой.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">they also run after each of its edits</p></div><div><div class="lab">Предлагается</div><p class="now">the checks also run after each of its edits</p></div></div>
+      <p class="why">«they» ближе к «the tests or the code», чем к проверкам.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so refusing costs nobody a judgement</p></div><div><div class="lab">Предлагается</div><p class="now">so a refusal requires nobody's judgement</p></div></div>
+      <p class="why">«costs nobody a judgement» — калька «ни от кого не требует суждения», звучит как «никому не стоит суждения».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is bypassed at the first chance</p></div><div><div class="lab">Предлагается</div><p class="now">is bypassed at the first opportunity</p></div></div>
+      <p class="why">Устойчивое выражение — «at the first opportunity».</p>
+    </li></ol></section>
+  <section class="card" aria-label="2.1"><h2><span class="num">2.1</span> The structure of the guidelines <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The rules state what is held, what is checked</p></div><div><div class="lab">Предлагается</div><p class="now">The rules state what is stored, what is checked</p></div></div>
+      <p class="why">"what is held" двусмысленно (ещё и «что верно»); «что хранится» — "what is stored".</p>
+    </li></ol></section>
+  <section class="card" aria-label="2.3"><h2><span class="num">2.3</span> A project's own guidelines <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">made of the rules every project shares</p></div><div><div class="lab">Предлагается</div><p class="now">made up of the rules every project shares</p></div></div>
+      <p class="why">"made of" говорят о материале; о составных частях — "made up of".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">which hold what only its specification needs, such as the specification's owners</p></div><div><div class="lab">Предлагается</div><p class="now">which set out what only its specification needs, such as who owns the specification</p></div></div>
+      <p class="why">Guidelines не могут "hold" людей-владельцев; естественно «устанавливают… например, кто владеет спецификацией».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Beyond what the SpecSheriff guidelines require there, a project may add rules of its own where it needs them.</p></div><div><div class="lab">Предлагается</div><p class="now">Beyond what the SpecSheriff guidelines require of a project's own guidelines, the project may add rules of its own where it needs them.</p></div></div>
+      <p class="why">"there" повисает: неясно, где именно — калька «там».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">let a tool, a skill or a reader carry from one project to the next</p></div><div><div class="lab">Предлагается</div><p class="now">let a tool, a skill or a reader carry over from one project to the next</p></div></div>
+      <p class="why">Непереходное "carry" без "over" не значит «переходить»; идиома — "carry over".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">without reading that project's own.</p></div><div><div class="lab">Предлагается</div><p class="now">without reading that project's own rules.</p></div></div>
+      <p class="why">"own" без существительного обрывает фразу.</p>
+    </li></ol></section>
+  <section class="card" aria-label="2.4"><h2><span class="num">2.4</span> A project's interaction with the SpecSheriff guidelines <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A project's interaction with the SpecSheriff guidelines</p></div><div><div class="lab">Предлагается</div><p class="now">How a project uses the SpecSheriff guidelines</p></div></div>
+      <p class="why">"interaction with" документом — калька «взаимодействие»; с текстом не взаимодействуют, его используют.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">and makes no copy of them, except SpecSheriff itself, where they are written.</p></div><div><div class="lab">Предлагается</div><p class="now">and makes no copy of them, unless the project is SpecSheriff itself, where they are written.</p></div></div>
+      <p class="why">"except SpecSheriff itself" после "makes no copy of them" читается как исключение из копий, а не из проектов.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Because they come whole with the plugin</p></div><div><div class="lab">Предлагается</div><p class="now">Because they come in full with the plugin</p></div></div>
+      <p class="why">"come whole" — калька «приходят целиком», звучит странно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">in every project working by one release</p></div><div><div class="lab">Предлагается</div><p class="now">in every project on the same release</p></div></div>
+      <p class="why">"working by one release" — калька «работающем на одном релизе»; "one release" к тому же читается как «один-единственный релиз».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">a second version that nobody who writes them reads</p></div><div><div class="lab">Предлагается</div><p class="now">a second version that none of their authors reads</p></div></div>
+      <p class="why">Нагромождение "nobody who writes them reads" носитель перечитывает дважды.</p>
+    </li></ol></section>
+  <section class="card" aria-label="2.5"><h2><span class="num">2.5</span> The archive <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The archive holds the nodes removed from the specification that an approval was ever given for.</p></div><div><div class="lab">Предлагается</div><p class="now">The archive holds the nodes that were ever approved and have since been removed from the specification.</p></div></div>
+      <p class="why">"that an approval was ever given for" цепляется к "specification", а не к "nodes".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">So is a node no approval was ever given for.</p></div><div><div class="lab">Предлагается</div><p class="now">So is a node that was never approved.</p></div></div>
+      <p class="why">"a node no approval was ever given for" — тяжёлая калька; естественно "never approved".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">records a logic or an approach that was mistaken</p></div><div><div class="lab">Предлагается</div><p class="now">records a line of reasoning or an approach that was mistaken</p></div></div>
+      <p class="why">"logic" неисчисляемое, "a logic" звучит странно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A node no approval was ever given for was never implemented, so archived it would only bury</p></div><div><div class="lab">Предлагается</div><p class="now">A node that was never approved was never implemented, so, if archived, it would only bury</p></div></div>
+      <p class="why">"so archived it would" читается как «так что [кто-то] заархивировал его»; к тому же тяжёлая конструкция "no approval was ever given for".</p>
+    </li></ol></section>
+  <section class="card" aria-label="3.1"><h2><span class="num">3.1</span> What the sections share is agreed in contracts <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">What only one section needs, that section holds itself, except a term</p></div><div><div class="lab">Предлагается</div><p class="now">What only one section needs stays in that section, except a term</p></div></div>
+      <p class="why">"that section holds itself" буквально значит «раздел держит самого себя» — русский вынос дополнения вперёд.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A specification with no term and nothing else shared needs none.</p></div><div><div class="lab">Предлагается</div><p class="now">A specification with no term and nothing else shared does not need it.</p></div></div>
+      <p class="why">"needs none" после "no term and nothing else" непонятно к чему относится — к терминам или к контрактам.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">or their own rules for one matter</p></div><div><div class="lab">Предлагается</div><p class="now">or make their own rules for the same matter</p></div></div>
+      <p class="why">Правила не "coin" (так говорят о словах), а «для одного и того же» — "for the same matter", не "for one matter".</p>
+    </li></ol></section>
+  <section class="card" aria-label="3.2"><h2><span class="num">3.2</span> A term is defined once, in contracts <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">or two terms naming one, is refused.</p></div><div><div class="lab">Предлагается</div><p class="now">or two terms naming one, are refused.</p></div></div>
+      <p class="why">При "or" глагол согласуется с ближайшим подлежащим — "two terms" требует "are".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">whether two words mean one thing</p></div><div><div class="lab">Предлагается</div><p class="now">whether two words mean the same thing</p></div></div>
+      <p class="why">«одно и то же» — "the same thing"; "one thing" звучит как «одну вещь».</p>
+    </li></ol></section>
+  <section class="card" aria-label="3.3"><h2><span class="num">3.3</span> What a term states <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">So a term names a quantity, and a rule states how it is computed.</p></div><div><div class="lab">Предлагается</div><p class="now">For example, a term names a quantity, and a rule states how it is computed.</p></div></div>
+      <p class="why">«Так,» в значении примера — "For example"; английское "So" значит «следовательно».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Behaviour held in a term</p></div><div><div class="lab">Предлагается</div><p class="now">Behaviour written into a term</p></div></div>
+      <p class="why">Поведение не "held in" термином; «записанное в термине» — "written into".</p>
+    </li></ol></section>
+  <section class="card" aria-label="4.1"><h2><span class="num">4.1</span> What the technical appendix holds <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the implementation of a rule is looked for in one place</p></div><div><div class="lab">Предлагается</div><p class="now">a reader looks for the implementation of a rule in one place</p></div></div>
+      <p class="why">Пассив "is looked for" — тяжёлая калька неопределённо-личного «ищут»; носитель назовёт того, кто ищет.</p>
+    </li></ol></section>
+  <section class="card" aria-label="4.2"><h2><span class="num">4.2</span> How the technical appendix relates to the base specification <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It does so in enough detail to be read only one way</p></div><div><div class="lab">Предлагается</div><p class="now">It does so in enough detail to be read in only one way</p></div></div>
+      <p class="why">Без предлога "in" оборот разговорный и спотыкается при чтении.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It never restates what they state.</p></div><div><div class="lab">Предлагается</div><p class="now">It never restates what those nodes state.</p></div></div>
+      <p class="why">Сразу после перечня "exact values, examples and the edge cases" местоимение "they" цепляется за него, а не за узлы базы.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">would leave the base binding nowhere</p></div><div><div class="lab">Предлагается</div><p class="now">would leave the base without force anywhere</p></div></div>
+      <p class="why">"leave the base binding nowhere" — калька «лишила бы силы везде», читается с запинкой.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Read beside the nodes it implements, an appendix node restating them</p></div><div><div class="lab">Предлагается</div><p class="now">Read alongside the nodes it implements, an appendix node restating them</p></div></div>
+      <p class="why">Документы читают "alongside" друг друга, а "beside" — чисто пространственное «рядом».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">a copy drifts from what it copies</p></div><div><div class="lab">Предлагается</div><p class="now">a copy drifts away from what it copies</p></div></div>
+      <p class="why">"drift from" без "away" звучит обрубленно; носитель скажет "drifts away from".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is found when that rule changes and is read beside it.</p></div><div><div class="lab">Предлагается</div><p class="now">is found when that rule changes, and is read alongside it.</p></div></div>
+      <p class="why">Без запятой "and is read beside it" прочитывается как продолжение "that rule changes", а "beside" — пространственное «рядом».</p>
+    </li></ol></section>
+  <section class="card" aria-label="4.3"><h2><span class="num">4.3</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Of a user interface the base states what it shows, not how it looks</p></div><div><div class="lab">Предлагается</div><p class="now">For a user interface, the base states what it shows, not how it looks</p></div></div>
+      <p class="why">Вынос "Of a user interface" в начало — калька «О пользовательском интерфейсе»; по-английски "For a user interface,".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Of a user interface, the base specification states</p></div><div><div class="lab">Предлагается</div><p class="now">For a user interface, the base specification states</p></div></div>
+      <p class="why">Вынос "Of a user interface" в начало — калька «О пользовательском интерфейсе»; по-английски "For a user interface,".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">what a user can rely on in any instance:</p></div><div><div class="lab">Предлагается</div><p class="now">what a user can rely on in any instance of the system:</p></div></div>
+      <p class="why">"in any instance" — устойчивое «в любом случае»; без "of the system" инстанс не прочитывается.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the sort of control</p></div><div><div class="lab">Предлагается</div><p class="now">the kind of control</p></div></div>
+      <p class="why">"sort" в спецификации звучит разговорно; естественно "kind of control".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The same rules can then be given another look with an appendix of its own.</p></div><div><div class="lab">Предлагается</div><p class="now">The same rules can then be given a different look, with an appendix of its own.</p></div></div>
+      <p class="why">"give … another look" — идиома «взглянуть ещё раз», а не «оформить иначе».</p>
+    </li></ol></section>
+  <section class="card" aria-label="4.4"><h2><span class="num">4.4</span> Technical debt <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The section of the technical debt lists</p></div><div><div class="lab">Предлагается</div><p class="now">The technical debt section lists</p></div></div>
+      <p class="why">"section of the technical debt" — калька родительного падежа «раздел технического долга».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Standing there is the whole of the choice to accept the shortcoming:</p></div><div><div class="lab">Предлагается</div><p class="now">Being listed there is the whole of the choice to accept the shortcoming:</p></div></div>
+      <p class="why">"Standing there" — калька «нахождение там»; носитель прочтёт «стоя там».</p>
+    </li></ol></section>
+  <section class="card" aria-label="5.1"><h2><span class="num">5.1</span> The structure of the specification is defined by its machine-readable schema <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">That schema is the schema of the SpecSheriff guidelines, with the extension</p></div><div><div class="lab">Предлагается</div><p class="now">That schema is the schema of the SpecSheriff guidelines together with the extension</p></div></div>
+      <p class="why">Голое "with" читается как «схема, у которой есть расширение»; для «вместе с» нужно "together with".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A file that does not match the schema is refused.</p></div><div><div class="lab">Предлагается</div><p class="now">A file that does not conform to the schema is refused.</p></div></div>
+      <p class="why">"match" — калька «соответствует»; о схеме по-английски говорят "conform to".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Named, the property tells the file's author what to correct.</p></div><div><div class="lab">Предлагается</div><p class="now">Naming the property tells the file's author what to correct.</p></div></div>
+      <p class="why">Причастие "Named," в начале калькирует «Названное свойство» и звучит как подпись под картинкой.</p>
+    </li></ol></section>
+  <section class="card" aria-label="5.2"><h2><span class="num">5.2</span> How a project may extend the schema <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A project may add to the schema, in its extension of it, its own kinds of node, and properties of a node, a file or a link.</p></div><div><div class="lab">Предлагается</div><p class="now">In its extension of the schema, a project may add its own kinds of node, as well as properties of nodes, files and links.</p></div></div>
+      <p class="why">Вставка "in its extension of it" разрывает глагол и дополнение, а запятая перед "and properties" ломает перечень — русский порядок слов.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A project changes no definition the schema of the SpecSheriff guidelines holds and cannot contradict it.</p></div><div><div class="lab">Предлагается</div><p class="now">A project neither changes a definition in the schema of the SpecSheriff guidelines nor contradicts that schema.</p></div></div>
+      <p class="why">"holds" вместо «содержит», "cannot" читается как невозможность, а не запрет, и "it" неясно — определение или схема.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">changes no definition of the schema of the SpecSheriff guidelines</p></div><div><div class="lab">Предлагается</div><p class="now">changes no definition in the schema of the SpecSheriff guidelines</p></div></div>
+      <p class="why">"definition of the schema" значит «определение самой схемы»; нужно "definition in the schema".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">So a tool relying on one of them is never wrong there.</p></div><div><div class="lab">Предлагается</div><p class="now">So a tool relying on one of those structures is never wrong in any project.</p></div></div>
+      <p class="why">"them" может значить и guidelines, и структуры, а "there" повисает без опоры — калька «там не ошибается».</p>
+    </li></ol></section>
+  <section class="card" aria-label="6.1"><h2><span class="num">6.1</span> What a link is <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Every link names what it means by a type.</p></div><div><div class="lab">Предлагается</div><p class="now">Every link names what it means through its type.</p></div></div>
+      <p class="why">"what it means by a type" читается как «что связь понимает под словом type».</p>
+    </li><li class="f dropped">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the linking node is how the linked one is carried out.</p></div><div><div class="lab">Предлагается</div><p class="now">the linking node shows how the linked one is carried out.</p></div></div>
+      <p class="why">Узел не может «быть способом»; в русском «показывает, как» — "shows how".</p><p class="note">Моё мнение: не ошибка, оставить. «the linking node is how the linked one is carried out» — естественный оборот; «shows how» меняет смысл.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the linking node holds a condition the linked rule depends on</p></div><div><div class="lab">Предлагается</div><p class="now">the linking node states a condition the linked rule depends on</p></div></div>
+      <p class="why">"holds" рядом с "condition" читается как «условие выполняется»; «содержит условие» — "states a condition".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the linking node, of an extension, changes the linked main rule</p></div><div><div class="lab">Предлагается</div><p class="now">the linking node, which belongs to an extension, changes the linked main rule</p></div></div>
+      <p class="why">Обособленное "of an extension" — калька «узел расширения», по-английски так не вставляют.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">So it holds no link of another type to it.</p></div><div><div class="lab">Предлагается</div><p class="now">So the linking node has no link of another type to the linked one.</p></div></div>
+      <p class="why">Два "it" подряд — непонятно, у кого нет связи и к кому.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">as an operator starting an export</p></div><div><div class="lab">Предлагается</div><p class="now">such as an operator starting an export</p></div></div>
+      <p class="why">"as" вместо "such as" перед примером — калька «как».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">No check can grade it.</p></div><div><div class="lab">Предлагается</div><p class="now">No check can assess it.</p></div></div>
+      <p class="why">"grade" — «ставить оценку» (школьную); «оценить» здесь — "assess".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is the same guess one step later</p></div><div><div class="lab">Предлагается</div><p class="now">is the same guess, one step further on</p></div></div>
+      <p class="why">«на шаг дальше» — не о времени; "one step later" звучит как «шагом позже».</p>
+    </li></ol></section>
+  <section class="card" aria-label="6.3"><h2><span class="num">6.3</span> A cited node is also linked <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">These properties are not considered:</p></div><div><div class="lab">Предлагается</div><p class="now">The following properties are ignored:</p></div></div>
+      <p class="why">"are not considered" можно прочесть как «не считаются свойствами»; перед списком естественно "The following … are ignored".</p>
+    </li></ol></section>
+  <section class="card" aria-label="6.4"><h2><span class="num">6.4</span> Incoming links are built <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">which reverses a ratio (§s-bckzdwd35d2nefa)</p></div><div><div class="lab">Предлагается</div><p class="now">which reverses its ratio (§s-bckzdwd35d2nefa)</p></div></div>
+      <p class="why">Речь о соотношении этой самой связи — нужно "its", а не неопределённое "a".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">No link it declares is built into another node.</p></div><div><div class="lab">Предлагается</div><p class="now">No link it declares is mirrored in another node.</p></div></div>
+      <p class="why">"built into" значит «встроен как составная часть», а не «отражён входящей записью».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">in every project working by one release</p></div><div><div class="lab">Предлагается</div><p class="now">in every project on the same release</p></div></div>
+      <p class="why">"working by one release" — калька «работающем на одном релизе»; "one release" к тому же читается как «один-единственный релиз».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A list in them of the links one project makes to them would hold true of that project alone.</p></div><div><div class="lab">Предлагается</div><p class="now">If they listed the links one project makes to them, the list would hold true of that project alone.</p></div></div>
+      <p class="why">"A list in them of the links … to them" — разорванная русская конструкция, носитель путается в двух "them".</p>
+    </li></ol></section>
+  <section class="card" aria-label="6.5"><h2><span class="num">6.5</span> Links between terms <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">No other type binds two terms of the specification, <code>cites</code> included:</p></div><div><div class="lab">Предлагается</div><p class="now">No other type, not even <code>cites</code>, binds two terms of the specification:</p></div></div>
+      <p class="why">"<code>cites</code> included" после отрицания неуклюже; в отрицании говорят "not even".</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">link terms alone</p></div><div><div class="lab">Предлагается</div><p class="now">link only terms</p></div></div>
+      <p class="why">"link terms alone" можно понять как «связывают термины сами по себе».</p>
+    </li></ol></section>
+  <section class="card" aria-label="6.6"><h2><span class="num">6.6</span> How a ratio is written <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A ratio is the multiplicity of each end in UML notation</p></div><div><div class="lab">Предлагается</div><p class="now">A ratio gives the multiplicity of each end in UML notation</p></div></div>
+      <p class="why">Соотношение — пара значений, а не одна «кратность»; "gives", как в обосновании, снимает это.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.1"><h2><span class="num">7.1</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">or a text the system shows its users</p></div><div><div class="lab">Предлагается</div><p class="now">or text the system shows its users</p></div></div>
+      <p class="why">a text — это текст как произведение или документ, а строка интерфейса — неисчисляемое text.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">loses the line between</p></div><div><div class="lab">Предлагается</div><p class="now">loses the distinction between</p></div></div>
+      <p class="why">line по-английски не теряют, а размывают, и «теряет границу» по смыслу — loses the distinction.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A project takes them as they are written</p></div><div><div class="lab">Предлагается</div><p class="now">A project adopts them as written</p></div></div>
+      <p class="why">Руководство не «берут», а adopt, и as they are written тяжелее as written.</p>
+    </li><li class="f dropped">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">letter for letter</p></div><div><div class="lab">Предлагается</div><p class="now">character for character</p></div></div>
+      <p class="why">«Буква в букву» передано дословно, а в технических текстах пишут character for character.</p><p class="note">Моё мнение: не ошибка, оставить. «letter for letter» — устойчивое выражение, как «word for word».</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.2"><h2><span class="num">7.2</span> Which rules have no place in the specification <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A prohibition that answers no rule</p></div><div><div class="lab">Предлагается</div><p class="now">A prohibition that no rule calls for</p></div></div>
+      <p class="why">«Не отвечает ни одному правилу» передано дословно, а answers no rule по-английски значит «не отвечает правилу на вопрос».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Each one written suggests</p></div><div><div class="lab">Предлагается</div><p class="now">Each such prohibition suggests</p></div></div>
+      <p class="why">each one written — обрывок причастного оборота «каждый написанный», носитель так не пишет.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">costs a reading and decides nothing either</p></div><div><div class="lab">Предлагается</div><p class="now">takes time to read and decides nothing either</p></div></div>
+      <p class="why">«Стоит одного прочтения» передано дословно, а costs a reading по-английски не говорят.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.3"><h2><span class="num">7.3</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A requirement with nobody to hold it</p></div><div><div class="lab">Предлагается</div><p class="now">A requirement that nobody is bound to meet</p></div></div>
+      <p class="why">hold a requirement не значит «соблюдать»: требование meet или comply with.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.4"><h2><span class="num">7.4</span> A title says what the node is about <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so a reader chooses what to open by it</p></div><div><div class="lab">Предлагается</div><p class="now">so a reader decides from the title what to open</p></div></div>
+      <p class="why">by it в конце повисает и читается как «открыть с его помощью».</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.5"><h2><span class="num">7.5</span> One thought to a sentence <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">could hold while another does not</p></div><div><div class="lab">Предлагается</div><p class="now">could be true while another is not</p></div></div>
+      <p class="why">hold здесь значит «быть верным», а в соседних узлах — «содержать», тогда как be true однозначно.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.6"><h2><span class="num">7.6</span> A node's text opens with its main thought <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is written as sentences</p></div><div><div class="lab">Предлагается</div><p class="now">is written in sentences</p></div></div>
+      <p class="why">Пишут in sentences, а не as sentences.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">qualifications of one kind are read alike</p></div><div><div class="lab">Предлагается</div><p class="now">qualifications of the same kind are read alike</p></div></div>
+      <p class="why">«Одного рода» по-английски — of the same kind, а of one kind звучит как «одного-единственного вида».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Reasoning holds only as a chain</p></div><div><div class="lab">Предлагается</div><p class="now">Reasoning holds together only as a chain</p></div></div>
+      <p class="why">Без together фраза читается как «рассуждение верно только как цепочка», а нужно «держится».</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.7"><h2><span class="num">7.7</span> A node holds what is applied together, and nothing applied apart <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is carried out where they narrow it.</p></div><div><div class="lab">Предлагается</div><p class="now">is carried out even where they narrow it.</p></div></div>
+      <p class="why">Пропущено «и там» (even), и без него фраза говорит, что мысль выполняют только там, где уточнения её сужают.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.8"><h2><span class="num">7.8</span> The use of general words <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the check at which moment comparing what with what</p></div><div><div class="lab">Предлагается</div><p class="now">the check made at which moment and comparing what with what</p></div></div>
+      <p class="why">Нанизывание «проверка в какой момент что с чем сравнивающая» без глагола и союза по-английски не читается.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">each reader fills it in for themselves, and the rule binds whatever each of them chose</p></div><div><div class="lab">Предлагается</div><p class="now">each reader fills in the gap for themselves, and the rule binds each of them to whatever they chose</p></div></div>
+      <p class="why">binds whatever they chose значит «связывает выбранное», а нужно «обязывает каждого к выбранному» — binds them to.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.9"><h2><span class="num">7.9</span> Naming rules <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Naming rules</p></div><div><div class="lab">Предлагается</div><p class="now">Rules for naming</p></div></div>
+      <p class="why">В спецификации о правилах Naming rules читается как «как называть правила».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">a field used apart from its object</p></div><div><div class="lab">Предлагается</div><p class="now">a field used without its object</p></div></div>
+      <p class="why">apart from по-английски чаще значит «кроме», и фраза читается как «поле, используемое помимо своего объекта».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Written so, the key may be a general word.</p></div><div><div class="lab">Предлагается</div><p class="now">Written this way, the key may be a general word.</p></div></div>
+      <p class="why">written so звучит архаично, естественно written this way.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A general one there means</p></div><div><div class="lab">Предлагается</div><p class="now">There, a general name means</p></div></div>
+      <p class="why">a general one there — тяжёлое замещение с повисшим there, а носитель вынесет There вперёд и назовёт name.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">a sort of request in one log, a user's action in another and a sort of error in a third</p></div><div><div class="lab">Предлагается</div><p class="now">the kind of request in one log, the user's action in another and the kind of error in a third</p></div></div>
+      <p class="why">a sort of request разговорно значит «нечто вроде запроса», а «вид запроса» — the kind of request.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Code font tells it from an ordinary word.</p></div><div><div class="lab">Предлагается</div><p class="now">Code font sets it apart from an ordinary word.</p></div></div>
+      <p class="why">tell X from Y требует подлежащего-человека («отличить»), а шрифт не tells, а sets apart.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.11"><h2><span class="num">7.11</span> Whether a restricting list names what is allowed or what is forbidden <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It chooses by which mistake</p></div><div><div class="lab">Предлагается</div><p class="now">It chooses according to which mistake</p></div></div>
+      <p class="why">choose by which — калька «выбирает по тому, какая», а естественно according to which.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">as the records a backup leaves out</p></div><div><div class="lab">Предлагается</div><p class="now">as with the records a backup leaves out</p></div></div>
+      <p class="why">as для «как, например» — калька, а естественно as with.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">as the fields a public API returns</p></div><div><div class="lab">Предлагается</div><p class="now">as with the fields a public API returns</p></div></div>
+      <p class="why">То же: нужно as with.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A list goes wrong on whatever</p></div><div><div class="lab">Предлагается</div><p class="now">A list fails on whatever</p></div></div>
+      <p class="why">«Ошибается на том» передано как goes wrong on, что не идиоматично, а естественно fails on.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.12"><h2><span class="num">7.12</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A sentence correcting a count is a count.</p></div><div><div class="lab">Предлагается</div><p class="now">A sentence that corrects a count states a count too.</p></div></div>
+      <p class="why">Предложение не «есть количество», а в русском «тоже называет количество», и too пропущено.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.13"><h2><span class="num">7.13</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">in the ordinary case of its language</p></div><div><div class="lab">Предлагается</div><p class="now">with the ordinary capitalisation of its language</p></div></div>
+      <p class="why">case без letter читается как грамматический падеж, а о регистре букв пишут capitalisation.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">three words or more running</p></div><div><div class="lab">Предлагается</div><p class="now">three or more words in a row</p></div></div>
+      <p class="why">«Подряд» по-английски — in a row, а running после words знакомо только по three days running.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is said in the words</p></div><div><div class="lab">Предлагается</div><p class="now">is made to stand out by the wording</p></div></div>
+      <p class="why">«Говорится словами» передано дословно, а said in the words по-английски бессмысленно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">binds alike</p></div><div><div class="lab">Предлагается</div><p class="now">binds equally</p></div></div>
+      <p class="why">alike как наречие при binds неестественно, нужно equally.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A word or two in capitals are most often</p></div><div><div class="lab">Предлагается</div><p class="now">One or two words in capitals are most often</p></div></div>
+      <p class="why">A word or two согласуется с единственным числом, и are рядом звучит как ошибка.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">which no check tells from a word stressed</p></div><div><div class="lab">Предлагается</div><p class="now">which no check can tell apart from an emphasised word</p></div></div>
+      <p class="why">Постпозиция a word stressed — калька, а stressed — об ударении, тогда как о выделении — emphasised.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Three words running are seldom anything but stress.</p></div><div><div class="lab">Предлагается</div><p class="now">Three words in a row are seldom anything but emphasis.</p></div></div>
+      <p class="why">stress — ударение или напряжение, а выделение в тексте — emphasis.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A run of abbreviations as long</p></div><div><div class="lab">Предлагается</div><p class="now">A run of abbreviations that long</p></div></div>
+      <p class="why">as long без второй части сравнения — калька «такой длины», нужно that long.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.15"><h2><span class="num">7.15</span> Revising a rule starts with its reason <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">they remove the rule and do not reword it</p></div><div><div class="lab">Предлагается</div><p class="now">they remove the rule rather than reword it</p></div></div>
+      <p class="why">«Удаляет, а не переформулирует» передано двумя действиями через and, а противопоставление по-английски — rather than.</p>
+    </li></ol></section>
+  <section class="card" aria-label="7.16"><h2><span class="num">7.16</span> A node may show examples</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">apart from its text</p></div><div><div class="lab">Предлагается</div><p class="now">separately from its text</p></div></div>
+      <p class="why">apart from чаще значит «кроме», и фраза читается как «примеры помимо текста».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the mistake that comes closest to it</p></div><div><div class="lab">Предлагается</div><p class="now">the mistake closest to that case</p></div></div>
+      <p class="why">it можно отнести и к rule, и к case.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the text holds</p></div><div><div class="lab">Предлагается</div><p class="now">the text prevails</p></div></div>
+      <p class="why">При расхождении текст prevails, а holds здесь двусмысленно: «верен» или «содержит».</p>
+    </li></ol></section>
+  <section class="card" aria-label="8.1"><h2><span class="num">8.1</span> A section holds rules and requires nothing <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It brings the rules together under a particular logic described in the text of the section itself.</p></div><div><div class="lab">Предлагается</div><p class="now">It brings the rules together on a principle that the section's own text describes.</p></div></div>
+      <p class="why">«В рамках определённой логики» передано дословно: under a particular logic по-английски не говорят, а the text of the section itself — калька с «текст самого раздела».</p>
+    </li></ol></section>
+  <section class="card" aria-label="8.2"><h2><span class="num">8.2</span> What is considered a rule of a section <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">- a rule of a section inside that section.</p></div><div><div class="lab">Предлагается</div><p class="now">- a rule of a section nested in that section.</p></div></div>
+      <p class="why">inside that section можно отнести и к rule, и к section, а nested in однозначно говорит о вложенном разделе.</p>
+    </li></ol></section>
+  <section class="card" aria-label="8.3"><h2><span class="num">8.3</span> A project's own kinds of node <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">may declare a kind of node of the project's own</p></div><div><div class="lab">Предлагается</div><p class="now">may declare the project's own kind of node</p></div></div>
+      <p class="why">Двойное of ... of the project's own звучит неуклюже, а в остальных узлах сказано a project's own kind.</p>
+    </li></ol></section>
+  <section class="card" aria-label="8.4"><h2><span class="num">8.4</span> How a project's own kind of node is declared and checked <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">a check verifies that the new kinds of node agree in name and <code>needsCode</code> between the JSON Schema and the project's own guidelines</p></div><div><div class="lab">Предлагается</div><p class="now">a check verifies that the JSON Schema and the project's own guidelines agree on the name and <code>needsCode</code> of each new kind of node</p></div></div>
+      <p class="why">agree ... between повторяет русское «согласованность ... между», а по-английски согласуются сами источники: X and Y agree on.</p>
+    </li></ol></section>
+  <section class="card" aria-label="8.5"><h2><span class="num">8.5</span> A node's location <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is located by the part's name and the file's</p></div><div><div class="lab">Предлагается</div><p class="now">takes as its location the part's name and the file's</p></div></div>
+      <p class="why">is located by читается как «находится с помощью», а речь о том, из чего составлено расположение.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Each such file numbers its nodes under its top node's location.</p></div><div><div class="lab">Предлагается</div><p class="now">In each such file, the nodes are numbered under the location of the file's top node.</p></div></div>
+      <p class="why">Файл как деятель, который «нумерует», — калька, а по-английски здесь пассив.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Computed, it can never disagree</p></div><div><div class="lab">Предлагается</div><p class="now">Because it is computed, it can never disagree</p></div></div>
+      <p class="why">Однословный оборот Computed в начале звучит обрывочно, нужна явная причина.</p>
+    </li></ol></section>
+  <section class="card" aria-label="9.1"><h2><span class="num">9.1</span> What is considered the system's code <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the code implementing the specification outside its guidelines</p></div><div><div class="lab">Предлагается</div><p class="now">the code implementing the parts of the specification outside its guidelines</p></div></div>
+      <p class="why">outside its guidelines цепляется и к code, и к specification, а с the parts ясно, что исключены guidelines, а не место кода.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">are not the system's code. A project's</p></div><div><div class="lab">Предлагается</div><p class="now">are not part of the system's code. A project's</p></div></div>
+      <p class="why">«Не являются кодом системы» по-английски — are not part of the system's code, иначе звучит как неудачное тождество.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Whether a file is the system's code</p></div><div><div class="lab">Предлагается</div><p class="now">Whether a file is part of the system's code</p></div></div>
+      <p class="why">Файл не «есть код системы», а входит в него: is part of.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">what serves the work on the system</p></div><div><div class="lab">Предлагается</div><p class="now">whatever supports the work on the system</p></div></div>
+      <p class="why">«То, что обслуживает работу над системой» передано дословно: serves the work носитель не скажет, естественно supports the work.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">considered implemented only by its code and a passing test together</p></div><div><div class="lab">Предлагается</div><p class="now">considered implemented only when its code and a passing test are both present</p></div></div>
+      <p class="why">considered implemented by its code читается как «код считает правило реализованным», потому что агент при considered — тот, кто считает.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so the tests are on the side of the code</p></div><div><div class="lab">Предлагается</div><p class="now">so the tests fall on the code's side of that line</p></div></div>
+      <p class="why">«На стороне кода» передано дословно, а сторону границы по-английски называют fall on X's side of the line.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Where a file lives is the same to every check, so it draws that line.</p></div><div><div class="lab">Предлагается</div><p class="now">A file's location is the same for every check, so the location draws that line.</p></div></div>
+      <p class="why">«Одинаково для каждой проверки» — the same for, не to, а it неясно: файл это или его место.</p>
+    </li></ol></section>
+  <section class="card" aria-label="9.2"><h2><span class="num">9.2</span> The implementation of an approved rule <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">when both hold (</p></div><div><div class="lab">Предлагается</div><p class="now">when both of the following hold (</p></div></div>
+      <p class="why">both перед двоеточием и списком без of the following звучит обрывочно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">counts for the rule implemented.</p></div><div><div class="lab">Предлагается</div><p class="now">counts towards the implemented rule.</p></div></div>
+      <p class="why">«Засчитываются реализуемому правилу» передано дословно: counts for the rule implemented бессмысленно, засчитывают towards, а implemented после существительного читается как сказуемое.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The requirement to be implemented does not hold for:</p></div><div><div class="lab">Предлагается</div><p class="now">The requirement that a rule be implemented does not apply to:</p></div></div>
+      <p class="why">«Не распространяется на» — does not apply to, а requirement to be implemented без подлежащего звучит как требование к самому требованию.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">stating what does not hold of the system</p></div><div><div class="lab">Предлагается</div><p class="now">stating what is not true of the system</p></div></div>
+      <p class="why">hold of — оборот формальной логики, а в спецификации естественно is not true of.</p>
+    </li></ol></section>
+  <section class="card" aria-label="9.3"><h2><span class="num">9.3</span> The SpecTag <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is decided by its code and a passing test together</p></div><div><div class="lab">Предлагается</div><p class="now">is determined by its code and a passing test together</p></div></div>
+      <p class="why">decided by its code делает код тем, кто принимает решение, а «определяется» — is determined by.</p>
+    </li></ol></section>
+  <section class="card" aria-label="9.4"><h2><span class="num">9.4</span> A change to a SpecTag <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is considered a change to the very test or symbol of code in which it is present.</p></div><div><div class="lab">Предлагается</div><p class="now">is considered a change to the test or the symbol of code that carries it.</p></div></div>
+      <p class="why">the very — калька с «самого», а in which it is present — с «в котором он присутствует»; носитель скажет that carries it.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Rewording a test's name or the comments</p></div><div><div class="lab">Предлагается</div><p class="now">Renaming a test or rewording the comments</p></div></div>
+      <p class="why">Имя теста не «переформулируют», а меняют: renaming a test.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">are checked anew</p></div><div><div class="lab">Предлагается</div><p class="now">are checked again</p></div></div>
+      <p class="why">anew — книжное слово, а в спецификации пишут again.</p>
+    </li></ol></section>
+  <section class="card" aria-label="9.5"><h2><span class="num">9.5</span> The nodes a commit's message names <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The nodes a commit's message names</p></div><div><div class="lab">Предлагается</div><p class="now">The nodes a commit message names</p></div></div>
+      <p class="why">Устойчивое сочетание — commit message, а a commit's message звучит как перевод родительного падежа.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The message of a commit names</p></div><div><div class="lab">Предлагается</div><p class="now">A commit message names</p></div></div>
+      <p class="why">«Сообщение коммита» передано родительным через of вместо устойчивого commit message.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The message of a commit records</p></div><div><div class="lab">Предлагается</div><p class="now">The commit message records</p></div></div>
+      <p class="why">То же: of вместо устойчивого commit message.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">changes only as a consequence of the specification</p></div><div><div class="lab">Предлагается</div><p class="now">changes only as a result of a change to the specification</p></div></div>
+      <p class="why">«Вслед за спецификацией» передано как as a consequence of the specification, а следствием бывает изменение спецификации, не она сама.</p><p class="note">Я поправил предложение рецензента. «after» теряет причинность.</p>
+    </li></ol></section>
+  <section class="card" aria-label="9.6"><h2><span class="num">9.6</span> A node's lists of its code and its tests <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">They build them anew after every edit</p></div><div><div class="lab">Предлагается</div><p class="now">They rebuild them after every edit</p></div></div>
+      <p class="why">build anew звучит книжно и тяжело, естественно rebuild.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A node's lists show a reader who has the node open the code that implements it and the tests written for it.</p></div><div><div class="lab">Предлагается</div><p class="now">A node's lists show the code that implements the node, and the tests written for it, to a reader who has the node open.</p></div></div>
+      <p class="why">Русский порядок слов даёт garden path: open the code читается как «открыть код», а it можно отнести к читателю.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">as a list kept by hand does</p></div><div><div class="lab">Предлагается</div><p class="now">the way a list kept by hand does</p></div></div>
+      <p class="why">После cannot оборот as ... does можно прочесть как «как и ручной список, не могут», а the way снимает двусмысленность.</p>
+    </li></ol></section>
+  <section class="card" aria-label="9.7"><h2><span class="num">9.7</span> Exempting a rule from being implemented <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Lifting a rule's requirement to be implemented</p></div><div><div class="lab">Предлагается</div><p class="now">Lifting the requirement that a rule be implemented</p></div></div>
+      <p class="why">a rule's requirement значит «то, что правило требует», а не требование к правилу.</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1 (head)"><h2><span class="num">10.1 (head)</span> The table of checks <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">every check can be seen at a glance with what its failure costs</p></div><div><div class="lab">Предлагается</div><p class="now">every check can be seen at a glance, together with what its failure costs</p></div></div>
+      <p class="why">«seen … with what» читается как «увидеть с помощью»; нужно «together with».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Gathered so,</p></div><div><div class="lab">Предлагается</div><p class="now">Gathered in one place,</p></div></div>
+      <p class="why">«Gathered so» — калька «Так»; по-английски так не говорят.</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.1"><h2><span class="num">10.1.1</span> No object in a file of the specification, of its archive or of its schema gives one property two values <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">gives one property two values</p></div><div><div class="lab">Предлагается</div><p class="now">assigns two values to one property</p></div></div>
+      <p class="why">Объект не «даёт» свойству значения; естественно «assigns».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">keeps one of them without a word</p></div><div><div class="lab">Предлагается</div><p class="now">silently keeps one of them</p></div></div>
+      <p class="why">«without a word» — о человеке, молча ушедшем; о парсере говорят «silently».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.3"><h2><span class="num">10.1.3</span> No two nodes share a sid</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">proposals</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">that sid would name two.</p></div><div><div class="lab">Предлагается</div><p class="now">that sid would name two nodes.</p></div></div>
+      <p class="why">«would name two» обрывается без существительного: два чего?</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.7"><h2><span class="num">10.1.7</span> No two term nodes name the same term, whatever the case of its letters</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">whatever the case of its letters</p></div><div><div class="lab">Предлагается</div><p class="now">regardless of letter case</p></div></div>
+      <p class="why">«whatever the case of its letters» звучит как «что бы ни случилось с его буквами»; нужно «regardless of letter case».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.9"><h2><span class="num">10.1.9</span> Each approval added in a commit names one of the owners of its node, as that commit holds them</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">, as that commit holds them</p></div><div><div class="lab">Предлагается</div><p class="now"> as of that commit</p></div></div>
+      <p class="why">«as that commit holds them» — калька «какими их держит коммит»; на момент коммита — «as of that commit».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.11"><h2><span class="num">10.1.11</span> A node removed in a commit, outside the SpecSheriff guidelines a project uses, is deleted where it is a section or no approval of it was ever given. Otherwise it stands in the archive with the reason for its removal</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is deleted where it is a section</p></div><div><div class="lab">Предлагается</div><p class="now">is deleted outright where it is a section</p></div></div>
+      <p class="why">«removed … is deleted» звучит как тавтология; противопоставление архиву передаёт «outright».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.14"><h2><span class="num">10.1.14</span> No node cites another by its location outside text quoted as code</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">by its location outside text quoted as code</p></div><div><div class="lab">Предлагается</div><p class="now">by its location except in text quoted as code</p></div></div>
+      <p class="why">«its location outside text» читается как место вне текста, а не как исключение для текста-кода.</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.17"><h2><span class="num">10.1.17</span> No approved node, and no section, sets three words or more running in capitals outside a name quoted from the code</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">sets three words or more running in capitals</p></div><div><div class="lab">Предлагается</div><p class="now">sets three or more consecutive words in capitals</p></div></div>
+      <p class="why">«running» в значении «подряд» идиоматично лишь со временем («three days running»), со словами звучит странно.</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.33"><h2><span class="num">10.1.33</span> Every project's own check whose code is added or changed in a commit has a test carrying the SpecTag of the rule listing it</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Every project's own check whose code</p></div><div><div class="lab">Предлагается</div><p class="now">Each of a project's own checks whose code</p></div></div>
+      <p class="why">«Every project's own check» читается как «собственная проверка каждого проекта».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.36"><h2><span class="num">10.1.36</span> Each member of `TextRule.list` that is an object holds the property the list names</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">holds the property the list names</p></div><div><div class="lab">Предлагается</div><p class="now">has the property the list names</p></div></div>
+      <p class="why">У объекта свойство «has»; «holds» — калька «содержит».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.38"><h2><span class="num">10.1.38</span> No file the repository keeps outside the specification and the fixtures of the tests of a check reading citations or locations (§s-6hha5en226aj8hu) names a node by its location</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">No file the repository keeps outside the specification and the fixtures of the tests of a check reading citations or locations (§s-6hha5en226aj8hu) names</p></div><div><div class="lab">Предлагается</div><p class="now">No file in the repository, other than the specification and the test fixtures of a check that reads citations or locations (§s-6hha5en226aj8hu), names</p></div></div>
+      <p class="why">Нагромождение «the fixtures of the tests of a check reading» без запятых не читается с первого раза.</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.40"><h2><span class="num">10.1.40</span> The tests and the code of a rule do not lag behind its text, nor its code behind its tests, as the history of the repository shows</h2><ol><li class="f dropped">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">as the history of the repository shows</p></div><div><div class="lab">Предлагается</div><p class="now">judging by the history of the repository</p></div></div>
+      <p class="why">«as the history shows» утверждает, что история это показывает, а речь о том, по чему судят.</p><p class="note">Моё мнение: не ошибка, оставить. «as the history of the repository shows» — естественно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">onFailure</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">reported by the node's sid</p></div><div><div class="lab">Предлагается</div><p class="now">reported under the node's sid</p></div></div>
+      <p class="why">«reported by» делает sid тем, кто сообщает.</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.41"><h2><span class="num">10.1.41</span> An approved rule the system's code must implement (§s-6fw72j65jkqrfpf) is bound to a symbol of the system's code outside its tests and to a test not marked as skipped</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">onFailure</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">reported by the rule's sid</p></div><div><div class="lab">Предлагается</div><p class="now">reported under the rule's sid</p></div></div>
+      <p class="why">«reported by» делает sid тем, кто сообщает.</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.1.42"><h2><span class="num">10.1.42</span> The message of a commit names, by its sid, each node that a SpecTag binds to a symbol added or changed in that commit, a symbol in the tests not counted</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">a symbol in the tests not counted</p></div><div><div class="lab">Предлагается</div><p class="now">not counting symbols in the tests</p></div></div>
+      <p class="why">Абсолютный оборот «a symbol … not counted» в конце звучит как перевод; естественно «not counting …».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.2"><h2><span class="num">10.2</span> When the checks run</h2><ol><li class="f dropped">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">run the checks at these moments:</p></div><div><div class="lab">Предлагается</div><p class="now">run the checks at these points:</p></div></div>
+      <p class="why">«moments» в спецификации звучит литературно; о точках процесса говорят «points».</p><p class="note">Моё мнение: не ошибка, оставить. «at these moments» — естественно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">after each edit of an agent</p></div><div><div class="lab">Предлагается</div><p class="now">after each edit by an agent</p></div></div>
+      <p class="why">Калька родительного падежа: правку делает агент, поэтому «by».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">every check of the table of checks</p></div><div><div class="lab">Предлагается</div><p class="now">every check in the table of checks</p></div></div>
+      <p class="why">Проверка находится в таблице — «in», а не «of».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">every check of that table but</p></div><div><div class="lab">Предлагается</div><p class="now">every check in that table but</p></div></div>
+      <p class="why">Тот же предлог: «in that table».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">at the earliest moment it has all it reads</p></div><div><div class="lab">Предлагается</div><p class="now">at the earliest moment at which everything it reads is available</p></div></div>
+      <p class="why">«has all it reads» не по-английски: проверка не «имеет» то, что читает.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">seen and mended</p></div><div><div class="lab">Предлагается</div><p class="now">caught and fixed</p></div></div>
+      <p class="why">«mended» — о штопке одежды; ошибки «catch and fix».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.3"><h2><span class="num">10.3</span> An agent's edit is checked before it is made</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">leave a node approved over a wording</p></div><div><div class="lab">Предлагается</div><p class="now">leave a node approved with a wording</p></div></div>
+      <p class="why">Предлог «over» здесь бессмыслен; «при формулировке» — «with».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">otherwise than through the procedure</p></div><div><div class="lab">Предлагается</div><p class="now">other than through the procedure</p></div></div>
+      <p class="why">«otherwise than» — устаревшая калька «иначе, чем»; говорят «other than».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so they can be held only where they are written</p></div><div><div class="lab">Предлагается</div><p class="now">so they can be guarded only where they are written</p></div></div>
+      <p class="why">«held» без дополнения читается как «хранятся», а не «удерживаются под контролем».</p>
+    </li></ol></section>
+  <section class="card" aria-label="10.12"><h2><span class="num">10.12</span> What is generated from the nodes is regenerated and never edited <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Nobody reads anything from it back into the specification</p></div><div><div class="lab">Предлагается</div><p class="now">Nobody copies anything from it back into the specification</p></div></div>
+      <p class="why">«read back into» не говорят о переносе содержимого: читатель не поймёт, что значит «прочитать обратно в спецификацию».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Examples are:</p></div><div><div class="lab">Предлагается</div><p class="now">Examples include:</p></div></div>
+      <p class="why">«Examples are:» перед списком звучит как дословное «Примеры:»; естественно «Examples include:».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">for example in markdown</p></div><div><div class="lab">Предлагается</div><p class="now">for example in Markdown</p></div></div>
+      <p class="why">Markdown — имя собственное и пишется с заглавной.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">left behind them</p></div><div><div class="lab">Предлагается</div><p class="now">left to lag behind them</p></div></div>
+      <p class="why">«left behind» значит «брошенный, забытый», а не «отстающий».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">sooner or later the two differ</p></div><div><div class="lab">Предлагается</div><p class="now">sooner or later the two diverge</p></div></div>
+      <p class="why">О версиях, постепенно расходящихся, говорят «diverge»; «differ» описывает состояние, а не процесс.</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.1.1"><h2><span class="num">12.1.1</span> What an extension of the guidelines is <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">only increase the volume of what its agent reads</p></div><div><div class="lab">Предлагается</div><p class="now">only add to what its agent has to read</p></div></div>
+      <p class="why">«increase the volume of» — канцелярская калька «увеличивают объём».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.1.2"><h2><span class="num">12.1.2</span> An extension of the guidelines may change a main rule <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The change holds only in a project using that extension.</p></div><div><div class="lab">Предлагается</div><p class="now">The change applies only in a project using that extension.</p></div></div>
+      <p class="why">Сразу после «holds a link» второе «holds» в другом смысле («действует») сбивает читателя.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the tools that follow the change</p></div><div><div class="lab">Предлагается</div><p class="now">the tools adapted to the change</p></div></div>
+      <p class="why">«follow the change» читается как «идут после изменения», а не «соответствуют ему».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so it only refines or extends.</p></div><div><div class="lab">Предлагается</div><p class="now">so it only refines or extends a rule.</p></div></div>
+      <p class="why">Переходные глаголы «refines or extends» оставлены без дополнения.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">see that it holds otherwise where the extension is used</p></div><div><div class="lab">Предлагается</div><p class="now">see that it applies differently where the extension is used</p></div></div>
+      <p class="why">«holds otherwise» — калька «действует иначе»; естественно «applies differently».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.1.3"><h2><span class="num">12.1.3</span> A main rule names no particular extension <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">would be left wrong</p></div><div><div class="lab">Предлагается</div><p class="now">would then be wrong</p></div></div>
+      <p class="why">«be left wrong» — калька «оказалось бы неверным».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.2.1"><h2><span class="num">12.2.1</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">it is made of contracts and of those domains</p></div><div><div class="lab">Предлагается</div><p class="now">it consists of contracts and those domains</p></div></div>
+      <p class="why">«made of» — о материале; о составных частях документа говорят «consists of».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It agrees the entities common to them and how they work together</p></div><div><div class="lab">Предлагается</div><p class="now">It is where the entities common to them, and how they work together, are agreed</p></div></div>
+      <p class="why">Документ не может сам «согласовывать» сущности; «It agrees the entities» звучит как ошибка.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">name the sections of theirs it uses</p></div><div><div class="lab">Предлагается</div><p class="now">name the sections of other domains it uses</p></div></div>
+      <p class="why">У «theirs» нет антецедента в абзаце: непонятно, чьи разделы.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">then leaves the other domains as they are</p></div><div><div class="lab">Предлагается</div><p class="now">then leaves the other domains unaffected</p></div></div>
+      <p class="why">«leaves … as they are» звучит разговорно и неточно; в спецификации — «unaffected».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A system of one such area</p></div><div><div class="lab">Предлагается</div><p class="now">A system with only one such area</p></div></div>
+      <p class="why">«A system of one area» читается как «система, состоящая из области»; естественно «with only one».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.2.2"><h2><span class="num">12.2.2</span>  <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">can be read alone</p></div><div><div class="lab">Предлагается</div><p class="now">can be read on its own</p></div></div>
+      <p class="why">«read alone» можно понять как «читается в одиночку»; естественно «on its own».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">divided by domains</p></div><div><div class="lab">Предлагается</div><p class="now">divided into domains</p></div></div>
+      <p class="why">Калька «по доменам»: делят «into», а «divided by» — это деление на число.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The division should preferably let self-contained parts of the specification be loaded so that the context window of the model in use can easily handle the loaded part.</p></div><div><div class="lab">Предлагается</div><p class="now">Ideally, the division lets self-contained parts of the specification be loaded, each small enough for the context window of the model in use to handle easily.</p></div></div>
+      <p class="why">«should preferably … so that … the loaded part» — дословное «Желательно, чтобы … так, чтобы», с повтором «loaded».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.2.4"><h2><span class="num">12.2.4</span> A domain's header carries the built index of its sections <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">title</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">carries the built index of its sections</p></div><div><div class="lab">Предлагается</div><p class="now">carries the index built from its sections</p></div></div>
+      <p class="why">«the built index» — причастие-прилагательное звучит как калька «построенный указатель».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">For each section the index holds:</p></div><div><div class="lab">Предлагается</div><p class="now">For each section the index lists:</p></div></div>
+      <p class="why">Об указателе естественно «lists»; «holds» — калька «содержит».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.3.1"><h2><span class="num">12.3.1</span> RecordType</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is a format of data</p></div><div><div class="lab">Предлагается</div><p class="now">is a data format</p></div></div>
+      <p class="why">Естественный термин — «data format».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-grammar">грамматика</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">changing only the values of those data and not their structure</p></div><div><div class="lab">Предлагается</div><p class="now">changing only the values in the data, not its structure</p></div></div>
+      <p class="why">«those data … their» — книжное множественное число, несогласованное с «format of data» выше; звучит натужно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">That RecordType is the format of the part common to the data of all the domains using it.</p></div><div><div class="lab">Предлагается</div><p class="now">Such a RecordType is the format of the part of the data that all the domains using it share.</p></div></div>
+      <p class="why">«That» указывает на конкретный экземпляр, а речь о любом таком («Such a»); цепочка «common to the data of all» — калька.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">several domains each form the data it describes</p></div><div><div class="lab">Предлагается</div><p class="now">several domains each produce the data it describes</p></div></div>
+      <p class="why">«form the data» — калька «формирует данные»; данные «produce».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">the two are changed apart</p></div><div><div class="lab">Предлагается</div><p class="now">the two are changed independently</p></div></div>
+      <p class="why">«changed apart» не по-английски; «по отдельности» — «independently».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so two with one name cannot be told apart</p></div><div><div class="lab">Предлагается</div><p class="now">so two with the same name cannot be told apart</p></div></div>
+      <p class="why">«with one name» читается как «с одним (единственным) именем»; нужно «the same name».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A RecordType described away from its provider falls out of step when the provider changes what it gives.</p></div><div><div class="lab">Предлагается</div><p class="now">A RecordType described outside its provider falls out of step when the provider changes what it provides.</p></div></div>
+      <p class="why">«described away from» и «what it gives» — кальки «вдали от» и «отдаёт».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">sees which domains it reaches</p></div><div><div class="lab">Предлагается</div><p class="now">sees which domains the change reaches</p></div></div>
+      <p class="why">«it» ближе всего к RecordType, а доходит изменение.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so naming it makes a domain rely on no other</p></div><div><div class="lab">Предлагается</div><p class="now">so a domain naming it relies on no other domain</p></div></div>
+      <p class="why">«makes a domain rely on no other» — неуклюжая конструкция с отрицанием и без объекта у «other».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.3.2"><h2><span class="num">12.3.2</span> </h2><ol><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">A structure of data the domains pass</p></div><div><div class="lab">Предлагается</div><p class="now">A data structure the domains pass</p></div></div>
+      <p class="why">Термин по-английски — «data structure»; «structure of data» звучит как перевод.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">and what it says;</p></div><div><div class="lab">Предлагается</div><p class="now">and what it means;</p></div></div>
+      <p class="why">Поле ничего не «говорит»; «что оно означает» — «what it means».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The bounds a value may take are part of its type.</p></div><div><div class="lab">Предлагается</div><p class="now">The bounds on a value are part of its type.</p></div></div>
+      <p class="why">Значение принимает значения, а не границы; «bounds a value may take» — калька.</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.3.3"><h2><span class="num">12.3.3</span> Types and RuntimeChecks are generated from the RecordTypes</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">never written beside them</p></div><div><div class="lab">Предлагается</div><p class="now">never written alongside them</p></div></div>
+      <p class="why">«beside» — буквально «рядом в пространстве»; о параллельно написанном коде говорят «alongside».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Written beside the description</p></div><div><div class="lab">Предлагается</div><p class="now">Written alongside the description</p></div></div>
+      <p class="why">Та же калька «рядом»: естественно «alongside».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-ambiguity">двусмысленность</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Generated, the two cannot disagree.</p></div><div><div class="lab">Предлагается</div><p class="now">Generated from the description, they cannot disagree with it.</p></div></div>
+      <p class="why">Висячее «Generated, the two»: описание не генерируется, а оборот относит причастие к обоим.</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.4.1"><h2><span class="num">12.4.1</span> A domain's level <span class="field">согласован</span></h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">It is needed for visualization: so that a diagram can be built showing how the domains are connected.</p></div><div><div class="lab">Предлагается</div><p class="now">It is needed for visualization, to build a diagram showing how the domains are connected.</p></div></div>
+      <p class="why">«: so that» после двоеточия — дословное «: чтобы»; по-английски так не строят.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">are placed in one line</p></div><div><div class="lab">Предлагается</div><p class="now">are placed in one row</p></div></div>
+      <p class="why">Для горизонтального ряда на схеме говорят «row»; «line» может значить и линию-связь.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The domains are placed in one order</p></div><div><div class="lab">Предлагается</div><p class="now">The domains are arranged in a single sequence</p></div></div>
+      <p class="why">«placed in one order» — калька «выстраиваются в один порядок».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">they follow the order of their names</p></div><div><div class="lab">Предлагается</div><p class="now">they are ordered by name</p></div></div>
+      <p class="why">«follow the order of their names» неестественно; говорят «ordered by name».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">keep this order in their line</p></div><div><div class="lab">Предлагается</div><p class="now">keep this order in their row</p></div></div>
+      <p class="why">Тот же «row» вместо «line», чтобы совпадало с предыдущим.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">The smaller a domain's responsibility</p></div><div><div class="lab">Предлагается</div><p class="now">The narrower a domain's responsibility</p></div></div>
+      <p class="why">Об ответственности говорят «narrow/broad», а не «small».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">a domain's header holds its level in that hierarchy</p></div><div><div class="lab">Предлагается</div><p class="now">a domain's header records its level in that hierarchy</p></div></div>
+      <p class="why">«holds its level» — калька «содержит»; естественно «records».</p>
+    </li></ol></section>
+  <section class="card" aria-label="12.5.1"><h2><span class="num">12.5.1</span> Code generated from the nodes waits for their approval</h2><ol><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">text</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">waits for its nodes.</p></div><div><div class="lab">Предлагается</div><p class="now">waits for its nodes to be approved.</p></div></div>
+      <p class="why">«waits for its nodes» непонятно: ждут не узлов, а их одобрения.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">Waiting, it lets a change to the node be committed before its approval, as a change to any rule is.</p></div><div><div class="lab">Предлагается</div><p class="now">While the code waits, a change to the node can be committed before its approval, like a change to any rule.</p></div></div>
+      <p class="why">Причастие «Waiting,» в начале и хвост «as … is» — дословная калька, читается тяжело и двусмысленно.</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-calque">подстрочник</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">is left behind its nodes</p></div><div><div class="lab">Предлагается</div><p class="now">lags behind its nodes</p></div></div>
+      <p class="why">«is left behind» значит «оставлен, брошен»; «отстаёт» — «lags behind».</p>
+    </li><li class="f">
+      <div class="meta"><span class="kind k-collocation">сочетание слов</span><span class="field">reason</span></div>
+      <div class="pair"><div><div class="lab">Сейчас</div><p class="was">so that nobody takes it for current</p></div><div><div class="lab">Предлагается</div><p class="now">so that nobody takes it to be current</p></div></div>
+      <p class="why">«take X for» требует существительного; с прилагательным говорят «take it to be».</p>
+    </li></ol></section>
+</div>

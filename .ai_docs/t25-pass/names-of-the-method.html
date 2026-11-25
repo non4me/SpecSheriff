@@ -1,0 +1,163 @@
+<title>Имена метода SpecSheriff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: one reading column; the rule and its two conditions, then three tables — names kept, words kept, past decisions to revisit — then the questions. */
+  /* One dark look whatever the viewer's theme: the owner reads on a dark ground. */
+  :root {
+    --bg: #10161b;
+    --panel: #17212a;
+    --fg: #eaeef1;
+    --muted: #9fb0bd;
+    --rule: #2a3946;
+    --name: #8fd1c3;
+    --keep: #a3b0b9;
+    --open: #e2a23b;
+    --display: "PT Serif", Georgia, serif;
+    --body: "PT Sans", "Segoe UI", Arial, sans-serif;
+    --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5;
+    margin: 0;
+  }
+  .wrap {
+    max-width: 1100px; margin: 0 auto;
+    padding-block: 28px 64px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid; gap: 28px;
+  }
+  h1, h2 { font-family: var(--display); text-wrap: balance; margin: 0; }
+  h1 { font-size: 1.7rem; }
+  h2 { font-size: 1.25rem; }
+  p, li { max-width: 72ch; }
+  p { margin: 0; }
+  .lead { color: var(--muted); }
+  section { display: grid; gap: 12px; min-width: 0; }
+  ol, ul { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; }
+  code, .n { font-family: var(--mono); font-size: 0.92em; }
+  .n { color: var(--name); white-space: nowrap; }
+  .scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; }
+  table { border-collapse: collapse; width: 100%; min-width: 780px; font-size: 0.95rem; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+  th { background: var(--panel); color: var(--muted); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+  .tag { display: inline-block; font-size: 0.78rem; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .yes { color: var(--name); }
+  .same { color: var(--keep); }
+  .ask { color: var(--open); }
+  .note { color: var(--muted); font-size: 0.9rem; }
+  .box { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 8px; }
+</style>
+
+<div class="wrap">
+  <header style="display:grid; gap:8px">
+    <h1>Имена метода SpecSheriff</h1>
+    <p class="lead">Задача T25, правило об именах метода. Версия по двум условиям, которые вы приняли 6 ноября в 23:19. Числа сняты с текущих файлов: каждое употребление слова в guidelines, skills и руководствах прочитано в контексте и отнесено к смыслу метода или к другому смыслу.</p>
+  </header>
+
+  <section>
+    <h2>Правило, как я понял ваше решение</h2>
+    <div class="box">
+      <ol>
+        <li>Особое имя получает только реальный термин: имя процедуры, сущности, константы или переменной метода, которое можно перепутать с тем же обычным словом. Иначе остаётся слово: ненужная сущность создаёт ложную предпосылку особого смысла.</li>
+        <li>Имя пишется одним словом, каждое слово с заглавной, и как можно конкретнее: по контексту употребления или по тому, что оно содержит: <span class="n">SpecTag</span>, <span class="n">RecordType</span>, <span class="n">RuntimeCheck</span>.</li>
+        <li>Свойство названного объекта пишется через точку, без нового термина: <code>TextRule.list</code>, <code>RecordType.fields</code>, <code>meta.comments</code>. Своё имя свойство получает, только если у него есть самостоятельный контекст употребления: <span class="n">NodeKind</span>.</li>
+        <li>Положение уже названной вещи говорится словами: «a RecordType of another domain», «a test of the system's code».</li>
+        <li>Значение схемы пишется моноширинным, как в файле: <code>implements</code>, <code>one of</code>, <code>draft</code>.</li>
+      </ol>
+    </div>
+    <p>Данные добавили уточнение к первому пункту. Часто второй смысл встречается в двух-трёх местах, и там он сам записан небрежно: «Node» вместо «Node.js», «exit status» вместо «exit code». Такие места я предлагаю переписать, а слову метода оставить обычное написание. Это ваше правило: ошибка исправляется у источника.</p>
+  </section>
+
+  <section>
+    <h2>Имена и свойства через точку</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Слово</th><th>Имя</th><th>Смысл метода · другой</th><th>Другой смысл</th><th>Состояние</th></tr></thead>
+      <tbody>
+        <tr><td>rule (вид узла)</td><td><span class="n">TextRule</span></td><td class="num">—</td><td>«rule» значит ещё любой узел, который требует: два смысла внутри метода</td><td><span class="tag yes">решено</span></td></tr>
+        <tr><td>kind</td><td><span class="n">NodeKind</span></td><td class="num">52 · 7</td><td>обычное «sort»: «the kind of control», «the procedural kind»</td><td><span class="tag yes">решено</span></td></tr>
+        <tr><td>runtime check</td><td><span class="n">RuntimeCheck</span></td><td class="num">26</td><td>определения JSON Schema, генерируемые из RecordType; слово check остаётся за проверкой метода</td><td><span class="tag yes">решено</span></td></tr>
+        <tr><td>list</td><td><code>TextRule.list</code></td><td class="num">58 · 78</td><td>свойство правила; его части <code>members</code>, <code>declaredIn</code></td><td><span class="tag yes">по правилу</span></td></tr>
+        <tr><td>comment, decision, todo</td><td><code>meta.comments</code>, <code>meta.decisions</code>, <code>meta.todos</code></td><td class="num">2 · 10; 11 · 5; 6 · 0</td><td>свойства метаданных узла; комментарий в коде и обычное «decision» больше не путаются</td><td><span class="tag yes">по правилу</span></td></tr>
+        <tr><td>field</td><td><code>RecordType.fields</code></td><td class="num">151 · 10</td><td>свойство RecordType; ключи самой схемы узла называются «properties», как в JSON Schema</td><td><span class="tag yes">по правилу</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Остаются словами</h2>
+    <p class="note">Второго смысла нет, или он редок и исправляется в своих местах. Колонка «Переписать» называет эти места.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Слово</th><th>Смысл метода · другой</th><th>Переписать</th></tr></thead>
+      <tbody>
+        <tr><td>node</td><td class="num">538 · 3</td><td>среда выполнения — «Node.js»</td></tr>
+        <tr><td>rule (любой узел, который требует)</td><td class="num">347 · 1</td><td>«a shell reads the arguments by rules of its own» — «by its own syntax»</td></tr>
+        <tr><td>section</td><td class="num">99 · 0</td><td>—</td></tr>
+        <tr><td>term</td><td class="num">45 · 4</td><td>«in neutral terms», «on the same terms» — «in neutral words», «in the same way»</td></tr>
+        <tr><td>domain, header, location, todo, archive, symbol, generator, technical debt, appendix, guidelines</td><td class="num">по 0</td><td>—</td></tr>
+        <tr><td>container</td><td class="num">1 · 0</td><td>—</td></tr>
+        <tr><td>link</td><td class="num">121 · 5</td><td>«A SpecTag links a symbol» — «binds»; «cut the links between them» — «cut the connections»; гиперссылки в docs/README</td></tr>
+        <tr><td>citation, cite</td><td class="num">47 · 5</td><td>«cites by its location» — та же сущность в запрещённой форме; переписывать нечего</td></tr>
+        <tr><td>status</td><td class="num">37 · 3</td><td>«an exit status» — «an exit code»</td></tr>
+        <tr><td>approval</td><td class="num">229 · 3</td><td>в руководстве «a plain approval, such as ok» — «a plain ok»</td></tr>
+        <tr><td>decision</td><td class="num">11 · 5</td><td>«the owners' decision», «the decision to set it aside» — «choice»</td></tr>
+        <tr><td>base</td><td class="num">43 · 2</td><td>«base schema» — ваш термин от 5 ноября, отдельное сочетание; оставить</td></tr>
+        <tr><td>stack</td><td class="num">9 · 3</td><td>сама технологическая основа и раздел о ней — один предмет; оставить</td></tr>
+        <tr><td>reviewer</td><td class="num">36 · 3</td><td>«a reviewer cannot tell» — «a reader»; рецензент черновика в skill назван «a reviewer of the draft»</td></tr>
+        <tr><td>test</td><td class="num">213 · 25</td><td>тесты собственных проверок проекта — тоже сущность метода, различаются словами: «a test of the system's code», «a test of a project's own check»</td></tr>
+        <tr><td>code</td><td class="num">249 · 52</td><td>Claude Code — имя продукта; код самих инструментов и «code block» уже уточнены словами: «the system's code»</td></tr>
+        <tr><td>tools</td><td class="num">80 · 42</td><td>все употребления уже с уточнением: «the SpecSheriff tools», «the project's own tools», «the file tools»</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Нужен ваш выбор</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Слово</th><th>Смысл метода · другой</th><th>Варианты</th><th>Рекомендую</th></tr></thead>
+      <tbody>
+                <tr><td>owner <span class="tag yes">словом, по правилу 2</span></td><td class="num">130 · 3 в guidelines</td><td>В skills «the owner» значит ещё человека, на которого работает агент, даже до того, как спецификация появилась. Имя <span class="n">SpecOwner</span>, или в skills писать «the user» там, где owner ещё не назначен.</td><td>Переписать skills: «the user» до назначения, «the owner» после.</td></tr>
+        <tr><td>значения <code>kind</code></td><td class="num">—</td><td>Если виды узлов — слова, их значения в схеме остаются <code>section</code>, <code>term</code>, <code>domain</code>, <code>recordType</code>, а вид rule получает <code>TextRule</code>. Значение <code>domain</code> сейчас называет заголовок домена.</td><td><span class="tag yes">решено</span> Значения совпадают с именами буква в букву: <code>section</code>, <code>term</code>, <code>header</code>, <code>TextRule</code>, <code>RecordType</code>.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Прошлые решения, которые второе условие меняет</h2>
+    <p><span class="tag yes">решено</span> Ваш ответ: оставить словами. Ненужная сущность вредна: она создаёт ложную предпосылку, что у обычного слова есть особый смысл.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Решение</th><th>Данные</th><th>Рекомендую</th></tr></thead>
+      <tbody>
+        <tr><td><span class="n">SpecContracts</span> («всё по одному шаблону»)</td><td class="num">28 · 1</td><td>Оставить «contracts». Единственный другой смысл — «hold every participant to the contract» в docs/README.</td></tr>
+        <tr><td><span class="n">SpecRule</span> — любой узел, который требует</td><td class="num">347 · 1</td><td>Оставить «rule». Вид узла уже отделён именем TextRule, а единственный обычный смысл переписывается.</td></tr>
+        <tr><td><span class="n">SpecContainer</span></td><td class="num">1 · 0</td><td>Оставить «container».</td></tr>
+        <tr><td>SpecNode, SpecSection, SpecTerm, SpecDomain, SpecLink, SpecApproval, SpecLocation и другие из прошлой версии</td><td class="num">см. выше</td><td>Оставить словами: второго смысла нет или он исправляется на месте.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Что это затрагивает</h2>
+    <ul>
+      <li>Имён становится пять: TextRule, NodeKind и, если вы согласитесь, SpecList, SpecComment и SpecCheck. Вместе с ними остаются RecordType и SpecTag.</li>
+      <li>Около сорока мест с редким вторым смыслом переписываются, слова метода остаются как есть.</li>
+      <li>Схема и файлы проектов меняются мало: значения <code>kind</code> для вида rule и заголовка домена. Ключи <code>list</code> и <code>comments</code> совпадают с именами по смыслу и остаются.</li>
+    </ul>
+    <p>Работа сильно сокращается по сравнению с прошлой версией. Основная её часть — проход, который приводит guidelines к правилам 6.3 и 6.4.</p>
+  </section>
+
+  <section>
+    <h2>Вопросы, по одному</h2>
+    <ol>
+      <li><span class="tag yes">решено</span> Прошлые решения: contracts, rule и container остаются словами.</li>
+      <li><span class="tag yes">решено</span> list, comment, field — свойства через точку; RuntimeCheck.</li>
+      <li><span class="tag yes">решено</span> owner — словом; значения <code>kind</code> совпадают с именами.</li>
+      <li><span class="tag yes">записано</span> Правила именования — в skill <code>spec-review</code>, раздел «Naming».</li>
+    </ol>
+  </section>
+</div>

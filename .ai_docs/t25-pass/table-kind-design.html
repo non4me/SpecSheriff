@@ -1,0 +1,126 @@
+<title>Таблица как тип узла</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header, the anatomy of a table node as one figure, the cases it covers as a table, the rulings taken
+     on it, and the question open now. The same dark look as every page the owner reads. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --panel-2: #1d2b35; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --base: #e8b75a; --tools: #5cb8d8; --tests: #5fbf86; --gap: #e07a6a;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
+  h1 { font-family: var(--display); font-size: 1.45rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; max-width: 78ch; }
+  .muted { color: var(--muted); }
+  figure, .panel { margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .scroll { overflow-x: auto; }
+  svg { display: block; width: 100%; min-width: 760px; height: auto; color: var(--fg); }
+  figcaption { color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
+  ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; align-content: start; max-width: 82ch; }
+  code { font-family: var(--mono); font-size: 0.86em; }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 0.92rem; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+  th { color: var(--muted); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  td:first-child { font-weight: 700; }
+  .tag { display: inline-block; font-family: var(--mono); font-size: 0.78rem; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--rule); white-space: nowrap; }
+  .tag.node { color: var(--base); border-color: var(--base); }
+  .tag.simple { color: var(--tools); border-color: var(--tools); }
+  .tag.none { color: var(--muted); }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+</style>
+<div class="wrap">
+  <header style="display:grid; gap:8px">
+    <h1>Таблица как тип узла</h1>
+    <p class="muted"><code>TableRule</code> — узел, который и есть таблица: шапка с пояснением и требованиями, колонки, строки. Каждая ячейка — маленький контейнер: в ней текст или узел. Узел в ячейку ставится по потребности, как примеры.</p>
+  </header>
+
+  <figure>
+    <h2>Из чего состоит TableRule</h2>
+    <div class="scroll">
+    <svg viewBox="0 0 1060 400" role="img" aria-label="TableRule: шапка с заголовком, текстом, обоснованием и колонками; каждая ячейка держит либо текст, принадлежащий узлу-таблице, либо узел со своим sid, связями, тестами и одобрением.">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+      </defs>
+      <rect x="20" y="20" width="1020" height="110" rx="4" fill="#1d2b35" stroke="#e8b75a" stroke-width="2"/>
+      <text x="36" y="44" font-family="PT Mono, monospace" font-size="12" fill="#e8b75a">ШАПКА — САМ УЗЕЛ TableRule, СО СВОИМ sid И ОДОБРЕНИЕМ</text>
+      <g font-size="12.5" fill="currentColor">
+        <text x="36" y="68">заголовок · текст: что держит таблица и что верно для каждой её строки · обоснование</text>
+        <text x="36" y="90">колонки: имя каждой; у колонки можно указать, где её значения объявлены в коде — тогда инструменты сверяют их</text>
+      </g>
+      <text x="36" y="114" font-size="11.5" fill="#a3b0b9">пример: «Каждая проверка читает как создаваемый коммит…» остаётся в шапке таблицы проверок как требование ко всем строкам</text>
+
+      <line x1="270" y1="130" x2="270" y2="170" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+      <line x1="790" y1="130" x2="790" y2="170" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+      <text x="282" y="156" font-size="11.5" fill="#a3b0b9">ячейке ничего своего не нужно</text>
+      <text x="802" y="156" font-size="11.5" fill="#a3b0b9">ячейке нужно своё</text>
+
+      <rect x="20" y="174" width="500" height="206" rx="4" fill="none" stroke="#5cb8d8" stroke-width="1.6"/>
+      <text x="36" y="198" font-family="PT Mono, monospace" font-size="12" fill="#5cb8d8">ТЕКСТ В ЯЧЕЙКЕ</text>
+      <g font-size="12.5" fill="currentColor">
+        <text x="36" y="224">текст принадлежит узлу-таблице, своего sid у ячейки нет</text>
+        <text x="36" y="246">таблица из одних текстовых ячеек — одно правило:</text>
+        <text x="36" y="264">одобряется, реализуется и тестируется целиком</text>
+        <text x="36" y="290">ячейка может ссылаться на узел через § — со связью,</text>
+        <text x="36" y="308">как везде</text>
+      </g>
+      <text x="36" y="340" font-size="11.5" fill="#a3b0b9">типы полей → JSON Schema / TypeScript / Python;</text>
+      <text x="36" y="358" font-size="11.5" fill="#a3b0b9">момент запуска → какие проверки; цена в таблице проверок</text>
+
+      <rect x="540" y="174" width="500" height="206" rx="4" fill="none" stroke="#e8b75a" stroke-width="1.6"/>
+      <text x="556" y="198" font-family="PT Mono, monospace" font-size="12" fill="#e8b75a">УЗЕЛ В ЯЧЕЙКЕ</text>
+      <g font-size="12.5" fill="currentColor">
+        <text x="556" y="224">узел обычного типа, чаще правило: свой sid,</text>
+        <text x="556" y="242">без заголовка — его называют колонка и строка</text>
+        <text x="556" y="264">свои связи: <tspan font-family="PT Mono, monospace" font-size="11.5">checks</tspan> → правило, которое он охраняет;</text>
+        <text x="556" y="282"><tspan font-family="PT Mono, monospace" font-size="11.5">implements</tspan> ← из описания инструментов, строится</text>
+        <text x="556" y="304">тесты — туда же, куда код, и видны у ячейки</text>
+        <text x="556" y="326">одобрение: по узлу, или вся таблица одной командой</text>
+      </g>
+      <text x="556" y="358" font-size="11.5" fill="#a3b0b9">текст его строки и заголовок колонки — часть его формулировки</text>
+    </svg>
+    </div>
+    <figcaption>Шапка — это сам узел: у неё свой sid, своя формулировка и своё одобрение, и её текст может требовать то, что верно для каждой строки. Что положить в ячейку, текст или узел, решается для каждой ячейки по потребности. Если в разных колонках одной строки стоят разные варианты правила, у каждого свой узел и своя реализация.</figcaption>
+  </figure>
+
+  <section class="panel" aria-labelledby="cases-h">
+    <h2 id="cases-h">Где у нас таблицы сейчас и что с ними станет</h2>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>Случай</th><th>Как записан сейчас</th><th>Ячейки</th><th>Что выигрывает</th></tr></thead>
+      <tbody>
+        <tr><td>Таблица проверок (10.1)</td><td>Две таблицы в тексте одного узла, около 44 строк, над ними абзацы с требованиями</td><td><span class="tag node">узел + текст</span></td><td>Проверка — узел со своим sid, связями, тестами и одобрением; цена — текст её строки; видна проверка без реализации; требования шапки остаются в шапке</td></tr>
+        <tr><td>Типы полей → JSON Schema, TypeScript, Python (описание инструментов)</td><td>Таблица в тексте узла, над ней абзацы о порядке значений</td><td><span class="tag none">не трогаем</span></td><td>Может остаться в тексте узла: ей ничего из TableRule не нужно</td></tr>
+        <tr><td>Типы связей и их смысл (2.2)</td><td>Список имён для инструментов и тот же перечень ещё раз списком «тип — смысл»</td><td><span class="tag simple">текст</span></td><td>Если станет таблицей — каждый тип записан один раз; решим в свой черёд</td></tr>
+        <tr><td>Значения статуса (1.5), источники значений поля «one of» (1.27), переменные окружения рецензента, уровни доменов</td><td>Список имён, сверяемый с тем, что объявлено в коде или схеме</td><td><span class="tag none">не трогаем</span></td><td>Списки остаются рядом с таблицей; узел выбирает одно из двух</td></tr>
+        <tr><td>Когда запускаются проверки (10.2, черновик)</td><td>Список пар «момент — какие проверки»</td><td><span class="tag simple">текст</span></td><td>Две колонки вместо пар в тексте; решим в свой черёд</td></tr>
+        <tr><td>Поля RecordType</td><td>Свой тип узла со структурой полей</td><td><span class="tag none">не трогаем</span></td><td>Поля несут типы и границы, которые читает генерация кода; это не просто таблица</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <div class="cols">
+    <section class="panel" aria-labelledby="done-h">
+      <h2 id="done-h">Решено</h2>
+      <ul>
+        <li>Типы называются <code>TableRule</code>; <code>CheckRule</code> и <code>TableRow</code> не нужны.</li>
+        <li>Узел стоит в ячейке, а не в строке; у него нет заголовка.</li>
+        <li>Текст строки и заголовок колонки входят в формулировку узлов этой строки и колонки: их смена делает узлы черновиками.</li>
+        <li>Узлы в ячейках одобряются по одному; таблицу проверок можно одобрить одной командой.</li>
+        <li>Связь <code>checks</code> — от узла в ячейке к правилу, которое он охраняет; тест указывает туда же, куда код.</li>
+        <li>Списки остаются рядом с таблицей; таблицу можно по-прежнему писать в тексте узла; TableRule и узлы в ячейках — по потребности.</li>
+      </ul>
+    </section>
+    <section class="panel" aria-labelledby="open-h">
+      <h2 id="open-h">Открыто сейчас</h2>
+      <ul>
+        <li>В 10.1 две таблицы: «The specification on its own» и «The specification and the code». Один TableRule или два.</li>
+      </ul>
+    </section>
+  </div>
+</div>

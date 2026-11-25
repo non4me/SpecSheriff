@@ -1,0 +1,233 @@
+<title>Узел описания инструментов: Ключи, записанные больше одного раза</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&family=PT+Mono&display=swap">
+<style>
+  /* Layout: a header naming the node, its reason, then the parts in four columns over the lists of links, tests and removals. */
+  :root {
+    --bg: #0f171c; --panel: #17232b; --raised: #1e2d37; --fg: #eef1f3; --muted: #a3b0b9; --rule: #2c3a44;
+    --new: #e2a23b; --same: #6f7f8a; --link: #5cb8d8; --mark: #3b5566;
+    --display: "PT Serif", Georgia, serif; --body: "PT Sans", "Segoe UI", Arial, sans-serif; --mono: "PT Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body { font-family: var(--body); font-size: 15px; line-height: 1.45; padding-block: 16px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-family: var(--display); font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  h2 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 8px; }
+  .sub { color: var(--muted); font-family: var(--mono); font-size: 0.85rem; margin-top: 4px; }
+  .reason { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; margin-top: 14px; }
+  .reason > div { min-width: 0; }
+  .label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+  .wrap { overflow-x: auto; }
+  table.parts { border-collapse: collapse; width: 100%; min-width: 980px; }
+  table.parts th { text-align: left; color: var(--muted); font-weight: 400; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  table.parts td { vertical-align: top; padding: 8px; border-bottom: 1px solid var(--rule); }
+  td.en, td.ru { width: 31%; } td.change { width: 24%; color: var(--new); font-size: 0.9rem; } td.change.same { color: var(--same); } td.links { width: 14%; }
+  tr.part { cursor: pointer; } tr.part.on { background: var(--raised); } tr.part.hit { background: var(--mark); }
+  .row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; } .row.th { color: var(--muted); font-weight: 700; }
+  .row.c3 { grid-template-columns: 1.3fr 1fr 1fr; }
+  .row span { min-width: 0; overflow-wrap: anywhere; }
+  p { margin: 0; }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--panel); padding: 0 3px; border-radius: 3px; overflow-wrap: anywhere; }
+  .cite { color: var(--link); cursor: pointer; }
+  td.links .cite { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  ul.nodes, ul.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li.node { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; cursor: pointer; }
+  li.node.on { border-color: var(--link); } li.node.hit { background: var(--mark); }
+  .loc { font-family: var(--mono); color: var(--muted); } .rut { color: var(--muted); } .meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  ul.plain li { background: var(--panel); border-radius: 6px; padding: 8px 10px; }
+  details { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); }
+  pre { white-space: pre-wrap; font-family: var(--mono); font-size: 0.85rem; margin: 8px 0 0; }
+  button { font: inherit; color: var(--fg); background: var(--raised); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+  button:focus-visible, tr.part:focus-visible, li.node:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 700px) { .reason { grid-template-columns: 1fr; } }
+</style>
+
+<h1>Ключи, записанные больше одного раза <span style="color:var(--muted);font-weight:400">· Keys written more than once</span></h1>
+<div class="sub">tools 2.4 (new) · new:tools-2-reindex-twice · предложение от 2026-11-21 · ждёт вашего согласия</div>
+
+<div class="reason">
+  <div><div class="label">Обоснование</div><code>sheriff reindex</code> переписывает целиком файлы, написанные вручную, поэтому сохраняет всё, что в них есть. Два значения, записанные под одним ключом, — это чьё-то намерение каждое. Их сохраняют вместе там, где могут стоять оба. Их отвергают там, где сохранить одно значило бы потерять другое, потому что ничто не говорит, какое имелось в виду. Каждое слияние называется, потому что одно из двух значений могли записать, чтобы заменить другое.</div>
+  <div><div class="label">Reason</div><code>sheriff reindex</code> rewrites in full the files written by hand, so it keeps everything they hold. Each of two values written under one key expresses somebody's intent. They are kept together where both can be kept. They are refused where keeping one would drop the other, since nothing says which was meant. Every merge is named, because one of the two values may have been written to replace the other.</div>
+</div>
+<p class="hint" style="margin-top:8px">Как было в узле «The commands».</p>
+
+<div class="reason">
+  <div><div class="label">Пример</div>Узел хранит <code>"refs": [A]</code>, а ниже <code>"refs": [B, A]</code>: <code>sheriff reindex</code> пишет <code>"refs": [A, B]</code> и называет <code>refs</code> с обеими строками. Узел с <code>"title": "X"</code> и <code>"title": "Y"</code> отвергается, и ни один файл не пишется.</div>
+  <div><div class="label">Example</div>A node holds <code>"refs": [A]</code> and, further down, <code>"refs": [B, A]</code>: <code>sheriff reindex</code> writes <code>"refs": [A, B]</code> and names <code>refs</code> with the line numbers of both values. <code>sheriff reindex</code> refuses a node that holds <code>"title": "X"</code> and <code>"title": "Y"</code>, and writes no file.</div>
+</div>
+<p class="hint" style="margin-top:8px">Предложил рецензент.</p>
+
+<h2>Формулировка по частям</h2>
+<p class="hint">Щелчок по части выделяет узлы, на которые она ссылается; щелчок по узлу внизу выделяет части, которые на него ссылаются.</p>
+<div class="wrap"><table class="parts">
+<thead><tr><th>English</th><th>Русский</th><th>Что изменилось</th><th>Ссылается на</th></tr></thead>
+<tbody>
+<tr class="part" id="part-0" data-cites="s-xm8rz4uupb73gu5">
+  <td class="en"><p><code>sheriff reindex</code> merges the values that an object holds under a key written more than once, known as a duplicate key, folding each value into the values written before it. It does so in every file of the specification and of its archive, and in the project's extension of the schema, <code>specs/_schema/project.schema.json</code> (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>), before it makes any other change. Two values are merged as follows:</p></td>
+  <td class="ru"><p><code>sheriff reindex</code> объединяет значения, которые объект хранит под ключом, записанным больше одного раза (такой ключ называют duplicate key), сливая каждое значение со значениями, записанными до него. Он делает это в каждом файле спецификации и её архива и в расширении схемы проекта, <code>specs/_schema/project.schema.json</code> (<span class="cite" data-sid="s-xm8rz4uupb73gu5" title="How a project may extend the schema">§5.2</span>), прежде чем вносить любое другое изменение. Два значения объединяются так:</p></td>
+  <td class="change">Из узла «The commands». Было: «Затем в каждом файле, который он переписывает…». Теперь слияние — первым, как и в коде: до переименований и до переписывания тестов. Добавлено общепринятое название «duplicate key». Новое, предлагаю: слияние охватывает и расширение схемы проекта — его тоже пишут вручную, и строка 10.1.1 проверяет его на ключи, записанные дважды. Сейчас код его не объединяет.</td>
+  <td class="links"><span class="cite" data-sid="s-xm8rz4uupb73gu5">How a project may extend the schema</span></td>
+</tr>
+<tr class="part" id="part-1" data-cites="">
+  <td class="en"><div class="li">• two lists become one, which holds the members of the first and then the members of the second that are new to the first;</div></td>
+  <td class="ru"><div class="li">• два списка становятся одним, в котором стоят элементы первого, а за ними элементы второго, новые для первого;</div></td>
+  <td class="change">Смысл тот же, сказано без отрицания: было «которых нет в первом».</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-2" data-cites="">
+  <td class="en"><div class="li">• two objects are merged key by key, the values under each key by these same rules, and each key stays where it was first written;</div></td>
+  <td class="ru"><div class="li">• два объекта объединяются по ключам, значения под каждым ключом — по этим же правилам, и каждый ключ остаётся там, где был записан впервые;</div></td>
+  <td class="change">Смысл тот же, другими словами.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-3" data-cites="">
+  <td class="en"><div class="li">• two values that JSON Schema treats as equal become one.</div></td>
+  <td class="ru"><div class="li">• два значения, которые JSON Schema считает равными, становятся одним.</div></td>
+  <td class="change">Смысл тот же, другими словами.</td>
+  <td class="links"></td>
+</tr>
+<tr class="part" id="part-4" data-cites="">
+  <td class="en"><p><code>sheriff reindex</code> names every key whose values it merged, with the file and the line number of each value. It refuses any other pair of values under one key, naming the file, the key, and the line number and the value of each. Where it refuses a pair, it writes no file.</p></td>
+  <td class="ru"><p><code>sheriff reindex</code> называет каждый ключ, значения которого он объединил, с файлом и номером строки каждого значения. Любую другую пару значений под одним ключом он отвергает, называя файл, ключ, номер строки и значение каждого. Если он отверг пару, он не пишет ни одного файла.</p></td>
+  <td class="change">Смысл тот же, другими словами.</td>
+  <td class="links"></td>
+</tr>
+</tbody></table></div>
+
+<h2>Что убрано из узла</h2>
+<ul class="plain">
+
+</ul>
+
+<h2>Связи узла: что он реализует и на что ссылается</h2>
+<ul class="nodes">
+<li class="node" data-sid="s-d5cgda5bdsn7bzy"><span class="loc">реализует · 10.1.1</span> <b>No object in a file of the specification, of its archive or of its schema assigns two values to one property</b><br><span class="meta">guidelines · s-d5cgda5bdsn7bzy</span></li>
+<li class="node" data-sid="s-jsqxdx47wkkj7gp"><span class="loc">реализует · 10.13</span> <b>A procedure that writes the specification is idempotent</b><br><span class="rut">Процедура, которая пишет спецификацию, идемпотентна</span><br><span class="meta">guidelines · s-jsqxdx47wkkj7gp</span></li>
+<li class="node" data-sid="s-xm8rz4uupb73gu5"><span class="loc">ссылается · 5.2</span> <b>How a project may extend the schema</b><br><span class="rut">Как проект может расширить схему</span><br><span class="meta">guidelines · s-xm8rz4uupb73gu5</span></li>
+</ul>
+
+<h2>Тесты, которые перейдут к узлу от «The commands»</h2>
+<ul class="plain">
+<li><code>keeps text it does not merge exactly as JSON.parse reads it</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+<li><code>merges two lists into one holding the first's members, then the second's the first lacks</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+<li><code>merges two objects key by key, each key where it was first written</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+<li><code>merges two values JSON Schema holds equal into one</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+<li><code>refuses two values it cannot merge, naming the key and each one's line and value</code><br><span class="meta">skills/tools/test/unit/json-text.test.ts</span></li>
+<li><code>merges the values an object holds under one key and names every merge</code><br><span class="meta">skills/tools/test/unit/reindex.test.ts</span></li>
+<li><code>refuses two values it cannot merge and then writes no file</code><br><span class="meta">skills/tools/test/unit/reindex.test.ts</span></li>
+</ul>
+
+<h2>Одобренная формулировка узла «The commands», из которого выделен этот узел</h2>
+<p class="hint">Этого узла ещё нет: то, что он говорит, сейчас говорит одобренная формулировка узла, из которого он выделен.</p>
+<button id="open-all" type="button">Раскрыть всё</button>
+<details id="approved-ru"><summary>Текущий текст узла по-русски</summary><pre></pre></details>
+<details id="approved"><summary>Текущий текст узла (English)</summary><pre>`sheriff validate`, `sheriff binding`, `sheriff citations`, `sheriff guard`, `sheriff message` and `sheriff review` implement the checks as the rules of §s-4kd2pave7vm4hmd describe them.
+
+`sheriff init` sets a repository up for the SpecSheriff tools (§s-7unxytshhc4md54). `sheriff remove` takes SpecSheriff out of it (§s-7unxytshhc4md54).
+
+`sheriff reindex` is run after every change to the specification. It does the following:
+
+- it gives a sid to every node that has none;
+- it computes every node's location from where it is;
+- it empties every incoming list and rebuilds it from the outgoing ones;
+- it rebuilds the index in every domain's header from the domain's sections;
+- beside each field of type `one of`, it writes the values gathered for it from elsewhere in the specification, each with the sid of the node it comes from (§s-ju5vcanbjph7mgh);
+- it makes a draft each approved node whose latest line for it and its wording's fingerprint is not an approval. It leaves out of this a section, a domain's header and the SpecSheriff guidelines the project takes.
+
+It then writes the status of each section and domain's header from the nodes under it (§s-9kfdycuq34beqvs).
+
+`sheriff reindex` adds the rule `sheriff init` writes, as a draft, at every run where `project.json` holds no rule refining §s-qzthyh7yqvfhsa2 (§s-7unxytshhc4md54).
+
+Before anything else, `sheriff reindex` renames each key and value an earlier release of the SpecSheriff tools wrote under another name. In every file of the specification and of its archive, it renames:
+
+- the key `id` to `location`;
+- the key `rationale` to `reason`;
+- the NodeKinds `record` and `recordType` to `RecordType`;
+- the NodeKind `rule` to `TextRule`;
+- the NodeKind `domain` to `header`;
+- a node's status `""` to `draft`;
+- a node's status `checked` to `approved`;
+- the key `owner` of a domain's header or a section, holding an email, to `owners`, holding a list holding that email.
+
+A renamed key keeps its place among the node's keys. `sheriff reindex` renames those NodeKinds also where a field's values are the sids of a NodeKind's nodes, and where the project's extension of the schema adds properties to a NodeKind.
+
+A field of type `one of` whose own list an earlier release wrote empty takes the values the domains add as its source instead. Under that release, the empty list stood for those values.
+
+`sheriff reindex` also renames `specs/_confirmations.jsonl` to `specs/_approvals.jsonl`. In each line of that file, it renames the key `owner` to `by`. Where `specs/_approvals.jsonl` already stands, it appends those lines to it and removes the old file.
+
+Then, in every file it rewrites, `sheriff reindex` merges the values an object holds under one key, each into those written before it:
+
+- two lists into one, holding the members of the first and then those of the second that the first does not hold;
+- two objects key by key in the same way, each key where it was first written;
+- two values JSON Schema holds equal into one.
+
+It names every key it merged, with the file and each value's line. It refuses any other two values under one key, naming the file, the key and each one's line and value. It then writes no file.
+
+`sheriff reindex` also rewrites each test that names its node by a bare sid, the form an earlier release of the SpecSheriff tools read. A bare sid is a word of the form of a sid that stands in one of these places:
+
+- it opens the test's name, followed by a space or the name's end;
+- it stands alone as the argument of the test's mark.
+
+In the files the settings name as the tests of the system's code or of a project's own check or generator, `sheriff reindex` puts `@spec ` before that sid. Each node's `meta.tests` then names the test by its new name. `sheriff reindex` names each file it rewrites.
+
+`sheriff approve` records an approval or its withdrawal (§s-v4qus7raqnwzneb).
+
+`sheriff export` writes the readable export in markdown, one file for each file of the specification, each node as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff render` writes the map, the mindmap of the specification's structure drawn from its nodes (§s-rpv4fkdqqguptqd).
+
+`sheriff guide` prints the following:
+
+- every node of the guidelines — the base, the appendix of the tools and the project's own — as §s-k4nqjr96ux7a5m7 says;
+- the figures counted off the model as it prints: how many nodes each part holds and how many of them are approved;
+- whether the specification is approved.
+
+`sheriff show` prints a node, found by its sid or its location, as §s-k4nqjr96ux7a5m7 says.
+
+`sheriff model` prints as JSON the model of the specification where it runs. The model holds every node as its file holds it, with its location, the part and the file it stands in, and the owners named nearest above it. A project's own check or generator is handed the model on its standard input (§s-2fau85dfyyeq66m, §s-km4x4s26kv7pjze).
+
+`sheriff todos` prints, as text, every item of `meta.todos` in the specification where it runs, the archive left out, and the SpecSheriff guidelines too where the project takes them. The items come the newest first, and those of one day in the order the specification reads. Each item comes with its date, who its author is, what is to be done, and the sid, location and title of its node (§s-t28j22vbdmmeqnh).
+
+`sheriff types` generates the following:
+
+- from the RecordTypes, the types and the RuntimeChecks of the system's code, where the technical appendix says they stand;
+- the files each generator the project's own guidelines add prints.
+
+A project's generator is run by the command the settings name for it, and is handed what `sheriff model` prints on its standard input. It prints as JSON each file's path, its content and the sids of the nodes the file is written from (§s-km4x4s26kv7pjze).
+
+`sheriff types` writes a file only where the file is missing or holds, line endings aside, anything other than what it generates. It names each file it writes.
+
+`sheriff types` names each refusal and writes no file where one of the following holds:
+
+- the check of generated copies refuses the list of the files it generates, or a RecordType (§s-dbk2vyeg8z5jxna);
+- a project's generator ends with an exit code other than zero.
+
+`sheriff types` writes a file only once every node that file is generated from is approved. It names each node it waits for:
+
+- the types and RuntimeChecks wait for every RecordType;
+- a file a project's generator prints waits for the nodes it is written from and for the rule listing that generator.</pre></details>
+
+<script>
+  // Selecting a part marks the nodes it cites; selecting a node marks the parts citing it.
+  const parts = [...document.querySelectorAll("tr.part")];
+  const nodes = [...document.querySelectorAll("li.node")];
+  const clear = () => document.querySelectorAll(".on, .hit").forEach((e) => e.classList.remove("on", "hit"));
+  parts.forEach((tr) => { tr.tabIndex = 0; tr.addEventListener("click", () => {
+    clear(); tr.classList.add("on");
+    const ids = tr.dataset.cites.split(" ").filter(Boolean);
+    nodes.forEach((n) => ids.includes(n.dataset.sid) && n.classList.add("hit"));
+  }); });
+  nodes.forEach((li) => { li.tabIndex = 0; li.addEventListener("click", () => {
+    clear(); li.classList.add("on");
+    parts.forEach((tr) => tr.dataset.cites.split(" ").includes(li.dataset.sid) && tr.classList.add("hit"));
+  }); });
+  // An opened block stays open across reloads and republishes.
+  const details = [...document.querySelectorAll("details")];
+  const key = "open:" + location.pathname;
+  try { const open = JSON.parse(localStorage.getItem(key) || "[]"); details.forEach((d) => { if (open.includes(d.id)) d.open = true; }); } catch {}
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(details.filter((d) => d.open).map((d) => d.id))); } catch {} };
+  details.forEach((d) => d.addEventListener("toggle", save));
+  document.getElementById("open-all").addEventListener("click", () => { details.forEach((d) => { d.open = true; }); save(); });
+</script>
