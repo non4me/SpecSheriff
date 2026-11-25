@@ -101,8 +101,8 @@ reviewed where it changes code. `npx sheriff validate`, `binding`, `citations` a
 
 ## Working with the owner
 
-- The owner reviews one node at a time, shown in full, never in fragments. Their approval is the
-  only thing that makes a node approved.
+- The owner reviews nodes in groups, one page per group, and agrees to each group in one answer. Each node
+  is shown in full, never in fragments. The owner's approval is the only thing that makes a node approved.
 - A node changed only to carry out what the owner has already approved in another node is not shown to the owner again:
   the owner's agreement to that other node covers it, so approve it and report it in one line, naming the
   node it follows from.
