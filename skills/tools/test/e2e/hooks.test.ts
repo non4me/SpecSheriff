@@ -4,12 +4,12 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { loc, sid } from "../fixture.ts";
+import { loc, sid, writing } from "../fixture.ts";
 import { approveSpecification, codeProject, OPEN, put, typedProject, withGenerator } from "../code-project.ts";
-import { PLUGIN, pluginHook, plugins } from "../plugin.ts";
+import { current, PLUGIN, pluginHook, plugins } from "../plugin.ts";
 
 const machine = plugins();
-const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: root, encoding: "utf8", env: machine.env });
+const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: root, encoding: "utf8", env: current(machine.env) });
 
 /** A project set up by sheriff init, on a machine where a session of Claude Code has started. */
 function hooked(): string {
@@ -98,7 +98,7 @@ test("@spec s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specifi
   git(root, "add", "-A");
   const run = commit(root, "Contracts: a location moved by hand");
   assert.notEqual(run.status, 0);
-  assert.match(run.stdout + run.stderr, /contracts\/9 is not the one its place gives/);
+  assert.match(run.stdout + run.stderr, /contracts\/9 differs from the location computed for it/);
 });
 
 test("@spec s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it", () => {
@@ -160,8 +160,7 @@ function testCommand(root: string, command?: string): void {
  */
 function pushing(live = true): string {
   const root = hooked();
-  const config = join(root, "sheriff.config.json");
-  writeFileSync(config, JSON.stringify({ ...JSON.parse(readFileSync(config, "utf8")), writesSpecSheriffGuidelines: false }, null, 2) + "\n");
+  writing(null);
   rmSync(join(root, "specs", "_schema"), { recursive: true, force: true });
   rmSync(join(root, "specs", "_guidelines", "spec.json"), { force: true });
   if (live) approveSpecification(root);

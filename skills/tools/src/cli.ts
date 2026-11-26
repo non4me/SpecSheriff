@@ -10,6 +10,7 @@ import { message } from "./message.ts";
 import { review } from "./review.ts";
 import { reindex, rewriteTests } from "./reindex.ts";
 import { show, todos } from "./show.ts";
+import { loadConfig, modelFlags, ownerSettings } from "./config.ts";
 import { modelOf } from "./model.ts";
 import { loadSpecification, specificationOf, type SpecFile, type Specification } from "./spec-files.ts";
 import { writeTypes } from "./types.ts";
@@ -73,10 +74,11 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       for (const m of report.merged) process.stdout.write(`merged: ${m.file}: "${m.key}" at ${m.path || "/"}, lines ${m.lines.join(", ")}\n`);
       for (const s of report.drafted) process.stdout.write(`made a draft: ${s}\n`);
       for (const f of report.written) process.stdout.write(`written: ${f}\n`);
+      for (const s of report.added) process.stdout.write(`added a draft rule, which the SpecSheriff tools read only once it is approved: ${s}\n`);
       return 0;
     }
     case "validate": {
-      const findings = validate(root, { before: lastCommitted() });
+      const findings = validate(root, { before: lastCommitted(), strict: args.includes("--strict") });
       for (const f of findings) process.stdout.write(`${f.where}: ${f.reported ? "reported: " : ""}${f.message}\n`);
       return findings.some((f) => !f.reported) ? 1 : 0;
     }
@@ -98,10 +100,11 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       process.stdout.write(`written: ${render(root)}\n`);
       return 0;
     case "model":
-      process.stdout.write(JSON.stringify(modelOf(loadSpecification(root)), null, 2) + "\n");
+      const spec = loadSpecification(root);
+      process.stdout.write(JSON.stringify(modelOf(spec, modelFlags(root, loadConfig(root), spec)), null, 2) + "\n");
       return 0;
     case "guide":
-      process.stdout.write(guide(loadSpecification(root)));
+      process.stdout.write(guide(loadSpecification(root), ownerSettings(loadConfig(root), false).approved));
       return 0;
     case "types": {
       const report = writeTypes(root);

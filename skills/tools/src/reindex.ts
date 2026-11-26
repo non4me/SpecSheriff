@@ -1,15 +1,15 @@
 import { randomInt } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join, posix } from "node:path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, posix } from "node:path";
 import { readCode } from "./code.ts";
 import { loadConfig, readsAs } from "./config.ts";
 import { trackedFiles } from "./diff.ts";
 import { migrateApprovals, readApprovals, stands } from "./approvals.ts";
 import { mergeKeys, type KeyTwice } from "./json-text.ts";
-import { APPROVAL_RULE, approvalRule, approvalRuleNode, builtStatuses, fingerprint, incoming, isContainer, locations, partOf, PROJECT, SID } from "./model.ts";
+import { APPROVAL_RULE, builtStatuses, fingerprint, incoming, isContainer, locations, partOf, PROJECT, SID, statusNow, TESTS_PASS_RULE, testsRunRule } from "./model.ts";
 import { EXTENSION, isArchive, schemaRefusals, type Extension } from "./schema.ts";
 import { fieldKey, fieldsOf, gather } from "./values.ts";
-import { canonical, cellNodes, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
+import { canonical, cellNodes, specPaths, withTaken, writesGuidelines, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface ReindexReport {
   /** Every key whose values were merged, with the file it is in. */
@@ -18,6 +18,67 @@ export interface ReindexReport {
   drafted: string[];
   /** The files written, because something in them changed. */
   written: string[];
+  /** The sids of the draft rules added to the project's own guidelines: rules that the SpecSheriff tools read only after they are approved. */
+  added: string[];
+}
+
+/**
+ * An earlier release recorded the specification's approval through a rule of `project.json`. Where `sheriff.config.json`
+ * holds no entry for the approval status, this function replaces that rule with an entry (s-gb8s9657a65hqmv). If that rule
+ * is approved, the entry names the owner who last approved it, and the rule is moved to the archive. If that rule is a draft,
+ * it is moved to the archive if it has ever been approved, and is deleted otherwise. If the rule is removed and no rule of
+ * `project.json` refines the rule on when the tests must pass, the draft rule on when the tests run is added, and the
+ * function returns true.
+ */
+function replaceApprovingRule(root: string, files: SpecFile[], report: ReindexReport): boolean {
+  const project = files.find((f) => f.path === PROJECT);
+  const settingsPath = join(root, "sheriff.config.json");
+  const settings = JSON.parse(readFileSync(settingsPath, "utf8")) as Record<string, unknown>;
+  if (!project || (Array.isArray(settings.approvalStatus) && settings.approvalStatus.length)) return false;
+  const removed: SpecNode[] = [];
+  const refining = (n: SpecNode, to: string) => n.refs?.some((r) => r.type === "refines" && r.to === to);
+  const strip = (ns: SpecNode[]): SpecNode[] =>
+    ns.filter((n) => {
+      if (refining(n, APPROVAL_RULE)) return removed.push(n), false;
+      if (n.children) n.children = strip(n.children);
+      return true;
+    });
+  project.data.nodes = strip(project.data.nodes ?? []);
+  if (!removed.length) return false;
+  const lines = readApprovals(root);
+  const archivePath = "specs/_archive/guidelines.json";
+  const archive = () => {
+    let f = files.find((x) => x.path === archivePath);
+    if (!f) files.push((f = { path: archivePath, data: { schemaVersion: 1, scope: "_guidelines", section: "guidelines", nodes: [] } }));
+    return f;
+  };
+  const date = new Date().toISOString().slice(0, 10);
+  for (const rule of removed) {
+    const approvals = lines.filter((l) => l.sid === rule.sid && !l.withdrawn);
+    const { sid: _, refs, ...rest } = rule;
+    const entry = (reason: string) => archive().data.nodes.push({ ...rest, refs: (refs ?? []).filter((r) => !r.from), archived: { date, reason } } as unknown as SpecNode);
+    if (statusNow(rule.status) === "approved" && approvals.length) {
+      settings.approvalStatus = [{ status: "approved", by: approvals.at(-1)!.by }];
+      entry("Replaced by the entry in `sheriff.config.json` that records the specification's approval status");
+    } else if (approvals.length) entry("The specification's approval status is recorded in `sheriff.config.json`");
+  }
+  if (settings.approvalStatus) {
+    writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
+    report.written.push("sheriff.config.json");
+  }
+  const all: SpecNode[] = [];
+  const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (all.push(n), walk(n.children)));
+  walk(project.data.nodes);
+  const top = project.data.nodes[0];
+  if (!top || all.some((n) => refining(n, TESTS_PASS_RULE))) return false;
+  top.children = [...(top.children ?? []), { location: "", ...testsRunRule() } as SpecNode];
+  return true;
+}
+
+/** The sid of the draft rule on when the tests run, which `sheriff reindex` added to the project's own guidelines. */
+function addedTestsRule(files: SpecFile[]): string[] {
+  const top = files.find((f) => f.path === PROJECT)?.data.nodes[0];
+  return (top?.children ?? []).filter((n) => n.title === "When the tests run" && n.refs?.some((r) => r.type === "refines" && r.to === TESTS_PASS_RULE)).map((n) => n.sid).slice(-1);
 }
 
 const ALPHABET = "23456789abcdefghjkmnpqrstuvwxyz";
@@ -67,7 +128,7 @@ function renamedExtension(root: string): Extension | null {
  * Renames, in every node of every file, the archive's included, what an earlier release wrote under another name,
  * each key where it stood; an old key whose new name the node already holds is dropped.
  */
-function renameEarlier(files: SpecFile[]): void {
+export function renameEarlier(files: SpecFile[]): void {
   const rename = (n: SpecNode): SpecNode => {
     // The files are validated only after this, so what is not a node is left for the validation to name.
     if (!n || typeof n !== "object" || Array.isArray(n)) return n;
@@ -188,7 +249,9 @@ function headers(spec: Specification): Array<{ header: SpecNode; sections: SpecN
 }
 
 /** The index a header carries, as the domain's sections produce it. */
+/** The index of a domain's sections that its header holds; none for a domain without sections (s-agc6fb3vx46pc23). */
 export function headerIndex(spec: Specification, sections: SpecNode[], built: ReturnType<typeof incoming>) {
+  if (!sections.length) return undefined;
   return sections.map((s) => {
     const usedBy = (built.get(s.sid) ?? []).filter((r) => r.type === "consumes" && spec.nodes.get(r.from)?.node.kind === "header").map((r) => r.from);
     return { sid: s.sid, title: s.title, text: s.text, ...(usedBy.length ? { usedBy } : {}) };
@@ -201,8 +264,9 @@ export function judgedHere(path: string, writesSpecSheriffGuidelines: boolean): 
 }
 
 export function reindex(root: string): ReindexReport {
-  const { writesSpecSheriffGuidelines } = loadConfig(root);
-  const report: ReindexReport = { merged: [], drafted: [], written: [] };
+  loadConfig(root);
+  const writesSpecSheriffGuidelines = writesGuidelines(root);
+  const report: ReindexReport = { merged: [], drafted: [], written: [], added: [] };
   const texts = new Map<string, string>();
   const files: SpecFile[] = specPaths(root).map((path) => {
     const text = readFileSync(join(root, path), "utf8");
@@ -220,18 +284,9 @@ export function reindex(root: string): ReindexReport {
   // Validated once what an earlier release wrote is changed, and before anything is computed (s-xzcw3hv4hmxz7h7).
   const refused = schemaRefusals(root, files.map((f) => ({ path: f.path, data: asValidated(f) })), extension ?? undefined);
   if (refused.length) throw new Error(`the schema refuses what the reindex reads, so it writes no file:\n${refused.map((r) => `${r.where}: ${r.message}`).join("\n")}`);
-  // A specification without the rule approving it gets the rule as `sheriff init` writes it, a draft (s-f5rz6b7dhxejjts).
-  const project = files.find((f) => f.path === PROJECT);
-  const top = project?.data.nodes?.[0];
-  // The base's rule it refines is the SpecSheriff guidelines', which a project takes and their repository holds.
-  const holdsBase = (ns: SpecNode[] = []): boolean => ns.some((n) => n.sid === APPROVAL_RULE || holdsBase(n.children));
-  if (top && (!writesSpecSheriffGuidelines || files.some((f) => holdsBase(f.data.nodes)))) {
-    const all: SpecNode[] = [];
-    const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (all.push(n), walk(n.children)));
-    walk(project!.data.nodes);
-    if (!approvalRule(all)) top.children = [...(top.children ?? []), approvalRuleNode()];
-  }
+  const testsRun = replaceApprovingRule(root, files, report);
   giveSids(files);
+  if (testsRun) report.added.push(...addedTestsRule(files));
   const spec = withTaken(root, files);
 
   const ids = locations(spec);
@@ -243,7 +298,11 @@ export function reindex(root: string): ReindexReport {
   // A node of the archive holds no link pointing at it.
   const unlinked = (nodes: SpecNode[]) => nodes.forEach((n) => ((n.refs = (n.refs ?? []).filter((r) => !r.from)), unlinked(n.children ?? [])));
   for (const f of spec.archive) unlinked(f.data.nodes ?? []);
-  for (const { header, sections } of headers(spec)) header.sections = headerIndex(spec, sections, built);
+  for (const { header, sections } of headers(spec)) {
+    const index = headerIndex(spec, sections, built);
+    if (index) header.sections = index;
+    else delete header.sections;
+  }
   // Beside each field whose values come from elsewhere than its own list, the values gathered for it (s-ju5vcanbjph7mgh).
   const gathered = gather(spec);
   for (const [, { node }] of spec.nodes) {
@@ -276,6 +335,7 @@ export function reindex(root: string): ReindexReport {
     if (!files.includes(f)) continue;
     const text = canonical(f.data);
     if (text !== texts.get(f.path)) {
+      mkdirSync(dirname(join(root, f.path)), { recursive: true });
       writeFileSync(join(root, f.path), text);
       report.written.push(f.path);
     }
@@ -283,6 +343,14 @@ export function reindex(root: string): ReindexReport {
   if (extension) {
     writeFileSync(join(root, EXTENSION), canonical(extension));
     report.written.push(EXTENSION);
+  }
+  // An earlier release recognized the repository where the SpecSheriff guidelines are written by means of a setting, which `sheriff reindex` removes (s-gb8s9657a65hqmv).
+  const settings = join(root, "sheriff.config.json");
+  const raw = JSON.parse(readFileSync(settings, "utf8")) as Record<string, unknown>;
+  if ("writesSpecSheriffGuidelines" in raw) {
+    delete raw.writesSpecSheriffGuidelines;
+    writeFileSync(settings, JSON.stringify(raw, null, 2) + "\n");
+    report.written.push("sheriff.config.json");
   }
   return report;
 }

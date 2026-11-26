@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
-import { CARRIED, takesGuidelines } from "./spec-files.ts";
+import { schemaDir } from "./spec-files.ts";
 
 export interface Schema {
   /** The errors of a file of the specification against the schema, each naming the field that is wrong; none where it matches. */
@@ -13,7 +13,7 @@ export interface Schema {
 }
 
 /** The files of the schema of the SpecSheriff guidelines, which the plugin carries to every project. */
-export const SCHEMA_FILES = ["node.schema.json", "section-file.schema.json", "archive-file.schema.json", "extension.schema.json"];
+export const SCHEMA_FILES = ["node.schema.json", "section-file.schema.json", "archive-file.schema.json", "extension.schema.json", "config.schema.json"];
 /** Whether a path is a file of the archive (s-f2b5zvc565s242f). */
 export const isArchive = (path: string) => path.startsWith("specs/_archive/");
 /** Where a project keeps its extension of the schema (s-eferktypcj7njt5). */
@@ -88,7 +88,7 @@ export function schemaRefusals(root: string, files: Array<{ path: string; data: 
  * earlier release wrote in it and not yet written it.
  */
 export function loadSchema(root: string, given?: Extension): Schema {
-  const dir = takesGuidelines(root) ? join(CARRIED, "_schema") : join(root, "specs", "_schema");
+  const dir = schemaDir(root);
   const read = (name: string): Json => JSON.parse(readFileSync(join(dir, name), "utf8"));
   // Every property that the schema of a node declares, for every node or for one kind of node.
   const declared = new Set<string>();

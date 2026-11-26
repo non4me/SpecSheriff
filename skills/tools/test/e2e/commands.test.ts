@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { approve } from "../../src/approvals.ts";
-import { BASE, file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
+import { BASE, file, loc, node, OWN, OWNER, repo, sid, taking } from "../fixture.ts";
 
 const CLI = fileURLToPath(new URL("../../src/cli.ts", import.meta.url));
 const sheriff = (root: string, ...args: string[]) => spawnSync(process.execPath, [CLI, ...args], { cwd: root, encoding: "utf8" });
@@ -14,7 +14,7 @@ const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: r
 function project(): string {
   const root = repo({
     "specs/_guidelines/spec.json": BASE,
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours." })),
+    "specs/_guidelines/project.json": OWN,
     "specs/contracts/c.json": file("contracts", "c",
       node("shared", { kind: "section", text: "Shared.", children: [node("term", { kind: "term", title: "user" })] }),
       node("more", { kind: "section", text: "More.", children: [node("ours", { text: "See §" + sid("shared") + ".", refs: [{ type: "cites", to: sid("shared") }] })] }),
@@ -45,7 +45,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff validate passes what holds together and re
   writeFileSync(path, readFileSync(path, "utf8").replace(`"location": "${loc("contracts", "1")}"`, `"location": "${loc("contracts", "9")}"`));
   const refused = sheriff(root, "validate");
   assert.equal(refused.status, 1);
-  assert.match(refused.stdout, /specs\/contracts\/c\.json: .*contracts\/9 is not the one its place gives/);
+  assert.match(refused.stdout, /specs\/contracts\/c\.json: .*contracts\/9 differs from the location computed for it/);
 });
 
 test("@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node an approval was given for, read against the last commit", () => {

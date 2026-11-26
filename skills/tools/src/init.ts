@@ -2,7 +2,7 @@ import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, rmdirSync,
 import { dirname, isAbsolute, join } from "node:path";
 import { APPROVALS } from "./approvals.ts";
 import { git } from "./diff.ts";
-import { approvalRuleNode } from "./model.ts";
+import { testsRunRule } from "./model.ts";
 import { newSid } from "./reindex.ts";
 import { canonical } from "./spec-files.ts";
 
@@ -184,8 +184,8 @@ export function init(root: string, agent: string = "claude"): InitReport {
       const project = { schemaVersion: 1, scope: "_guidelines", section: "project", nodes: [{
         location: ["_guidelines", "project"].join("/"), sid: newSid(new Set()), kind: "section", title: "The project's own guidelines", status: "draft",
         text: "What only this project's specification needs beyond the SpecSheriff guidelines.", owners: [owner], refs: [],
-        // Every project holds the rule approving its specification, a draft until its owners approve it (s-7unxytshhc4md54).
-        children: [{ ...approvalRuleNode(), location: ["_guidelines", "project", "1"].join("/"), sid: newSid(new Set()) }],
+        // Every project holds the rule on when the tests run, a draft until its owners approve it (s-7unxytshhc4md54).
+        children: [{ location: ["_guidelines", "project", "1"].join("/"), sid: newSid(new Set()), ...testsRunRule() }],
       }] };
       write("specs/_guidelines/project.json", canonical(project));
     }

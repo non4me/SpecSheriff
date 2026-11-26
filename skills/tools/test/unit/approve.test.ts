@@ -74,24 +74,7 @@ test("@spec s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner i
   assert.throws(() => approve(lone, [sid("lone")], { me: OWNER }), /no owner/);
 });
 
-function withApprovalRule() {
-  return repo({
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [
-      node("ours", { kind: "section", owners: [OTHER], children: [
-        node("approved spec", { title: "The specification is approved", text: "This project's specification is approved.", refs: [{ type: "refines", to: APPROVAL_RULE }] }),
-      ] }),
-    ] })),
-  });
-}
 
-test("@spec s-qzthyh7yqvfhsa2 refuses to approve the rule that approves the specification, or to withdraw its approval, to anyone but the specification's owners", () => {
-  const root = withApprovalRule();
-  assert.throws(() => approve(root, [sid("approved spec")], { me: OTHER }), /specification's owners/);
-  approve(root, [sid("approved spec")], { me: OWNER });
-  assert.throws(() => approve(root, [sid("approved spec")], { me: OTHER, withdraw: true }), /specification's owners/);
-  approve(root, [sid("approved spec")], { me: OWNER, withdraw: true });
-  assert.equal(statusOf(root, "approved spec"), "draft");
-});
 
 test("@spec s-v4qus7raqnwzneb lets anyone withdraw an approval by a line of its own naming them as by, makes the node a draft, and the latest line decides", () => {
   const root = project();

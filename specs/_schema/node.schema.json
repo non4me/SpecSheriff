@@ -86,9 +86,7 @@
               }
             },
             "required": [
-              "level",
-              "code",
-              "sections"
+              "code"
             ]
           }
         },

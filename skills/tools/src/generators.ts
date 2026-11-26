@@ -1,6 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { isAbsolute, posix } from "node:path";
-import type { Config } from "./config.ts";
+import { modelFlags, type Config } from "./config.ts";
 import { modelOf } from "./model.ts";
 import type { Specification } from "./spec-files.ts";
 import type { Finding } from "./validate.ts";
@@ -29,7 +29,7 @@ export function runGenerators(root: string, spec: Specification, config: Config)
   const refusals: Finding[] = [];
   const waiting = new Set<string>();
   if (!config.generators.length) return { files, refusals, waiting: [] };
-  const model = JSON.stringify(modelOf(spec));
+  const model = JSON.stringify(modelOf(spec, modelFlags(root, config, spec)));
   for (const g of config.generators) {
     const where = `generator "${g.name}"`;
     const rule = spec.nodes.get(g.rule)?.node;

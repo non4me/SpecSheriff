@@ -1,6 +1,7 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { domainOrder, isDomain, levelsOf, partOf, PROJECT, specificationApproved, statusNow } from "./model.ts";
+import { approvedWordings } from "./approved-wording.ts";
+import { domainOrder, isDomain, levelsOf, partOf, statusNow, type Wordings } from "./model.ts";
 import { nodeMarkdown } from "./show.ts";
 import { loadSpecification, type SpecNode, type Specification } from "./spec-files.ts";
 
@@ -71,14 +72,14 @@ function branch(nodes: SpecNode[], depth: number, out: string[]): void {
 }
 
 /** The outline of the map: the guidelines, contracts, a branch per level from the top, the technical appendix last. */
-export function outline(spec: Specification): string {
+export function outline(spec: Specification, wordings: Wordings): string {
   const out = ["# Specification"];
   const files = (part: (p: string) => boolean) => spec.files.filter((f) => part(partOf(f.path).part));
   out.push(item(0, "Guidelines"));
   for (const f of files((p) => p === "_guidelines")) branch(f.data.nodes, 1, out);
   out.push(item(0, "Contracts"));
   for (const f of files((p) => p === "contracts")) branch(f.data.nodes, 1, out);
-  const levels = levelsOf(spec) ?? [];
+  const levels = levelsOf(spec, wordings);
   const order = domainOrder(spec);
   const domainFiles = (d: string) => files((p) => p === d);
   const levelOf = (d: string) => domainFiles(d).flatMap((f) => f.data.nodes).find((n) => n.kind === "header")?.level as string | undefined;
@@ -106,7 +107,7 @@ export function outline(spec: Specification): string {
 export function render(root: string): string {
   const spec = loadSpecification(root);
   // Every `<` written as its escape, so that no title ends the script it stands in.
-  const carried = JSON.stringify(outline(spec)).replace(/</g, "\\u003c");
+  const carried = JSON.stringify(outline(spec, approvedWordings(root, spec))).replace(/</g, "\\u003c");
   const page = `<!doctype html>
 <html lang="en">
 <head>
@@ -130,8 +131,8 @@ ${LIBRARIES.map((library) => `<script>\n${readFileSync(library, "utf8")}</script
   return path.replace(/\\/g, "/");
 }
 
-/** The guidelines whole, and the figures counted off the model as they are printed. */
-export function guide(spec: Specification): string {
+/** The guidelines in full, the specification's approval status, and the figures counted from the model, as they are printed. */
+export function guide(spec: Specification, approved: boolean): string {
   const counts = new Map<string, { nodes: number; approved: number }>();
   for (const { node, file } of spec.nodes.values()) {
     const { part } = partOf(file.path);
@@ -141,10 +142,7 @@ export function guide(spec: Specification): string {
     counts.set(part, c);
   }
   const figures = [...counts].sort(([a], [b]) => a.localeCompare(b)).map(([part, c]) => `- ${part}: ${c.nodes} nodes, ${c.approved} approved`);
-  const project: SpecNode[] = [];
-  const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (project.push(n), walk(n.children)));
-  walk(spec.files.find((f) => f.path === PROJECT)?.data.nodes);
-  figures.push(`\nThe specification is ${specificationApproved(project) ? "approved" : "a draft"}.`);
+  figures.push(`\nThe specification is ${approved ? "approved" : "a draft"}.`);
   const guidelines = spec.files.filter((f) => partOf(f.path).part === "_guidelines").flatMap((f) => f.data.nodes.map((n) => nodeMarkdown(spec, n, 1, { metadata: false })));
   return [`# Where the specification stands\n\nCounted off the model as this was printed.\n\n${figures.join("\n")}`, ...guidelines].join("\n\n") + "\n";
 }

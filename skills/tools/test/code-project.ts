@@ -5,7 +5,7 @@ import { approve } from "../src/approvals.ts";
 import { reindex } from "../src/reindex.ts";
 import { APPROVAL_RULE } from "../src/model.ts";
 import { DATA_STRUCTURES, writeTypes } from "../src/types.ts";
-import { BASE, file, node, OWNER, repo, sid, taking } from "./fixture.ts";
+import { BASE, file, node, OWN, OWNER, repo, sid, taking } from "./fixture.ts";
 
 export const git = (root: string, ...args: string[]) => spawnSync("git", args, { cwd: root, encoding: "utf8" });
 
@@ -28,27 +28,12 @@ export const nodeIn = (data: any, name: string): any => data.nodes[0].children.f
 export const OPEN = `/** @spec ${sid("open")} */\nexport function open(amount: number) {\n  return amount;\n}\n`;
 export const OPEN_TEST = `test("@spec ${sid("open")} opens an account", () => {});\n`;
 
-/**
- * The sid of the rule of the project's own guidelines that approves the specification: the one the reindex adds where
- * the project takes the SpecSheriff guidelines, or, in a project writing guidelines that hold no base's rule on it,
- * one added here.
- */
-export function approvalRuleSid(root: string): string {
-  const path = join(root, "specs", "_guidelines", "project.json");
-  const data = JSON.parse(readFileSync(path, "utf8"));
-  const find = () => (data.nodes[0].children ?? []).find((n: any) => n.refs.some((r: any) => r.type === "refines" && r.to === APPROVAL_RULE));
-  if (!find()) {
-    data.nodes[0].children = [...(data.nodes[0].children ?? []), node("approved spec", { title: "The specification is approved", text: "This project's specification is approved.", refs: [{ type: "refines", to: APPROVAL_RULE }] })];
-    writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
-    reindex(root);
-  }
-  return find().sid;
-}
-
-/** Approves the specification (s-qzthyh7yqvfhsa2), its rule approved by its owner, or withdraws that approval. */
+/** Approves the specification (s-qzthyh7yqvfhsa2), or sets it back to draft, by means of an entry in sheriff.config.json that names `me` (s-d3nkw9b6mn98vuw). */
 export function approveSpecification(root: string, { withdraw = false, me = OWNER } = {}): void {
-  reindex(root);
-  approve(root, [approvalRuleSid(root)], { me, withdraw });
+  const path = join(root, "sheriff.config.json");
+  const settings = JSON.parse(readFileSync(path, "utf8"));
+  settings.approvalStatus = [...(settings.approvalStatus ?? []), { status: withdraw ? "draft" : "approved", by: me }];
+  writeFileSync(path, JSON.stringify(settings, null, 2) + "\n");
   reindex(root);
 }
 
@@ -57,7 +42,7 @@ export function codeProject(): string {
   const root = repo({
     "sheriff.config.json": { code: ["src/**"], tests: ["test/**"], writesSpecSheriffGuidelines: true },
     "specs/_guidelines/spec.json": BASE,
-    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours." })),
+    "specs/_guidelines/project.json": OWN,
     "specs/contracts/c.json": file("contracts", "c", node("accounts", { kind: "section", text: "Accounts.", children: [
       node("open", { meta: { code: [{ file: "src/open.ts" }], tests: [`test/open.test.ts::@spec ${sid("open")} opens an account`] } }),
       node("draft"),

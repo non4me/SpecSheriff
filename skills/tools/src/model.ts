@@ -7,31 +7,28 @@ export const LEVELS_RULE = "s-nkyty4dy9x2v2a4";
 export const SID = /^s-[2-9a-hjkmnp-z]{15}$/;
 /** The file of a project's own guidelines. */
 export const PROJECT = "specs/_guidelines/project.json";
-/** The sid of the base's rule on the specification's status, which the rule of a project's own guidelines approving it refines. */
+/**
+ * The sid of the base's rule on the specification's approval status. An earlier release recorded the specification's
+ * approval through a rule of a project's own guidelines that refines the base's rule. `sheriff reindex` replaces that
+ * rule with an entry (s-gb8s9657a65hqmv).
+ */
 export const APPROVAL_RULE = "s-qzthyh7yqvfhsa2";
 
-/** The rule of a project's own guidelines that approves its specification, where its file holds one (s-qzthyh7yqvfhsa2). */
-export function approvalRule(nodes: Iterable<SpecNode>): SpecNode | undefined {
-  for (const n of nodes) if (n.refs?.some((r) => r.type === "refines" && r.to === APPROVAL_RULE)) return n;
-  return undefined;
-}
+/** The sid of the base's rule on when the tests must pass; that rule is refined by the rule of a project's own guidelines on when the tests run. */
+export const TESTS_PASS_RULE = "s-x8uzc8z44pwtd3h";
 
-/** The rule approving the specification as `sheriff init` writes it and the reindex adds it where it is missing, a draft (s-7unxytshhc4md54). */
-export function approvalRuleNode(): SpecNode {
+/** The draft rule on when the tests run, as `sheriff init` writes it (s-7unxytshhc4md54), without a sid or a location. */
+export function testsRunRule(): Omit<SpecNode, "sid" | "location"> {
   return {
-    location: "", sid: "", kind: "TextRule", title: "The specification is approved", status: "draft",
-    text: "This project's specification is approved.", refs: [{ type: "refines", to: APPROVAL_RULE }],
-  } as SpecNode;
+    kind: "TextRule", title: "When the tests run", status: "draft", text: "The tests run before every push.",
+    refs: [{ type: "refines", to: TESTS_PASS_RULE }],
+    reason: "Running the tests before every push keeps a change whose tests fail from reaching the project's shared branch.",
+    list: { of: "the moments at which the tests run", members: ["push"] },
+  };
 }
 
 /** A node's status as this release writes it: an earlier release wrote "" for draft and "checked" for approved. */
 export const statusNow = (status: string | undefined) => (status === "checked" || status === "approved" ? "approved" : "draft");
-
-/** Whether the specification is approved: its rule stands in the project's own guidelines and is approved (s-qzthyh7yqvfhsa2). */
-export function specificationApproved(nodes: Iterable<SpecNode>): boolean {
-  const rule = approvalRule(nodes);
-  return rule !== undefined && statusNow(rule.status) === "approved";
-}
 
 /** Whether a node is a section or a domain's header, whose status is built from the nodes under it (s-9kfdycuq34beqvs). */
 export const isContainer = (kind: string | undefined) => kind === "section" || kind === "header";
@@ -166,13 +163,16 @@ export function incoming(spec: Specification): Map<string, Incoming[]> {
 /** One node of the model `sheriff model` prints: as its file holds it, without the nodes under it, with where it stands and its owners. */
 export type ModelNode = Omit<SpecNode, "children"> & { part: string; file: string; parent: string | null; owners: string[]; children?: undefined };
 
-/** The model of the specification: every node as its file holds it, with its part, its file, the node above it and its owners (s-f5rz6b7dhxejjts). */
-export function modelOf(spec: Specification): { nodes: ModelNode[] } {
+/**
+ * The model of the specification (s-w6gybeqn2ttydqx): the specification's approval status and its `strict` flag, and every
+ * node as its file holds it, with its part, its file, the node above it and its owners.
+ */
+export function modelOf(spec: Specification, flags: { approved: boolean; strict: boolean }): { approvalStatus: "approved" | "draft"; strict: boolean; nodes: ModelNode[] } {
   const nodes = [...spec.nodes].map(([sid, { node, file, parent }]) => {
     const { children: _, ...own } = node;
     return { ...own, part: partOf(file.path).part, file: file.path, parent: parent?.sid ?? null, owners: ownersOf(spec, sid) };
   });
-  return { nodes };
+  return { approvalStatus: flags.approved ? "approved" : "draft", strict: flags.strict, nodes };
 }
 
 /** A node's own owners: the list it names, or, as an earlier release wrote it, its one owner. */
@@ -225,7 +225,8 @@ export function builtStatuses(spec: Specification): Map<string, "draft" | "appro
     });
     walk(f.data.nodes);
     if (isDomain(part)) {
-      const every = f.data.nodes.every((n) => n.kind === "header" || (isContainer(n.kind) ? allUnder(n) : approved(n) && allUnder(n)));
+      // A header's approval status is built from every node of its domain's files, including the header's own children and the nodes in the cells of TableRules.
+      const every = f.data.nodes.every((n) => (isContainer(n.kind) ? allUnder(n) : approved(n) && allUnder(n)));
       byDomain.set(part, (byDomain.get(part) ?? true) && every);
     }
   }
@@ -237,21 +238,38 @@ export function builtStatuses(spec: Specification): Map<string, "draft" | "appro
   return out;
 }
 
-/** The levels the domains stand at, from the top: the list of the rule of the project's own guidelines refining the base's rule on levels. */
-export function levelsOf(spec: Specification): string[] | null {
-  let levels: string[] | null = null;
+/** What a reader of the project's own guidelines takes from the last approved wordings of their rules (s-t9j29hppag2nren). */
+export type Wordings = { wording(sid: string): SpecNode | undefined; links(sid: string): SpecNode["refs"] };
+
+/**
+ * The members of the lists of every rule of the project's own guidelines that refines the given rule, in the order in
+ * which those rules appear, each rule read in its last approved wording. A rule that was never approved contributes no members (s-t9j29hppag2nren).
+ */
+export function listedBy(spec: Specification, wordings: Wordings, refined: string): unknown[] {
+  const out: unknown[] = [];
   const walk = (nodes: SpecNode[]) => {
     for (const n of nodes) {
-      if (n.list && n.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE)) levels = (n.list as { members: string[] }).members;
+      if (wordings.links(n.sid).some((r) => r.type === "refines" && r.to === refined)) {
+        out.push(...(((wordings.wording(n.sid)?.list as { members?: unknown[] } | undefined)?.members) ?? []));
+      }
       walk(n.children ?? []);
     }
   };
   walk(spec.files.find((f) => f.path === PROJECT)?.data.nodes ?? []);
-  return levels;
+  return out;
 }
 
-/** Whether a file's part is a domain: neither the guidelines, nor contracts, nor the technical appendix, nor the archive. */
-export const isDomain = (part: string) => !["_guidelines", "contracts", "tech", "_archive"].includes(part);
+/** The levels at which the domains are placed, from the top: the list members of every rule of the project's own guidelines that refines the rule on levels. */
+export function levelsOf(spec: Specification, wordings: Wordings): string[] {
+  return listedBy(spec, wordings, LEVELS_RULE).filter((m): m is string => typeof m === "string");
+}
+
+/**
+ * Whether a file's part is a domain. It is not one if it is the guidelines, the contracts section, the technical appendix,
+ * the archive, or `base`, which is the folder of the base specification of a project that has not chosen the Domains extension
+ * (s-zefk589ykh37b8u).
+ */
+export const isDomain = (part: string) => !["_guidelines", "contracts", "tech", "_archive", "base"].includes(part);
 
 /**
  * The domains, each after every domain it uses and as close as possible before the first that uses
@@ -337,15 +355,27 @@ export function fingerprint(node: SpecNode, cell?: CellPlace): string {
     return [k, v];
   }));
   if (cell) wording.cell = cell;
-  // What the reindex builds beside a field, the values gathered for it, is no one's wording. A field taking the values
-  // the domains add stands as earlier releases wrote it, with an empty list of its own (s-v4qus7raqnwzneb).
-  const earlier = (v: unknown) => {
-    if (!v || typeof v !== "object" || Array.isArray(v)) return v;
-    const { from, ...rest } = v as Record<string, unknown>;
-    // A field whose values are the sids of a kind's nodes names that kind as earlier releases wrote it.
-    if (from === "kindSids" && typeof rest.kind === "string" && EARLIER_KINDS[rest.kind]) return { ...rest, from, kind: EARLIER_KINDS[rest.kind] };
-    return (rest as { is?: unknown }).is === "one of" && from === "domains" && !("values" in rest) ? { ...rest, values: [] } : v;
-  };
-  const built = JSON.parse(JSON.stringify(wording, (k, v) => (k === "gathered" ? undefined : earlier(v))));
-  return createHash("sha256").update(JSON.stringify(sorted(built))).digest("hex");
+  return createHash("sha256").update(JSON.stringify(sorted(asEarlier(JSON.parse(JSON.stringify(wording)))))).digest("hex");
+}
+
+/**
+ * A node's wording as earlier releases wrote it, used to compute the node's fingerprint (s-f5brvuuu6xmkj6t). The values gathered for a
+ * field, in its `x-enumSource` or, as earlier releases wrote them, in a member of `fields`, are left out, since
+ * `sheriff reindex` builds them. The kind of node that a field's values come from is named as earlier releases named it. A
+ * field that takes the values that the domains add is kept as earlier releases wrote it, with an empty list of values of its own
+ * (s-v4qus7raqnwzneb). In this function, `under` is the key that holds `value`, and `field` marks a member of `fields`.
+ */
+function asEarlier(value: unknown, under?: string): unknown {
+  if (Array.isArray(value)) return value.map((v) => asEarlier(v, under === "fields" ? "field" : undefined));
+  if (!value || typeof value !== "object") return value;
+  let o = value as Record<string, unknown>;
+  const { from, ...rest } = o;
+  if (from === "kindSids" && typeof rest.kind === "string" && EARLIER_KINDS[rest.kind]) o = { ...rest, from, kind: EARLIER_KINDS[rest.kind] };
+  else if (rest.is === "one of" && from === "domains" && !("values" in rest)) o = { ...rest, values: [] };
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(o)) {
+    if (k === "gathered" && (under === "x-enumSource" || under === "field")) continue;
+    out[k] = k === "kind" && under === "x-enumSource" && typeof v === "string" ? (EARLIER_KINDS[v] ?? v) : asEarlier(v, k);
+  }
+  return out;
 }

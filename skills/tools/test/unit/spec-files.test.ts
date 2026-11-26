@@ -3,12 +3,25 @@ import assert from "node:assert/strict";
 import { cpSync, existsSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { canonical, loadSpecification, writeSpecFile } from "../../src/spec-files.ts";
+import { canonical, loadSpecification, writesGuidelines, writeSpecFile } from "../../src/spec-files.ts";
 import { LEVELS_RULE } from "../../src/model.ts";
 import { reindex } from "../../src/reindex.ts";
 import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
-import { file, node, repo, sid, taking } from "../fixture.ts";
+import { file, node, repo, sid, taking, writing } from "../fixture.ts";
+
+test("@spec s-zefk589ykh37b8u uses SPECSHERIFF_GUIDELINES_REPO alone, a variable that holds the path to a repository's root, to recognize the repository where the SpecSheriff guidelines are written", () => {
+  const root = repo({});
+  assert.equal(writesGuidelines(root), true);
+  writing(join(root, "/"));
+  assert.equal(writesGuidelines(root), true);
+  writing(join(root, "elsewhere"));
+  assert.equal(writesGuidelines(root), false);
+  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify({ code: [], tests: [], writesSpecSheriffGuidelines: true }));
+  assert.equal(writesGuidelines(root), false);
+  writing(null);
+  assert.equal(writesGuidelines(root), false);
+});
 
 test("@spec s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools", () => {
   const root = taking();

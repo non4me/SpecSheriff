@@ -1644,8 +1644,7 @@
                     ],
                     "tests": [
                       "skills/tools/test/unit/model.test.ts::@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it that are no section, and a domain's header's from every node of the domain",
-                      "skills/tools/test/unit/reindex.test.ts::@spec s-9kfdycuq34beqvs writes the status of each section and domain's header from the nodes under it, after every change",
-                      "skills/tools/test/unit/validate.test.ts::@spec s-9kfdycuq34beqvs refuses a section or a domain's header whose status is not the one the nodes under it produce"
+                      "skills/tools/test/unit/reindex.test.ts::@spec s-9kfdycuq34beqvs writes the status of each section and domain's header from the nodes under it, after every change"
                     ]
                   }
                 }
@@ -5790,9 +5789,6 @@
                         "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
                         "type": "textual"
                       }
-                    ],
-                    "tests": [
-                      "skills/tools/test/unit/validate.test.ts::@spec s-m6upmfq64kw5h4r refuses three words or more running in capitals, letters beyond ASCII included, two words left out"
                     ]
                   }
                 },
@@ -6460,9 +6456,6 @@
                     "ruling": "The words \"a part of the base specification\" were replaced by \"a folder of the base specification\", and the words that name the same thing in the same sentences by \"folder\", to carry out the owner's choice of answer A in group 5 (\"A\", 2026-11-24). The node's meaning does not change, so the node stays agreed.",
                     "type": "textual"
                   }
-                ],
-                "tests": [
-                  "skills/tools/test/unit/reindex.test.ts::@spec s-kag2m9tzdnduxdx computes every node's location from where it is"
                 ]
               }
             },
@@ -9498,6 +9491,9 @@
                                   "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you choose A? If so, and you have no remarks on the nodes, the same answer agrees to the whole of group 4.\").",
                                   "type": "textual"
                                 }
+                              ],
+                              "tests": [
+                                "skills/tools/test/unit/validate.test.ts::@spec s-vj67ztqkuhxbv7s refuses a project's own check that adds, changes or removes a file that git does not ignore, naming the check and each file"
                               ]
                             }
                           }
@@ -10360,45 +10356,20 @@
                   "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh reports a rule whose text changed after its code, and refuses nothing for it",
                   "skills/tools/test/unit/gates.test.ts::@spec s-jau82aq9juv9zzh asks no review of a commit that changes no code",
                   "skills/tools/test/unit/gates.test.ts::@spec s-jau82aq9juv9zzh passes a message of a commit that changes no code",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh leaves the approvals of the SpecSheriff guidelines a project takes to where they are written",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes a specification that holds together",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes a value a domain declares for a RecordType of contracts, its variant standing in that domain",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes an exempts link from a node of the project's own guidelines to a rule or a section, and refuses one standing elsewhere or reaching anything else",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their approvals aside",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType holding two fields of type variant, the ones it inherits counted",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field declares in no list of values",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field does not declare, or declaring no field of its own",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant standing outside the domain whose RecordType declares the value it answers to",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant whose own fields only repeat those its RecordType's field of type variant holds",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a cites link beside a link of another type to the same node",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a consumes link that does not go from a header to a section of another domain",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a domain without a header, and a header whose index its sections do not produce",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a field of type one of holding no value, in its own list or in a list of a domain",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a file giving one field two values",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a file that does not match its schema",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a level the project's own guidelines do not list",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a link to no node, and a citation without a link or a cites link without a citation",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a list of values standing outside a domain, refining no RecordType of contracts, or naming a field whose values the domains do not add",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a location other than the one its place gives",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a node citing another by its location",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a node of the technical appendix outside the stack implementing no node of the base",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a rule of the appendix of the tools implementing no node of the base of the guidelines",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a section of the technical appendix standing under a name no domain has, the stack's and the technical debt's aside",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a term node standing outside contracts",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a term-relation not binding two terms, and a link of another type binding two",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a value of a choosing field declared twice, or by a variant in another part than the one declaring it",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses an approved node no approval stands for",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses an approved node, and any section or header, setting three words or more running in capitals, two words and a quoted name left out",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses an identifier of a RecordType that names no field identifying it among its fields",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses domains using one another in a cycle",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses every section holding no rule, whatever its status",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses identifiers that lead, from one identifying field to the next, back to a RecordType already passed",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses incoming links the outgoing ones do not produce",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses two nodes sharing a sid, and two sharing a location",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses two term nodes naming one term, and two RecordTypes sharing a name",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses two term nodes, or two RecordTypes, whose names differ only in the case of their letters",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses, outside the repository the SpecSheriff guidelines are written in, a copy of them or of their schema"
+                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses identifiers that lead, from one identifying field to the next, back to a RecordType already passed"
                 ]
               }
             },
@@ -11181,11 +11152,6 @@
                     "ruling": "Made without asking, as section 1 of the questions about the base specification says: a technical replacement that carries out the owner's rulings of 2026-11-17 on rows 10.1.26 and 10.1.26a, made together with proposal 2.6, which the owner's answer \"but I have already made decisions on these questions\" agreed on the owner's behalf.",
                     "type": "textual"
                   }
-                ],
-                "tests": [
-                  "skills/tools/test/unit/approve.test.ts::@spec s-qzthyh7yqvfhsa2 refuses to approve the rule that approves the specification, or to withdraw its approval, to anyone but the specification's owners",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-qzthyh7yqvfhsa2 refuses a commit putting the specification back to draft by an edit of its rule's wording or by its removal, and passes one recording an owner's withdrawal",
-                  "skills/tools/test/unit/model.test.ts::@spec s-qzthyh7yqvfhsa2 holds the specification approved while the rule refining the base's rule on its status is approved, whatever its wording, and a draft otherwise"
                 ]
               }
             },

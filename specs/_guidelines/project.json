@@ -17,36 +17,22 @@
       "children": [
         {
           "location": "_guidelines/project/1",
-          "sid": "s-p92k6vfe3ju27at",
+          "sid": "s-rsfqzpkwpuunzed",
           "kind": "TextRule",
-          "title": "The specification is approved",
+          "title": "When the tests run",
           "status": "approved",
-          "text": "This project's specification is approved.",
+          "text": "The tests run before every push.",
           "refs": [
             {
               "type": "refines",
-              "to": "s-qzthyh7yqvfhsa2"
-            },
-            {
-              "type": "cites",
               "to": "s-x8uzc8z44pwtd3h"
             }
           ],
-          "reason": "This repository holds no symbol of the system's code. Every test of its tools carries the SpecTag of the node it is written from. So, if the specification were a draft, its only effect would be to stop the tests from running on a push (§s-x8uzc8z44pwtd3h).",
-          "meta": {
-            "decisions": [
-              {
-                "date": "2026-11-06",
-                "problem": "The rule said the specification is live, a word of its own beside a node's statuses.",
-                "ruling": "Carrying out the owner's decision on §s-qzthyh7yqvfhsa2 of that day: the specification is approved or a draft.",
-                "type": "textual"
-              },
-              {
-                "date": "2026-11-07",
-                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
-                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
-                "type": "textual"
-              }
+          "reason": "Running the tests before every push keeps a change whose tests fail from reaching the project's shared branch.",
+          "list": {
+            "of": "the moments at which the tests run",
+            "members": [
+              "push"
             ]
           }
         }

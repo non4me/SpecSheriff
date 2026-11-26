@@ -12,8 +12,10 @@ guidelines and the SpecSheriff tools. The worked example, the saloon, is a repos
 into `skills/claude-code/tools/`, and into `skills/codex/` together with the skills and hook scripts it copies there from the
 plugin for Claude Code. On `main`, git ignores all these copies in both plugins; they are committed only on the `release` branch. `npm test` builds
 the tools again and runs their unit and end-to-end tests and those of `skills/pytest-specsheriff/`
-(Python 3.10 or later with pytest). The repository is checked by its own tools: `sheriff.config.json` states that the SpecSheriff
-guidelines are written in this repository, so their nodes are approved by the
+(Python 3.10 or later with pytest). This repository is checked by its own tools. Only one thing tells them that it is the
+repository where the SpecSheriff guidelines are written: the environment variable `SPECSHERIFF_GUIDELINES_REPO`, whose value is
+the path to this repository's root (§s-zefk589ykh37b8u). Because the tools treat this repository as the one where the SpecSheriff guidelines are written, the nodes of the
+SpecSheriff guidelines are approved by the
 owners named in `specs/_guidelines/project.json`, and the approvals are recorded in `specs/_approvals.jsonl`. `.githooks/`, `.claude/settings.json` and `.gitattributes`
 contain what `sheriff init` writes, as in any project, and a test fails if they differ from it. `internal/release.md`
 describes how a release is made and how this repository runs its own plugin from the working tree: a change to `skills/tools/src/` reaches the

@@ -7,7 +7,7 @@ import { codeChanges, spelledIn, trackedFiles, type Line } from "./diff.ts";
 import { fingerprint, isContainer } from "./model.ts";
 import { patchedFiles, PatchError, type EditedFile } from "./patch.ts";
 import { judgedHere } from "./reindex.ts";
-import { loadSpecification, specificationOf, type Located, type SpecFile, type SpecNode } from "./spec-files.ts";
+import { loadSpecification, specificationOf, writesGuidelines, type Located, type SpecFile, type SpecNode } from "./spec-files.ts";
 
 interface Edit {
   old_string: string;
@@ -114,7 +114,7 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
     const after = specificationOf([...spec.files.filter((f) => !edited.has(f.path)), ...spec.archive, ...written]);
     const lines = readApprovals(root);
     for (const [sid, { node, file, cell }] of after.nodes) {
-      if (node.status !== "approved" || isContainer(node.kind) || !judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
+      if (node.status !== "approved" || isContainer(node.kind) || !judgedHere(file.path, writesGuidelines(root))) continue;
       if (stands(lines, sid, fingerprint(node, cell))) continue;
       const old = was.get(sid);
       // A node the edit leaves as it was is the reindex's to make a draft, not this edit's fault.

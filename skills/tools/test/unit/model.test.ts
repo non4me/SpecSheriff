@@ -2,9 +2,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { reindex } from "../../src/reindex.ts";
 import { loadSpecification } from "../../src/spec-files.ts";
-import { APPROVAL_RULE, builtStatuses, citations, fingerprint, incoming, locations, modelOf, LEVELS_RULE, ownersOf, partOf, specificationApproved } from "../../src/model.ts";
+import { builtStatuses, citations, fingerprint, incoming, locations, modelOf, LEVELS_RULE, ownersOf, partOf } from "../../src/model.ts";
+import { loadConfig, modelFlags } from "../../src/config.ts";
 import { REPO } from "../repo.ts";
-import { BY_NUMBER, file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
+import { BY_NUMBER, file, loc, node, OWNER, repo, sid, table, taking } from "../fixture.ts";
 
 test("@spec s-ygg5kpcxgzq3m7w computes the location of every node of the SpecSheriff guidelines", () => {
   const spec = loadSpecification(REPO);
@@ -46,19 +47,6 @@ test("@spec s-ygg5kpcxgzq3m7w numbers the node at the top of a file of contracts
 });
 
 /** A TableRule with two columns: a node in the first cell of each row, and text in the second. */
-function table(name: string, rows: Array<[string, string]>, fields: Record<string, unknown> = {}) {
-  const cell = (n: string) => {
-    const { title: _, ...rest } = node(n);
-    return rest;
-  };
-  return node(name, {
-    kind: "TableRule",
-    columns: [{ key: "check", heading: "What is checked", holds: "node" }, { key: "cost", heading: "On failure", holds: "text" }],
-    groups: [{ heading: null, rows: rows.map(([n, cost]) => ({ cells: { check: { node: cell(n) }, cost: { text: cost } } })) }],
-    ...fields,
-  });
-}
-
 test("@spec s-ygg5kpcxgzq3m7w gives the top node of a file of an extension of the guidelines the file's path as its location, and numbers the nodes in the cells of a TableRule after its children, row by row", () => {
   const root = repo({
     "specs/_guidelines/extensions/views.json": file("_guidelines/extensions", "views", node("views", { kind: "section", children: [node("map"), table("view checks", [["first row", "refused"], ["second row", "reported"]], { children: [node("under the table")] })] })),
@@ -202,12 +190,13 @@ test("@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it 
   assert.equal(built.get(sid("bank")), "draft");
 });
 
-test("@spec s-qzthyh7yqvfhsa2 holds the specification approved while the rule refining the base's rule on its status is approved, whatever its wording, and a draft otherwise", () => {
-  const rule = (status: string) => node("whatever it says", { title: "The specification is live", status, refs: [{ type: "refines", to: APPROVAL_RULE }] });
-  assert.equal(specificationApproved([rule("approved")]), true);
-  assert.equal(specificationApproved([rule("checked")]), true);
-  assert.equal(specificationApproved([rule("draft")]), false);
-  assert.equal(specificationApproved([node("other", { status: "approved" })]), false);
+test("@spec s-d3nkw9b6mn98vuw gives the model the approval status that the last entry of approvalStatus sets, whatever the rules of project.json say", () => {
+  const root = taking();
+  const spec = loadSpecification(root);
+  const flags = (approvalStatus: Array<{ status: "approved" | "draft"; by: string }>) => modelFlags(root, { ...loadConfig(root), approvalStatus }, spec);
+  assert.equal(flags([]).approved, false);
+  assert.equal(flags([{ status: "approved", by: OWNER }]).approved, true);
+  assert.equal(flags([{ status: "approved", by: OWNER }, { status: "draft", by: OWNER }]).approved, false);
 });
 
 test("@spec s-f5brvuuu6xmkj6t fingerprints a node's wording and the values its kind adds, not its owners or what the reindex builds", () => {
@@ -249,6 +238,19 @@ test("@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among th
   assert.equal(ids.get(sid("close")), loc("bank", "1.3"));
 });
 
+test("@spec s-f5brvuuu6xmkj6t leaves out of the fingerprint only the values gathered in a field's x-enumSource, keeps a property named gathered, and hashes the kind of node that x-enumSource names under that kind's earlier name", () => {
+  const record = (gathered: object, kind = "TextRule") => node("a record", { kind: "RecordType", schema: { type: "object", properties: {
+    gathered: { type: "string", ...gathered },
+    part: { "x-enumSource": { from: "kind", kind, gathered: [{ value: "a", sid: sid("a record") }] } },
+  } } });
+  assert.notEqual(fingerprint(record({ minLength: 1 })), fingerprint(record({})));
+  const other = record({});
+  ((other.schema as any).properties.part["x-enumSource"].gathered as unknown[]).push({ value: "b", sid: sid("a record") });
+  assert.equal(fingerprint(other), fingerprint(record({})));
+  assert.equal(fingerprint(record({}, "TextRule")), fingerprint(record({}, "rule")));
+  assert.notEqual(fingerprint(record({}, "TextRule")), fingerprint(record({}, "section")));
+});
+
 test("@spec s-f5brvuuu6xmkj6t leaves the values gathered beside a field out of the fingerprint", () => {
   const field = (gathered?: object[]) => ({ name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "", ...(gathered ? { gathered } : {}) });
   const record = (gathered?: object[]) => node("event", { kind: "RecordType", unknown: "refused", fields: [field(gathered)] });
@@ -261,7 +263,8 @@ test("@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds i
     "specs/contracts/c.json": file("contracts", "c", node("accounts", { kind: "section", text: "Accounts.", children: [node("open", { reason: "Why." })] })),
   });
   reindex(root);
-  const model = modelOf(loadSpecification(root));
+  const model = modelOf(loadSpecification(root), { approved: false, strict: true });
+  assert.deepEqual([model.approvalStatus, model.strict], ["draft", true]);
   const open = model.nodes.find((n) => n.sid === sid("open"))!;
   assert.equal(open.location, loc("contracts", "1.1"));
   assert.equal(open.reason, "Why.");

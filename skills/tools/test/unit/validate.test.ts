@@ -9,7 +9,11 @@ import { loadSpecification } from "../../src/spec-files.ts";
 import { fingerprint, LEVELS_RULE } from "../../src/model.ts";
 import { validate } from "../../src/validate.ts";
 import { REPO } from "../repo.ts";
-import { file, node, NONE, OWNER, repo, sid, taking } from "../fixture.ts";
+import { ALL_EXTENSIONS, file, loc, node, NONE, OWNER, repo, sid, table, taking, writing } from "../fixture.ts";
+import { git } from "../code-project.ts";
+
+/** The settings of a repository in which the SpecSheriff guidelines are written and no extension of them is chosen. */
+const NO_EXTENSIONS = { code: [], tests: [] };
 
 /** A small project that passes every check: its own guidelines, a domain, contracts, the technical appendix. */
 /** The base's rule on a project's own checks, which the rule listing them refines. */
@@ -17,7 +21,7 @@ const OWN_CHECKS = "s-2fau85dfyyeq66m";
 
 function good(): string {
   const root = repo({
-    "sheriff.config.json": { code: [], tests: [], writesSpecSheriffGuidelines: true },
+    "sheriff.config.json": { code: [], tests: [], extensions: ALL_EXTENSIONS },
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("levels rule"), node("one rule")] })),
     "specs/_guidelines/tools.json": file("_guidelines", "tools", node("tools", { kind: "section", text: "The tools.", children: [node("tool", { refs: [{ type: "implements", to: sid("one rule") }] })] })),
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [
@@ -44,10 +48,20 @@ function good(): string {
     writeFileSync(join(root, p), readFileSync(join(root, p), "utf8").replaceAll(sid("levels rule"), LEVELS_RULE));
   }
   reindex(root);
+  // The levels are read from the last approved wording of the rule that lists them (s-t9j29hppag2nren).
+  approve(root, [sid("our levels")], { me: OWNER });
+  reindex(root);
   return root;
 }
 
-const run = (root: string, before?: string) => validate(root, { before: before ? loadSpecification(before) : undefined });
+/** Validates the repository at the given root. Where a parent commit is given, both are read as repositories in which the guidelines are written, and the root is validated against the parent. */
+const run = (root: string, before?: string) => {
+  if (!before) return validate(root);
+  writing(before);
+  const parent = loadSpecification(before);
+  writing(root);
+  return validate(root, { before: parent });
+};
 const messages = (root: string, before?: string) => run(root, before).map((f) => `${f.where}: ${f.message}`);
 
 function edit(root: string, path: string, change: (data: any) => void): void {
@@ -74,11 +88,21 @@ test(`@spec s-jau82aq9juv9zzh passes a specification that holds together`, () =>
   assert.deepEqual(messages(good()), []);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a file giving one field two values`, () => {
+test(`@spec s-7zqsstgnuc772ba refuses a key written more than once in one object, naming the file, the key and the line of each value, and says that sheriff reindex merges such values`, () => {
   const root = good();
   const path = join(root, "specs", "bank", "a.json");
-  writeFileSync(path, readFileSync(path, "utf8").replace('"text": "Accounts.",', '"text": "Accounts.",\n      "text": "Accounts.",'));
-  expectOne(root, /specs\/bank\/a\.json: .*"text".*twice/);
+  writeFileSync(path, readFileSync(path, "utf8").replace('"text": "Accounts.",', '"text": "Accounts.",\n      "text": "Accounts.",\n      "text": "Accounts.",'));
+  const first = readFileSync(path, "utf8").split("\n").findIndex((l) => l.includes('"text": "Accounts."')) + 1;
+  assert.deepEqual(messages(root), [`specs/bank/a.json: "text" is written 3 times in one object, on lines ${first}, ${first + 1}, ${first + 2}; sheriff reindex merges such values wherever it can keep all of them`]);
+});
+
+test(`@spec s-7zqsstgnuc772ba reads every file of the schema that the repository keeps, including those in the folders under specs/_schema, and names the line at which parsing fails in a file that is not valid JSON`, () => {
+  const root = good();
+  mkdirSync(join(root, "specs", "_schema", "extensions"), { recursive: true });
+  writeFileSync(join(root, "specs", "_schema", "extensions", "notes.schema.json"), '{\n  "title": "a",\n  "title": "b"\n}\n');
+  expectOne(root, /^specs\/_schema\/extensions\/notes\.schema\.json: "title" is written 2 times in one object, on lines 2, 3/);
+  writeFileSync(join(root, "specs", "_schema", "extensions", "notes.schema.json"), '{\n  "title": "a"\n  "x": 1\n}\n');
+  expectOne(root, /^specs\/_schema\/extensions\/notes\.schema\.json: line 3/);
 });
 
 test(`@spec s-jau82aq9juv9zzh refuses a file that does not match its schema`, () => {
@@ -95,20 +119,32 @@ test("@spec s-xzcw3hv4hmxz7h7 refuses an extension the schema of an extension re
   assert.ok(!validate(project).some((f) => /copy/.test(f.message)), validate(project).map((f) => `${f.where}: ${f.message}`).join("\n"));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses two nodes sharing a sid, and two sharing a location`, () => {
+test(`@spec s-vke5hakwf3uyrjs refuses a sid that two nodes hold, including a node in a cell of a TableRule, naming the file and the location of each node`, () => {
   const root = good();
-  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push({ ...nodeIn(d, "close") }));
-  expectOne(root, /sid .* held by more than one node/);
-  expectOne(root, /id .* held by more than one node/);
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(table("shared checks", [["close", "refused"]])));
+  reindex(root);
+  const found = messages(root).filter((m) => m.includes(`sid ${sid("close")}`));
+  assert.equal(found.length, 1, messages(root).join("\n"));
+  assert.match(found[0]!, /specs\/bank\/a\.json \(bank\/1\.2\), specs\/contracts\/c\.json \(contracts\/1\.1\.1\)/);
+  assert.ok(!messages(root).some((m) => /location .* held by more than one node/.test(m)), messages(root).join("\n"));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a location other than the one its place gives`, () => {
+test(`@spec s-stxmhq3hgfndvn6 refuses a location other than the one computed for the node, naming the node's file and sid and both locations`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").location = "bank/9"));
-  expectOne(root, /bank\/9.*not the one its place gives.*bank\/1\.2/);
+  expectOne(root, new RegExp(`specs/bank/a\\.json: ${sid("close")} .*location bank/9 .* computed .*bank/1\\.2`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses two term nodes naming one term, and two RecordTypes sharing a name`, () => {
+test(`@spec s-stxmhq3hgfndvn6 checks the locations of the nodes in the files that the repository keeps, including those in the cells of a TableRule`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(table("shared checks", [["checked in a cell", "refused"]])));
+  reindex(root);
+  const nine = loc("contracts", "9");
+  edit(root, "specs/contracts/c.json", (d) => (d.nodes[0].children.at(-1).groups[0].rows[0].cells.check.node.location = nine));
+  expectOne(root, new RegExp(`${sid("checked in a cell")} .*location ${nine} .* computed .*${loc("contracts", "1")}\\.1\\.1`));
+});
+
+test(`@spec s-vke5hakwf3uyrjs refuses two term nodes naming the same term, and two RecordTypes sharing a name`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").title = "user"));
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").title = "account"));
@@ -116,7 +152,7 @@ test(`@spec s-jau82aq9juv9zzh refuses two term nodes naming one term, and two Re
   expectOne(root, /RecordType "account" .*more than one/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses two term nodes, or two RecordTypes, whose names differ only in the case of their letters`, () => {
+test(`@spec s-vke5hakwf3uyrjs refuses two term nodes, or two RecordTypes, whose names differ only in the case of their letters`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").title = "User"));
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").title = "ACCOUNT"));
@@ -124,14 +160,50 @@ test(`@spec s-jau82aq9juv9zzh refuses two term nodes, or two RecordTypes, whose 
   expectOne(root, /RecordType "account" .*more than one/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a term node standing outside contracts`, () => {
+test(`@spec s-yauyedny2yzvs4c refuses a term node outside the contracts section, naming its file and location, and accepts one in a domain's folder where the project has chosen the Domains extension`, () => {
   const root = good();
-  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("stray term", { kind: "term", title: "stray" })));
+  edit(root, "specs/tech/bank.json", (d) => d.nodes[0].children.push(node("stray term", { kind: "term", title: "stray" })));
+  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("domain term", { kind: "term", title: "teller" })));
   reindex(root);
-  expectOne(root, new RegExp(`${sid("stray term")}.*a term node outside contracts`));
+  expectOne(root, new RegExp(`specs/tech/bank\\.json: ${sid("stray term")} \\(${loc("tech", "bank", "stray")}\\): a term node outside the contracts section`));
+  assert.ok(!messages(root).some((m) => m.includes(sid("domain term"))), messages(root).join("\n"));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses an approved node no approval stands for`, () => {
+test(`@spec s-yauyedny2yzvs4c refuses a term node in the folder of the base specification where the project has not chosen the Domains extension`, () => {
+  const root = repo({
+    "sheriff.config.json": NO_EXTENSIONS,
+    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule")] })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [node("ours", { refs: [{ type: "refines", to: sid("base rule") }] })] })),
+    "specs/base/a.json": file("base", "a", node("accounts", { kind: "section", text: "Accounts.", children: [node("open"), node("base term", { kind: "term", title: "teller" })] })),
+  });
+  reindex(root);
+  expectOne(root, new RegExp(`specs/base/a\\.json: ${sid("base term")} .*a term node outside the contracts section`));
+});
+
+test(`@spec s-76becsjwmasc2r2 refuses a term of a domain that a node outside the domain and its part of the technical appendix cites or links to, naming each such node`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("domain term", { kind: "term", title: "teller" })));
+  edit(root, "specs/tech/bank.json", (d) => (nodeIn(d, "store").refs.push({ type: "refines", to: sid("domain term") })));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => m.includes(sid("domain term"))), messages(root).join("\n"));
+  mkdirSync(join(root, "specs", "loans"));
+  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", code: null }))));
+  writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [node("lend", { text: `A loan goes through a teller (§${sid("domain term")}).`, refs: [{ type: "cites", to: sid("domain term") }] }), node("repay", { refs: [{ type: "refines", to: sid("domain term") }] })] }))));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("domain term")} .*cited or linked to from outside the domain bank: specs/loans/l\\.json ${sid("lend")}, specs/loans/l\\.json ${sid("repay")}`));
+});
+
+test(`@spec s-76becsjwmasc2r2 refuses a term of the contracts section that only the nodes of one domain cite or link to, naming that domain`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(node("teller term", { kind: "term", title: "teller" })));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => m.includes(sid("teller term"))), messages(root).join("\n"));
+  edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "refines", to: sid("teller term") }));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("teller term")} .*only the domain bank cites or links to it; move it into that domain`));
+});
+
+test(`@spec s-95w92rnjuv3sst8 refuses an approved node for whose wording no approval is in force`, () => {
   const root = good();
   approve(root, [sid("close")], { me: OWNER });
   reindex(root);
@@ -140,7 +212,13 @@ test(`@spec s-jau82aq9juv9zzh refuses an approved node no approval stands for`, 
   expectOne(root, new RegExp(`${sid("open")}.*approved, but no approval stands for its wording`));
 });
 
-test(`@spec s-95w92rnjuv3sst8 refuses an approval the commit records by someone none of the node's owners, as the commit holds them, and judges the rule approving the specification by the specification's owners`, () => {
+test(`@spec s-75ue25v6r23jkk8 refuses an approval of a sid that is held by no node in the files that the repository keeps, naming the sid and the approver's email address`, () => {
+  const root = good();
+  writeFileSync(join(root, "specs", "_approvals.jsonl"), readFileSync(join(root, "specs", "_approvals.jsonl"), "utf8") + JSON.stringify({ sid: NONE, fingerprint: "0", by: OWNER }) + "\n");
+  expectOne(root, new RegExp(`specs/_approvals\\.jsonl: an approval of ${NONE} by ${OWNER.replaceAll(".", "\\.")}, a sid that no node of the files that the repository keeps holds`));
+});
+
+test(`@spec s-75ue25v6r23jkk8 refuses an approval that the commit records and that was given by someone who is not one of the node's owners as the commit lists them`, () => {
   const root = good();
   const line = (name: string, by: string) => JSON.stringify({ sid: sid(name), fingerprint: fingerprint(loadSpecification(root).nodes.get(sid(name))!.node), by }) + "\n";
   writeFileSync(join(root, "specs", "_approvals.jsonl"), line("close", "stranger@example.org"));
@@ -151,13 +229,28 @@ test(`@spec s-95w92rnjuv3sst8 refuses an approval the commit records by someone 
   assert.ok(!messages(root).some((m) => /stranger/.test(m)), messages(root).join("\n"));
 });
 
-test(`@spec s-9kfdycuq34beqvs refuses a section or a domain's header whose status is not the one the nodes under it produce`, () => {
+test(`@spec s-agc6fb3vx46pc23 refuses a section or a domain's header whose status is not the one the nodes under it produce`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (d.nodes[0].status = "approved"));
   expectOne(root, new RegExp(`${sid("accounts")}.*its status is approved, while the nodes under it make it draft`));
 });
 
-test(`@spec s-jau82aq9juv9zzh leaves the approvals of the SpecSheriff guidelines a project takes to where they are written`, () => {
+test(`@spec s-agc6fb3vx46pc23 builds the approval status of a domain's header from the header's own children and from the nodes in the cells of a TableRule`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => (d.nodes[0].children = [node("open", { text: "An account is opened." })]));
+  edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].children = [node("bank rules", { kind: "section", text: "Kept with the header.", children: [table("bank checks", [["checked by the bank", "refused"]])] })]));
+  reindex(root);
+  approve(root, [sid("open"), sid("bank checks")], { me: OWNER });
+  reindex(root);
+  const spec = loadSpecification(root);
+  assert.equal(spec.nodes.get(sid("bank"))!.node.status, "draft");
+  approve(root, [sid("checked by the bank")], { me: OWNER });
+  reindex(root);
+  assert.equal(loadSpecification(root).nodes.get(sid("bank"))!.node.status, "approved");
+  assert.deepEqual(messages(root), []);
+});
+
+test(`@spec s-95w92rnjuv3sst8 leaves the approvals of the SpecSheriff guidelines that a project takes to the repository where those guidelines are written`, () => {
   assert.deepEqual(messages(taking()), []);
 });
 
@@ -176,6 +269,7 @@ test(`@spec s-j4webte36gkraju refuses a removed node that was ever approved and 
   approve(before, [sid("close")], { me: OWNER });
   const root = mkdtempSync(join(tmpdir(), "sheriff-"));
   cpSync(before, root, { recursive: true });
+  writing(root);
   edit(root, "specs/bank/a.json", (d) => {
     const accounts = d.nodes[0];
     accounts.children = accounts.children.filter((n: any) => n.sid !== sid("close"));
@@ -210,134 +304,302 @@ test(`@spec s-j4webte36gkraju deletes a section outright, an approval given for 
   edit(root, "specs/contracts/c.json", (d) => d.nodes.push(node("gone soon", { kind: "section", text: "Soon gone.", children: [node("gone rule")] })));
   const was = mkdtempSync(join(tmpdir(), "sheriff-"));
   cpSync(root, was, { recursive: true });
+  writing(was);
   reindex(was);
   edit(root, "specs/contracts/c.json", (d) => (d.nodes = d.nodes.filter((n: any) => n.sid !== sid("gone soon"))));
+  writing(root);
   reindex(root);
   assert.ok(!messages(root, was).some((m) => m.includes(sid("gone soon"))), messages(root, was).join("\n"));
   writeArchive(root, entry("old section", "bank/9", { kind: "section" }));
   expectOne(root, /specs\/_archive\/bank\.json: bank\/9.*no removed node/, was);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a link to no node, and a citation without a link or a cites link without a citation`, () => {
+test(`@spec s-c4rn9fj4czk768b refuses a link whose target is not a node of the model, naming the link's type and its target, and accepts a link to a node of the SpecSheriff guidelines that a project takes`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "constrains", to: NONE }));
+  expectOne(root, new RegExp(`specs/bank/a\\.json: ${sid("close")} .*its constrains link to ${NONE} names no node`));
+  const project = taking();
+  assert.deepEqual(validate(project).filter((f) => /names no node/.test(f.message)), []);
+});
+
+test(`@spec s-c4rn9fj4czk768b refuses a link to a nonexistent node, declared by a node that a cell of a TableRule holds`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(table("shared checks", [["checked in a cell", "refused"]])));
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.at(-1).groups[0].rows[0].cells.check.node.refs.push({ type: "constrains", to: NONE }));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("checked in a cell")} .*its constrains link to ${NONE} names no node`));
+});
+
+test(`@spec s-qzyacnqwvaeaps4 refuses a citation without a link, and a cites link without a citation`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => {
-    nodeIn(d, "close").refs.push({ type: "constrains", to: NONE });
     nodeIn(d, "close").text = "See §" + sid("shared") + ".";
     nodeIn(d, "open").text = "An account is opened.";
   });
-  expectOne(root, new RegExp(`link .* ${NONE} .*no node`));
   expectOne(root, new RegExp(`cites ${sid("shared")} .*no link`));
   expectOne(root, new RegExp(`cites link to ${sid("close")} .*does not cite`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a cites link beside a link of another type to the same node`, () => {
+test(`@spec s-qzyacnqwvaeaps4 refuses a citation that has no link, both in a node that a cell of a TableRule holds and in a text cell of that TableRule`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(table("shared checks", [["checked in a cell", `refused, as §${sid("user")} says`]])));
+  edit(root, "specs/contracts/c.json", (d) => (d.nodes[0].children.at(-1).groups[0].rows[0].cells.check.node.text = `See §${sid("session")}.`));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("checked in a cell")} .*cites ${sid("session")} .*no link`));
+  expectOne(root, new RegExp(`${sid("shared checks")} .*cites ${sid("user")} .*no link`));
+});
+
+test(`@spec s-qzyacnqwvaeaps4 refuses a cites link beside a link of another type to the same node`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "open").refs.push({ type: "constrains", to: sid("close") }));
   reindex(root);
   expectOne(root, /cites link .* beside a link of another type/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a node citing another by its location`, () => {
+test(`@spec s-qzyacnqwvaeaps4 refuses a node citing another by its location`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "As §bank/1.1 says."));
   expectOne(root, /§bank\/1\.1.*location/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a term-relation not binding two terms, and a link of another type binding two`, () => {
+test(`@spec s-pvnnr844f3y964m refuses a term-relation that does not bind two terms, and a link of another type that binds two terms, naming the link's type and target and referring the link's author to the specification's owners`, () => {
   const root = good();
   edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").refs.push({ type: "constrains", to: sid("user") })));
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").refs.push({ type: "uses", to: sid("user") })));
   reindex(root);
-  expectOne(root, /constrains link binds two terms/);
-  expectOne(root, /uses link .* two terms/);
+  expectOne(root, new RegExp(`${sid("session")} .*its constrains link to ${sid("user")} binds two terms; settle it with the specification's owners`));
+  expectOne(root, new RegExp(`${sid("close")} .*its uses link to ${sid("user")} does not bind two terms; settle it with the specification's owners`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses incoming links the outgoing ones do not produce`, () => {
+test(`@spec s-pvnnr844f3y964m leaves a term-relation whose target is not a node to the check on a link's target`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "session").refs.push({ type: "term-relation", to: NONE, ratio: "1:1" })));
+  const found = messages(root).filter((m) => m.includes(NONE));
+  assert.equal(found.length, 1, found.join("\n"));
+  assert.match(found[0]!, /names no node/);
+});
+
+test(`@spec s-agc6fb3vx46pc23 refuses incoming links that the outgoing links do not produce`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "cites", from: sid("shared") }));
   expectOne(root, /incoming links .* outgoing/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses an approved node, and any section or header, setting three words or more running in capitals, two words and a quoted name left out`, () => {
+test(`@spec s-e2vdhfsndy5stq9 refuses in any node, whatever its status, three or more words in capitals in a row, and passes two such words and a quoted name`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "It MUST NOT EVER close; MUST NOT, REST API, `NOT CODE HERE` and \"QUOTED NAME TOO\" pass."));
-  assert.deepEqual(messages(root).filter((m) => /capitals/.test(m)), []);
-  approve(root, [sid("close")], { me: OWNER });
   const found = messages(root).filter((m) => /capitals/.test(m));
   assert.equal(found.length, 1, found.join("\n"));
-  assert.match(found[0]!, /"MUST NOT EVER"/);
+  assert.match(found[0]!, new RegExp(`${sid("close")} .*its text sets "MUST NOT EVER" in capitals`));
   edit(root, "specs/bank/a.json", (d) => (d.nodes[0].text = "ACCOUNTS ARE KEPT here."));
   assert.ok(messages(root).some((m) => m.includes(sid("accounts")) && /"ACCOUNTS ARE KEPT"/.test(m)), messages(root).join("\n"));
 });
 
-test(`@spec s-m6upmfq64kw5h4r refuses three words or more running in capitals, letters beyond ASCII included, two words left out`, () => {
+test(`@spec s-e2vdhfsndy5stq9 reads each string of the members of a list, each text cell of a TableRule and each node in its cells`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("kinds listed", { list: { of: "the kinds of account", property: "name", members: ["plain", { name: "savings", note: "OPENED BY HAND" }] } })));
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(table("shared checks", [["checked in a cell", "REFUSED AT ONCE"]])));
+  edit(root, "specs/contracts/c.json", (d) => (d.nodes[0].children.at(-1).groups[0].rows[0].cells.check.node.text = "CHECKED EVERY TIME."));
+  reindex(root);
+  const found = messages(root).filter((m) => /capitals/.test(m));
+  assert.ok(found.some((m) => m.includes(sid("kinds listed")) && /"OPENED BY HAND"/.test(m)), found.join("\n"));
+  assert.ok(found.some((m) => m.includes(sid("shared checks")) && /"REFUSED AT ONCE"/.test(m)), found.join("\n"));
+  assert.ok(found.some((m) => m.includes(sid("checked in a cell")) && /"CHECKED EVERY TIME"/.test(m)), found.join("\n"));
+});
+
+test(`@spec s-e2vdhfsndy5stq9 refuses three or more words in capitals in a row, including words in non-ASCII letters, and passes two such words`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "close").text = "An account is never closed by DÉJÀ VU RÉSUMÉ; CAFÉ DÉCOR and NAÏVE ÉCLAT pass."));
-  approve(root, [sid("close")], { me: OWNER });
   const found = messages(root).filter((m) => /capitals/.test(m));
   assert.equal(found.length, 1, found.join("\n"));
   assert.match(found[0]!, /"DÉJÀ VU RÉSUMÉ"/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses every section holding no rule, whatever its status`, () => {
+test(`@spec s-zhen42p6mnaxu7w refuses every section, whatever the section's status, that contains no rule, and the section that contains that section`, () => {
   const root = good();
-  edit(root, "specs/contracts/c.json", (d) => d.nodes.push({ ...node("empty", { kind: "section", text: "Nothing." }) }));
+  edit(root, "specs/contracts/c.json", (d) => d.nodes.push({ ...node("outer", { kind: "section", text: "Nothing.", children: [node("empty", { kind: "section", text: "Nothing either." })] }) }));
   reindex(root);
   expectOne(root, new RegExp(`${sid("empty")}.*a section that holds no rule`));
+  expectOne(root, new RegExp(`${sid("outer")}.*a section that holds no rule`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a domain without a header, and a header whose index its sections do not produce`, () => {
+test(`@spec s-zhen42p6mnaxu7w counts a TableRule, a term and a node of a project's own kind as rules of their section`, () => {
   const root = good();
-  edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].sections = []));
-  expectOne(root, /index .* sections/);
+  writeFileSync(join(root, "specs", "_schema", "project.schema.json"), JSON.stringify({ kinds: { job: { needsCode: false, schema: {} } } }));
+  edit(root, "specs/contracts/c.json", (d) => d.nodes.push(
+    node("tabled", { kind: "section", text: "A table.", children: [table("shared checks", [["checked in a cell", "refused"]])] }),
+    node("jobs", { kind: "section", text: "Jobs.", children: [node("nightly", { kind: "job" })] }),
+  ));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => /holds no rule/.test(m)), messages(root).join("\n"));
+});
+
+test(`@spec s-8esbyvaj2yx5eqf refuses a domain whose files hold no header, or two headers, naming each header's file and sid`, () => {
   const headless = good();
   mkdirSync(join(headless, "specs", "loans"));
   writeFileSync(join(headless, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("headless section", { kind: "section", text: "Lending.", children: [node("headless rule")] }))));
   reindex(headless);
-  expectOne(headless, /domain loans has no header/);
+  expectOne(headless, /specs\/loans\/: domain loans has no header/);
+  const twice = good();
+  writeFileSync(join(twice, "specs", "bank", "b.json"), JSON.stringify(file("bank", "b", node("second header", { kind: "header", code: null }))));
+  reindex(twice);
+  expectOne(twice, new RegExp(`specs/bank/: domain bank has more than one header: specs/bank/00-bank\\.json ${sid("bank")}, specs/bank/b\\.json ${sid("second header")}`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a level the project's own guidelines do not list`, () => {
+test(`@spec s-8esbyvaj2yx5eqf checks no domain where the project has not chosen the Domains extension`, () => {
+  const root = repo({
+    "sheriff.config.json": NO_EXTENSIONS,
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours." , children: [node("ours", { refs: [{ type: "refines", to: sid("base rule") }] })] })),
+    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule")] })),
+    "specs/base/a.json": file("base", "a", node("accounts", { kind: "section", text: "Accounts.", children: [node("open")] })),
+  });
+  reindex(root);
+  assert.ok(!messages(root).some((m) => /header/.test(m)), messages(root).join("\n"));
+});
+
+test(`@spec s-agc6fb3vx46pc23 refuses a header whose index is not the one built from its domain's sections, and an index in the header of a domain without sections`, () => {
+  const root = good();
+  edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].sections = []));
+  expectOne(root, /index .* sections/);
+  const empty = good();
+  edit(empty, "specs/bank/a.json", (d) => (d.nodes = []));
+  edit(empty, "specs/tech/bank.json", (d) => (d.nodes[0].children = [node("store")]));
+  reindex(empty);
+  assert.equal(loadSpecification(empty).nodes.get(sid("bank"))!.node.sections, undefined);
+  edit(empty, "specs/bank/00-bank.json", (d) => (d.nodes[0].sections = []));
+  expectOne(empty, new RegExp(`${sid("bank")} .*index .* sections`));
+});
+
+test(`@spec s-uxmkwbnpgtjzkgv takes the levels from every rule that refines the rule on levels, each in its last approved wording, and takes none from a rule that was never approved`, () => {
+  const root = good();
+  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("more levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "more levels", members: ["edge"] } })));
+  edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].level = "edge"));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("bank")} .*level "edge".*not.*listed`));
+  approve(root, [sid("more levels")], { me: OWNER });
+  reindex(root);
+  assert.ok(!messages(root).some((m) => /level/.test(m)), messages(root).join("\n"));
+  edit(root, "specs/_guidelines/project.json", (d) => (d.nodes[0].children.at(-1).list.members = ["edge", "top"]));
+  edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].level = "top"));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("bank")} .*level "top".*not.*listed`));
+});
+
+test(`@spec s-uxmkwbnpgtjzkgv refuses a level the project's own guidelines do not list, and passes a header that contains no level`, () => {
   const root = good();
   edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].level = "top"));
-  expectOne(root, /level "top".*not.*listed/);
+  expectOne(root, new RegExp(`${sid("bank")} .*level "top".*not.*listed`));
+  edit(root, "specs/bank/00-bank.json", (d) => delete d.nodes[0].level);
+  assert.ok(!messages(root).some((m) => /level/.test(m)), messages(root).join("\n"));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a consumes link that does not go from a header to a section of another domain`, () => {
+test(`@spec s-p3n666zfjdrrw6a refuses a consumes link that does not go from a header to a section of another domain, naming its target, and leaves a link to a nonexistent node to the check on a link's target`, () => {
   const root = good();
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "consumes", to: sid("accounts") }));
   reindex(root);
-  expectOne(root, /consumes link .* from a domain's header/);
+  expectOne(root, new RegExp(`${sid("close")} .*its consumes link to ${sid("accounts")} must go from a domain's header to a section of another domain`));
+  edit(root, "specs/bank/00-bank.json", (d) => d.nodes[0].refs.push({ type: "consumes", to: NONE }));
+  const found = messages(root).filter((m) => m.includes(NONE));
+  assert.equal(found.length, 1, found.join("\n"));
+  assert.match(found[0]!, /names no node/);
 });
 
-test(`@spec s-jau82aq9juv9zzh passes an exempts link from a node of the project's own guidelines to a rule or a section, and refuses one standing elsewhere or reaching anything else`, () => {
+test(`@spec s-qvgzubkrafadqgf passes an exempts link from a node of the project's own guidelines that cites a rule, a TableRule, a RecordType or a section, and refuses every other exempts link`, () => {
   const root = good();
-  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("by people", { text: "Carried out by people.", refs: [{ type: "exempts", to: sid("accounts") }, { type: "exempts", to: sid("node runtime") }] })));
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(table("shared checks", [["checked in a cell", "refused"]])));
+  const cites = (...names: string[]) => names.map((n) => `§${sid(n)}`).join(", ");
+  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("by people", {
+    text: `Carried out by people: ${cites("accounts", "node runtime", "shared checks", "account record")}.`,
+    refs: ["accounts", "node runtime", "shared checks", "account record"].map((n) => ({ type: "exempts", to: sid(n) })),
+  })));
   reindex(root);
   assert.ok(!messages(root).some((m) => /exempts/.test(m)), messages(root).join("\n"));
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "exempts", to: sid("open") }));
-  edit(root, "specs/_guidelines/project.json", (d) => nodeIn(d, "by people").refs.push({ type: "exempts", to: sid("user") }));
+  edit(root, "specs/_guidelines/project.json", (d) => nodeIn(d, "by people").refs.push({ type: "exempts", to: sid("user") }, { type: "exempts", to: sid("store") }));
   reindex(root);
-  expectOne(root, new RegExp(`${sid("close")} .*an exempts link must go from a node of the project's own guidelines to a rule, a node of a project's own kind or a section`));
-  expectOne(root, new RegExp(`${sid("by people")} .*an exempts link must go from a node of the project's own guidelines to a rule, a node of a project's own kind or a section`));
+  expectOne(root, new RegExp(`${sid("close")} .*its exempts link to ${sid("open")} is not allowed`));
+  expectOne(root, new RegExp(`${sid("by people")} .*its exempts link to ${sid("user")} is not allowed`));
+  expectOne(root, new RegExp(`${sid("by people")} .*its exempts link to ${sid("store")} is not allowed`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a section of the technical appendix standing under a name no domain has, the stack's and the technical debt's aside`, () => {
+test(`@spec s-qvgzubkrafadqgf passes an exempts link to a node of a project's own kind`, () => {
   const root = good();
-  assert.ok(!messages(root).some((m) => /name of a domain/.test(m)), messages(root).join("\n"));
+  writeFileSync(join(root, "specs", "_schema", "project.schema.json"), JSON.stringify({ kinds: { job: { needsCode: false, schema: {} } } }));
+  edit(root, "specs/bank/a.json", (d) => d.nodes.push(node("jobs", { kind: "section", text: "Jobs.", children: [node("nightly", { kind: "job" })] })));
+  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("not coded", { text: `Run by the scheduler (§${sid("nightly")}).`, refs: [{ type: "exempts", to: sid("nightly") }] })));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => /exempts/.test(m)), messages(root).join("\n"));
+});
+
+test(`@spec s-gvafe6bnstwab8b refuses each file of the technical appendix, at any depth, that is named after no domain, reporting each such file once, by its path, except the files of the stack and of the technical debt`, () => {
+  const root = good();
+  writeFileSync(join(root, "specs/tech/debt.json"), JSON.stringify(file("tech", "debt", node("debt", { kind: "section", text: "Debt.", children: [node("owed")] })), null, 2) + "\n");
+  writeFileSync(join(root, "specs/tech/ledger.json"), JSON.stringify(file("tech", "ledger", node("ledger tech", { kind: "section", text: "Ledger, built.", children: [node("posting", { refs: [{ type: "implements", to: sid("open") }] })] }), node("ledger more", { kind: "section", text: "More.", children: [node("more posting", { refs: [{ type: "implements", to: sid("open") }] })] })), null, 2) + "\n");
+  mkdirSync(join(root, "specs/tech/deep"));
+  writeFileSync(join(root, "specs/tech/deep/bank.json"), JSON.stringify(file("tech", "deep/bank", node("deep tech", { kind: "section", text: "Deep.", children: [node("deep posting", { refs: [{ type: "implements", to: sid("open") }] })] })), null, 2) + "\n");
+  reindex(root);
+  const found = messages(root).filter((m) => /named after no domain/.test(m));
+  assert.deepEqual(found, [
+    "specs/tech/deep/bank.json: a file of the technical appendix named after no domain",
+    "specs/tech/ledger.json: a file of the technical appendix named after no domain",
+  ]);
+});
+
+test(`@spec s-gvafe6bnstwab8b leaves the names of the files of the technical appendix unchecked where the project has not chosen the Domains extension`, () => {
+  const root = good();
+  edit(root, "sheriff.config.json", (d) => delete d.extensions);
   writeFileSync(join(root, "specs/tech/ledger.json"), JSON.stringify(file("tech", "ledger", node("ledger tech", { kind: "section", text: "Ledger, built.", children: [node("posting", { refs: [{ type: "implements", to: sid("open") }] })] })), null, 2) + "\n");
   reindex(root);
-  expectOne(root, new RegExp(`${sid("ledger tech")} .*stands under the name ledger, which no domain has`));
+  assert.ok(!messages(root).some((m) => /named after no domain/.test(m)), messages(root).join("\n"));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses domains using one another in a cycle`, () => {
+test(`@spec s-g7auhqvzzbkw644 refuses a section of the technical appendix that lies below the first node of a file named after a folder of the base specification and whose path of titles leads to no section of that folder`, () => {
+  const root = good();
+  edit(root, "specs/tech/bank.json", (d) => d.nodes[0].children.push(
+    node("accounts tech", { kind: "section", title: "accounts", text: "Accounts, built.", children: [node("kept", { refs: [{ type: "implements", to: sid("open") }] })] }),
+    node("validation tech", { kind: "section", title: "Validation", text: "Checked.", children: [node("checked", { refs: [{ type: "implements", to: sid("open") }] })] }),
+  ));
+  reindex(root);
+  const found = messages(root).filter((m) => /path of titles/.test(m));
+  assert.equal(found.length, 1, messages(root).join("\n"));
+  assert.match(found[0]!, new RegExp(`specs/tech/bank\\.json: ${sid("validation tech")} .*"Validation".*path of titles`));
+});
+
+test(`@spec s-g7auhqvzzbkw644 matches the sections of the technical appendix with those of the base specification where the project has not chosen the Domains extension`, () => {
+  const root = repo({
+    "sheriff.config.json": NO_EXTENSIONS,
+    "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule")] })),
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [node("ours", { refs: [{ type: "refines", to: sid("base rule") }] })] })),
+    "specs/base/a.json": file("base", "a", node("accounts", { kind: "section", text: "Accounts.", children: [node("open"), node("intake", { kind: "section", text: "Intake.", children: [node("take")] })] })),
+    "specs/tech/base.json": file("tech", "base", node("base tech", { kind: "section", text: "Built.", children: [
+      node("accounts built", { kind: "section", title: "accounts", text: "Built.", children: [node("intake built", { kind: "section", title: "intake", text: "Built.", children: [node("taken", { refs: [{ type: "implements", to: sid("take") }] })] })] }),
+      node("intake misplaced", { kind: "section", title: "intake", text: "Built.", children: [node("taken too", { refs: [{ type: "implements", to: sid("take") }] })] }),
+    ] })),
+  });
+  reindex(root);
+  const found = messages(root);
+  assert.equal(found.length, 1, found.join("\n"));
+  assert.match(found[0]!, new RegExp(`${sid("intake misplaced")} .*"intake".*path of titles`));
+});
+
+test(`@spec s-vuujweu57sxsa58 accepts two domains of which one cites a rule of the other, against the direction of the citing domain's consumes link`, () => {
+  const root = good();
+  mkdirSync(join(root, "specs", "loans"));
+  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] }))));
+  writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [node("lend")] }))));
+  edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "refines", to: sid("lend") }));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => /cycle/.test(m)), messages(root).join("\n"));
+});
+
+test(`@spec s-vuujweu57sxsa58 refuses domains using one another in a cycle`, () => {
   const root = good();
   mkdirSync(join(root, "specs", "loans"));
   writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] }))));
   writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [node("lend")] }))));
   edit(root, "specs/bank/00-bank.json", (d) => d.nodes[0].refs.push({ type: "consumes", to: sid("lending") }));
   reindex(root);
-  expectOne(root, /cycle/);
+  expectOne(root, /specs\/: the domains use one another in a cycle: bank → loans → bank/);
 });
 
 test(`@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field does not declare, or declaring no field of its own`, () => {
@@ -458,18 +720,26 @@ test(`@spec s-jau82aq9juv9zzh refuses a RecordType variant standing outside the 
   expectOne(root, new RegExp(`${sid("savings record")}.*stands in loans.*declared in bank`));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a node of the technical appendix outside the stack implementing no node of the base`, () => {
+test(`@spec s-yprj7d6tnvauggr refuses a node of the technical appendix that implements no node of the base specification and is outside the stack and the technical debt, and accepts one that implements a section`, () => {
   const root = good();
   edit(root, "specs/tech/bank.json", (d) => (nodeIn(d, "store").refs = []));
+  writeFileSync(join(root, "specs/tech/debt.json"), JSON.stringify(file("tech", "debt", node("debt", { kind: "section", text: "Debt.", children: [node("owed")] })), null, 2) + "\n");
   reindex(root);
-  expectOne(root, new RegExp(`${sid("store")}.*implements no node of the base`));
+  expectOne(root, new RegExp(`${sid("store")}.*a node of the technical appendix that implements no node of the base specification`));
+  assert.ok(!messages(root).some((m) => m.includes(sid("owed"))), messages(root).join("\n"));
+  edit(root, "specs/tech/bank.json", (d) => (nodeIn(d, "store").refs = [{ type: "implements", to: sid("accounts") }]));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => m.includes(sid("store"))), messages(root).join("\n"));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a rule of the appendix of the tools implementing no node of the base of the guidelines`, () => {
+test(`@spec s-yprj7d6tnvauggr refuses a rule of the appendix of the tools that implements no rule of the SpecSheriff guidelines or of an extension of them; a section does not count`, () => {
   const root = good();
   edit(root, "specs/_guidelines/tools.json", (d) => (nodeIn(d, "tool").refs = []));
   reindex(root);
-  expectOne(root, new RegExp(`${sid("tool")}.*implements no node of the base of the guidelines`));
+  expectOne(root, new RegExp(`${sid("tool")}.*a rule of the appendix of the tools that implements no rule of the SpecSheriff guidelines or of an extension of them`));
+  edit(root, "specs/_guidelines/tools.json", (d) => (nodeIn(d, "tool").refs = [{ type: "implements", to: sid("base") }]));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("tool")}.*implements no rule of the SpecSheriff guidelines`));
 });
 
 test(`@spec s-yprj7d6tnvauggr accepts a rule of the appendix of the tools that implements a node of an extension of the guidelines, and reads no file of an extension as the project's own guidelines`, () => {
@@ -482,25 +752,42 @@ test(`@spec s-yprj7d6tnvauggr accepts a rule of the appendix of the tools that i
   assert.ok(!found.some((m) => m.includes(sid("tool")) || m.includes(sid("a view"))), found.join("\n"));
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines`, () => {
+test(`@spec s-yprj7d6tnvauggr refuses a rule of a project's own guidelines that refines no rule of the SpecSheriff guidelines or of an extension the project has chosen; an implements link does not count`, () => {
   const root = good();
-  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("loose")));
+  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("loose"), node("implementing", { refs: [{ type: "implements", to: sid("one rule") }] }), node("refining tools", { refs: [{ type: "refines", to: sid("tool") }] })));
   reindex(root);
-  expectOne(root, new RegExp(`${sid("loose")}.*neither refines nor implements`));
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses, outside the repository the SpecSheriff guidelines are written in, a copy of them or of their schema`, () => {
-  const root = taking();
-  cpSync(join(REPO, "specs", "_guidelines", "tools.json"), join(root, "specs", "_guidelines", "tools.json"));
-  mkdirSync(join(root, "specs", "_schema"));
-  writeFileSync(join(root, "specs", "_schema", "notes.txt"), "ours\n");
-  const found = messages(root);
-  for (const path of ["specs/_guidelines/tools.json", "specs/_schema/notes.txt"]) {
-    assert.ok(found.some((m) => m.startsWith(`${path}: `) && /copy of the SpecSheriff guidelines/.test(m)), found.join("\n"));
+  for (const name of ["loose", "implementing", "refining tools"]) {
+    expectOne(root, new RegExp(`${sid(name)}.*a rule of the project's own guidelines that refines no rule of the SpecSheriff guidelines or of an extension the project has chosen`));
   }
 });
 
+test(`@spec s-yprj7d6tnvauggr accepts a rule of a project's own guidelines that refines a rule of an extension, only where the project has chosen that extension`, () => {
+  const root = good();
+  mkdirSync(join(root, "specs", "_guidelines", "extensions"), { recursive: true });
+  writeFileSync(join(root, "specs", "_guidelines", "extensions", "views.json"), JSON.stringify(file("_guidelines/extensions", "views", node("views", { kind: "section", text: "Views.", children: [node("a view")] })), null, 2) + "\n");
+  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("our view", { refs: [{ type: "refines", to: sid("a view") }] })));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => m.includes(sid("our view"))), messages(root).join("\n"));
+  edit(root, "sheriff.config.json", (d) => d.extensions.push({ name: "views", chosen: false, by: OWNER }));
+  expectOne(root, new RegExp(`${sid("our view")}.*refines no rule of the SpecSheriff guidelines or of an extension the project has chosen`));
+});
+
+test(`@spec s-6bmnsbskg6en4nf refuses, outside the repository where the SpecSheriff guidelines are written, each copy of a file that the plugin delivers, and runs no other check while any such copy is kept`, () => {
+  const root = taking();
+  cpSync(join(REPO, "specs", "_guidelines", "tools.json"), join(root, "specs", "_guidelines", "tools.json"));
+  mkdirSync(join(root, "specs", "_guidelines", "extensions"), { recursive: true });
+  cpSync(join(REPO, "specs", "_guidelines", "extensions", "views.json"), join(root, "specs", "_guidelines", "extensions", "views.json"));
+  mkdirSync(join(root, "specs", "_schema", "extensions"), { recursive: true });
+  writeFileSync(join(root, "specs", "_schema", "notes.txt"), "ours\n");
+  writeFileSync(join(root, "specs", "_schema", "extensions", "x.schema.json"), "{}\n");
+  writeFileSync(join(root, "specs", "_schema", "project.schema.json"), "{}\n");
+  edit(root, "specs/_guidelines/project.json", (d) => (d.nodes[0].children[0].location = "elsewhere"));
+  assert.deepEqual(messages(root), ["specs/_guidelines/extensions/views.json", "specs/_guidelines/tools.json", "specs/_schema/extensions/x.schema.json", "specs/_schema/notes.txt"]
+    .map((path) => `${path}: a copy of a file that the SpecSheriff plugin delivers, which the SpecSheriff tools read from the plugin`));
+});
+
 test(`@spec s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their approvals aside`, () => {
+  writing(REPO);
   const found = validate(REPO).map((f) => `${f.where}: ${f.message}`);
   assert.deepEqual(found.filter((m) => !/no approval stands/.test(m)), []);
 });
@@ -542,29 +829,91 @@ test("@spec s-5nf87c3e3jg9v7c refuses a domain's list naming a field holding its
   expectOne(kinds, new RegExp(`${sid("account record")}.*about names the kind chapter, which the schema does not hold`));
 });
 
-test("@spec s-7pk89t8z6wymmj9 runs each of the project's own checks on the model, refusing or reporting as the rule listing it says, its output shown", () => {
-  const withCheck = (onFailure: string) => {
-    const root = good();
-    edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("our checks", {
-      refs: [{ type: "refines", to: OWN_CHECKS }],
-      list: { of: "the project's own checks", property: "name", members: [{ name: "no plain accounts", onFailure }] },
-    })));
-    writeFileSync(join(root, "check.mjs"), [
-      'let input = "";',
-      'process.stdin.on("data", (c) => (input += c)).on("end", () => {',
-      '  const plain = JSON.parse(input).nodes.filter((n) => n.title === "close");',
-      '  if (plain.length) { console.log(`a node titled close: ${plain[0].sid}`); process.exit(1); }',
-      '});',
-    ].join("\n"));
-    writeFileSync(join(root, "sheriff.config.json"), JSON.stringify({ code: [], tests: [], writesSpecSheriffGuidelines: true,
-      checks: [{ rule: sid("our checks"), name: "no plain accounts", command: "node check.mjs", code: ["check.mjs"], tests: [] }] }));
+/**
+ * A project whose own guidelines list the check "no plain accounts" as the given member, with the rule approved unless
+ * the caller asks otherwise. The check fails where a node is titled "close", and prints that node's sid and the approval status and the strict flag of the model
+ * that it receives.
+ */
+function withCheck(member: unknown, { approved = true, config = {} as Record<string, unknown> } = {}): string {
+  const root = good();
+  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.push(node("our checks", {
+    refs: [{ type: "refines", to: OWN_CHECKS }],
+    list: { of: "the project's own checks", ...(typeof member === "object" ? { property: "name" } : {}), members: [member] },
+  })));
+  writeFileSync(join(root, "check.mjs"), [
+    'let input = "";',
+    'process.stdin.on("data", (c) => (input += c)).on("end", () => {',
+    '  const model = JSON.parse(input);',
+    '  const plain = model.nodes.filter((n) => n.title === "close");',
+    '  if (plain.length) { console.log(`a node titled close: ${plain[0].sid}; ${model.approvalStatus}; strict ${model.strict}`); process.exit(1); }',
+    '});',
+  ].join("\n"));
+  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify({ code: [], tests: [], writesSpecSheriffGuidelines: true, extensions: ALL_EXTENSIONS,
+    checks: [{ rule: sid("our checks"), name: "no plain accounts", command: "node check.mjs", code: ["check.mjs"], tests: [] }], ...config }));
+  reindex(root);
+  if (approved) {
+    approve(root, [sid("our checks")], { me: OWNER });
     reindex(root);
-    return root;
-  };
-  const refused = run(withCheck("refused")).filter((f) => /no plain accounts/.test(f.where));
+  }
+  return root;
+}
+const checkFindings = (root: string, strict = false) => validate(root, { strict }).filter((f) => /no plain accounts/.test(f.where));
+
+test("@spec s-7pk89t8z6wymmj9 runs each of the project's own checks on the model, refusing or reporting as the rule listing it says, its output shown", () => {
+  const refused = checkFindings(withCheck({ name: "no plain accounts", onFailure: "refused" }));
   assert.deepEqual(refused.map((f) => [f.message.includes(`a node titled close: ${sid("close")}`), Boolean(f.reported)]), [[true, false]]);
-  const reported = run(withCheck("reported")).filter((f) => /no plain accounts/.test(f.where));
+  const reported = checkFindings(withCheck({ name: "no plain accounts", onFailure: "reported" }));
   assert.deepEqual(reported.map((f) => Boolean(f.reported)), [true]);
+});
+
+test("@spec s-7pk89t8z6wymmj9 reads the rule that lists a check in the rule's last approved wording, and refuses a check that this wording does not list", () => {
+  const never = checkFindings(withCheck({ name: "no plain accounts" }, { approved: false }));
+  assert.deepEqual(never.map((f) => f.message), [`the last approved wording of the rule ${sid("our checks")} does not list the check`]);
+  const root = withCheck({ name: "other check" });
+  edit(root, "specs/_guidelines/project.json", (d) => d.nodes[0].children.at(-1).list.members.push({ name: "no plain accounts" }));
+  reindex(root);
+  assert.deepEqual(checkFindings(root).map((f) => f.message), [`the last approved wording of the rule ${sid("our checks")} does not list the check`]);
+});
+
+test("@spec s-7pk89t8z6wymmj9 takes a list member that is a string as the name of the check", () => {
+  const found = checkFindings(withCheck("no plain accounts"));
+  assert.equal(found.length, 1, found.map((f) => f.message).join("\n"));
+  assert.match(found[0]!.message, /a node titled close/);
+});
+
+test("@spec s-7pk89t8z6wymmj9 runs the project's own checks after the check for keys written more than once and the validation against the schema have passed, and before the other checks", () => {
+  const root = withCheck({ name: "no plain accounts" });
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "open").location = "bank/9"));
+  const found = run(root).map((f) => f.where);
+  const check = found.findIndex((w) => /no plain accounts/.test(w));
+  const location = found.findIndex((w) => w.includes(sid("open")));
+  assert.ok(check >= 0 && location > check, found.join("\n"));
+  const path = join(root, "specs", "bank", "a.json");
+  writeFileSync(path, readFileSync(path, "utf8").replace('"text": "Accounts.",', '"text": "Accounts.",\n      "text": "Accounts.",'));
+  assert.deepEqual(checkFindings(root), []);
+});
+
+test("@spec s-7pk89t8z6wymmj9 reads reportedUnlessStrict as reported while the strict flag is off, and as refused while the flag is on or sheriff validate runs with --strict; the option --strict gives the check a model in which the specification is approved and the flag is on", () => {
+  const member = { name: "no plain accounts", onFailure: "reportedUnlessStrict" };
+  const off = checkFindings(withCheck(member));
+  assert.deepEqual(off.map((f) => [Boolean(f.reported), /; draft; strict false$/.test(f.message)]), [[true, true]]);
+  const on = checkFindings(withCheck(member, { config: { strict: [{ on: true, by: OWNER }] } }));
+  assert.deepEqual(on.map((f) => [Boolean(f.reported), /strict true$/.test(f.message)]), [[false, true]]);
+  const strict = checkFindings(withCheck(member), true);
+  assert.deepEqual(strict.map((f) => [Boolean(f.reported), /; approved; strict true$/.test(f.message)]), [[false, true]]);
+});
+
+test("@spec s-vj67ztqkuhxbv7s refuses a project's own check that adds, changes or removes a file that git does not ignore, naming the check and each file", () => {
+  const root = withCheck({ name: "no plain accounts", onFailure: "reported" });
+  writeFileSync(join(root, ".gitignore"), "ignored.txt\n");
+  writeFileSync(join(root, "kept.txt"), "kept\n");
+  git(root, "init", "-q");
+  writeFileSync(join(root, "check.mjs"), [
+    'import { writeFileSync, rmSync } from "node:fs";',
+    'writeFileSync("made.txt", "made\\n"); writeFileSync("ignored.txt", "ignored\\n"); rmSync("kept.txt");',
+  ].join("\n"));
+  const found = checkFindings(root);
+  assert.deepEqual(found.map((f) => [f.message, Boolean(f.reported)]), [["the check changed files it may not change: kept.txt, made.txt", false]]);
 });
 
 test("@spec s-xzcw3hv4hmxz7h7 refuses an extension that is no JSON, or whose kind's schema is no JSON Schema, naming it rather than failing on it", () => {
