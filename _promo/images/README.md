@@ -1,7 +1,7 @@
 # The pictures
 
-The pictures of the first article and the cards on how requirements decay, one card for each rule of
-how a rule is written (§s-3w8puyqn2ramsre). Each is kept in three formats, a folder for each:
+The pictures for the first article and the cards on how requirements decay, one card for each rule on
+how a rule is written (§s-s5s83353kfzt2mf). Each is kept in three formats, a folder for each:
 
 - `html/` — the source: each picture a page of its own, its text live, its fonts (Rye and Courier
   Prime) loaded from Google Fonts. A picture is changed here and nowhere else. What a page shows
@@ -33,8 +33,8 @@ interpreter other than `python3`, or `python` on Windows, named by `PYTHON`).
 |------|--------------------------|
 | `card-6-1-one-language` | §s-7anvune6h4f6mbr |
 | `card-6-2-name-the-subject` | §s-3dgt5c94jr55j3z |
-| `card-6-3-bind-the-property` | §s-ybq7wbhkrh5pjqs |
-| `card-6-4-reason-as-wide-as-its-rule` | §s-hwnzhgw5b683fc7 |
+| `card-6-3-bind-the-property` | the rule, removed on 2026-11-20 |
+| `card-6-4-reason-as-wide-as-its-rule` | the rule, removed on 2026-11-20 |
 | `card-6-5-grounds-and-nothing-more` | §s-ydzyh9nqm3x64h4 |
 | `card-6-6-no-count-in-prose` | §s-xtqebaxjrqjsjwn |
 | `card-6-7-allowed-or-forbidden` | §s-hgdc2543ms5spwj |

@@ -7,9 +7,9 @@ import { trackedFiles } from "./diff.ts";
 import { migrateApprovals, readApprovals, stands } from "./approvals.ts";
 import { mergeKeys, type KeyTwice } from "./json-text.ts";
 import { APPROVAL_RULE, approvalRule, approvalRuleNode, builtStatuses, fingerprint, incoming, isContainer, locations, partOf, PROJECT, SID } from "./model.ts";
-import { EXTENSION, schemaRefusals, type Extension } from "./schema.ts";
+import { EXTENSION, isArchive, schemaRefusals, type Extension } from "./schema.ts";
 import { fieldKey, fieldsOf, gather } from "./values.ts";
-import { canonical, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
+import { canonical, cellNodes, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface ReindexReport {
   /** Every key whose values were merged, with the file it is in. */
@@ -99,6 +99,14 @@ function renameEarlier(files: SpecFile[]): void {
     return node;
   };
   for (const f of files) if (Array.isArray(f.data.nodes)) f.data.nodes = f.data.nodes.map(rename);
+  // A node of the archive, as an earlier release wrote it, loses its sid and every link pointing at it (s-gb8s9657a65hqmv).
+  for (const f of files.filter((f) => isArchive(f.path))) {
+    for (const n of f.data.nodes ?? []) {
+      if (!n || typeof n !== "object") continue;
+      delete (n as Partial<SpecNode>).sid;
+      if (Array.isArray(n.refs)) n.refs = n.refs.filter((r) => !r.from);
+    }
+  }
 }
 
 const A_SID = "s-222222222222222";
@@ -131,6 +139,9 @@ function asValidated(f: SpecFile): unknown {
       ungathered(n.fields);
     }
     if (Array.isArray(n.children)) n.children.forEach(visit);
+    if (Array.isArray(n.groups)) for (const g of n.groups.filter(isObject)) for (const r of (Array.isArray(g.rows) ? g.rows : []).filter(isObject)) {
+      for (const c of Object.values(isObject(r.cells) ? r.cells : {})) if (isObject(c)) visit(c.node);
+    }
   };
   if (Array.isArray(copy.nodes)) copy.nodes.forEach(visit);
   return copy;
@@ -140,7 +151,7 @@ function asValidated(f: SpecFile): unknown {
 function giveSids(files: SpecFile[]): void {
   const taken = new Set<string>();
   const each = (nodes: SpecNode[], visit: (n: SpecNode) => void) => {
-    for (const n of nodes) visit(n), each(n.children ?? [], visit);
+    for (const n of nodes) visit(n), each(n.children ?? [], visit), each(cellNodes(n).map((c) => c.node), visit);
   };
   for (const f of files) each(f.data.nodes ?? [], (n) => typeof n.sid === "string" && taken.add(n.sid));
   const settle = (nodes: SpecNode[]): SpecNode[] =>
@@ -149,6 +160,10 @@ function giveSids(files: SpecFile[]): void {
       const { location = "", sid: _, ...rest } = n;
       const settled = { location, sid, ...rest } as SpecNode;
       if (settled.children) settled.children = settle(settled.children);
+      // A node in a cell of a TableRule gets its location and sid in its cell.
+      for (const g of (settled.groups as Array<{ rows: Array<{ cells: Record<string, { node?: SpecNode }> }> }> | undefined) ?? []) {
+        for (const r of g.rows) for (const c of Object.values(r.cells)) if (c.node) c.node = settle([c.node])[0]!;
+      }
       return settled;
     });
   for (const f of files) if (!partOf(f.path).part.startsWith("_archive")) f.data.nodes = settle(f.data.nodes ?? []);
@@ -242,9 +257,9 @@ export function reindex(root: string): ReindexReport {
   // An approved node whose wording no approval stands for is a draft (s-5ah25f6gy99panq); a section's and a domain's
   // header's status is then built from the nodes under it (s-9kfdycuq34beqvs).
   const lines = readApprovals(root);
-  for (const [sid, { node, file }] of spec.nodes) {
+  for (const [sid, { node, file, cell }] of spec.nodes) {
     if (isContainer(node.kind) || !judgedHere(file.path, writesSpecSheriffGuidelines)) continue;
-    if (node.status === "approved" && !stands(lines, sid, fingerprint(node))) {
+    if (node.status === "approved" && !stands(lines, sid, fingerprint(node, cell))) {
       node.status = "draft";
       report.drafted.push(sid);
     }

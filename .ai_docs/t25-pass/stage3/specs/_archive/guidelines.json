@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines",
+  "section": "guidelines",
+  "nodes": [
+    {
+      "location": "_guidelines/spec/1.10",
+      "kind": "TextRule",
+      "title": "A decision lives on the rule it settled",
+      "status": "approved",
+      "text": "A decision records what was settled about a rule. It is kept in that rule's `meta.decisions`, never as a document of its own. A decision usually changes the rule's wording. A procedural one changes none.",
+      "refs": [],
+      "reason": "A decision is not specification but the history of one rule. It is read beside that rule. A procedural decision would otherwise leave no trace, because nothing in the wording shows it.\n\nThe number of decisions on one rule also measures how well it was written. A rule that keeps collecting them was written badly.",
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the rule, since it repeated the rule that everything bearing on a node is kept in that node, and the schema.",
+        "replacedBy": "s-x4zcbk5ekebd9ua"
+      }
+    },
+    {
+      "location": "_guidelines/spec/1.15",
+      "kind": "TextRule",
+      "title": "A member of `TextRule.list` may be an object",
+      "status": "approved",
+      "text": "Each member of `TextRule.list` is a primitive value or an object. In an object, the property the list names holds the member's value. The object's other properties hold what is stated of that value, each of them a primitive value, a list or an object.",
+      "reason": "What is stated of a value, held in that value's own object, is never taken for what is stated of another. The named property stays where the value is declared. So the members are read, and compared with their declaration, the same whatever else they hold.",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-xqs2e24mx5253ye"
+        }
+      ],
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-11-04",
+            "problem": "A project keeps beside each value of a list what it states of that value, as a value's severity, and could write it only as a table in a rule's text, which no tool reads.",
+            "ruling": "The owner: a table is held as data; first put as a list's columns, then corrected, since columns are a way of showing data rather than its shape: any member of any list is a primitive value or an object, the property the list names holding the member's value.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the rule, since it only restated the schema.",
+        "replacedBy": "s-eferktypcj7njt5"
+      }
+    },
+    {
+      "location": "_guidelines/spec/1.18",
+      "kind": "TextRule",
+      "title": "The base specification holds no figure of one instance",
+      "status": "approved",
+      "text": "The base specification holds no figure measured on an instance — a population, a rate, a duration observed there.\n\nA threshold a rule needs is stated by the method an instance measures it with. Its value is a setting of the technical appendix.",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-5x737t9nee4zgaa"
+        },
+        {
+          "type": "refines",
+          "to": "s-vj7ercem526zd6v"
+        }
+      ],
+      "reason": "A figure belongs to the instance it was measured on and to the day it was measured. Every other instance would then pass or fail the rule by accident.",
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-10-27",
+            "problem": "A rule of the writing doctrine forbade numbers measured on a running instance, written to repair rules into which one instance's data had leaked.",
+            "ruling": "The owner: in a specification written fresh it is one case of the base being tied to no implementation, and stands beside the rules on technology and on a look.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the rule as a duplicate of the rules on what the base specification states and on what the technical appendix describes.",
+        "replacedBy": "s-5x737t9nee4zgaa"
+      }
+    },
+    {
+      "location": "_guidelines/spec/1.28",
+      "kind": "TextRule",
+      "title": "The list of a field's values in contracts may consolidate values from different domains",
+      "status": "approved",
+      "text": "Only a field of type `one of` in a RecordType described in contracts may have as its values those the domains add. Each domain lists the values it adds in a rule of its own.",
+      "reason": "A RecordType described in contracts is shared by the domains, and so are its fields. So each domain may add the values it brings, and the variants answering to them (§s-z3dnru6qqdf9m6j), without changing the RecordType, which the owners of contracts hold.\n\nA RecordType one domain provides is described in that domain (§s-7vm323mhry2enx3). So that domain alone answers for its fields' values and declares them itself.",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-xfu2gpzddjnmgks"
+        },
+        {
+          "type": "cites",
+          "to": "s-z3dnru6qqdf9m6j"
+        },
+        {
+          "type": "cites",
+          "to": "s-7vm323mhry2enx3"
+        },
+        {
+          "type": "cites",
+          "to": "s-bsya3febm6u64ab"
+        }
+      ],
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-10-27",
+            "problem": "The rule named, beside a field's own list of values, the tables one project's tools read such values from.",
+            "ruling": "The owner: the SpecSheriff guidelines keep the field's own list, and a project's own guidelines may declare such values elsewhere (§s-bsya3febm6u64ab).",
+            "type": "textual"
+          },
+          {
+            "date": "2026-10-31",
+            "problem": "The rule allowed a place a project's own guidelines name for a variant's values, and nothing described how they name it, so the tools read the field's own list alone.",
+            "ruling": "The owner: the other place stays and is described. For a data record described in contracts, a rule of a domain defines a list of the field's values and refines the data record by its sid; the tools collect the values from every such list and refuse one declared twice, the variant stands where its value is declared, and the generated types list every value. A data record one domain provides keeps its values in its own field, as the rule on contracts requires.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-04",
+            "problem": "The values the domains add to a field of contracts stood in one rule with every other source of a field's values, named the lists of domains, which read as the list of the domains, and stated from the field's side.",
+            "ruling": "The owner: the list of a field's values declared in contracts may consolidate values from different domains, the field being shared by them; only such a field may have as its values those the domains add, each domain listing its own in a rule of its own, and a data record one domain provides declares its fields' values itself.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-05",
+            "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+            "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-06",
+            "problem": "The node named a node's status checked, the act of agreeing to it a confirmation, and one owner of a part.",
+            "ruling": "Carrying out the owner's decision of that day: a node's status is draft or approved, the act is an approval, and a part has owners, one or several.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the values that the domains add to a field as a source of the field's values, since the contracts section now holds only fragments of a format, which refer only to other fragments."
+      }
+    },
+    {
+      "location": "_guidelines/spec/1.29",
+      "kind": "TextRule",
+      "title": "How a domain's added values find their field",
+      "status": "approved",
+      "text": "A domain's rule that adds values to a field of a RecordType in contracts refines that RecordType. Its `TextRule.list` names the field the values go to.",
+      "reason": "A RecordType may have several fields of type `one of`, so the rule's `TextRule.list` names the field its values go to. The rule is linked to the RecordType by its sid, so the link holds when the RecordType is renamed.",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-96df5fcfqsvex9d"
+        }
+      ],
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-11-04",
+            "problem": "How a domain's rule adding values names the field they go to stood in one rule with every source of a field's values, and was then put so that the owner could not tell which values and which field were meant.",
+            "ruling": "The owner: held in a rule of its own, put plainly: the rule refines the field's data record, and its list names the field the values go to.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-05",
+            "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+            "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the values that the domains add to a field as a source of the field's values, since the contracts section now holds only fragments of a format, which refer only to other fragments."
+      }
+    },
+    {
+      "location": "_guidelines/spec/1.32",
+      "kind": "TextRule",
+      "title": "Where a value is declared",
+      "status": "approved",
+      "text": "A value of a field of type `one of` is declared in the part of the specification where the list, the domain or the node it comes from stands.",
+      "reason": "Whoever answers for a list, a domain or a node then declares the values coming from it, and adds the variant answering to each (§s-z3dnru6qqdf9m6j), without changing another part.",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-xfu2gpzddjnmgks"
+        },
+        {
+          "type": "cites",
+          "to": "s-z3dnru6qqdf9m6j"
+        }
+      ],
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-11-04",
+            "problem": "A data record variant stands in the part declaring its value, and only a domain or contracts were named as that part, while a value now comes from a domain, a domain's list or a node.",
+            "ruling": "The owner: a value is declared in the part where the list, the domain or the node it comes from stands.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the rule, since the values of a field now come from the field's own list, declared with the field, or are read from the specification.",
+        "replacedBy": "s-xfu2gpzddjnmgks"
+      }
+    },
+    {
+      "location": "_guidelines/spec/1.37",
+      "kind": "TextRule",
+      "title": "An entity is declared once",
+      "status": "approved",
+      "text": "Every entity of the system is declared once. An entity is what a term names, such as a user or a session.\n\nAn entity is declared by the term that names it, in contracts (§s-7vm323mhry2enx3). Its data, where the specification describes them, are declared by one RecordType. That RecordType stands in the domain that provides it or, where no single domain does, in contracts.\n\nNo two RecordTypes share a name.",
+      "refs": [
+        {
+          "type": "cites",
+          "to": "s-7vm323mhry2enx3"
+        }
+      ],
+      "reason": "Two definitions of one entity are two places that each answer for it, and the two are changed apart. The duplicate is usually the first visible trace of one domain doing another's work.",
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-11-05",
+            "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+            "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner found the rule a duplicate of the rules on terms. Its two remaining statements and its reason moved to the rule on RecordType.",
+        "replacedBy": "s-7vm323mhry2enx3"
+      }
+    },
+    {
+      "location": "_guidelines/spec/1.39",
+      "kind": "TextRule",
+      "title": "A domain uses another domain's RecordTypes only from the sections it declares",
+      "status": "approved",
+      "text": "A RecordType of one domain names a RecordType of another domain, in a field's type or as the RecordType it refines, only where the named RecordType stands in a section the first domain's header names in its `consumes` links. A RecordType named from elsewhere is reported, not refused.",
+      "reason": "A domain's header then names every section of another domain whose RecordTypes the domain relies on at runtime. That other domain's index names the domain beside each such section. So whoever changes such a RecordType sees which domains it reaches (§s-yggv9myedprnaa7).\n\nA RecordType of contracts is provided by no single domain (§s-7vm323mhry2enx3), so naming it makes a domain rely on no other.\n\nA RecordType named from elsewhere is reported rather than refused, since declaring the use may set the domains using one another in a cycle (§s-uw9n84edf7cbe9n). Only a change to the design removes such a cycle. Until then the work goes on with the dependency in view.",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-yggv9myedprnaa7"
+        },
+        {
+          "type": "cites",
+          "to": "s-7vm323mhry2enx3"
+        },
+        {
+          "type": "cites",
+          "to": "s-uw9n84edf7cbe9n"
+        },
+        {
+          "type": "cites",
+          "to": "s-hr7j7scmfkkjnws"
+        }
+      ],
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-11-04",
+            "problem": "A data record of one domain could name one of another that its header's consumes links did not name, so the domain relied on the other at runtime with no header showing it.",
+            "ruling": "The owner: the domains are decoupled by data at runtime, the data records a domain provides being its interface; the check is kept and warns rather than refuses, and a link of any type still crosses a domain line (§s-hr7j7scmfkkjnws).",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-05",
+            "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+            "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner ruled that a RecordType of one domain does not name a RecordType of another domain, so the rule on naming such RecordTypes through the sections a domain's header declares was removed.",
+        "replacedBy": "s-8ht2hn88cu2qwz9"
+      }
+    },
+    {
+      "location": "_guidelines/spec/5.3",
+      "kind": "TextRule",
+      "title": "Tests at a push while the specification is a draft",
+      "status": "approved",
+      "text": "While a project's specification is a draft, neither the tests of the system's code nor those of the project's own checks and generators are run at a push.",
+      "reason": "While the specification is a draft, the work is above all on the specification, the code and the tests secondary in it. A push that waited for every test would slow that work. The tests of the project's own checks and generators go with those of the system's code, since a push runs them together (§s-jau82aq9juv9zzh).",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-jau82aq9juv9zzh"
+        }
+      ],
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-11-06",
+            "problem": "A push in a draft waited for every test, though a draft is above all work on the specification.",
+            "ruling": "The owner: while the specification is a draft, the tests need not run at a push, to keep the work quick.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-06",
+            "problem": "The node named a node's status checked, the act of agreeing to it a confirmation, and one owner of a part.",
+            "ruling": "Carrying out the owner's decision of that day: a node's status is draft or approved, the act is an approval, and a part has owners, one or several.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The rule moved into the rule on what the checks enforce and when they run, which now says that no test has to pass while the specification is a draft.",
+        "replacedBy": "s-x8uzc8z44pwtd3h"
+      }
+    },
+    {
+      "location": "_guidelines/spec/6.5",
+      "kind": "TextRule",
+      "title": "A name is quoted where the reader must reach it, a predicate where the rule must keep binding",
+      "status": "approved",
+      "text": "Where a rule binds a named thing, the name is quoted where the reader must reach the definition that owns it. The predicate is stated where the rule must keep binding if that name changes. So not “`deleted_users` is never searched”, which binds nothing once the table is renamed, but “a table holding the users who deleted their accounts — today `deleted_users` — is never searched”.",
+      "refs": [],
+      "reason": "A sentence written against a name goes inert rather than failing when the name moves. Nothing breaks, no test moves, and a requirement quietly becomes a statement about nothing. A sentence written against the predicate keeps binding whatever the thing is called. Yet it is useless exactly where the reader needs to find the definition.",
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-10-27",
+            "problem": "Its examples were drawn from one project a reader of the method does not know.",
+            "ruling": "The owner: the examples name what any system has — a user, an operator, a data record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the rule, since other rules cover what it said about names."
+      }
+    },
+    {
+      "location": "_guidelines/spec/6.6",
+      "kind": "TextRule",
+      "title": "A reason is no narrower than the rule it holds up",
+      "status": "approved",
+      "text": "A node's reason covers everything the node's text requires. So a rule that refuses an upload too large to store and tells the user why gives a reason for both, not only for the refusal.\n\nWhere the reason is narrower, either the reason is completed or the rule is cut back to what the reason carries.",
+      "refs": [
+        {
+          "type": "refines",
+          "to": "s-dpe5kcz4eamv39g"
+        }
+      ],
+      "reason": "A rule with a narrow reason is destroyed by the next author doing everything right. The change is checked against the stated reason, the reason still holds, and the property nobody wrote down is gone. A reviewer cannot defend what the node never said.",
+      "meta": {
+        "decisions": [
+          {
+            "date": "2026-10-27",
+            "problem": "Its examples were drawn from one project a reader of the method does not know.",
+            "ruling": "The owner: the examples name what any system has — a user, an operator, a data record, a request — and nothing of one implementation; the worked example's subject stays in the example.",
+            "type": "textual"
+          },
+          {
+            "date": "2026-11-07",
+            "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+            "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+            "type": "textual"
+          }
+        ]
+      },
+      "archived": {
+        "date": "2026-11-20",
+        "reason": "The owner removed the rule, since it led to reasons written paragraph by paragraph."
+      }
+    }
+  ]
+}

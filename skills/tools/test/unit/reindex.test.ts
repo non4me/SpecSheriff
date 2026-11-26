@@ -38,12 +38,13 @@ test("@spec s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from t
   assert.deepEqual(at(root, "shared").refs, [{ type: "consumes", from: sid("header") }]);
 });
 
-test("@spec s-bpdqd9v72wg7vsz empties the incoming lists of the nodes of the archive, and builds none of their links into another node", () => {
+test("@spec s-gb8s9657a65hqmv removes its sid and every link pointing at it from a node of the archive that an earlier release wrote, and builds no link pointing from it to another node", () => {
   const root = bank({
     "specs/_archive/bank.json": file("bank", "bank", { ...node("gone", { refs: [{ type: "cites", from: sid("open") }, { type: "cites", to: sid("close") }] }), location: "bank/1.3", archived: { date: "2026-10-28", reason: "Gone." } }),
   });
   reindex(root);
   const archived = JSON.parse(readFileSync(join(root, "specs", "_archive", "bank.json"), "utf8")).nodes[0];
+  assert.equal(archived.sid, undefined);
   assert.deepEqual(archived.refs, [{ type: "cites", to: sid("close") }]);
   assert.deepEqual(at(root, "close").refs, [{ type: "cites", from: sid("open") }]);
 });
@@ -71,7 +72,7 @@ test("@spec s-f5rz6b7dhxejjts gives a sid to a node that has none, its location 
   reindex(root);
   const added = JSON.parse(readFileSync(path, "utf8")).nodes[0].children[1];
   assert.match(added.sid, SID);
-  assert.equal(added.location, loc("contracts", "1"));
+  assert.equal(added.location, loc("contracts", "1.1"));
   assert.deepEqual(Object.keys(added).slice(0, 3), ["location", "sid", "kind"]);
 });
 

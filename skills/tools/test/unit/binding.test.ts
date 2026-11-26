@@ -159,10 +159,10 @@ test("@spec s-jau82aq9juv9zzh refuses a node's location in a file outside the sp
 test("@spec s-jau82aq9juv9zzh refuses a node's location in any file the repository keeps outside the specification, a term's and a file's included", async () => {
   const root = project();
   put(root, "config/routes.yaml", `# as ${loc("contracts", "1.1")} says\n`);
-  put(root, "notes.txt", "Read contracts/c and contracts/Account.\nThe file specs/contracts/c.json and contracts/c.json are paths.\n");
+  put(root, "notes.txt", `Read ${loc("contracts", "1")} and contracts/Account.\nThe file specs/contracts/c.json and contracts/c.json are paths.\n`);
   editSpec(root, (d) => d.nodes[0].children.push({ location: "", sid: sid("account term"), kind: "term", title: "account", status: "draft", text: "An account.", refs: [] }));
   await expectOne(root, /config\/routes\.yaml:1: .*contracts\/1\.1.*location/);
-  await expectOne(root, /notes\.txt:1: contracts\/c is a node's location/);
+  await expectOne(root, /notes\.txt:1: contracts\/1 is a node's location/);
   await expectOne(root, /notes\.txt:1: contracts\/Account is a node's location/);
   assert.ok(!(await messages(root)).some((m) => m.startsWith("notes.txt:2")), (await messages(root)).join("\n"));
 });

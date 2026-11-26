@@ -84,8 +84,8 @@ reviewed where it changes code. `npx sheriff validate`, `binding`, `citations` a
   citation, the citing node must have an outgoing link to the cited node (`cites`, unless another type says how the two nodes
   relate), and a `cites` link is allowed only where the node cites its target (§s-bpdqd9v72wg7vsz);
   the matching incoming entry is built by `sheriff reindex`.
-- **Decisions** are recorded in the `meta.decisions` field of the rule they settled, never as a separate document
-  (§s-gqbj8849rf224qa), and are restated with no trace of the private project the method was
+- **Decisions** are recorded in the `meta.decisions` field of the rule they concern, never in a separate document
+  (§s-x4zcbk5ekebd9ua), and are restated with no trace of the private project the method was
   extracted from: nothing in this repository names that project or relies on it.
 - **Removal.** A node that has ever been approved is moved, when it is removed, to the archive
   `specs/_archive/<name>.json`, with its `archived` field holding the date, the reason and the sid of the node

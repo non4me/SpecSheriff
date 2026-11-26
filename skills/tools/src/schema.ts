@@ -6,12 +6,16 @@ import { CARRIED, takesGuidelines } from "./spec-files.ts";
 export interface Schema {
   /** The errors of a file of the specification against the schema, each naming the field that is wrong; none where it matches. */
   check(data: unknown): string[];
+  /** The errors found when a file of the archive is checked against the schema of a file of the archive and against no other schema (s-hw84ynkvhgzcnpr). */
+  checkArchive(data: unknown): string[];
   /** The errors of the project's extension of the schema; where there are any, the schema is used without it. */
   extension: string[];
 }
 
 /** The files of the schema of the SpecSheriff guidelines, which the plugin carries to every project. */
-export const SCHEMA_FILES = ["node.schema.json", "section-file.schema.json", "extension.schema.json"];
+export const SCHEMA_FILES = ["node.schema.json", "section-file.schema.json", "archive-file.schema.json", "extension.schema.json"];
+/** Whether a path is a file of the archive (s-f2b5zvc565s242f). */
+export const isArchive = (path: string) => path.startsWith("specs/_archive/");
 /** Where a project keeps its extension of the schema (s-eferktypcj7njt5). */
 export const EXTENSION = "specs/_schema/project.schema.json";
 
@@ -75,7 +79,7 @@ function compose(node: Json, file: Json, ext: Extension): string[] {
 export function schemaRefusals(root: string, files: Array<{ path: string; data: unknown }>, extension?: Extension): Array<{ where: string; message: string }> {
   const schema = loadSchema(root, extension);
   if (schema.extension.length) return schema.extension.map((message) => ({ where: EXTENSION, message }));
-  return files.flatMap((f) => schema.check(f.data).map((message) => ({ where: f.path, message })));
+  return files.flatMap((f) => (isArchive(f.path) ? schema.checkArchive(f.data) : schema.check(f.data)).map((message) => ({ where: f.path, message })));
 }
 
 /**
@@ -86,10 +90,30 @@ export function schemaRefusals(root: string, files: Array<{ path: string; data: 
 export function loadSchema(root: string, given?: Extension): Schema {
   const dir = takesGuidelines(root) ? join(CARRIED, "_schema") : join(root, "specs", "_schema");
   const read = (name: string): Json => JSON.parse(readFileSync(join(dir, name), "utf8"));
+  // Every property that the schema of a node declares, for every node or for one kind of node.
+  const declared = new Set<string>();
+  const collect = (s: unknown): void => {
+    if (!s || typeof s !== "object") return;
+    if (Array.isArray(s)) return s.forEach(collect);
+    for (const [k, v] of Object.entries(s as Json)) {
+      if (k === "properties" && v && typeof v === "object") Object.keys(v).forEach((p) => declared.add(p));
+      collect(v);
+    }
+  };
+  collect(read("node.schema.json"));
   const errorsOf = (validate: { errors?: Array<{ instancePath: string; message?: string; params: unknown }> | null }) => {
     // The field a message is about, where Ajv keeps it in the error's parameters rather than its path.
     const field = (p: Record<string, unknown>) => p.unevaluatedProperty ?? p.additionalProperty ?? p.missingProperty;
-    return (validate.errors ?? []).map((e) => {
+    // A failed condition declares no property. So where a node fails a condition, Ajv also reports each property of the
+    // node that the schema does declare as an undeclared property. Such an error names no field that is wrong,
+    // and it is dropped. A property that the schema declares nowhere is still refused.
+    const errors = (validate.errors ?? []) as Array<{ keyword?: string; instancePath: string; message?: string; params: unknown }>;
+    const real = errors.filter((e) => e.keyword !== "unevaluatedProperties").map((e) => e.instancePath);
+    const echo = (e: { keyword?: string; instancePath: string; params: unknown }) =>
+      e.keyword === "unevaluatedProperties" &&
+      declared.has(String((e.params as Record<string, unknown>).unevaluatedProperty)) &&
+      real.some((p) => p === e.instancePath || p.startsWith(e.instancePath + "/"));
+    return errors.filter((e) => !echo(e)).map((e) => {
       const named = field(e.params as Record<string, unknown>);
       return `${e.instancePath || "/"}: ${e.message}${named === undefined ? "" : `: "${named}"`}`;
     });
@@ -99,6 +123,7 @@ export function loadSchema(root: string, given?: Extension): Schema {
     const redefined = ext ? compose(node, file, ext) : [];
     const ajv = new Ajv2020({ strict: false, allErrors: true });
     ajv.addSchema(node).addSchema(file);
+    if (existsSync(join(dir, "archive-file.schema.json"))) ajv.addSchema(read("archive-file.schema.json"));
     return { ajv, redefined };
   };
 
@@ -122,19 +147,25 @@ export function loadSchema(root: string, given?: Extension): Schema {
       }
     }
   }
-  const compiled = (with_: Extension | null) => build(with_).ajv.getSchema("section-file.schema.json");
-  let validate: ReturnType<typeof compiled>;
+  const compiled = (with_: Extension | null) => build(with_).ajv;
+  let ajv: ReturnType<typeof compiled>;
   try {
-    validate = compiled(ext && !extension.length ? ext : null);
+    ajv = compiled(ext && !extension.length ? ext : null);
   } catch (error) {
     extension = [`composes into no valid schema: ${(error as Error).message}`];
-    validate = compiled(null);
+    ajv = compiled(null);
   }
+  const validate = ajv.getSchema("section-file.schema.json");
   if (!validate) throw new Error("specs/_schema/section-file.schema.json: not found");
+  const archive = ajv.getSchema("archive-file.schema.json");
   return {
     extension,
     check(data) {
       return validate(data) ? [] : errorsOf(validate);
+    },
+    checkArchive(data) {
+      if (!archive) return ["specs/_schema/archive-file.schema.json: not found"];
+      return archive(data) ? [] : errorsOf(archive);
     },
   };
 }

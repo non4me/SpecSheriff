@@ -1,0 +1,133 @@
+# T25, stage 3, step A1: the report of assemble.mjs
+
+Written 2026-11-26T11:38:11Z. Drafts read: 229; nodes they settle: 188; new: 92.
+
+Nodes by file: spec 189, domains 23, recordtype 35, views 3, tools 134, project 2; archive 11.
+
+## Problems (0)
+
+
+## Notes (122)
+
+- draft commands:sids: holds no proposal, left out
+- s-k6dzuajejrw4cej: its row's "On failure" now reads "refused; for code that the commit leaves unchanged, the result is what the rule on code that no SpecTag binds says (§s-kkbqcb9xrpaepwn)", where it read "refused; for a symbol that the commit leaves unchanged, the result is what §s-kkbqcb9xrpaepwn says"
+- section The commands (s-qk8ezwujq95er7x) put in place of s-f5rz6b7dhxejjts
+- section Who runs the reviewer (s-v36s7dm8s3yewtr) put in place of s-xr5xxa9cxf2mq5u
+- section SpecTags in the code and the tests (s-6c4hyyrnprekk32) put in place of s-5z5gnu7pahr82xp
+- section The approvals of nodes (s-e75g25ajrm2kqj5) put in place of s-v4qus7raqnwzneb
+- new Project-wide settings (s-tjsv2wv4j2cuapa) placed after s-zefk589ykh37b8u
+- new What the SpecSheriff tools read in the project's own guidelines (s-t9j29hppag2nren) placed after new:tools-1-settings
+- new Validation of a file of the archive (s-hw84ynkvhgzcnpr) placed after s-j4webte36gkraju
+- new Term nodes outside the contracts section (s-yauyedny2yzvs4c) placed after s-vke5hakwf3uyrjs
+- new How a node's location is computed (s-ygg5kpcxgzq3m7w) placed after s-stxmhq3hgfndvn6
+- new Who an added approval names (s-75ue25v6r23jkk8) placed after s-95w92rnjuv3sst8
+- new One header for each domain (s-8esbyvaj2yx5eqf) placed after s-agc6fb3vx46pc23
+- new `consumes` links (s-p3n666zfjdrrw6a) placed after s-qvgzubkrafadqgf
+- new A link from the SpecSheriff guidelines to an extension of the guidelines (s-75r4pg4wdqu3gw5) placed after s-p3n666zfjdrrw6a
+- new The target of a link (s-c4rn9fj4czk768b) placed before s-qzyacnqwvaeaps4
+- new The approval status of a domain's header (s-yccuyqbypzzx2gu) placed after s-2r59txnms5serdr
+- new (row) (s-bn8rvk6du2jkf2d) placed after s-6n2ab7escdtspwe
+- new The judgement on the code that a commit changes (s-rd9nftptjuz6bwv) placed after s-vp24dqydygztqbt
+- new The judgement on a statement that a rule's implementation needs no change (s-kgqxg4gunzynwsv) placed after s-rd9nftptjuz6bwv
+- new The judgement on a node of the technical appendix that a commit approves (s-4bwa4zepd4nwcv8) placed after s-kgqxg4gunzynwsv
+- new How a commit message states that a rule's implementation needs no change (s-7gab4ptjt2khfr5) placed after s-6c4hyyrnprekk32
+- new A SpecTag that names no node (s-36x8amvunmv2kp5) placed after s-9rtrj24myzjvshu
+- new Code and tests outside the commit that no SpecTag binds (s-3xx2eukc8gtd2tx) placed after s-36x8amvunmv2kp5
+- new A test for each rule whose code a commit changes (s-8wp7xm7g3u8gscq) placed after s-utf4mbt7ref8g9c
+- new The chosen extensions and the installed plugin (s-mhsb6fjsq5xn6c9) placed after s-xzcw3hv4hmxz7h7
+- new How two versions of code are compared (s-u6mj5yv8ngnz79v) placed after s-2x58az67bm6cxq2
+- new The code and the tests of a draft rule (s-w93jfnqynfa47pf) placed after s-3xx2eukc8gtd2tx
+- new The list of a project's own kinds of node (s-czxaqvaesmu3gru) placed after s-5hb9k2e34dgn284
+- new (row) (s-cgkkksc7efxhcst) placed after s-f5mm7tagez38ffz
+- new (row) (s-td4e3rdga6azav9) placed after s-nudrdn5xvcg262k
+- new The judgement on a comment that a commit adds or changes (s-7vpsdsy8dpqdy6r) placed after s-4bwa4zepd4nwcv8
+- new What the checks enforce (s-5j9s5dstbawdd69) placed before s-m4h279nbaqkpa3t
+- new When the tests must pass (s-x8uzc8z44pwtd3h) placed after s-m4h279nbaqkpa3t
+- new (row) (s-vj67ztqkuhxbv7s) placed after s-ujm7nfxkk9j3464
+- new Fields with `enum` that `sheriff validate` accepts (s-dk3zfkbhc3v6xbp) placed after s-5nf87c3e3jg9v7c
+- new The entries of the settings that only an owner changes (s-d3nkw9b6mn98vuw) placed after s-chsfpkgpmfk4fft
+- new Approving the specification (s-m59dqwkw2e96wne) placed after s-d3nkw9b6mn98vuw
+- new Turning the `strict` flag on (s-nxgkp988mej79eg) placed after s-m59dqwkw2e96wne
+- new Withdrawing the choice of an extension (s-n4ny597qdv9c9bu) placed after s-nxgkp988mej79eg
+- new Writing the human-readable export (s-e3495enbc5h75c3) placed after s-k4nqjr96ux7a5m7
+- new Printing one node (s-2dhbqy43tcm6qj2) placed after s-e3495enbc5h75c3
+- new Drawing the diagram of the domains (s-jzm6qw992j3bnxt) placed after s-rpv4fkdqqguptqd
+- new The validator of the RuntimeChecks (s-axxezge5duzemgs) placed after s-pvzms7d8kxb8dk2
+- new The pre-commit hook (s-npnmwyt6s3gypwe) placed after s-477gtdrkw34dzxw
+- new The working tree compared with what a push sends (s-8a5eyy5n5hnsgrs) placed after s-npnmwyt6s3gypwe
+- new Turning the git hooks on when a session starts (s-jgcveum8dwdnyzr) placed after s-8a5eyy5n5hnsgrs
+- new The settings of each runner when a session starts (s-p29yawkkkgk7kxb) placed after s-jgcveum8dwdnyzr
+- new The agent's hook after an edit (s-hcmpjmwtgfwzncu) placed after s-p29yawkkkgk7kxb
+- new (row) (s-yn5tdx2bp4f5rq7) placed after s-vj67ztqkuhxbv7s
+- new The skills of the SpecSheriff plugins (s-kq6wmdud9c7j2k9) placed after s-2pdy9gw2jrjvfb4
+- new The skill `spec-init` (s-ttsc8tpnu46q53s) placed after s-kq6wmdud9c7j2k9
+- new The skill `spec-remove` (s-jn3rauw6a8zeefn) placed after s-ttsc8tpnu46q53s
+- new The skill `spec-settings` (s-h343yq2mua648eg) placed after s-jn3rauw6a8zeefn
+- new A term defined in a domain (s-cb9rbh8q88a84xp) placed after s-hr7j7scmfkkjnws
+- new (row) (s-8p52mzm3y33cf7z) placed after s-j3v4y4d3sbmdgfp
+- new (row) (s-qscrdhf6kj57gbx) placed after s-8p52mzm3y33cf7z
+- new Setting a repository up and taking SpecSheriff out of it (s-57g82ucqz3g834p) placed after s-jsqxdx47wkkj7gp
+- new Who chooses an agent's model and reasoning effort (s-8f6gw8c265cnj2n) placed after s-nyh9yk22ba6g77q
+- new (row) (s-axjr5ex3p7ys3nd) placed after s-cqys6wqrnfzu5ac
+- new (row) (s-gc7uwxtkrnpa2t9) placed after s-hrguxwcsdm57vxf
+- new (row) (s-n94dfdsdzue2kur) placed after s-gc7uwxtkrnpa2t9
+- new (row) (s-c7zj6mraw8w83py) placed after s-axjr5ex3p7ys3nd
+- new (row) (s-4jgugss8r35z46b) placed after s-jh85u42agh5k73x
+- new (row) (s-ujnb23vbw3y8cne) placed after s-694brc6fytwxc5v
+- new (row) (s-69pwmwyrk6efag2) placed after s-w4g56n2bs753rt3
+- new Terms defined in a domain (s-76becsjwmasc2r2) placed after s-yauyedny2yzvs4c
+- new What a `$ref` within a RecordType names (s-yhe32vrbygjyd66) placed after s-ezq8csd433vj6fj
+- new `"type": "object"` in a RecordType's `schema` (s-qg2yqec2cgmcg2w) placed after s-c2r9jndrjbtbsv6
+- new Sections of the technical appendix matched to the base specification (s-g7auhqvzzbkw644) placed after s-gvafe6bnstwab8b
+- new The meta-schema of a RecordType's `schema` (s-j4t9vusnsajmqdw) placed after s-dk3zfkbhc3v6xbp
+- new Validation against the schema before a command works on the files (s-ynqb8zt3fy28asp) placed after s-mhsb6fjsq5xn6c9
+- s-txbwsthdqhvyzd2 moved after s-qqs2svksmjct753
+- removed, never approved: The entry in the bindings file for a file of RuntimeChecks (s-h5rfyy9j8nnhx62)
+- archive: 5.3 now names s-x8uzc8z44pwtd3h "When the tests must pass", to which its content moved when 1.6.1 was split
+- s-qtq7t32yfqj2yzw: cites s-x8uzc8z44pwtd3h in place of s-xhcmchcngykvn2k, which the archive holds; a technical replacement, approved on the owner's behalf
+- s-4kd2pave7vm4hmd: cites s-x8uzc8z44pwtd3h in place of s-xhcmchcngykvn2k, which the archive holds; a technical replacement, approved on the owner's behalf
+- s-bgegrkhrgpefs69: cites s-x8uzc8z44pwtd3h in place of s-xhcmchcngykvn2k, which the archive holds; a technical replacement, approved on the owner's behalf
+- s-b6qdtghnyha3fhk: cites s-x8uzc8z44pwtd3h in place of s-xhcmchcngykvn2k, which the archive holds; a technical replacement, approved on the owner's behalf
+- s-4r66g6swm8up52b: cites s-x8uzc8z44pwtd3h in place of s-xhcmchcngykvn2k, which the archive holds; a technical replacement, approved on the owner's behalf
+- s-p92k6vfe3ju27at: cites s-x8uzc8z44pwtd3h in place of s-xhcmchcngykvn2k, which the archive holds; a technical replacement, approved on the owner's behalf
+- s-tgrnpagrb58tya7: its list's declaredIn becomes jsonSchema
+- s-sn6au3vcr9uy5pm: its list's declaredIn becomes jsonSchema
+- s-xr5xxa9cxf2mq5u: its list's declaredIn becomes valueList
+- s-qtq7t32yfqj2yzw: cites link to s-mbmnsnxenmavu3z added for its citation
+- s-qtq7t32yfqj2yzw: cites link to s-2fau85dfyyeq66m added for its citation
+- s-qtq7t32yfqj2yzw: cites link to s-km4x4s26kv7pjze added for its citation
+- s-zefk589ykh37b8u: cites link to s-xr5xxa9cxf2mq5u added for its citation
+- s-zefk589ykh37b8u: cites link to s-4kd2pave7vm4hmd added for its citation
+- s-zefk589ykh37b8u: cites link to s-hheus6f395ynqvc added for its citation
+- s-f5rz6b7dhxejjts: cites link to s-bpdqd9v72wg7vsz added for its citation
+- s-f5rz6b7dhxejjts: cites link to s-hr7j7scmfkkjnws added for its citation
+- s-f5rz6b7dhxejjts: cites link to s-kh8qcd5kxgh9z3j added for its citation
+- s-f5rz6b7dhxejjts: cites link to s-dbk2vyeg8z5jxna added for its citation
+- s-f5rz6b7dhxejjts: cites link to s-5ah25f6gy99panq added for its citation
+- s-f5rz6b7dhxejjts: cites link to s-9kfdycuq34beqvs added for its citation
+- s-y5yk7eu6h4zrjpr: cites link to s-hheus6f395ynqvc added for its citation
+- s-npnmwyt6s3gypwe: cites link to s-bpdqd9v72wg7vsz dropped, since the node does not cite it
+- s-npnmwyt6s3gypwe: cites link to s-sn6au3vcr9uy5pm dropped, since the node does not cite it
+- s-npnmwyt6s3gypwe: cites link to s-hr7j7scmfkkjnws dropped, since the node does not cite it
+- s-npnmwyt6s3gypwe: cites link to s-jau82aq9juv9zzh dropped, since the node does not cite it
+- s-hcmpjmwtgfwzncu: cites link to s-4kd2pave7vm4hmd dropped, since the node does not cite it
+- s-hcmpjmwtgfwzncu: cites link to s-9kfdycuq34beqvs dropped, since the node does not cite it
+- s-4kd2pave7vm4hmd: cites link to s-gpzs5fcxvp6jkrp added for its citation
+- s-95w92rnjuv3sst8: cites link to s-5ah25f6gy99panq added for its citation
+- s-qvgzubkrafadqgf: cites link to s-sn6au3vcr9uy5pm added for its citation
+- s-c2r9jndrjbtbsv6: cites link to s-jau82aq9juv9zzh added for its citation
+- s-c2r9jndrjbtbsv6: cites link to s-xfu2gpzddjnmgks added for its citation
+- s-5nf87c3e3jg9v7c: cites link to s-qmmzf9nksfsa3qp dropped, since the node does not cite it
+- s-5nf87c3e3jg9v7c: cites link to s-4bwa4zepd4nwcv8 dropped, since the node does not cite it
+- s-utf4mbt7ref8g9c: cites link to s-rah8b37kytb682y added for its citation
+- s-utf4mbt7ref8g9c: cites link to s-rwqzepmrt77rv35 added for its citation
+- s-dbk2vyeg8z5jxna: cites link to s-f5rz6b7dhxejjts added for its citation
+- s-vp24dqydygztqbt: cites link to s-hheus6f395ynqvc added for its citation
+- s-6c4hyyrnprekk32: cites link to s-hheus6f395ynqvc added for its citation
+- s-6c4hyyrnprekk32: cites link to s-8xw4mgvpexyvw5q added for its citation
+- s-5z5gnu7pahr82xp: cites link to s-jau82aq9juv9zzh added for its citation
+- s-v36s7dm8s3yewtr: cites link to s-m4h279nbaqkpa3t added for its citation
+- s-e75g25ajrm2kqj5: cites link to s-67vekyup7y8smap added for its citation
+- s-e75g25ajrm2kqj5: cites link to s-fpq35tf3pehgk64 added for its citation
+- s-kq6wmdud9c7j2k9: cites link to s-xr5xxa9cxf2mq5u dropped, since the node does not cite it
+- node.schema.json: the present schema with TableRule, its cells, `examples`, and `TextRule.list.jsonSchema` and `valueList` added; `declaredIn` kept until the reindex rewrites it

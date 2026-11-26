@@ -3,214 +3,327 @@
   "$id": "node.schema.json",
   "title": "A node of the specification",
   "$comment": "The one description of a node's structure, its metadata included. The file schema refers to it and never restates it, and a node refers to itself for the nodes under it. Each kind adds its own fields through a condition on kind, so an error names the field that is wrong rather than every kind the node is not. A field nobody declared is refused: it would be a field nobody remembers the purpose of, and admitting one lets them accumulate.",
+  "type": "object",
   "allOf": [
     {
-      "$ref": "#/$defs/base"
-    },
-    {
-      "$comment": "The header of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owners where it names them, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
-      "if": {
-        "properties": {
-          "kind": {
-            "const": "header"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "owners": {
-            "$ref": "#/$defs/owners"
+      "$ref": "#/$defs/node"
+    }
+  ],
+  "required": [
+    "sid",
+    "title"
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "node": {
+      "$comment": "The fields and the conditions on `kind` shared by every node. Each schema that refers to this one says whether a sid and a title are required or refused, and whether an undeclared field is refused.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "$comment": "The header of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owners where it names them, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "header"
+              }
+            }
           },
-          "level": {
-            "$comment": "The name of the level the domain stands at, one of those the project's own guidelines list; validate checks it against that list, which the schema cannot see.",
-            "type": "string",
-            "minLength": 1
-          },
-          "code": {
-            "$comment": "The directory the domain's code is in, or null where it has none.",
-            "anyOf": [
-              {
+          "then": {
+            "properties": {
+              "owners": {
+                "$ref": "#/$defs/owners"
+              },
+              "level": {
+                "$comment": "The name of the level the domain stands at, one of those the project's own guidelines list; validate checks it against that list, which the schema cannot see.",
                 "type": "string",
                 "minLength": 1
               },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sections": {
-            "$comment": "The index of the domain's sections, in the order they read: each one's sid, title and text, and the headers of the domains that use it. Built by the reindex from the sections; validate refuses an index they do not produce.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "sid": {
-                  "$ref": "#/$defs/sid"
-                },
-                "title": {
-                  "type": "string"
-                },
-                "text": {
-                  "type": "string"
-                },
-                "usedBy": {
-                  "$comment": "Read off the section's incoming consumes links; absent where no domain uses it.",
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {
-                    "$ref": "#/$defs/sid"
+              "code": {
+                "$comment": "The directory the domain's code is in, or null where it has none.",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
                   }
-                }
+                ]
               },
-              "required": [
-                "sid",
-                "title",
-                "text"
-              ],
-              "additionalProperties": false
+              "sections": {
+                "$comment": "The index of the domain's sections, in the order in which they are read: each section's sid, title and text, and the headers of the domains that use it. Built by `sheriff reindex` from the sections; `sheriff validate` refuses an index that the sections do not produce.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "sid": {
+                      "$ref": "#/$defs/sid"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "usedBy": {
+                      "$comment": "Read off the section's incoming consumes links; absent where no domain uses it.",
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/$defs/sid"
+                      }
+                    }
+                  },
+                  "required": [
+                    "sid",
+                    "title",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "level",
+              "code",
+              "sections"
+            ]
+          }
+        },
+        {
+          "$comment": "A section: a container of rules, whose text states what it is responsible for and requires nothing. It may name owners of its own, any of whom approves every node within it. Its status is built from the nodes under it and approved by nobody.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "section"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "owners": {
+                "$ref": "#/$defs/owners"
+              }
             }
           }
         },
-        "required": [
-          "level",
-          "code",
-          "sections"
-        ]
-      }
-    },
-    {
-      "$comment": "A section: a container of rules, whose text states what it is responsible for and requires nothing. It may name owners of its own, any of whom approves every node within it. Its status is built from the nodes under it and approved by nobody.",
-      "if": {
-        "properties": {
-          "kind": {
-            "const": "section"
+        {
+          "$comment": "One rule. A rule may describe a list.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "TextRule"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "list": {
+                "$ref": "#/$defs/list"
+              }
+            }
           }
-        }
-      },
-      "then": {
-        "properties": {
-          "owners": {
-            "$ref": "#/$defs/owners"
-          }
-        }
-      }
-    },
-    {
-      "$comment": "One rule. A rule may describe a list.",
-      "if": {
-        "properties": {
-          "kind": {
-            "const": "TextRule"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "list": {
-            "$ref": "#/$defs/list"
-          }
-        }
-      }
-    },
-    {
-      "$comment": "A RecordType: a structure of data the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the RecordType's name and its text what the RecordType is. The implementation's types and runtime checks are generated from it and never written beside it. A RecordType that refines another RecordType node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the RecordType it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
-      "if": {
-        "properties": {
-          "kind": {
-            "const": "RecordType"
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "fields": {
-            "$comment": "The RecordType's own fields, in the order they read; one inherited from the RecordType it refines is not repeated here. At most one is of type variant, since that field is where the chosen variant's fields stand and a second would leave unsaid which one holds them.",
-            "type": "array",
-            "items": {
-              "$ref": "#/$defs/field"
-            },
-            "contains": {
-              "properties": {
-                "type": {
+        },
+        {
+          "$comment": "A RecordType: a structure of data the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the RecordType's name and its text what the RecordType is. The implementation's types and runtime checks are generated from it and never written beside it. A RecordType that refines another RecordType node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the RecordType it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "RecordType"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "fields": {
+                "$comment": "The RecordType's own fields, in the order in which they are read; a field inherited from the RecordType it refines is not repeated here. At most one is of type variant, since that field is where the chosen variant's fields go, and a second such field would leave it unclear which of the two holds them.",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/field"
+                },
+                "contains": {
                   "properties": {
-                    "is": {
-                      "const": "variant"
+                    "type": {
+                      "properties": {
+                        "is": {
+                          "const": "variant"
+                        }
+                      }
                     }
                   }
+                },
+                "minContains": 0,
+                "maxContains": 1
+              },
+              "unknown": {
+                "$comment": "What happens to a field nobody declared: refused, or kept as it came.",
+                "enum": [
+                  "refused",
+                  "kept"
+                ]
+              },
+              "chosenBy": {
+                "$comment": "On a RecordType whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "#/$defs/fieldName"
                 }
+              },
+              "answersTo": {
+                "$comment": "On a RecordType variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest RecordType up its chain of refines names as choosing it.",
+                "type": "object",
+                "minProperties": 1,
+                "propertyNames": {
+                  "$ref": "#/$defs/fieldName"
+                },
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "identifiedBy": {
+                "$comment": "Where another RecordType refers to this one by an identifier: the field, its own or inherited, that identifies it, whose type an identifier of it takes.",
+                "$ref": "#/$defs/fieldName"
               }
             },
-            "minContains": 0,
-            "maxContains": 1
-          },
-          "unknown": {
-            "$comment": "What happens to a field nobody declared: refused, or kept as it came.",
-            "enum": [
-              "refused",
-              "kept"
-            ]
-          },
-          "chosenBy": {
-            "$comment": "On a RecordType whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
-            "type": "array",
-            "minItems": 1,
-            "uniqueItems": true,
-            "items": {
-              "$ref": "#/$defs/fieldName"
-            }
-          },
-          "answersTo": {
-            "$comment": "On a RecordType variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest RecordType up its chain of refines names as choosing it.",
-            "type": "object",
-            "minProperties": 1,
-            "propertyNames": {
-              "$ref": "#/$defs/fieldName"
-            },
-            "additionalProperties": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          "identifiedBy": {
-            "$comment": "Where another RecordType refers to this one by an identifier: the field, its own or inherited, that identifies it, whose type an identifier of it takes.",
-            "$ref": "#/$defs/fieldName"
-          }
-        },
-        "required": [
-          "fields",
-          "unknown"
-        ],
-        "if": {
-          "properties": {
-            "fields": {
-              "contains": {
-                "properties": {
-                  "type": {
+            "required": [
+              "fields",
+              "unknown"
+            ],
+            "if": {
+              "properties": {
+                "fields": {
+                  "contains": {
                     "properties": {
-                      "is": {
-                        "const": "variant"
+                      "type": {
+                        "properties": {
+                          "is": {
+                            "const": "variant"
+                          }
+                        }
                       }
                     }
                   }
                 }
+              },
+              "required": [
+                "fields"
+              ]
+            },
+            "then": {
+              "$comment": "A field of type variant stands only on the RecordType that names the fields choosing its variant.",
+              "required": [
+                "chosenBy"
+              ]
+            }
+          }
+        },
+        {
+          "$comment": "A rule set out as a table (s-5fewsp22mmdz7y6). It has a title, a text and a reason, as a TextRule has; it also names its table's columns, and holds the table's rows, grouped under headings. Each cell holds text or a node; a node in a cell has no title of its own, since its column and its row name it. `sheriff validate` checks what the schema cannot: that the column keys are distinct, that every row has a cell for each column and for no other, and that each cell holds what its column says.",
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "TableRule"
               }
             }
           },
-          "required": [
-            "fields"
-          ]
-        },
-        "then": {
-          "$comment": "A field of type variant stands only on the RecordType that names the fields choosing its variant.",
-          "required": [
-            "chosenBy"
-          ]
+          "then": {
+            "properties": {
+              "columns": {
+                "$comment": "The table's columns, in the order in which they are read.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "$comment": "The name by which a row's cells refer to the column.",
+                      "$ref": "#/$defs/columnKey"
+                    },
+                    "heading": {
+                      "$comment": "The column's heading as the table shows it.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "holds": {
+                      "$comment": "What each cell of the column holds: a node, or text that is part of the wording of the TableRule.",
+                      "enum": [
+                        "node",
+                        "text"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "heading",
+                    "holds"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "groups": {
+                "$comment": "The table's rows in groups, in the order in which they are read. A table whose rows are not grouped holds one group, whose heading is null.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "heading": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/row"
+                      }
+                    }
+                  },
+                  "required": [
+                    "heading",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "columns",
+              "groups"
+            ]
+          }
         }
-      }
-    }
-  ],
-  "unevaluatedProperties": false,
-  "$defs": {
+      ]
+    },
+    "cellNode": {
+      "$comment": "A node in a cell of a TableRule: an ordinary node except that it has no title of its own, since its column and its row name it.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/node"
+        }
+      ],
+      "required": [
+        "sid"
+      ],
+      "not": {
+        "required": [
+          "title"
+        ]
+      },
+      "unevaluatedProperties": false
+    },
     "base": {
       "type": "object",
       "properties": {
@@ -221,13 +334,14 @@
           "$ref": "#/$defs/sid"
         },
         "kind": {
-          "$comment": "header is a domain's header; a term's title is the term it defines.",
+          "$comment": "`header` is a domain's header; a term's title is the term it defines; a TableRule is a rule set out as a table.",
           "enum": [
             "header",
             "section",
             "TextRule",
             "term",
-            "RecordType"
+            "RecordType",
+            "TableRule"
           ]
         },
         "title": {
@@ -245,6 +359,15 @@
         "reason": {
           "$comment": "Why the requirement in text must hold; not part of it.",
           "type": "string"
+        },
+        "examples": {
+          "$comment": "Examples of what the text states, each a typical case of applying the node and, where that helps, the mistake closest to that case (s-pqemhjzvxtw4byc). Part of the node's wording, though an example imposes no requirement.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "refs": {
           "$comment": "A link is declared once: a second copy of it says nothing the first does not, and the reindex would build it twice into the other node's list.",
@@ -279,7 +402,7 @@
           "additionalProperties": false
         },
         "children": {
-          "$comment": "The nodes under this one, in the order they read. Nesting carries the tree: there is no parent field and no order field, so neither can contradict where the node actually sits.",
+          "$comment": "The nodes under this one, in the order in which they are read. Nesting alone gives the tree: there is no parent field and no order field, so no such field can contradict where the node actually is.",
           "type": "array",
           "items": {
             "$ref": "node.schema.json"
@@ -288,9 +411,7 @@
       },
       "required": [
         "location",
-        "sid",
         "kind",
-        "title",
         "status",
         "text",
         "refs"
@@ -341,6 +462,7 @@
             "consumes",
             "supersedes",
             "exempts",
+            "checks",
             "cites",
             "term-relation",
             "uses"
@@ -457,6 +579,44 @@
         "field": {
           "$comment": "On a list declaring values of a field choosing a RecordType variant: the name of that field, of the RecordType of contracts the list's rule refines.",
           "$ref": "#/$defs/fieldName"
+        },
+        "jsonSchema": {
+          "type": "object",
+          "$comment": "The place in a JSON Schema whose values the list states: the file, and a JSON pointer within it.",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pointer": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "file",
+            "pointer"
+          ],
+          "additionalProperties": false
+        },
+        "valueList": {
+          "type": "object",
+          "$comment": "The symbol in code that declares the list's values: the file, and the name of the symbol.",
+          "properties": {
+            "file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "symbol": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "file",
+            "symbol"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -904,6 +1064,58 @@
         }
       },
       "additionalProperties": false
+    },
+    "columnKey": {
+      "$comment": "The key of a column of a TableRule: an identifier in camelCase.",
+      "type": "string",
+      "pattern": "^[a-z][A-Za-z0-9]*$"
+    },
+    "row": {
+      "$comment": "A row of a TableRule: its cells, each under the key of its column.",
+      "type": "object",
+      "properties": {
+        "cells": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/columnKey"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/cell"
+          }
+        }
+      },
+      "required": [
+        "cells"
+      ],
+      "additionalProperties": false
+    },
+    "cell": {
+      "$comment": "A cell of a TableRule: text that is part of the wording of the TableRule, or a node of its own.",
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "node": {
+              "$ref": "#/$defs/cellNode"
+            }
+          },
+          "required": [
+            "node"
+          ],
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }

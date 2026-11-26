@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines",
+  "section": "project",
+  "nodes": [
+    {
+      "location": "_guidelines/project",
+      "sid": "s-4r66g6swm8up52b",
+      "kind": "section",
+      "title": "SpecSheriff's own guidelines",
+      "status": "approved",
+      "text": "What only the specification of this repository needs beyond the SpecSheriff guidelines.",
+      "refs": [],
+      "owners": [
+        "vladimir.troyanenko@gmail.com"
+      ],
+      "children": [
+        {
+          "location": "_guidelines/project/1",
+          "sid": "s-p92k6vfe3ju27at",
+          "kind": "TextRule",
+          "title": "The specification is approved",
+          "status": "approved",
+          "text": "This project's specification is approved.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-qzthyh7yqvfhsa2"
+            },
+            {
+              "type": "cites",
+              "to": "s-x8uzc8z44pwtd3h"
+            }
+          ],
+          "reason": "This repository holds no symbol of the system's code. Every test of its tools carries the SpecTag of the node it is written from. So as a draft the specification would only stop the tests from running at a push (§s-x8uzc8z44pwtd3h).",
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-06",
+                "problem": "The rule said the specification is live, a word of its own beside a node's statuses.",
+                "ruling": "Carrying out the owner's decision on §s-qzthyh7yqvfhsa2 of that day: the specification is approved or a draft.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-07",
+                "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                "type": "textual"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
