@@ -7,7 +7,7 @@ import { codeChanges, spelledIn, trackedFiles, type Line } from "./diff.ts";
 import { fingerprint, isContainer } from "./model.ts";
 import { patchedFiles, PatchError, type EditedFile } from "./patch.ts";
 import { judgedHere } from "./reindex.ts";
-import { loadSpecification, specificationOf, type SpecFile, type SpecNode } from "./spec-files.ts";
+import { loadSpecification, specificationOf, type Located, type SpecFile, type SpecNode } from "./spec-files.ts";
 
 interface Edit {
   old_string: string;
@@ -108,17 +108,17 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
   }
   if (edited.size) {
     const spec = loadSpecification(root);
-    const was = new Map<string, SpecNode>();
-    for (const [sid, at] of spec.nodes) if (edited.has(at.file.path)) was.set(sid, at.node);
+    const was = new Map<string, Located>();
+    for (const [sid, at] of spec.nodes) if (edited.has(at.file.path)) was.set(sid, at);
     const written = [...edited].flatMap(([path, data]) => (data ? [{ path, data }] : []));
     const after = specificationOf([...spec.files.filter((f) => !edited.has(f.path)), ...spec.archive, ...written]);
     const lines = readApprovals(root);
-    for (const [sid, { node, file }] of after.nodes) {
+    for (const [sid, { node, file, cell }] of after.nodes) {
       if (node.status !== "approved" || isContainer(node.kind) || !judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
-      if (stands(lines, sid, fingerprint(node))) continue;
+      if (stands(lines, sid, fingerprint(node, cell))) continue;
       const old = was.get(sid);
       // A node the edit leaves as it was is the reindex's to make a draft, not this edit's fault.
-      const touched = edited.has(file.path) && (!old || old.status !== "approved" || fingerprint(old) !== fingerprint(node));
+      const touched = edited.has(file.path) && (!old || old.node.status !== "approved" || fingerprint(old.node, old.cell) !== fingerprint(node, cell));
       if (touched) reasons.push(`${sid} (${node.location}) would stand approved over a wording for which no approval stands: leave it a draft for one of its owners to approve`);
     }
   }

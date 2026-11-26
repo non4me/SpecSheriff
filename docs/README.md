@@ -32,10 +32,10 @@ independent reviewer, which sees only the change and the text of the rules the c
 refuses with the rule and the line (§s-nyh9yk22ba6g77q).
 
 The base specification names no technology; a technical appendix beside it says how the system is
-built, so that the same rules can be built again on another stack (§s-5x737t9nee4zgaa,
-§s-vj7ercem526zd6v). And a rule is written by a doctrine whose every item comes from a way
-requirements were seen to decay unnoticed — a count in prose that goes stale, a general word without
-its object, a rule bound to a name rather than to a property (§s-3w8puyqn2ramsre).
+built, so that the same rules can be implemented again on another stack (§s-5x737t9nee4zgaa,
+§s-vj7ercem526zd6v). And a rule is written according to a doctrine whose every item comes from a way in which
+requirements were found to decay without anyone noticing — a count in prose that goes stale, a general word without
+its object, a rule bound to a name rather than to a property (§s-s5s83353kfzt2mf).
 
 ## The principles
 

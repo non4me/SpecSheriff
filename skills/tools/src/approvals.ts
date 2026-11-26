@@ -107,7 +107,7 @@ export function approve(root: string, sids: string[], { me, withdraw = false }: 
   for (const sid of sids) {
     const at = spec.nodes.get(sid)!;
     // A withdrawal takes back the approval of every wording for which one stands, one line for each.
-    const print = fingerprint(at.node);
+    const print = fingerprint(at.node, at.cell);
     const added: Approval[] = withdraw
       ? standingPrints(lines, sid).map((p): Approval => ({ sid, fingerprint: p, withdrawn: true, by: me }))
       : stands(lines, sid, print) ? [] : [{ sid, fingerprint: print, by: me }];

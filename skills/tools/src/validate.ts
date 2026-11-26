@@ -6,9 +6,9 @@ import { addedApprovals, everApproved, readApprovals, stands } from "./approvals
 import { keysTwice } from "./json-text.ts";
 import { APPROVAL_RULE, BASE_KINDS, builtStatuses, citations, fingerprint, isContainer, isProjectKind, locations, modelOf, incoming, isDomain, LEVELS_RULE, levelsOf, ownersOf, partOf, PROJECT, specificationOwners } from "./model.ts";
 import { headerIndex, judgedHere } from "./reindex.ts";
-import { EXTENSION, loadSchema, readExtension, SCHEMA_FILES } from "./schema.ts";
+import { EXTENSION, isArchive, loadSchema, readExtension, SCHEMA_FILES } from "./schema.ts";
 import { fieldKey, gather } from "./values.ts";
-import { specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
+import { cellNodes, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface Finding {
   /** The file, and the node where there is one. */
@@ -58,7 +58,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     }
     if (!paths.includes(path)) continue;
     const data = JSON.parse(text);
-    for (const e of schema.check(data)) findings.push({ where: path, message: e });
+    for (const e of isArchive(path) ? schema.checkArchive(data) : schema.check(data)) findings.push({ where: path, message: e });
     files.push({ path, data });
   }
   if (findings.length) return findings;
@@ -76,10 +76,9 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     for (const [v, where] of values) seen.set(v, [...(seen.get(v) ?? []), where]);
     for (const [v, wheres] of seen) if (wheres.length > 1) findings.push({ where: wheres.join(", "), message: what(v) });
   };
-  const all: Array<{ node: SpecNode; path: string }> = [];
-  for (const f of [...spec.files, ...spec.archive]) walk(f.data.nodes, (node) => all.push({ node, path: f.path }));
-  count(all.map(({ node, path }) => [node.sid, path]), (v) => `sid ${v} is held by more than one node`);
-  const live = all.filter(({ path }) => !path.startsWith("specs/_archive/"));
+  const live: Array<{ node: SpecNode; path: string }> = [];
+  for (const f of spec.files) walk(f.data.nodes, (node) => live.push({ node, path: f.path }));
+  count(live.map(({ node, path }) => [node.sid, path]), (v) => `sid ${v} is held by more than one node`);
   count(live.map(({ node, path }) => [node.location, path]), (v) => `location ${v} is held by more than one node`);
   count(live.filter(({ node }) => node.kind === "term").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `term "${v}" is named by more than one term node`);
   count(live.filter(({ node }) => node.kind === "RecordType").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `RecordType "${v}" is the name of more than one RecordType`);
@@ -93,11 +92,11 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   // Approvals, the statuses of sections and headers, and the archive.
   const lines = readApprovals(root);
   const statuses = builtStatuses(spec);
-  for (const [sid, { node, file }] of spec.nodes) {
+  for (const [sid, { node, file, cell }] of spec.nodes) {
     if (judgedHere(file.path, config.writesSpecSheriffGuidelines)) {
       if (isContainer(node.kind)) {
         if (statuses.get(sid) !== node.status) refuse(sid, `its status is ${node.status}, while the nodes under it make it ${statuses.get(sid)} (s-9kfdycuq34beqvs)`);
-      } else if (node.status === "approved" && !stands(lines, sid, fingerprint(node))) {
+      } else if (node.status === "approved" && !stands(lines, sid, fingerprint(node, cell))) {
         refuse(sid, "approved, but no approval stands for its wording");
       }
     }
@@ -111,22 +110,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     const owners = approving ? specificationOwners(spec) : ownersOf(spec, line.sid);
     if (!owners.includes(line.by)) refuse(line.sid, `approved by ${line.by}, who is none of its ${approving ? "specification's " : ""}owners (${owners.join(", ") || "none named"})`);
   }
-  const archived = new Map<string, { node: SpecNode; path: string }>();
-  for (const f of spec.archive) {
-    walk(f.data.nodes, (node) => {
-      archived.set(node.sid, { node, path: f.path });
-      if (!node.archived) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive without the reason for its removal" });
-      if (node.refs?.some((r) => r.from)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive holding a link pointing at it" });
-      if (isContainer(node.kind)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive, but a section or a domain's header is deleted outright" });
-      else if (!everApproved(lines, node.sid)) findings.push({ where: `${f.path}: ${node.sid}`, message: "stands in the archive, but was never approved" });
-    });
-  }
-  for (const [sid, was] of before?.nodes ?? []) {
-    if (spec.nodes.has(sid) || !judgedHere(was.file.path, config.writesSpecSheriffGuidelines)) continue;
-    if (!isContainer(was.node.kind) && everApproved(lines, sid) && !archived.has(sid)) {
-      findings.push({ where: `${was.file.path}: ${sid} (${was.node.location})`, message: "removed after an approval was given for it, but not in the archive with the reason for its removal" });
-    }
-  }
+  if (before) findings.push(...archiveFindings(spec, before, lines, config.writesSpecSheriffGuidelines));
 
   // Links and citations.
   const built = incoming(spec);
@@ -134,7 +118,7 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   for (const [sid, { node }] of spec.nodes) {
     const out = node.refs.filter((r) => r.to);
     for (const r of out) {
-      const named = spec.nodes.has(r.to!) || (r.type === "supersedes" && archived.has(r.to!));
+      const named = spec.nodes.has(r.to!);
       if (!named) refuse(sid, `its ${r.type} link to ${r.to} names no node`);
     }
     const cited = citations(node);
@@ -209,8 +193,42 @@ function schemaPaths(root: string): string[] {
   return existsSync(dir) ? [...SCHEMA_FILES, "project.schema.json"].filter((n) => existsSync(join(dir, n))).map((n) => `specs/_schema/${n}`) : [];
 }
 
+/**
+ * What a commit adds to the archive, compared with what it removes from the specification (s-j4webte36gkraju). A node is removed where the commit's parent holds
+ * its sid and the commit does not. It must be archived where it was ever approved and its status is set by approvals.
+ * Its entry is a node the commit adds to the archive with the location, the kind and the wording it had in the parent.
+ * A node is added to the archive where the archive holds more nodes with its location, kind and wording than the parent's archive holds.
+ */
+function archiveFindings(spec: Specification, before: Specification, lines: ReturnType<typeof readApprovals>, writesGuidelines: boolean): Finding[] {
+  const key = (n: SpecNode) => `${n.location}\u0000${n.kind}\u0000${fingerprint(n)}`;
+  const counted = (s: Specification) => {
+    const out = new Map<string, Array<{ node: SpecNode; path: string }>>();
+    for (const f of s.archive) for (const node of f.data.nodes ?? []) out.set(key(node), [...(out.get(key(node)) ?? []), { node, path: f.path }]);
+    return out;
+  };
+  const [now, was] = [counted(spec), counted(before)];
+  const added = new Map<string, Array<{ node: SpecNode; path: string }>>();
+  for (const [k, list] of now) {
+    const extra = list.slice(was.get(k)?.length ?? 0);
+    if (extra.length) added.set(k, extra);
+  }
+  const findings: Finding[] = [];
+  for (const [sid, at] of before.nodes) {
+    if (spec.nodes.has(sid) || !judgedHere(at.file.path, writesGuidelines)) continue;
+    if (isContainer(at.node.kind) || !everApproved(lines, sid)) continue;
+    const entries = added.get(key(at.node));
+    if (entries?.length) entries.shift();
+    else findings.push({ where: `${at.file.path}: ${sid} (${at.node.location})`, message: "removed after an approval was given for it, but not in the archive with its location, kind and wording" });
+  }
+  for (const entries of added.values()) {
+    for (const { node, path } of entries) findings.push({ where: `${path}: ${node.location}`, message: "added to the archive, but is the entry of no removed node that must be archived" });
+  }
+  return findings;
+}
+
+/** Every node in `nodes` and every node under any of them, including the nodes in the cells of a TableRule. */
 function walk(nodes: SpecNode[] | undefined, visit: (n: SpecNode) => void): void {
-  for (const n of nodes ?? []) visit(n), walk(n.children, visit);
+  for (const n of nodes ?? []) visit(n), walk(n.children, visit), walk(cellNodes(n).map((c) => c.node), visit);
 }
 
 function holdsRule(section: SpecNode): boolean {
@@ -451,15 +469,15 @@ function appendices(spec: Specification, refuse: Refuse): void {
     for (const top of f.data.nodes) refuse(top.sid, `a section of the technical appendix stands under the name ${name}, which no domain has`);
   }
   for (const [sid, { node, file }] of spec.nodes) {
-    const { part, file: name, specSheriffGuidelines } = partOf(file.path);
+    const { part, file: name } = partOf(file.path);
     if (node.kind === "section") continue;
     if (part === "tech" && name === "debt") {
       if (!linksTo(node, ["refines"], isBase)) refuse(sid, "a rule of the technical debt that refines no node of the base");
     } else if (part === "tech" && name !== "stack") {
       if (!linksTo(node, ["implements"], isBase)) refuse(sid, "a node of the technical appendix that implements no node of the base");
     } else if (part === "_guidelines" && name === "tools") {
-      if (!linksTo(node, ["implements"], (p) => p === "specs/_guidelines/spec.json")) refuse(sid, "a rule of the appendix of the tools that implements no node of the base of the guidelines");
-    } else if (part === "_guidelines" && !specSheriffGuidelines) {
+      if (!linksTo(node, ["implements"], (p) => p === "specs/_guidelines/spec.json" || p.startsWith("specs/_guidelines/extensions/"))) refuse(sid, "a rule of the appendix of the tools that implements no node of the base of the guidelines");
+    } else if (part === "_guidelines" && name === "project") {
       if (!linksTo(node, ["refines", "implements"], (p) => partOf(p).specSheriffGuidelines) && !node.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE)) {
         refuse(sid, "a rule of the project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines");
       }

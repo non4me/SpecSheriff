@@ -161,7 +161,17 @@ test(`@spec s-jau82aq9juv9zzh leaves the approvals of the SpecSheriff guidelines
   assert.deepEqual(messages(taking()), []);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a removed node ever approved that is not in the archive, and one never approved that is`, () => {
+/** A node of the archive, as the archive holds one: the removed node without its sid, with the reason for its removal. */
+const entry = (name: string, location: string, fields: Record<string, unknown> = {}) => {
+  const { sid: _, ...rest } = node(name, fields);
+  return { ...rest, location, archived: { date: "2026-10-28", reason: "Gone." } };
+};
+const writeArchive = (root: string, ...nodes: object[]) => {
+  mkdirSync(join(root, "specs", "_archive"), { recursive: true });
+  writeFileSync(join(root, "specs", "_archive", "bank.json"), JSON.stringify(file("bank", "bank", ...nodes), null, 2) + "\n");
+};
+
+test(`@spec s-j4webte36gkraju refuses a removed node that was ever approved and has no entry in the archive, matched by location, kind and wording, and refuses an entry that no removal calls for`, () => {
   const before = good();
   approve(before, [sid("close")], { me: OWNER });
   const root = mkdtempSync(join(tmpdir(), "sheriff-"));
@@ -174,12 +184,22 @@ test(`@spec s-jau82aq9juv9zzh refuses a removed node ever approved that is not i
   });
   reindex(root);
   expectOne(root, new RegExp(`${sid("close")}.*archive`), before);
-  const never = node("never");
-  mkdirSync(join(root, "specs", "_archive"));
-  writeFileSync(join(root, "specs", "_archive", "bank.json"), JSON.stringify(file("bank", "bank", { ...node("close"), location: "bank/1.2", archived: { date: "2026-10-28", reason: "Gone." } }, { ...never, location: "bank/1.3", archived: { date: "2026-10-28", reason: "x" } }), null, 2) + "\n");
+  writeArchive(root, entry("close", "bank/1.2", { text: "Another wording." }));
+  expectOne(root, new RegExp(`${sid("close")}.*archive`), before);
+  writeArchive(root, entry("close", "bank/1.2"), entry("never", "bank/1.3"));
   const found = messages(root, before);
   assert.ok(!found.some((m) => m.includes(`${sid("close")}`) && /archive/.test(m)), found.join("\n"));
-  assert.ok(found.some((m) => m.includes(sid("never")) && /never approved/.test(m)), found.join("\n"));
+  assert.ok(found.some((m) => m.includes("specs/_archive/bank.json") && m.includes("bank/1.3") && /no removed node/.test(m)), found.join("\n"));
+});
+
+test(`@spec s-hw84ynkvhgzcnpr validates a file of the archive against its own schema alone, refusing a node with a sid or a link pointing at it, and admitting any other property`, () => {
+  const root = good();
+  writeArchive(root, { ...entry("old form", "bank/1.7"), fields: [{ name: "kind", type: { is: "text" } }], unknown: "refused" });
+  assert.ok(!messages(root).some((m) => m.includes("specs/_archive/bank.json")), messages(root).join("\n"));
+  writeArchive(root, { ...entry("with a sid", "bank/1.8"), sid: sid("with a sid") });
+  expectOne(root, /specs\/_archive\/bank\.json: \/nodes\/0/);
+  writeArchive(root, { ...entry("pointed at", "bank/1.9"), refs: [{ type: "cites", from: sid("open") }] });
+  expectOne(root, /specs\/_archive\/bank\.json: \/nodes\/0\/refs/);
 });
 
 test(`@spec s-j4webte36gkraju deletes a section outright, an approval given for it under an earlier release aside, and refuses one standing in the archive`, () => {
@@ -194,18 +214,8 @@ test(`@spec s-j4webte36gkraju deletes a section outright, an approval given for 
   edit(root, "specs/contracts/c.json", (d) => (d.nodes = d.nodes.filter((n: any) => n.sid !== sid("gone soon"))));
   reindex(root);
   assert.ok(!messages(root, was).some((m) => m.includes(sid("gone soon"))), messages(root, was).join("\n"));
-  mkdirSync(join(root, "specs", "_archive"), { recursive: true });
-  writeFileSync(join(root, "specs", "_archive", "bank.json"), JSON.stringify(file("bank", "bank", { ...node("old section", { kind: "section" }), location: "bank/9", archived: { date: "2026-11-06", reason: "Gone." } }), null, 2) + "\n");
-  expectOne(root, new RegExp(`${sid("old section")}.*a section or a domain's header is deleted outright`));
-});
-
-test(`@spec s-bpdqd9v72wg7vsz refuses a node of the archive holding a link pointing at it`, () => {
-  const root = good();
-  approve(root, [sid("close")], { me: OWNER });
-  mkdirSync(join(root, "specs", "_archive"), { recursive: true });
-  writeFileSync(join(root, "specs", "_archive", "bank.json"), JSON.stringify(file("bank", "bank", { ...node("close"), sid: sid("old close"), location: "bank/1.9", refs: [{ type: "cites", from: sid("open") }], archived: { date: "2026-10-28", reason: "Gone." } }), null, 2) + "\n");
-  writeFileSync(join(root, "specs", "_approvals.jsonl"), readFileSync(join(root, "specs", "_approvals.jsonl"), "utf8").replaceAll(sid("close"), sid("old close")), { flag: "w" });
-  expectOne(root, new RegExp(`specs/_archive/bank\\.json: ${sid("old close")}.*a link pointing at it`));
+  writeArchive(root, entry("old section", "bank/9", { kind: "section" }));
+  expectOne(root, /specs\/_archive\/bank\.json: bank\/9.*no removed node/, was);
 });
 
 test(`@spec s-jau82aq9juv9zzh refuses a link to no node, and a citation without a link or a cites link without a citation`, () => {
@@ -460,6 +470,16 @@ test(`@spec s-jau82aq9juv9zzh refuses a rule of the appendix of the tools implem
   edit(root, "specs/_guidelines/tools.json", (d) => (nodeIn(d, "tool").refs = []));
   reindex(root);
   expectOne(root, new RegExp(`${sid("tool")}.*implements no node of the base of the guidelines`));
+});
+
+test(`@spec s-yprj7d6tnvauggr accepts a rule of the appendix of the tools that implements a node of an extension of the guidelines, and reads no file of an extension as the project's own guidelines`, () => {
+  const root = good();
+  mkdirSync(join(root, "specs", "_guidelines", "extensions"), { recursive: true });
+  writeFileSync(join(root, "specs", "_guidelines", "extensions", "views.json"), JSON.stringify(file("_guidelines/extensions", "views", node("views", { kind: "section", text: "Views.", children: [node("a view")] })), null, 2) + "\n");
+  edit(root, "specs/_guidelines/tools.json", (d) => (nodeIn(d, "tool").refs = [{ type: "implements", to: sid("a view") }]));
+  reindex(root);
+  const found = messages(root);
+  assert.ok(!found.some((m) => m.includes(sid("tool")) || m.includes(sid("a view"))), found.join("\n"));
 });
 
 test(`@spec s-jau82aq9juv9zzh refuses a rule of a project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines`, () => {

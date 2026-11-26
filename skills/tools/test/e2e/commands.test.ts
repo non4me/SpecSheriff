@@ -31,7 +31,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and 
   const run = sheriff(root, "reindex");
   assert.equal(run.status, 0, run.stderr);
   const c = JSON.parse(readFileSync(join(root, "specs", "contracts", "c.json"), "utf8"));
-  assert.equal(c.nodes[0].location, "contracts/c");
+  assert.equal(c.nodes[0].location, loc("contracts", "1"));
   assert.deepEqual(c.nodes[0].refs, [{ type: "cites", from: sid("ours") }]);
   assert.match(run.stdout, /written: specs\/contracts\/c\.json/);
 });
@@ -42,7 +42,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff validate passes what holds together and re
   const ok = sheriff(root, "validate");
   assert.equal(ok.status, 0, ok.stdout + ok.stderr);
   const path = join(root, "specs", "contracts", "c.json");
-  writeFileSync(path, readFileSync(path, "utf8").replace(`"location": "${loc("contracts", "c")}"`, `"location": "${loc("contracts", "9")}"`));
+  writeFileSync(path, readFileSync(path, "utf8").replace(`"location": "${loc("contracts", "1")}"`, `"location": "${loc("contracts", "9")}"`));
   const refused = sheriff(root, "validate");
   assert.equal(refused.status, 1);
   assert.match(refused.stdout, /specs\/contracts\/c\.json: .*contracts\/9 is not the one its place gives/);
@@ -124,10 +124,10 @@ test("@spec s-f5rz6b7dhxejjts sheriff types writes the types where the technical
 test("@spec s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its location", () => {
   const root = project();
   sheriff(root, "reindex");
-  const run = sheriff(root, "show", "contracts/c");
+  const run = sheriff(root, "show", loc("contracts", "1"));
   assert.equal(run.status, 0, run.stderr);
-  assert.match(run.stdout, new RegExp(`^# contracts/c shared\n\n\`${sid("shared")}\``));
-  assert.match(run.stdout, /cites ← s-\w{15} contracts\/1\.1 ours/);
+  assert.match(run.stdout, new RegExp(`^# ${loc("contracts", "1")} shared\n\n\`${sid("shared")}\``));
+  assert.match(run.stdout, /cites ← s-\w{15} contracts\/2\.1 ours/);
 });
 
 test("@spec s-f5rz6b7dhxejjts sheriff todos prints every item of the todos with its node", () => {
@@ -139,7 +139,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff todos prints every item of the todos with 
   sheriff(root, "reindex");
   const run = sheriff(root, "todos");
   assert.equal(run.status, 0, run.stderr);
-  assert.equal(run.stdout, `2026-11-02 · ${OWNER}\nDefine the user.\n${sid("shared")} · contracts/c · shared\n`);
+  assert.equal(run.stdout, `2026-11-02 · ${OWNER}\nDefine the user.\n${sid("shared")} · ${loc("contracts", "1")} · shared\n`);
 });
 
 test("@spec s-xzcw3hv4hmxz7h7 sheriff reindex and sheriff binding refuse a file the schema refuses, naming it, rather than fail on it", () => {

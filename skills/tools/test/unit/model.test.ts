@@ -6,13 +6,13 @@ import { APPROVAL_RULE, builtStatuses, citations, fingerprint, incoming, locatio
 import { REPO } from "../repo.ts";
 import { BY_NUMBER, file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
 
-test("@spec s-kag2m9tzdnduxdx computes for every node of the SpecSheriff guidelines the location it is at", () => {
+test("@spec s-ygg5kpcxgzq3m7w computes the location of every node of the SpecSheriff guidelines", () => {
   const spec = loadSpecification(REPO);
   const computed = locations(spec);
   for (const [s, at] of spec.nodes) assert.equal(computed.get(s), at.node.location, s);
 });
 
-test("@spec s-kag2m9tzdnduxdx locates a domain's header by its name and numbers its sections straight through its files", () => {
+test("@spec s-ygg5kpcxgzq3m7w gives a domain's header the domain's name as its location, and numbers its sections consecutively across its files", () => {
   const root = repo({
     "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [] })),
     "specs/bank/accounts.json": file("bank", "accounts", node("accounts", { kind: "section", children: [node("open"), node("term", { kind: "term", title: "account" }), node("close")] })),
@@ -30,22 +30,104 @@ test("@spec s-kag2m9tzdnduxdx locates a domain's header by its name and numbers 
   assert.equal(ids.get(sid("node")), "tech/stack/1");
 });
 
-test("@spec s-kag2m9tzdnduxdx locates the node at the top of a file of contracts by the part's name and the file's, and numbers the rest of contracts straight through its files", () => {
+test("@spec s-ygg5kpcxgzq3m7w numbers the node at the top of a file of contracts like any other node of the base specification, consecutively across the files of contracts", () => {
   const root = repo({
     "specs/contracts/a.json": file("contracts", "a", node("shared", { kind: "section", children: [node("agree"), node("user", { kind: "term", title: "user" }), node("settle", { kind: "section", children: [node("pay")] })] })),
     "specs/contracts/b.json": file("contracts", "b", node("more", { kind: "section", children: [node("bind")] })),
   });
   const ids = locations(loadSpecification(root));
-  assert.equal(ids.get(sid("shared")), "contracts/a");
-  assert.equal(ids.get(sid("agree")), loc("contracts", "1"));
+  assert.equal(ids.get(sid("shared")), loc("contracts", "1"));
+  assert.equal(ids.get(sid("agree")), loc("contracts", "1.1"));
   assert.equal(ids.get(sid("user")), "contracts/user");
-  assert.equal(ids.get(sid("settle")), loc("contracts", "2"));
-  assert.equal(ids.get(sid("pay")), loc("contracts", "2.1"));
-  assert.equal(ids.get(sid("more")), "contracts/b");
-  assert.equal(ids.get(sid("bind")), loc("contracts", "3"));
+  assert.equal(ids.get(sid("settle")), loc("contracts", "1.2"));
+  assert.equal(ids.get(sid("pay")), loc("contracts", "1.2.1"));
+  assert.equal(ids.get(sid("more")), loc("contracts", "2"));
+  assert.equal(ids.get(sid("bind")), loc("contracts", "2.1"));
 });
 
-test("@spec s-bpdqd9v72wg7vsz reads the citations of a node outside its links, the nodes under it and the values gathered beside a field, text quoted as code included", () => {
+/** A TableRule with two columns: a node in the first cell of each row, and text in the second. */
+function table(name: string, rows: Array<[string, string]>, fields: Record<string, unknown> = {}) {
+  const cell = (n: string) => {
+    const { title: _, ...rest } = node(n);
+    return rest;
+  };
+  return node(name, {
+    kind: "TableRule",
+    columns: [{ key: "check", heading: "What is checked", holds: "node" }, { key: "cost", heading: "On failure", holds: "text" }],
+    groups: [{ heading: null, rows: rows.map(([n, cost]) => ({ cells: { check: { node: cell(n) }, cost: { text: cost } } })) }],
+    ...fields,
+  });
+}
+
+test("@spec s-ygg5kpcxgzq3m7w gives the top node of a file of an extension of the guidelines the file's path as its location, and numbers the nodes in the cells of a TableRule after its children, row by row", () => {
+  const root = repo({
+    "specs/_guidelines/extensions/views.json": file("_guidelines/extensions", "views", node("views", { kind: "section", children: [node("map"), table("view checks", [["first row", "refused"], ["second row", "reported"]], { children: [node("under the table")] })] })),
+  });
+  const ids = locations(loadSpecification(root));
+  const views = loc("_guidelines", "extensions", "views");
+  assert.equal(ids.get(sid("views")), views);
+  assert.equal(ids.get(sid("map")), loc(views, "1"));
+  assert.equal(ids.get(sid("view checks")), loc(views, "2"));
+  assert.equal(ids.get(sid("under the table")), loc(views, "2.1"));
+  assert.equal(ids.get(sid("first row")), loc(views, "2.2"));
+  assert.equal(ids.get(sid("second row")), loc(views, "2.3"));
+});
+
+test("@spec s-ygg5kpcxgzq3m7w goes through the files of a part in the code-point order of their paths", () => {
+  const root = repo({
+    "specs/contracts/a.json": file("contracts", "a", node("lower", { kind: "section", children: [node("in lower")] })),
+    "specs/contracts/B.json": file("contracts", "B", node("upper", { kind: "section", children: [node("in upper")] })),
+  });
+  const ids = locations(loadSpecification(root));
+  assert.equal(ids.get(sid("upper")), loc("contracts", "1"));
+  assert.equal(ids.get(sid("lower")), loc("contracts", "2"));
+});
+
+test("@spec s-qzyacnqwvaeaps4 reads the citations of a TableRule from its text and its text cells, and leaves out what the nodes in its cells cite", () => {
+  const [inText, inCell, inNode] = ["in text", "in a text cell", "in a node"].map((x) => sid(`cited ${x}`));
+  const t = table("cited checks", [["checked", `refused (§${inCell})`]], { text: `See §${inText}.` });
+  (t.groups as Array<{ rows: Array<{ cells: { check: { node: { text: string } } } }> }>)[0]!.rows[0]!.cells.check.node.text = `§${inNode}`;
+  assert.deepEqual(citations(t).sids, [inText, inCell]);
+});
+
+test("@spec s-f5brvuuu6xmkj6t includes a node's kind in its fingerprint, except a TextRule's, and reads a kind that an earlier release wrote under its earlier name as the same kind", () => {
+  const rule = node("kinds");
+  assert.equal(fingerprint(rule), fingerprint({ ...rule, kind: "rule" }));
+  assert.notEqual(fingerprint({ ...rule, kind: "TableRule" }), fingerprint(rule));
+  const record = node("a record", { kind: "RecordType" });
+  assert.equal(fingerprint(record), fingerprint({ ...record, kind: "recordType" }));
+});
+
+test("@spec s-f5brvuuu6xmkj6t leaves each cell holding a node out of a TableRule's fingerprint, and gives a node in a cell its column, its group and the text cells of its row", () => {
+  const t = table("printed checks", [["printed", "refused"]]);
+  const rows = (x: typeof t) => (x.groups as Array<{ rows: Array<{ cells: Record<string, { node?: { text: string }; text?: string }> }> }>)[0]!.rows;
+  const changedNode = structuredClone(t);
+  rows(changedNode)[0]!.cells.check!.node!.text = "Another check.";
+  assert.equal(fingerprint(changedNode), fingerprint(t));
+  const changedText = structuredClone(t);
+  rows(changedText)[0]!.cells.cost!.text = "reported";
+  assert.notEqual(fingerprint(changedText), fingerprint(t));
+  const cellNode = rows(t)[0]!.cells.check!.node as never;
+  const at = { column: "What is checked", group: null, row: { cost: "refused" } };
+  assert.notEqual(fingerprint(cellNode, at), fingerprint(cellNode));
+  assert.notEqual(fingerprint(cellNode, { ...at, row: { cost: "reported" } }), fingerprint(cellNode, at));
+});
+
+test("@spec s-f5brvuuu6xmkj6t gives a list's jsonSchema or valueList the fingerprint that it had when an earlier release wrote it under declaredIn, and includes the examples in the wording", () => {
+  const listed = (list: object) => node("listed", { list: { of: "x", members: ["a"], ...list } });
+  assert.equal(fingerprint(listed({ valueList: { file: "src/a.ts", symbol: "A" } })), fingerprint(listed({ declaredIn: { file: "src/a.ts", declaration: "A" } })));
+  assert.equal(fingerprint(listed({ jsonSchema: { file: "s.json", pointer: "/a" } })), fingerprint(listed({ declaredIn: { file: "s.json", declaration: "/a" } })));
+  const plain = node("with examples");
+  assert.notEqual(fingerprint({ ...plain, examples: ["A case."] }), fingerprint(plain));
+});
+
+test("@spec s-agc6fb3vx46pc23 builds a section's status from the nodes in the cells of its TableRules too", () => {
+  const t = table("status checks", [["a draft row", "refused"]], { status: "approved" });
+  const root = repo({ "specs/contracts/c.json": file("contracts", "c", node("with a table", { kind: "section", children: [t] })) });
+  assert.equal(builtStatuses(loadSpecification(root)).get(sid("with a table")), "draft");
+});
+
+test("@spec s-qzyacnqwvaeaps4 reads the citations of a node everywhere except in its links, the nodes under it and the values gathered beside a field, including text quoted as code", () => {
   const [b, c, d, e, f, g] = ["b", "c", "d", "e", "f", "g"].map((x) => sid(`cited ${x}`));
   const n = node("n", {
     text: `See §${b} and \`§${c}\`, and \`§<sid>\` and \`§s-…\` as notation.\n\n\`\`\`\nopen --> §${f}\n\`\`\``,
@@ -128,7 +210,7 @@ test("@spec s-qzthyh7yqvfhsa2 holds the specification approved while the rule re
   assert.equal(specificationApproved([node("other", { status: "approved" })]), false);
 });
 
-test("@spec s-v4qus7raqnwzneb fingerprints a node's wording and the values its kind adds, not its owners or what the reindex builds", () => {
+test("@spec s-f5brvuuu6xmkj6t fingerprints a node's wording and the values its kind adds, not its owners or what the reindex builds", () => {
   const base = node("f", { kind: "section", reason: "why" });
   const same = fingerprint(base);
   assert.match(same, /^[0-9a-f]{64}$/);
@@ -143,7 +225,7 @@ test("@spec s-v4qus7raqnwzneb fingerprints a node's wording and the values its k
   assert.equal(fingerprint({ ...listed, list: { members: ["a", "b"], of: "x" } }), fingerprint(listed));
 });
 
-test("@spec s-v4qus7raqnwzneb keeps the reason under its earlier name in the fingerprint, so an approval given before the rename stands", () => {
+test("@spec s-f5brvuuu6xmkj6t keeps the reason under its earlier name in the fingerprint, so an approval given before the rename stands", () => {
   const renamed = { location: "x/1", sid: sid("pinned"), kind: "TextRule", title: "t", status: "draft", text: "x", reason: "y", refs: [] };
   // The fingerprint the release before the rename gave this wording, with the reason under the key `rationale`.
   assert.equal(fingerprint(renamed as never), "d97a5bc9b8d7cd0b5e1a2e191f26f46d87b8c62e3b8a020269a747dc3b5562ff");
@@ -153,6 +235,7 @@ test("@spec s-zefk589ykh37b8u tells a file's part and whether it holds the SpecS
   assert.deepEqual(partOf("specs/_guidelines/spec.json"), { part: "_guidelines", file: "spec", specSheriffGuidelines: true });
   assert.deepEqual(partOf("specs/_guidelines/project.json"), { part: "_guidelines", file: "project", specSheriffGuidelines: false });
   assert.deepEqual(partOf("specs/bank/00-bank.json"), { part: "bank", file: "00-bank", specSheriffGuidelines: false });
+  assert.deepEqual(partOf("specs/_guidelines/extensions/domains.json"), { part: "_guidelines", file: "extensions/domains", specSheriffGuidelines: true });
 });
 
 test("@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among the rules of their section", () => {
@@ -166,7 +249,7 @@ test("@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among th
   assert.equal(ids.get(sid("close")), loc("bank", "1.3"));
 });
 
-test("@spec s-v4qus7raqnwzneb leaves the values gathered beside a field out of the fingerprint", () => {
+test("@spec s-f5brvuuu6xmkj6t leaves the values gathered beside a field out of the fingerprint", () => {
   const field = (gathered?: object[]) => ({ name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "", ...(gathered ? { gathered } : {}) });
   const record = (gathered?: object[]) => node("event", { kind: "RecordType", unknown: "refused", fields: [field(gathered)] });
   assert.equal(fingerprint(record([{ value: "paid", sid: sid("bank events") }])), fingerprint(record()));
@@ -180,13 +263,13 @@ test("@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds i
   reindex(root);
   const model = modelOf(loadSpecification(root));
   const open = model.nodes.find((n) => n.sid === sid("open"))!;
-  assert.equal(open.location, loc("contracts", "1"));
+  assert.equal(open.location, loc("contracts", "1.1"));
   assert.equal(open.reason, "Why.");
   assert.deepEqual([open.part, open.file, open.parent, open.owners], ["contracts", "specs/contracts/c.json", sid("accounts"), [OWNER]]);
   assert.equal(open.children, undefined);
 });
 
-test("@spec s-v4qus7raqnwzneb fingerprints a field taking the values the domains add as earlier releases wrote it, so an approval given before the reindex rewrote it stands", () => {
+test("@spec s-f5brvuuu6xmkj6t fingerprints a field taking the values the domains add as earlier releases wrote it, so an approval given before the reindex rewrote it stands", () => {
   const field = (type: object) => ({ name: "kind", type, required: true, text: "" });
   const record = (type: object) => node("event", { kind: "RecordType", unknown: "refused", fields: [field({ is: "list of", of: type })] });
   assert.equal(fingerprint(record({ is: "one of", from: "domains" })), fingerprint(record({ is: "one of", values: [] })));

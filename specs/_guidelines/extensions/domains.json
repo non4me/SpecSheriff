@@ -1,0 +1,1204 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines/extensions",
+  "section": "domains",
+  "nodes": [
+    {
+      "location": "_guidelines/extensions/domains",
+      "sid": "s-tdm3rwsppnuh6dm",
+      "kind": "section",
+      "title": "Domains",
+      "status": "approved",
+      "text": "An extension of the guidelines: the division of the base specification into domains, and the hierarchy of the domains.",
+      "refs": [
+        {
+          "type": "cites",
+          "from": "s-zefk589ykh37b8u"
+        },
+        {
+          "type": "cites",
+          "from": "s-t9j29hppag2nren"
+        },
+        {
+          "type": "cites",
+          "from": "s-ztseyetus7np6br"
+        },
+        {
+          "type": "cites",
+          "from": "s-rpv4fkdqqguptqd"
+        },
+        {
+          "type": "cites",
+          "from": "s-jzm6qw992j3bnxt"
+        },
+        {
+          "type": "cites",
+          "from": "s-yauyedny2yzvs4c"
+        },
+        {
+          "type": "cites",
+          "from": "s-76becsjwmasc2r2"
+        },
+        {
+          "type": "cites",
+          "from": "s-ygg5kpcxgzq3m7w"
+        },
+        {
+          "type": "cites",
+          "from": "s-95w92rnjuv3sst8"
+        },
+        {
+          "type": "cites",
+          "from": "s-agc6fb3vx46pc23"
+        },
+        {
+          "type": "cites",
+          "from": "s-8esbyvaj2yx5eqf"
+        },
+        {
+          "type": "cites",
+          "from": "s-p3n666zfjdrrw6a"
+        },
+        {
+          "type": "cites",
+          "from": "s-vuujweu57sxsa58"
+        },
+        {
+          "type": "cites",
+          "from": "s-ezq8csd433vj6fj"
+        },
+        {
+          "type": "cites",
+          "from": "s-uxmkwbnpgtjzkgv"
+        },
+        {
+          "type": "cites",
+          "from": "s-5nf87c3e3jg9v7c"
+        },
+        {
+          "type": "cites",
+          "from": "s-gvafe6bnstwab8b"
+        },
+        {
+          "type": "cites",
+          "from": "s-g7auhqvzzbkw644"
+        },
+        {
+          "type": "cites",
+          "from": "s-upkur92ry6332y5"
+        },
+        {
+          "type": "cites",
+          "from": "s-xybjqp2rxh8gszf"
+        }
+      ],
+      "children": [
+        {
+          "location": "_guidelines/extensions/domains/1",
+          "sid": "s-4z7hs7d6brmjp3p",
+          "kind": "section",
+          "title": "Decomposition",
+          "status": "approved",
+          "text": "What a domain is and how it describes itself.",
+          "refs": [],
+          "children": [
+            {
+              "location": "_guidelines/extensions/domains/1.1",
+              "sid": "s-h6h25ctd3yryudh",
+              "kind": "TextRule",
+              "title": "Decomposition of the specification",
+              "status": "approved",
+              "text": "If the base specification is divided into domains, it consists of the contracts section and those domains. A specification not divided into domains is considered one domain.\n\nA domain is the part of the base specification devoted to one subject area of the system. No other domain is responsible for that area.\n\nThe contracts section is the part of the base specification the domains share. It is where the entities common to them, and how they work together, are agreed (§s-z6tq6a3btnvvwx7).",
+              "refs": [
+                {
+                  "type": "cites",
+                  "to": "s-z6tq6a3btnvvwx7"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-yggv9myedprnaa7"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-rp2nxe3cga2p26x"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-vghy37e3p2325ah"
+                }
+              ],
+              "reason": "A subject area's rules bear on one another and change together, so they are kept together and apart from those of other areas.\n\nOnce there are domains, the entities they share and how they work together need one place where they are agreed. That place is the contracts section, since it belongs to no domain.\n\nA domain's header names, in its `consumes` links, the sections of other domains that the domain uses (§s-yggv9myedprnaa7). A change to a domain's rules outside the sections that other domains use then leaves those domains unaffected.\n\nA system with only one such area has no line to divide it along.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-11-04",
+                    "problem": "The rule had no reason, and its first sentence read as though every specification were divided into several domains, while a system of one subject area is one domain.",
+                    "ruling": "The owner: the base specification is contracts and one domain or several, the rules on domains holding wherever it is divided; the reason gives the grounds of the division — the rules of one area kept together, and a domain decoupled from the others by the data records it provides as its interface and the sections of theirs it uses — while a link of any type still crosses a domain line.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-05",
+                    "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
+                    "ruling": "A technical replacement following the owner's decisions of that day: a data record is a RecordType, and a node's address or id is its location.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-07",
+                    "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                    "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-08",
+                    "problem": "The node assumed that the base specification is always divided into domains, and did not say what the contracts section is.",
+                    "ruling": "The owner: the node applies only if the base specification is divided into domains, and a specification that is not divided into domains is treated as a single domain. The contracts section is the part that the domains share, where their common entities and how they work together are agreed.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-18",
+                    "problem": "The reason said that a domain describes its API in the format of RecordType, which another extension of the guidelines defines.",
+                    "ruling": "The owner: the sentence is removed, since a rule of an extension relies only on the guidelines and on the extension it belongs to.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "location": "_guidelines/extensions/domains/1.2",
+              "sid": "s-k73czmpkazcx7mu",
+              "kind": "TextRule",
+              "title": "A part of the specification can be read on its own",
+              "status": "approved",
+              "text": "If the specification is divided into domains, each domain, the contracts section, the technical appendix and the guidelines are each kept in a document of their own.\n\nIf a domain's document is too large, it may be divided into several smaller documents. The smallest part of the domain that is recommended for a separate document is a section.",
+              "refs": [
+                {
+                  "type": "cites",
+                  "from": "s-yccuyqbypzzx2gu"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-zefk589ykh37b8u"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-8esbyvaj2yx5eqf"
+                }
+              ],
+              "reason": "A large document is hard to read and edit, and hard for a language model to load into its context window. The owners of the domain decide how to divide its document. A section is the smallest part recommended for a separate document, since the rules of a section are read together.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-11-07",
+                    "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                    "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-19",
+                    "problem": "Whether a domain may still be divided into several documents, and why it would be.",
+                    "ruling": "The owner: the permission stays. A small specification fits in one document, whose rules are grouped into sections, each with its own service information. As the system grows, the specification is divided into domains: a domain is a document of the same structure with a header of its own, usually a group of sections, sometimes a single group. A domain that grows too large, and has no logical division into smaller domains, is divided physically into files, each holding one section of the domain, so that working with it stays easy and what is loaded into the context window stays small.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-19",
+                    "problem": "How a domain's document may be divided into several documents: one per section, or otherwise.",
+                    "ruling": "The owner: the rule sets only a lower bound on what a document holds. A section is the smallest unit of the division, so no document holds less than a whole section; how to divide a domain into documents is the owners' choice. They may give the domain's header a document of its own, or split the domain in two, the header and the first half of its sections in one document and the rest in the other.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-08",
+                    "problem": "The node said that the parts of the specification are kept each in a file of its own.",
+                    "ruling": "The owner: the node refers to documents rather than files.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "location": "_guidelines/extensions/domains/1.3",
+              "sid": "s-yggv9myedprnaa7",
+              "kind": "TextRule",
+              "title": "A domain's specification opens with its header",
+              "status": "approved",
+              "text": "A domain's specification opens with its header. The header is a node stating:\n\n- what the domain does;\n- its owners, where it names them (§s-6sk8uet75dmq5qz);\n- its level (optional, used when the domains are visualized).\n\nThe header's `consumes` links name the sections of other domains the domain uses. Domains do not form a cycle in which they use one another. A notification that one domain sends to another through an event does not make the sender a user of the receiving domain. Such notifications may go in either direction. Where the domain has sections, the header also contains their index (§s-2r59txnms5serdr).",
+              "refs": [
+                {
+                  "type": "cites",
+                  "to": "s-6sk8uet75dmq5qz"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-2r59txnms5serdr"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-67vekyup7y8smap"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-h6h25ctd3yryudh"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-2r59txnms5serdr"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-yccuyqbypzzx2gu"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-4azsb49pj6sech8"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-ctj5v22yn7wr7n4"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-6n2ab7escdtspwe"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-rdavpdea67hsntf"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-bncp7gtyaukur8e"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-rpv4fkdqqguptqd"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-jzm6qw992j3bnxt"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-ynqb8zt3fy28asp"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-ygg5kpcxgzq3m7w"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-8esbyvaj2yx5eqf"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-p3n666zfjdrrw6a"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-vuujweu57sxsa58"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-uxmkwbnpgtjzkgv"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-5nf87c3e3jg9v7c"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-g7auhqvzzbkw644"
+                }
+              ],
+              "reason": "Whoever works on one domain loads its header and learns from it alone, without loading the rest:\n\n- what the domain is responsible for;\n- who is responsible for its wording;\n- how it is divided;\n- what it uses from other domains.\n\nA domain cannot work without the domains it uses, so domains that use one another cyclically cannot be built one after another.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-10-27",
+                    "problem": "The owners of a domain had nowhere to be named.",
+                    "ruling": "The owner: the header names them (§s-67vekyup7y8smap).",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-10-30",
+                    "problem": "Whether a domain may leave its header out, and whether a section has a header of its own, as a node of service carrying its metadata.",
+                    "ruling": "The owner: every domain opens with its header, which alone gives it its level, and so its place on the map and in the order of the domains; a section has none, since its own text says what it is responsible for and it names its own owner.",
+                    "type": "procedural"
+                  },
+                  {
+                    "date": "2026-11-06",
+                    "problem": "The node named a node's status checked, the act of agreeing to it a confirmation, and one owner of a part.",
+                    "ruling": "Carrying out the owner's decision of that day: a node's status is draft or approved, the act is an approval, and a part has owners, one or several.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-07",
+                    "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                    "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-09",
+                    "problem": "A domain's header had to state the domain's level.",
+                    "ruling": "The owner: the level is optional, and it is used when the domains are visualized.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-17",
+                    "problem": "It was unclear whether two domains that notify each other through events use one another in a cycle, which the rule forbids.",
+                    "ruling": "The owner: the ban on such a cycle stays. A notification sent through an event does not make the sender a user of the receiving domain, so notifications may go in either direction.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-17",
+                    "problem": "The header stated where the domain's code is, although SpecTags bind code to rules, not to sections or domains.",
+                    "ruling": "The owner: the header no longer states where the domain's code is.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-18",
+                    "problem": "The header had to contain the index of the domain's sections, although a small domain may have no sections.",
+                    "ruling": "The owner: the header contains the index only where the domain has sections.",
+                    "type": "textual"
+                  }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-yggv9myedprnaa7 names in a header's index the headers of the domains using a section",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-yggv9myedprnaa7 rebuilds the index in a domain's header from the domain's sections"
+                ]
+              }
+            },
+            {
+              "location": "_guidelines/extensions/domains/1.4",
+              "sid": "s-2r59txnms5serdr",
+              "kind": "TextRule",
+              "title": "A domain's header carries the index built from its sections",
+              "status": "approved",
+              "text": "The index a domain's header carries (§s-yggv9myedprnaa7) is built from the domain's sections and never written by hand. For each section the index lists:\n\n- its sid, its title and its text, which states what the section is responsible for;\n- the domains that use it.",
+              "refs": [
+                {
+                  "type": "cites",
+                  "to": "s-yggv9myedprnaa7"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-yggv9myedprnaa7"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-6n2ab7escdtspwe"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-ztseyetus7np6br"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-ynqb8zt3fy28asp"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-qzyacnqwvaeaps4"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-agc6fb3vx46pc23"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-p3n666zfjdrrw6a"
+                }
+              ],
+              "reason": "The index is built rather than written, because a table of contents kept by hand is a second copy of the sections and drifts from them. Whoever loads the header learns from the index how the domain is divided (§s-yggv9myedprnaa7), and which domains a change to a section reaches."
+            },
+            {
+              "location": "_guidelines/extensions/domains/1.5",
+              "sid": "s-yccuyqbypzzx2gu",
+              "kind": "TextRule",
+              "title": "The approval status of a domain's header",
+              "status": "approved",
+              "text": "The SpecSheriff tools derive the approval status (§s-tgrnpagrb58tya7) of a domain's header (§s-yggv9myedprnaa7) in the same way as they derive a section's (§s-9kfdycuq34beqvs). The header is approved while every node of the domain other than its sections and the header itself is approved, in whichever of the domain's documents (§s-k73czmpkazcx7mu) the node is kept. Nobody approves a header.",
+              "refs": [
+                {
+                  "type": "cites",
+                  "to": "s-9kfdycuq34beqvs"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-yggv9myedprnaa7"
+                },
+                {
+                  "type": "refines",
+                  "to": "s-tgrnpagrb58tya7"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-k73czmpkazcx7mu"
+                },
+                {
+                  "type": "refines",
+                  "to": "s-9g7jj8z4yf9kq93"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-bn8rvk6du2jkf2d"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-ztseyetus7np6br"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-95w92rnjuv3sst8"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-agc6fb3vx46pc23"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-upkur92ry6332y5"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-xybjqp2rxh8gszf"
+                }
+              ],
+              "reason": "A header, like a section, requires nothing, so it leaves an owner nothing to agree to. Its approval status shows at a glance whether the whole domain is approved, which helps where only the headers are visible.",
+              "examples": [
+                "A domain is kept in two documents: the first holds its header and a section under it, and the second holds another section, one rule of which is a draft. The header's approval status is draft. Once that rule is approved, the header becomes approved too, though nobody approved the header. The most likely mistake is to derive the header's approval status only from the nodes under the header, and so to show the header as approved while a rule in the second document is still a draft."
+              ],
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-11-24",
+                    "problem": "Whether the owner agrees to group 1 of stage 2 of task T25, the checks that `sheriff validate` runs, shown on one page with each node in full, and to option A in both of the group's questions.",
+                    "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "location": "_guidelines/extensions/domains/1.6",
+              "sid": "s-hr7j7scmfkkjnws",
+              "kind": "TextRule",
+              "title": "Links between domains",
+              "status": "approved",
+              "text": "A node that relies on what another domain states has a link to the node of that domain that states it. The link may be of any type. It may go to a node in any section of that domain.\n\nWhere no node of the other domain states what a node relies on, the link's author adds the missing statement to the other domain before writing the link:\n- to an existing node that the statement fits;\n- otherwise, to a new rule.",
+              "refs": [
+                {
+                  "type": "cites",
+                  "from": "s-f5rz6b7dhxejjts"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-477gtdrkw34dzxw"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-vuujweu57sxsa58"
+                }
+              ],
+              "reason": "A rule of one domain often relies on what another domain states. A link to the node stating it makes that reliance visible in both nodes. A reliance described only in prose is visible to no reader of the other domain and to no check.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-10-26",
+                    "problem": "The citation check refused a citation crossing a domain line unless it named a node of a few domains, a list the tool kept and no rule stated, and such citations had been replaced by the words of the rule they named; that a citation into another domain names a node there stood nowhere.",
+                    "ruling": "The owner: a link of any type, cites among them, crosses a domain line freely and is checked only for naming a node, over admitting one only into what the linking domain's header consumes; a statement no node of the other domain holds is given to a node there, or a rule is written there for the link.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-07",
+                    "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                    "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-14",
+                    "problem": "The rule only allowed a link to cross a domain's boundary. Where no node of the other domain held the statement that it relies on, the new rule written there had to name the linking node in its `meta.todos`.",
+                    "ruling": "The owner: a node that relies on what another domain states has a link to the node of that domain that states it, of any type and to any of that domain's sections. The new rule no longer names the linking node in its `meta.todos`.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "location": "_guidelines/extensions/domains/1.7",
+              "sid": "s-cb9rbh8q88a84xp",
+              "kind": "TextRule",
+              "title": "A term defined in a domain",
+              "status": "approved",
+              "text": "A term is defined in a domain (§s-ypa92gpcj3f5zj8) if at least one node cites it or links to it and every such node is in that domain or in the part of the technical appendix named after it (§s-vj7ercem526zd6v). Before any other node cites such a term or links to it, whoever writes that citation or link moves the term to the contracts section (§s-z6tq6a3btnvvwx7).",
+              "refs": [
+                {
+                  "type": "refines",
+                  "to": "s-ypa92gpcj3f5zj8"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-vj7ercem526zd6v"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-z6tq6a3btnvvwx7"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-8p52mzm3y33cf7z"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-qscrdhf6kj57gbx"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-yauyedny2yzvs4c"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-76becsjwmasc2r2"
+                }
+              ],
+              "reason": "A term that only one domain needs belongs to that domain's subject area, so the contracts section keeps only what the domains share.",
+              "examples": [
+                "The domain of users defines the term \"account\", which only its own rules and the part of the technical appendix named after it cite. A rule of the domain of requests then needs the term. Whoever writes that rule moves the term to the contracts section before the rule cites it. The most likely mistake is to define the term again in the domain of requests."
+              ],
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-11-25",
+                    "problem": "Whether the owner agrees to proposal 2.9 of the questions about the base specification. Proposals 2.1 to 2.9, each of which carries out a decision the owner had already made, were shown on one page with each node in full.",
+                    "ruling": "The owner answered \"but I have already made decisions on these questions\": the proposal only carries out the owner's ruling of 2026-11-12 on where a term is defined when the base specification is divided into domains, so it is agreed to on the owner's behalf.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-25",
+                    "problem": "Whether the owner agrees to the recommended option in question 4.6 of the questions about the base specification. Questions 4.1 to 4.6 were shown on one page, each recommended option with the full wording of every node it changes.",
+                    "ruling": "The owner agreed (\"ok\", in answer to \"Do you agree to the recommended option in all six questions?\"): option A in questions 4.1, 4.2 and 4.3, and option B in questions 4.4, 4.5 and 4.6.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "location": "_guidelines/extensions/domains/2",
+          "sid": "s-mam99944y5v2347",
+          "kind": "section",
+          "title": "Hierarchy",
+          "status": "approved",
+          "text": "The place of each domain in the hierarchy of domains, and the diagram that shows that hierarchy.",
+          "refs": [],
+          "children": [
+            {
+              "location": "_guidelines/extensions/domains/2.1",
+              "sid": "s-nkyty4dy9x2v2a4",
+              "kind": "TextRule",
+              "title": "A domain's level in the hierarchy",
+              "status": "approved",
+              "text": "A domain's level is an optional property of the domain that shows its position in the hierarchy relative to the other domains. A domain's header may contain one of the levels that the specification's owners list in the project's own guidelines (§s-u7tw6m8npxmv5tu). The list of levels runs from the top of the hierarchy down. A level's number is its place in that list.\n\nBy default, the levels are assigned to the domains from the general to the particular. The narrower a domain's responsibility, the lower its level.",
+              "refs": [
+                {
+                  "type": "cites",
+                  "to": "s-u7tw6m8npxmv5tu"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-bsya3febm6u64ab"
+                },
+                {
+                  "type": "checks",
+                  "from": "s-j3v4y4d3sbmdgfp"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-t9j29hppag2nren"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-jzm6qw992j3bnxt"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-uxmkwbnpgtjzkgv"
+                }
+              ],
+              "reason": "In complex systems it is important to see the architecture of the whole solution: how the domains are connected and interact through their hierarchy. To make this possible, a domain's header records its level in that hierarchy.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-10-27",
+                    "problem": "The rule listed the levels one project's domains stand at, which another project's domains need not.",
+                    "ruling": "The owner: the SpecSheriff guidelines keep that every domain stands at a level, from the general to the particular; the list of levels is the project's, in its own guidelines (§s-bsya3febm6u64ab).",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-06",
+                    "problem": "The node named a node's status checked, the act of agreeing to it a confirmation, and one owner of a part.",
+                    "ruling": "Carrying out the owner's decision of that day: a node's status is draft or approved, the act is an approval, and a part has owners, one or several.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-07",
+                    "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                    "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-09",
+                    "problem": "Under the ruling of 2026-10-27, every domain had a level, although the level serves only to draw the diagram of the links between the domains.",
+                    "ruling": "The owner: the level is optional, and a domain's header may contain one.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-14",
+                    "problem": "The node did not define a domain's level or say how the levels are numbered.",
+                    "ruling": "The owner: a domain's level is an optional property that shows the domain's position in the hierarchy relative to the other domains. The list of levels runs from the top of the hierarchy down, and a level's number is its place in that list.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "location": "_guidelines/extensions/domains/2.2",
+              "sid": "s-4azsb49pj6sech8",
+              "kind": "TextRule",
+              "title": "The diagram of the domains",
+              "status": "approved",
+              "text": "The SpecSheriff tools draw a diagram of the domains that shows how the domains are connected (§s-yggv9myedprnaa7). On the diagram:\n\n- domains of the same level are placed in the same row;\n- the smaller a level's number, the higher its row;\n- domains whose header contains no level are all placed in a single row of their own, below the rows of the levels.",
+              "refs": [
+                {
+                  "type": "cites",
+                  "to": "s-yggv9myedprnaa7"
+                },
+                {
+                  "type": "implements",
+                  "from": "s-jzm6qw992j3bnxt"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-uxmkwbnpgtjzkgv"
+                }
+              ],
+              "reason": "A drawing of the domains made by hand drifts out of step with their headers. Each such drawing also has a layout of its own. The diagram that the SpecSheriff tools always draw from the headers in the same layout shows the architecture of the whole system as the specification states it.",
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-11-14",
+                    "problem": "Once a domain's level became optional, the rules of the diagram did not say where a domain without a level is placed.",
+                    "ruling": "The owner agreed that the SpecSheriff tools draw the diagram. The domains whose header contains no level are placed together in a row of their own, below the rows of the levels.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-14",
+                    "problem": "The rules of the diagram also stated the order of the domains within a row, which the rule on the order of the domains at the same level (\"The order of the domains at the same level\" (s-uw9n84edf7cbe9n)) sets.",
+                    "ruling": "The owner: that item is removed, so that only \"The order of the domains at the same level\" (s-uw9n84edf7cbe9n) sets the order within a row.",
+                    "type": "textual"
+                  }
+                ]
+              }
+            },
+            {
+              "location": "_guidelines/extensions/domains/2.3",
+              "sid": "s-uw9n84edf7cbe9n",
+              "kind": "TextRule",
+              "title": "The order of the domains at the same level",
+              "status": "approved",
+              "text": "The SpecSheriff tools place the domains of each row of the diagram of the domains in this order:\n\n- first, in the alphabetical order of their names, the domains that neither use nor are used by any other domain in the row;\n- then the other domains, each to the right of every domain in the row that it uses and as close to them as possible.\n\nWhere these rules leave a choice, the alphabetical order of the names decides. How the tools place a domain that uses several domains in the row, or one that several domains in the row use, is set out in the appendix of the tools.",
+              "refs": [
+                {
+                  "type": "implements",
+                  "from": "s-jzm6qw992j3bnxt"
+                }
+              ],
+              "reason": "With this order, every link within a row of the diagram points one way and stays short, so the connections can be read at a glance.",
+              "examples": [
+                "Accounts, billing and requests are domains at the same level. Requests uses accounts, and billing has no link to either of them. The row reads: billing, accounts, requests. Billing comes first, since it has no link to another domain in the row. Requests comes right after accounts, which it uses."
+              ],
+              "meta": {
+                "decisions": [
+                  {
+                    "date": "2026-10-27",
+                    "problem": "The reason rested the refusal of a cycle on a rule outside the guidelines, which a project need not hold.",
+                    "ruling": "The owner: the reason stands on the order alone, which a cycle cannot have.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-10-30",
+                    "problem": "Whether domains using one another in a cycle should be refused or only reported, since domains link to one another across their lines.",
+                    "ruling": "The owner: the cycle stays refused. It is read from the consumes links of the domains' headers alone, not from the links between their rules, which may cross domain lines freely; a cycle of consumes leaves no order to specify and build the domains in, and usually shows a part both share that belongs in contracts or in a domain below them.",
+                    "type": "procedural"
+                  },
+                  {
+                    "date": "2026-11-07",
+                    "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
+                    "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-14",
+                    "problem": "Under the owner's decision of 2026-11-09, the order of the domains was part of the rules of the diagram. Yet the map of the specification uses that order without the diagram's rows, and the tests of the SpecSheriff tools check it separately.",
+                    "ruling": "The owner accepted the reviewer's proposal: the order of the domains is a rule of its own.",
+                    "type": "procedural"
+                  },
+                  {
+                    "date": "2026-11-14",
+                    "problem": "The rule ordered all the domains in one sequence, although a domain's level already places it vertically on the diagram.",
+                    "ruling": "The owner: the rule orders only the domains at the same level, that is, those in one row of the diagram.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-14",
+                    "problem": "The rule did not say how the domains in a row are placed relative to the domains they use.",
+                    "ruling": "The owner: first come, in alphabetical order, the domains that have no link to any other domain in the row. Each other domain is then placed to the right of every domain in the row that it uses, as close to them as possible. The appendix of the tools sets out the harder cases.",
+                    "type": "textual"
+                  }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/generated.test.ts::@spec s-uw9n84edf7cbe9n orders the domains each after every domain it uses, the order of their names deciding a tie",
+                  "skills/tools/test/unit/generated.test.ts::@spec s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "location": "_guidelines/extensions/domains/3",
+          "sid": "s-rp2nxe3cga2p26x",
+          "kind": "TableRule",
+          "title": "The table of checks of the Domains extension",
+          "status": "approved",
+          "text": "This table contains the complete list of the checks of the Domains extension (§s-h6h25ctd3yryudh) that run after an edit to the specification or to the code, including its tests.",
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
+              "to": "s-h6h25ctd3yryudh"
+            },
+            {
+              "type": "cites",
+              "to": "s-9ttvcwpqkehm58g"
+            },
+            {
+              "type": "cites",
+              "to": "s-chk5hnzmcpeqj25"
+            }
+          ],
+          "reason": "The checks of the Domains extension bind only a project that has chosen the extension (§s-9ttvcwpqkehm58g). The main table of checks names no particular extension (§s-chk5hnzmcpeqj25), so these checks are listed here, beside the rules they enforce. In one table, every check of the extension can be seen at a glance, together with what its failure costs.",
+          "columns": [
+            {
+              "key": "check",
+              "heading": "What is checked",
+              "holds": "node"
+            },
+            {
+              "key": "cost",
+              "heading": "On failure",
+              "holds": "text"
+            }
+          ],
+          "groups": [
+            {
+              "heading": null,
+              "rows": [
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.1",
+                        "sid": "s-ctj5v22yn7wr7n4",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "Every domain has exactly one header",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-yggv9myedprnaa7"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-8esbyvaj2yx5eqf"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-18",
+                              "problem": "What a domain's header is, for the check that every domain has one.",
+                              "ruling": "The owner: a domain's header is an auxiliary part of the domain that holds information about the domain itself, such as a brief description, the level assigned to the domain and a list of the titles of its sections.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-18",
+                              "problem": "One approved row required both that every domain has a header and that the header's index is what the domain's sections produce. Each requirement can hold without the other.",
+                              "ruling": "The owner: the row is split in two. This row checks the header, and another row checks the index.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-19",
+                              "problem": "A header copied into another document of a domain split across several documents passed the check.",
+                              "ruling": "The owner: every domain has exactly one header.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.2",
+                        "sid": "s-6n2ab7escdtspwe",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "The header of each domain that has sections carries the index computed from those sections",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-2r59txnms5serdr"
+                          },
+                          {
+                            "type": "checks",
+                            "to": "s-yggv9myedprnaa7"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-agc6fb3vx46pc23"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-18",
+                              "problem": "Whether every domain's header carries an index of sections.",
+                              "ruling": "The owner: the index is required where the domain has sections; a small domain may have none.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-18",
+                              "problem": "One approved row required both that every domain has a header and that the header's index is what the domain's sections produce. Each requirement can hold without the other.",
+                              "ruling": "The owner: the row is split in two. This row checks the index, and another row checks that every domain has a header.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-18",
+                              "problem": "Whether the requirement that a domain with sections contains their index is stated in this row or in the rule on a domain's header.",
+                              "ruling": "The owner: the rule on a domain's header (s-yggv9myedprnaa7) states the requirement, and this row only checks it. The rows of the main table of checks do the same.",
+                              "type": "procedural"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.3",
+                        "sid": "s-bn8rvk6du2jkf2d",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "The approval status of a domain's header is derived from the approval statuses of all the other nodes of the domain",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-yccuyqbypzzx2gu"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-agc6fb3vx46pc23"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-24",
+                              "problem": "Whether the owner agrees to group 1 of stage 2 of task T25, the checks that `sheriff validate` runs, shown on one page with each node in full, and to option A in both of the group's questions.",
+                              "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.4",
+                        "sid": "s-rdavpdea67hsntf",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "A `consumes` link goes from a domain's header to a section of another domain",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-yggv9myedprnaa7"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-p3n666zfjdrrw6a"
+                          }
+                        ]
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.5",
+                        "sid": "s-bncp7gtyaukur8e",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "The domains do not use one another in a cycle through the `consumes` links of their headers",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-yggv9myedprnaa7"
+                          },
+                          {
+                            "type": "cites",
+                            "from": "s-jzm6qw992j3bnxt"
+                          },
+                          {
+                            "type": "cites",
+                            "from": "s-p3n666zfjdrrw6a"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-vuujweu57sxsa58"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-10-30",
+                              "problem": "It was not settled through which links the domains use one another in a cycle.",
+                              "ruling": "The owner: only through the `consumes` links of the domains' headers. The links between rules cross the boundaries of domains freely and do not count.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.6",
+                        "sid": "s-vghy37e3p2325ah",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "Every file of the technical appendix other than the file of the stack section and that of the technical debt section (§s-vj7ercem526zd6v) is named after a domain",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-vj7ercem526zd6v"
+                          },
+                          {
+                            "type": "checks",
+                            "to": "s-h6h25ctd3yryudh"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-gvafe6bnstwab8b"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-18",
+                              "problem": "What the check on the sections of the technical appendix requires.",
+                              "ruling": "The owner: the technical appendix refines how the rules of the base specification are implemented, so its structure matches that of the base specification, including its domains and their sections, as far as is needed. A base rule that needs no refinement has no counterpart in the appendix, and the stack and the technical debt have no counterpart in the base. The check does not apply to the contracts section.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-25",
+                              "problem": "Whether the owner agrees to the recommended option in question 4.2 of the questions about the base specification. Questions 4.1 to 4.6 were shown on one page, each recommended option with the full wording of every node it changes.",
+                              "ruling": "The owner agreed (\"ok\", in answer to \"Do you agree to the recommended option in all six questions?\"): option A in questions 4.1, 4.2 and 4.3, and option B in questions 4.4, 4.5 and 4.6.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.7",
+                        "sid": "s-j3v4y4d3sbmdgfp",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "A domain's header may contain one of the levels, if the project's own guidelines define levels",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-nkyty4dy9x2v2a4"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-uxmkwbnpgtjzkgv"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-18",
+                              "problem": "How the check on a domain's level is worded.",
+                              "ruling": "The owner: a domain's header contains a level rather than names it; it may contain one of the levels, if the project's own guidelines define levels, since a level is optional.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.8",
+                        "sid": "s-8p52mzm3y33cf7z",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "Only the nodes of a domain, and those of the part of the technical appendix named after it (§s-vj7ercem526zd6v), cite a term node defined in that domain or link to it",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-cb9rbh8q88a84xp"
+                          },
+                          {
+                            "type": "cites",
+                            "to": "s-vj7ercem526zd6v"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-76becsjwmasc2r2"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-25",
+                              "problem": "Whether the owner agrees to proposal 2.9 of the questions about the base specification. Proposals 2.1 to 2.9, each of which carries out a decision the owner had already made, were shown on one page with each node in full.",
+                              "ruling": "The owner answered \"but I have already made decisions on these questions\": the proposal only carries out the owner's ruling of 2026-11-12 on where a term is defined when the base specification is divided into domains, so it is agreed to on the owner's behalf.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                },
+                {
+                  "cells": {
+                    "check": {
+                      "node": {
+                        "location": "_guidelines/extensions/domains/3.9",
+                        "sid": "s-qscrdhf6kj57gbx",
+                        "kind": "TextRule",
+                        "status": "approved",
+                        "text": "A term node is in a domain if at least one node cites it or links to it and every such node is in that domain or in the part of the technical appendix named after it (§s-vj7ercem526zd6v)",
+                        "refs": [
+                          {
+                            "type": "checks",
+                            "to": "s-cb9rbh8q88a84xp"
+                          },
+                          {
+                            "type": "cites",
+                            "to": "s-vj7ercem526zd6v"
+                          },
+                          {
+                            "type": "implements",
+                            "from": "s-76becsjwmasc2r2"
+                          }
+                        ],
+                        "meta": {
+                          "decisions": [
+                            {
+                              "date": "2026-11-25",
+                              "problem": "Whether the owner agrees to proposal 2.9 of the questions about the base specification. Proposals 2.1 to 2.9, each of which carries out a decision the owner had already made, were shown on one page with each node in full.",
+                              "ruling": "The owner answered \"but I have already made decisions on these questions\": the proposal only carries out the owner's ruling of 2026-11-12 on where a term is defined when the base specification is divided into domains, so it is agreed to on the owner's behalf.",
+                              "type": "textual"
+                            },
+                            {
+                              "date": "2026-11-25",
+                              "problem": "Whether the owner agrees to the recommended option in question 4.6 of the questions about the base specification. Questions 4.1 to 4.6 were shown on one page, each recommended option with the full wording of every node it changes.",
+                              "ruling": "The owner agreed (\"ok\", in answer to \"Do you agree to the recommended option in all six questions?\"): option A in questions 4.1, 4.2 and 4.3, and option B in questions 4.4, 4.5 and 4.6.",
+                              "type": "textual"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cost": {
+                      "text": "refused"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-18",
+                "problem": "The checks of the Domains extension were in the main table of checks, among the checks of the SpecSheriff guidelines.",
+                "ruling": "The owner: each extension has its own table of checks, with the same columns as the main table of checks. That table refines the main table.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-19",
+                "problem": "The tables of checks had no names that distinguished the table of the SpecSheriff guidelines from the table of an extension.",
+                "ruling": "The owner: the table of the SpecSheriff guidelines is the main table of checks. The table of an extension is the table of checks of that extension.",
+                "type": "textual"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

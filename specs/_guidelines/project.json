@@ -10,10 +10,10 @@
       "title": "SpecSheriff's own guidelines",
       "status": "approved",
       "text": "What only the specification of this repository needs beyond the SpecSheriff guidelines.",
+      "refs": [],
       "owners": [
         "vladimir.troyanenko@gmail.com"
       ],
-      "refs": [],
       "children": [
         {
           "location": "_guidelines/project/1",
@@ -22,7 +22,6 @@
           "title": "The specification is approved",
           "status": "approved",
           "text": "This project's specification is approved.",
-          "reason": "This repository holds no symbol of the system's code. Every test of its tools carries the SpecTag of the node it is written from. So as a draft the specification would only stop the tests from running at a push (§s-xhcmchcngykvn2k).",
           "refs": [
             {
               "type": "refines",
@@ -30,9 +29,10 @@
             },
             {
               "type": "cites",
-              "to": "s-xhcmchcngykvn2k"
+              "to": "s-x8uzc8z44pwtd3h"
             }
           ],
+          "reason": "This repository holds no symbol of the system's code. Every test of its tools carries the SpecTag of the node it is written from. So, if the specification were a draft, its only effect would be to stop the tests from running on a push (§s-x8uzc8z44pwtd3h).",
           "meta": {
             "decisions": [
               {

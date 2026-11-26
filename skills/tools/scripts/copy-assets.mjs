@@ -12,9 +12,12 @@ const require = createRequire(import.meta.url);
 const guidelines = new URL("../guidelines/", import.meta.url);
 mkdirSync(guidelines, { recursive: true });
 for (const name of ["spec.json", "tools.json"]) cpSync(new URL(`../../../specs/_guidelines/${name}`, import.meta.url), new URL(name, guidelines));
+// The extensions of the guidelines, each in a file of its own under extensions/.
+rmSync(new URL("extensions/", guidelines), { recursive: true, force: true });
+cpSync(new URL("../../../specs/_guidelines/extensions/", import.meta.url), new URL("extensions/", guidelines), { recursive: true });
 // The schema's own files only, so that this repository's extension of it, were it to keep one, reaches no project.
 mkdirSync(new URL("_schema/", guidelines), { recursive: true });
-for (const name of ["node.schema.json", "section-file.schema.json", "extension.schema.json"]) {
+for (const name of ["node.schema.json", "section-file.schema.json", "archive-file.schema.json", "extension.schema.json"]) {
   cpSync(new URL(`../../../specs/_schema/${name}`, import.meta.url), new URL(`_schema/${name}`, guidelines));
 }
 

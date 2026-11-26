@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { posix } from "node:path";
-import type { SpecNode, Specification } from "./spec-files.ts";
+import { cellNodes, type CellPlace, type SpecNode, type Specification } from "./spec-files.ts";
 
 /** The sid of the base's rule on levels, which the rule of a project's own guidelines listing them refines. */
 export const LEVELS_RULE = "s-nkyty4dy9x2v2a4";
@@ -49,10 +49,14 @@ export function fixtureGlobs(spec: Specification): string[] {
 /** Whether a path is one of the fixtures of tests the globs name. */
 export const isFixture = (globs: string[], path: string) => globs.some((glob) => posix.matchesGlob(path, glob));
 
+/**
+ * The part of the specification that a file belongs to, which is the folder under specs/ that holds the file, and the file's path
+ * within that folder without the `.json` extension. The SpecSheriff guidelines consist of the base, the appendix of the tools and the extensions of the guidelines (s-zefk589ykh37b8u).
+ */
 export function partOf(path: string): { part: string; file: string; specSheriffGuidelines: boolean } {
   const [, part = "", ...rest] = path.split("/");
-  const file = posix.basename(rest.join("/"), ".json");
-  return { part, file, specSheriffGuidelines: part === "_guidelines" && (file === "spec" || file === "tools") };
+  const file = rest.join("/").replace(/\.json$/, "");
+  return { part, file, specSheriffGuidelines: part === "_guidelines" && (file === "spec" || file === "tools" || file.startsWith("extensions/")) };
 }
 
 /** A part whose files are numbered one by one under locations of their own, rather than straight through. */
@@ -62,6 +66,9 @@ export const BASE_KINDS = new Set(["header", "section", "TextRule", "term", "Rec
 export const isProjectKind = (kind: string) => !BASE_KINDS.has(kind);
 /** Every kind but a term, located by its name, and a domain's header, by its domain's, is numbered as a rule is. */
 const numbered = { has: (kind: string) => kind !== "term" && kind !== "header" };
+
+/** The nodes under a node: its children, then the nodes in its cells, row by row and column by column (s-ygg5kpcxgzq3m7w). */
+const under = (n: SpecNode) => [...(n.children ?? []), ...cellNodes(n).map((c) => c.node)];
 
 /** Every node's location, computed from where it is. */
 export function locations(spec: Specification): Map<string, string> {
@@ -73,7 +80,7 @@ export function locations(spec: Specification): Map<string, string> {
       } else if (numbered.has(n.kind)) {
         const place = path ? `${path}.${++counter.n}` : `${++counter.n}`;
         ids.set(n.sid, `${base}/${place}`);
-        number(n.children ?? [], base, place);
+        number(under(n), base, place);
       }
     }
   };
@@ -85,20 +92,12 @@ export function locations(spec: Specification): Map<string, string> {
       const [top, ...more] = f.data.nodes;
       if (!top) continue;
       ids.set(top.sid, location);
-      number(top.children ?? [], location, "");
-      number(more, location, "", { n: top.children?.filter((c) => numbered.has(c.kind)).length ?? 0 });
+      const counter = { n: 0 };
+      number(under(top), location, "", counter);
+      number(more, location, "", counter);
       continue;
     }
     if (!straight.has(part)) straight.set(part, { n: 0 });
-    if (part === "contracts") {
-      // The node at the top of a file of contracts is located by the file; the rest are numbered straight through.
-      const [top, ...more] = f.data.nodes;
-      if (!top) continue;
-      ids.set(top.sid, `${part}/${file}`);
-      number(top.children ?? [], part, "", straight.get(part));
-      number(more, part, "", straight.get(part));
-      continue;
-    }
     for (const n of f.data.nodes) {
       if (n.kind === "header") {
         ids.set(n.sid, part);
@@ -127,7 +126,18 @@ export function citations(node: SpecNode): { sids: string[]; locations: string[]
     } else if (Array.isArray(value)) value.forEach(read);
     else if (value && typeof value === "object") Object.values(value).forEach(read);
   };
-  for (const [key, value] of Object.entries(node)) if (!NOT_CITING.has(key)) read(value);
+  for (const [key, value] of Object.entries(node)) {
+    if (NOT_CITING.has(key)) continue;
+    // A TableRule's citations are those in its headings and its text cells; a node in a cell has citations of its own (s-qzyacnqwvaeaps4).
+    if (key === "groups" && Array.isArray(value)) {
+      for (const g of value as Array<{ heading?: unknown; rows?: Array<{ cells?: Record<string, { text?: unknown }> }> }>) {
+        read(g.heading);
+        for (const r of g.rows ?? []) for (const c of Object.values(r.cells ?? {})) read(c.text);
+      }
+      continue;
+    }
+    read(value);
+  }
   return { sids: [...sids].filter((s) => s !== node.sid), locations: [...found] };
 }
 
@@ -205,7 +215,7 @@ export function ownersOf(spec: Specification, sid: string): string[] {
 export function builtStatuses(spec: Specification): Map<string, "draft" | "approved"> {
   const out = new Map<string, "draft" | "approved">();
   const approved = (n: SpecNode) => statusNow(n.status) === "approved";
-  const allUnder = (n: SpecNode): boolean => (n.children ?? []).every((c) => (isContainer(c.kind) ? allUnder(c) : approved(c) && allUnder(c)));
+  const allUnder = (n: SpecNode): boolean => under(n).every((c) => (isContainer(c.kind) ? allUnder(c) : approved(c) && allUnder(c)));
   const byDomain = new Map<string, boolean>();
   for (const f of spec.files) {
     const { part } = partOf(f.path);
@@ -282,7 +292,25 @@ export function domainOrder(spec: Specification): string[] {
 /** The name earlier releases wrote for each kind they wrote otherwise, which a fingerprint keeps (s-v4qus7raqnwzneb). */
 const EARLIER_KINDS: Record<string, string> = { TextRule: "rule", RecordType: "recordType", header: "domain" };
 
-const NOT_WORDING = new Set(["location", "sid", "kind", "status", "refs", "meta", "children", "owner", "owners", "sections", "archived"]);
+const NOT_WORDING = new Set(["location", "sid", "status", "refs", "meta", "children", "owner", "owners", "sections", "archived"]);
+
+/** Puts a list's `jsonSchema` or `valueList`, where the list holds only one of the two, under `declaredIn`, the key under which earlier releases wrote them. */
+function earlierList(list: unknown): unknown {
+  if (!list || typeof list !== "object") return list;
+  const { jsonSchema, valueList, ...rest } = list as Record<string, { file: string; pointer?: string; symbol?: string } | undefined>;
+  if (jsonSchema && !valueList) return { ...rest, declaredIn: { file: jsonSchema.file, declaration: jsonSchema.pointer } };
+  if (valueList && !jsonSchema) return { ...rest, declaredIn: { file: valueList.file, declaration: valueList.symbol } };
+  return list;
+}
+
+/** A TableRule's groups without the cells that contain a node, since each such node has a fingerprint of its own. */
+function textCells(groups: unknown): unknown {
+  if (!Array.isArray(groups)) return groups;
+  return groups.map((g: { rows?: Array<{ cells: Record<string, { node?: unknown }> }> }) => ({
+    ...g,
+    rows: (g.rows ?? []).map((r) => ({ ...r, cells: Object.fromEntries(Object.entries(r.cells).filter(([, c]) => !c.node)) })),
+  }));
+}
 
 function sorted(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(sorted);
@@ -293,12 +321,22 @@ function sorted(value: unknown): unknown {
 }
 
 /**
- * The SHA-256 of one canonical string of the node's wording: title, text, reason and the values its kind adds.
- * The reason stands there under `rationale`, the key earlier releases wrote, so that renaming the key changed no
- * fingerprint and no approval given before it.
+ * The SHA-256 hash of a single canonical string of the node's wording (s-f5brvuuu6xmkj6t). The wording is every property except
+ * the node's location, status, links, metadata and the nodes under it. The kind is part of it, except for a TextRule. For a
+ * node in a cell, its place in the table is part of it too. A key or a kind that earlier releases wrote under another
+ * name is hashed under the earlier name, for example the reason under `rationale`. So renaming a key or a kind changes no fingerprint
+ * and no approval.
  */
-export function fingerprint(node: SpecNode): string {
-  const wording = Object.fromEntries(Object.entries(node).filter(([k]) => !NOT_WORDING.has(k)).map(([k, v]) => [k === "reason" ? "rationale" : k, v]));
+export function fingerprint(node: SpecNode, cell?: CellPlace): string {
+  const kept = Object.entries(node).filter(([k, v]) => !NOT_WORDING.has(k) && !(k === "kind" && (v === "TextRule" || v === "rule")));
+  const wording: Record<string, unknown> = Object.fromEntries(kept.map(([k, v]) => {
+    if (k === "reason") return ["rationale", v];
+    if (k === "kind") return [k, EARLIER_KINDS[v as string] ?? v];
+    if (k === "list") return [k, earlierList(v)];
+    if (k === "groups") return [k, textCells(v)];
+    return [k, v];
+  }));
+  if (cell) wording.cell = cell;
   // What the reindex builds beside a field, the values gathered for it, is no one's wording. A field taking the values
   // the domains add stands as earlier releases wrote it, with an empty list of its own (s-v4qus7raqnwzneb).
   const earlier = (v: unknown) => {
