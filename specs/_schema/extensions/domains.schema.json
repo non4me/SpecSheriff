@@ -1,0 +1,56 @@
+{
+  "$comment": "What the Domains extension of the guidelines adds to the schema of the guidelines: the header a domain's specification opens with (s-yggv9myedprnaa7), and the consumes link by which a header names the sections of other domains the domain uses.",
+  "kinds": {
+    "header": {
+      "needsCode": false,
+      "schema": {
+        "$comment": "The header of a domain: the node a domain's specification opens with. Its text says what the domain does. It names its owners where the domain has owners of its own, and its level where it has one. Where the domain has sections, it carries their index, which `sheriff reindex` builds from them and no one writes by hand (s-2r59txnms5serdr). Its approval status, like a section's, is built from the nodes under it.",
+        "properties": {
+          "owners": {
+            "$ref": "#/$defs/owners"
+          },
+          "level": {
+            "$comment": "The name of the level that the domain is at, one of those that the project's own guidelines list (s-nkyty4dy9x2v2a4); `sheriff validate` checks it against that list, which the schema cannot see. Absent where the domain has no level.",
+            "type": "string",
+            "minLength": 1
+          },
+          "sections": {
+            "$comment": "The index of the domain's sections, in the order in which they are read: each one's sid, title and text, and the headers of the domains that use it. Absent where the domain has no sections. `sheriff reindex` builds it from the sections, and `sheriff validate` refuses an index other than the one that `sheriff reindex` builds.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sid": {
+                  "$ref": "#/$defs/sid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "usedBy": {
+                  "$comment": "Read off the section's incoming consumes links; absent where no domain uses it.",
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/$defs/sid"
+                  }
+                }
+              },
+              "required": [
+                "sid",
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "linkTypes": [
+    "consumes"
+  ]
+}

@@ -268,6 +268,10 @@
                 },
                 {
                   "type": "cites",
+                  "from": "s-gb8s9657a65hqmv"
+                },
+                {
+                  "type": "cites",
                   "from": "s-rpv4fkdqqguptqd"
                 },
                 {
@@ -404,6 +408,10 @@
                 {
                   "type": "cites",
                   "from": "s-p3n666zfjdrrw6a"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-f5brvuuu6xmkj6t"
                 }
               ],
               "reason": "The index is built rather than written, because a table of contents kept by hand is a second copy of the sections and drifts from them. Whoever loads the header learns from the index how the domain is divided (§s-yggv9myedprnaa7), and which domains a change to a section reaches."
@@ -473,6 +481,9 @@
                     "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/model.test.ts::@spec s-yccuyqbypzzx2gu builds the approval status of a domain's header from every node of the domain other than its sections and the header itself"
                 ]
               }
             },
@@ -491,6 +502,10 @@
                 {
                   "type": "cites",
                   "from": "s-477gtdrkw34dzxw"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-npnmwyt6s3gypwe"
                 },
                 {
                   "type": "cites",
@@ -753,10 +768,6 @@
                     "ruling": "The owner: first come, in alphabetical order, the domains that have no link to any other domain in the row. Each other domain is then placed to the right of every domain in the row that it uses, as close to them as possible. The appendix of the tools sets out the harder cases.",
                     "type": "textual"
                   }
-                ],
-                "tests": [
-                  "skills/tools/test/unit/generated.test.ts::@spec s-uw9n84edf7cbe9n orders the domains each after every domain it uses, the order of their names deciding a tie",
-                  "skills/tools/test/unit/generated.test.ts::@spec s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it"
                 ]
               }
             }

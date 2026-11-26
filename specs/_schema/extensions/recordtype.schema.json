@@ -1,0 +1,94 @@
+{
+  "$comment": "What the RecordType extension of the guidelines adds to the schema of the guidelines: the RecordType, the format of data that a part of the system outputs and keeps in its store (s-7vm323mhry2enx3), written as a JSON Schema 2020-12 object.",
+  "kinds": {
+    "RecordType": {
+      "needsCode": true,
+      "schema": {
+        "$comment": "A RecordType is a rule of the section that declares it (s-ktfstpv8rurznrp), and is numbered among its rules; its title is the RecordType's name and its text what the RecordType is for (s-6eb92ddch7shuvu). The implementation's types and RuntimeChecks are generated from it and never written beside it (s-e877bnfa559tvk9). A RecordType that refines another RecordType is a RecordType variant of it where it holds answersTo (s-z3dnru6qqdf9m6j).",
+        "properties": {
+          "schema": {
+            "$comment": "The format itself, as a JSON Schema 2020-12 object that the meta-schema of a RecordType's schema checks at any depth (s-j4t9vusnsajmqdw): each field a property, with its type, its bounds, whether its value is guaranteed (required) and what it means (description).",
+            "type": "object",
+            "$ref": "recordtype-meta.schema.json"
+          },
+          "chosenBy": {
+            "$comment": "On a RecordType in which the values of some fields decide which other fields a data record holds: those fields, its own or inherited, that select its RecordType variant (s-z3dnru6qqdf9m6j).",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/fieldName"
+            }
+          },
+          "answersTo": {
+            "$comment": "On a RecordType variant: the one value it corresponds to for each field that selects a variant of its RecordType (s-z3dnru6qqdf9m6j, s-c2r9jndrjbtbsv6).",
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {
+              "$ref": "#/$defs/fieldName"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "identifiedBy": {
+            "$comment": "Where another RecordType refers to this one by an identifier: the field, its own or inherited, that identifies its data records (s-6eb92ddch7shuvu).",
+            "$ref": "#/$defs/fieldName"
+          }
+        },
+        "required": [
+          "schema"
+        ],
+        "if": {
+          "required": [
+            "answersTo"
+          ]
+        },
+        "then": {
+          "$comment": "The top level of a RecordType variant's schema holds neither additionalProperties nor unevaluatedProperties (s-c2r9jndrjbtbsv6).",
+          "properties": {
+            "schema": {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "additionalProperties"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "unevaluatedProperties"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "else": {
+          "$comment": "The top level of the schema of a RecordType other than a RecordType variant holds \"type\": \"object\" (s-qg2yqec2cgmcg2w).",
+          "properties": {
+            "schema": {
+              "properties": {
+                "type": {
+                  "const": "object"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "fieldName": {
+      "$comment": "A field's name as the code spells it: an identifier in camelCase, so that the generated types use it unchanged.",
+      "type": "string",
+      "pattern": "^[a-z][A-Za-z0-9]*$"
+    }
+  }
+}

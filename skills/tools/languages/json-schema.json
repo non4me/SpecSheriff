@@ -1,0 +1,13 @@
+{
+  "$comment": "What counts as a symbol and as an import in JSON Schema, the dialect of JSON whose files hold the value of `dialect` below as the `$schema` of their top-level object. A symbol is a definition under the `$defs` of the top-level object, and its SpecTags are whole lines of the string in its `$comment`. The SpecTags of the code outside every definition are whole lines of the `$comment` of the top-level object. `$schema` is the file's import. JSON Schema has no tests.",
+  "extensions": [".json"],
+  "dialect": "https://json-schema.org/draft/2020-12/schema",
+  "grammars": { ".json": "tree-sitter-json.wasm" },
+  "comment": "comment",
+  "tagComment": "property",
+  "symbols": ["$defs"],
+  "imports": ["$schema"],
+  "export": null,
+  "decorated": null,
+  "tests": {}
+}

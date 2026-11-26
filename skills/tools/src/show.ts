@@ -1,4 +1,5 @@
-import type { SpecNode, Specification } from "./spec-files.ts";
+import { cellNodes, type SpecNode, type Specification, type TableColumn, type TableGroup } from "./spec-files.ts";
+import { schemasWithin, sourcedFields } from "./values.ts";
 
 type Ref = SpecNode["refs"][number];
 
@@ -29,40 +30,83 @@ function listTable(value: unknown): string | null {
   return [`**list:**`, "", "```json", JSON.stringify(rest, null, 2), "```", "", line(columns), `|${columns.map(() => "---").join("|")}|`, ...rows.map(line)].join("\n");
 }
 
-/** A RecordType's fields as JSON, the values gathered beside a field left out of it and written after it as a list under the field's name. */
-function fieldsWithGathered(spec: Specification, fields: Array<Record<string, unknown>>): string {
-  const bare = fields.map(({ gathered: _, ...f }) => f);
-  const out = [`**fields:**\n\n\`\`\`json\n${JSON.stringify(bare, null, 2)}\n\`\`\``];
-  for (const f of fields) {
-    const gathered = f.gathered as Array<{ value: string; sid: string }> | undefined;
-    if (!gathered?.length) continue;
-    const line = (g: { value: string; sid: string }) => {
-      const at = spec.nodes.get(g.sid)?.node;
-      return `- ${g.value} — ${g.sid}${at ? ` ${at.location} ${at.title}` : ""}`;
-    };
-    out.push(`**${f.name}:**\n\n${gathered.map(line).join("\n")}`);
+/**
+ * A RecordType's `schema` as JSON, with the values gathered beside each field left out of it (s-k4nqjr96ux7a5m7). Each
+ * field's gathered values follow as a list headed by the JSON Pointer to the field's schema. Each value is written with
+ * the sid, location and title of the node it comes from. A value that comes from a node in a cell, which has no title, is
+ * written with that node's sid and location.
+ */
+function schemaWithGathered(spec: Specification, node: SpecNode): string {
+  const bare = structuredClone(node.schema);
+  for (const { schema } of schemasWithin(bare)) {
+    const source = schema.enumSource as Record<string, unknown> | undefined;
+    if (source && typeof source === "object") delete source.gathered;
+  }
+  const out = [`**schema:**\n\n\`\`\`json\n${JSON.stringify(bare, null, 2)}\n\`\`\``];
+  const line = (g: { value: string; sid: string }) => {
+    const at = spec.nodes.get(g.sid)?.node;
+    return `- ${g.value} — ${g.sid}${at ? ` ${at.location}${at.title ? ` ${at.title}` : ""}` : ""}`;
+  };
+  for (const { pointer, source } of sourcedFields(node)) {
+    if (source.gathered?.length) out.push(`**${pointer}:**\n\n${source.gathered.map(line).join("\n")}`);
   }
   return out.join("\n\n");
 }
 
+/** The text of a cell, with each line break written as `<br>` (s-k4nqjr96ux7a5m7). */
+const inCell = (text: string) => text.replaceAll("\r\n", "\n").replaceAll("\n", "<br>");
+
+/** The place of a node in a cell: the heading of its column, the heading of its group, and the text cells of its row, each under its column's heading. */
+function cellPlace(spec: Specification, sid: string): string | null {
+  const at = spec.nodes.get(sid);
+  if (!at?.cell) return null;
+  const headings = new Map(((at.parent?.columns as TableColumn[] | undefined) ?? []).map((c) => [c.key, c.heading]));
+  return [
+    `- column: ${at.cell.column}`,
+    ...(at.cell.group ? [`- group: ${at.cell.group}`] : []),
+    ...Object.entries(at.cell.row).map(([key, text]) => `- ${headings.get(key) ?? key}: ${inCell(text)}`),
+  ].join("\n");
+}
+
+/** The columns and groups of a TableRule as a table for each group, under the group's heading where it has one; a node's cell holds its location and its text. */
+function tableMarkdown(n: SpecNode): string {
+  const columns = (n.columns as TableColumn[] | undefined) ?? [];
+  const escaped = (text: string) => inCell(text).replaceAll("|", "\\|");
+  const line = (cells: string[]) => `| ${cells.join(" | ")} |`;
+  return ((n.groups as TableGroup[] | undefined) ?? []).map((group) => {
+    const rows = group.rows.map(({ cells }) => line(columns.map((c) => {
+      const cell = cells[c.key];
+      return escaped(cell?.node ? `${cell.node.location} ${cell.node.text ?? ""}`.trim() : (cell?.text ?? ""));
+    })));
+    const table = [line(columns.map((c) => escaped(c.heading))), `|${columns.map(() => "---").join("|")}|`, ...rows].join("\n");
+    return group.heading ? `**${group.heading}**\n\n${table}` : table;
+  }).join("\n\n");
+}
+
 /**
- * A node as the export, the guide and sheriff show write it: every value its file holds, each that is
- * not text under its key as JSON, the metadata only where asked for, and the nodes under it each one
- * heading level deeper, only where asked for.
+ * A node as the export, the guide and `sheriff show` write it: every value that its file holds, each value that is not text
+ * written as JSON under its key, the metadata only where asked for, and, only where asked for, the nodes under it, each a heading
+ * level deeper than the node above it. A node in a cell, which has no title, is headed by its location alone.
  */
 export function nodeMarkdown(spec: Specification, n: SpecNode, depth: number, { metadata = true, children = true } = {}): string {
-  const parts = [`${"#".repeat(Math.min(depth, 6))} ${n.location} ${n.title}`, `\`${n.sid}\` · ${n.kind} · ${n.status}`];
+  const place = cellPlace(spec, n.sid);
+  const parts = [`${"#".repeat(Math.min(depth, 6))} ${n.location}${place ? "" : ` ${n.title}`}`, `\`${n.sid}\` · ${n.kind} · ${n.status}`];
+  if (place) parts.push(place);
   if (n.text) parts.push(n.text);
   if (n.reason) parts.push(`*Why:* ${n.reason}`);
   for (const [key, value] of Object.entries(n)) {
     if (WRITTEN.has(key) || (key === "meta" && !metadata)) continue;
-    if (key === "list" && listTable(value)) parts.push(listTable(value)!);
-    else if (key === "fields" && Array.isArray(value)) parts.push(fieldsWithGathered(spec, value));
+    if (n.kind === "TableRule" && key === "columns") continue;
+    if (n.kind === "TableRule" && key === "groups") parts.push(tableMarkdown(n));
+    else if (key === "list" && listTable(value)) parts.push(listTable(value)!);
+    else if (key === "schema" && n.kind === "RecordType") parts.push(schemaWithGathered(spec, n));
     else parts.push(typeof value === "string" ? `**${key}:** ${value}` : `**${key}:**\n\n\`\`\`json\n${JSON.stringify(value, null, 2)}\n\`\`\``);
   }
   if (n.refs.length) parts.push(["**Links:**", "", ...n.refs.map((r) => link(spec, r))].join("\n"));
   const own = parts.join("\n\n");
-  return children ? [own, ...(n.children ?? []).map((c) => nodeMarkdown(spec, c, depth + 1, { metadata }))].join("\n\n") : own;
+  // The nodes in the cells of a TableRule follow its children, in the order in which their locations are computed.
+  const below = [...(n.children ?? []), ...(n.kind === "TableRule" ? cellNodes(n).map((c) => c.node) : [])];
+  return children ? [own, ...below.map((c) => nodeMarkdown(spec, c, depth + 1, { metadata }))].join("\n\n") : own;
 }
 
 /**

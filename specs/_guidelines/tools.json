@@ -510,6 +510,10 @@
                 "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/unit/binding.test.ts::@spec s-tjsv2wv4j2cuapa reads a file of types as the system's code where the globs naming the code do not match it",
+              "skills/tools/test/unit/reindex.test.ts::@spec s-tjsv2wv4j2cuapa reads a file of RuntimeChecks that the stack lists as the system's code, even where the code's glob patterns do not match it"
             ]
           }
         },
@@ -659,7 +663,8 @@
               }
             ],
             "tests": [
-              "skills/tools/test/unit/approved-wording.test.ts::@spec s-t9j29hppag2nren takes a rule's refines links from the commit that added its last approval, and from the files until that commit is made"
+              "skills/tools/test/unit/approved-wording.test.ts::@spec s-t9j29hppag2nren takes a rule's refines links from the commit that added its last approval, and from the files until that commit is made",
+              "skills/tools/test/unit/model.test.ts::@spec s-t9j29hppag2nren lists, for one hook, the project's own tools that rewrite files, from the approved rules that refine the rule on the order of tools and checks, in the order of their lists"
             ]
           }
         },
@@ -959,7 +964,8 @@
                   "skills/tools/test/e2e/cli.test.ts::@spec s-f5rz6b7dhxejjts an unknown command is refused, naming it",
                   "skills/tools/test/e2e/cli.test.ts::@spec s-f5rz6b7dhxejjts sheriff --version prints the version of the SpecSheriff tools",
                   "skills/tools/test/e2e/cli.test.ts::@spec s-f5rz6b7dhxejjts sheriff with no command lists the commands",
-                  "skills/tools/test/e2e/commands.test.ts::@spec s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines",
+                  "skills/tools/test/e2e/commands.test.ts::@spec s-f5rz6b7dhxejjts sheriff markdown, sheriff map and sheriff guide write the export, write the map and print the guidelines",
+                  "skills/tools/test/e2e/commands.test.ts::@spec s-f5rz6b7dhxejjts sheriff refuses the confirm command, which an earlier release accepted",
                   "skills/tools/test/e2e/commands.test.ts::@spec s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and reports it",
                   "skills/tools/test/e2e/commands.test.ts::@spec s-f5rz6b7dhxejjts sheriff show prints a node by its sid or its location",
                   "skills/tools/test/e2e/commands.test.ts::@spec s-f5rz6b7dhxejjts sheriff todos prints every item of the todos with its node",
@@ -971,8 +977,7 @@
                   "skills/tools/test/unit/json-text.test.ts::@spec s-f5rz6b7dhxejjts merges two objects key by key, each key where it was first written",
                   "skills/tools/test/unit/json-text.test.ts::@spec s-f5rz6b7dhxejjts merges two values JSON Schema holds equal into one",
                   "skills/tools/test/unit/json-text.test.ts::@spec s-f5rz6b7dhxejjts refuses two values it cannot merge, naming the key and each one's line and value",
-                  "skills/tools/test/unit/model.test.ts::@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds it, with its part, its file, the node above it and the owners named nearest above it",
-                  "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts gives a field of type one of whose own list an earlier release wrote empty the values the domains add",
+                  "skills/tools/test/unit/model.test.ts::@spec s-f5rz6b7dhxejjts sheriff json prints every node as its file holds it, with its part of the specification, its file, the node above it and the owners that the nearest section or header above it names",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts gives a sid to a node that has none, its location and sid first",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts refuses two values it cannot merge and then writes no file",
@@ -981,11 +986,7 @@
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts rewrites each test naming its node by a bare sid, opening its name or as its mark, and the lists naming it, naming each file",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts rewrites the statuses, the owners and the confirmations an earlier release wrote, keeping every approval",
                   "skills/tools/test/unit/show.test.ts::@spec s-f5rz6b7dhxejjts lists every item of the todos, the newest first, those of one day in the order the specification reads, each with its date, author, text and node, the archive left out",
-                  "skills/tools/test/unit/show.test.ts::@spec s-f5rz6b7dhxejjts refuses a key no node holds",
-                  "skills/tools/test/unit/show.test.ts::@spec s-f5rz6b7dhxejjts shows a node found by its location the same as by its sid",
                   "skills/tools/test/unit/types.test.ts::@spec s-f5rz6b7dhxejjts sheriff types refuses a path a project's generator prints into git's own directory, or naming the repository itself, and then writes no file",
-                  "skills/tools/test/unit/types.test.ts::@spec s-f5rz6b7dhxejjts sheriff types writes no file while a RecordType is a draft, and names each such node",
-                  "skills/tools/test/unit/types.test.ts::@spec s-f5rz6b7dhxejjts sheriff types writes only a file that is missing or holds, line endings aside, anything else than it generates, and names each",
                   "skills/tools/test/unit/types.test.ts::@spec s-f5rz6b7dhxejjts sheriff types writes the files a project's own generator prints, and refuses a path under specs/"
                 ],
                 "todos": [
@@ -1143,6 +1144,12 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-ztseyetus7np6br gathers the names of the parts of the base specification where the project has not chosen the Domains extension: the contracts section, then each top-level section of specs/base by its title",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-ztseyetus7np6br takes the SpecTags of a file whose format the project's own guidelines list as allowing no comments from its entry in the bindings file, never from its start",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-ztseyetus7np6br writes into meta.code each file bound as a whole, by an entry of the bindings file or by SpecTags at its start, and each file in which the first comment or a definition of JSON Schema binds code to the node",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-ztseyetus7np6br writes the lists of a node that is in a cell of a TableRule, and those of the rule listing a project's own check, from the check's code and tests"
                 ]
               }
             },
@@ -1152,7 +1159,7 @@
               "kind": "TextRule",
               "title": "What `sheriff reindex` changes in what an earlier release wrote",
               "status": "approved",
-              "text": "`sheriff reindex` rewrites whatever an earlier release of the SpecSheriff tools wrote or read differently from the release that `sheriff reindex` belongs to. It does so after it has merged the duplicate keys (§s-w5wg69pvvhedsws), and before it validates the files. In every file of the specification and of its archive (§s-f2b5zvc565s242f), it makes the following changes:\n- a node's key `id` becomes `location`;\n- a node's key `rationale` becomes `reason`;\n- the kinds of node `record` and `recordType` become `RecordType`;\n- the kind of node `rule` becomes `TextRule`;\n- the kind of node `domain` becomes `header`;\n- a node's status `\"\"` becomes `draft`;\n- a node's status `checked` becomes `approved`;\n- a node's key `owner`, which holds an email address, becomes `owners`, which holds a list that contains that email address;\n- a RecordType's `fields` and `unknown` become its `schema` (§s-6eb92ddch7shuvu), as follows:\n  - the schema holds `\"type\": \"object\"`, unless the RecordType is a RecordType variant (§s-z3dnru6qqdf9m6j);\n  - each field becomes a property whose schema is the one given for the field's neutral type (§s-4npdup7mjkva69y);\n  - the field's `text` becomes the property's `description`;\n  - each field that the RecordType marks as required is listed in the schema's `required`;\n  - a field that is required only \"where it holds a value\" becomes an optional property;\n  - `unknown: \"refused\"` becomes `unevaluatedProperties: false`, and a RecordType variant loses its `unknown`;\n- the source of a field's values becomes the field's `enumSource` (§s-xfu2gpzddjnmgks);\n- `TextRule.list.declaredIn` (§s-eferktypcj7njt5) is removed where it points to the field `kinds` of the project's extension of the schema (§s-xm8rz4uupb73gu5);\n- `TextRule.list.declaredIn` becomes `TextRule.list.jsonSchema`, and its key `declaration` becomes `pointer`, where it points to any other place in a JSON Schema;\n- `TextRule.list.declaredIn` becomes `TextRule.list.valueList`, and its key `declaration` becomes `symbol`, where it names a declaration in code;\n- a link of the type `supersedes` is removed (§s-sn6au3vcr9uy5pm);\n- a node of the archive loses its sid and every link that points to it (§s-f2b5zvc565s242f, §s-bpdqd9v72wg7vsz).\n\nA renamed key keeps its place among the node's keys.\n\nThe name of a kind of node is also changed in each of these places:\n- the source of a field's values, where those values are the sids of that kind's nodes;\n- the `fields` of the project's extension of the schema, where the name is the key under which those `fields` add properties to that kind.\n\nA bare sid is a word that has the form of a sid and meets one of these conditions:\n- it opens a test's name, followed by a space or by the end of the name;\n- it is the only argument of a test's mark.\n\n`sheriff reindex` also makes the following changes:\n- `specs/_confirmations.jsonl` becomes `specs/_approvals.jsonl`;\n- the key `owner` in each line of `specs/_confirmations.jsonl` becomes `by`;\n- where `specs/_approvals.jsonl` already exists, the lines of `specs/_confirmations.jsonl`, with `owner` renamed to `by`, are appended to it, and `specs/_confirmations.jsonl` is removed;\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, an approved rule of `project.json` that refines the rule on that status (§s-qzthyh7yqvfhsa2) is replaced by an entry that approves the specification (§s-d3nkw9b6mn98vuw);\n- the entry that approves the specification names the owner who last approved the rule that the entry replaces;\n- the rule that the entry replaces is moved to the archive (§s-f2b5zvc565s242f), with the reason \"Replaced by the entry in `sheriff.config.json` that records the specification's approval status\";\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, a draft rule of `project.json` that refines the rule on that status is moved to the archive with the reason \"The specification's approval status is recorded in `sheriff.config.json`\" if it was ever approved, and is deleted otherwise (§s-f2b5zvc565s242f);\n- in a run that archives or deletes a rule of `project.json` that refines the rule on the specification's approval status, regardless of whether the archived or deleted rule is approved or a draft, and where `project.json` is left with no rule that refines the rule on when the tests must pass (§s-x8uzc8z44pwtd3h), the draft rule on when the tests run, which `sheriff init` writes (§s-7unxytshhc4md54), is added under the top node of `project.json`;\n- the key `writesSpecSheriffGuidelines` is removed from `sheriff.config.json` (§s-zefk589ykh37b8u) before the SpecSheriff tools validate that file;\n- in each file that `sheriff.config.json` names as tests of the system's code (§s-hheus6f395ynqvc) or of a project's own check (§s-2fau85dfyyeq66m) or generator (§s-km4x4s26kv7pjze), `@spec ` is inserted before each bare sid.\n\n`sheriff reindex` leaves unchanged a RecordType that holds a field of type `variant`, a field whose values come from the source `domains`, or a field whose own list of values is empty, and names that RecordType and each such field.\n\nWhere a node of the specification is of a kind, or holds a link of a type, that an extension of the guidelines (§s-mbmnsnxenmavu3z) adds, and the project has not chosen that extension (§s-9ttvcwpqkehm58g), `sheriff reindex` names that extension.\n\nWhen `sheriff reindex` adds the draft rule on when the tests run, it names that rule, since the SpecSheriff tools read the rule only after an owner approves it (§s-t9j29hppag2nren).\n\nA renamed key and a renamed kind of node leave a node's fingerprint (§s-f5brvuuu6xmkj6t) unchanged, so the approval of the node's wording stays in force (§s-v4qus7raqnwzneb).\n\n`sheriff reindex` names each file that it rewrites because an earlier release wrote or read that file differently, including the files of the specification.",
+              "text": "`sheriff reindex` rewrites whatever an earlier release of the SpecSheriff tools wrote or read differently from the release that `sheriff reindex` belongs to. It does so after it has merged the duplicate keys (§s-w5wg69pvvhedsws), and before it validates the files. In every file of the specification and of its archive (§s-f2b5zvc565s242f), it makes the following changes:\n- a node's key `id` becomes `location`;\n- a node's key `rationale` becomes `reason`;\n- the kinds of node `record` and `recordType` become `RecordType`;\n- the kind of node `rule` becomes `TextRule`;\n- the kind of node `domain` becomes `header`;\n- the key `code` of a domain's header (§s-yggv9myedprnaa7) is removed;\n- a node's status `\"\"` becomes `draft`;\n- a node's status `checked` becomes `approved`;\n- a node's key `owner`, which holds an email address, becomes `owners`, which holds a list that contains that email address;\n- a RecordType's `fields` and `unknown` become its `schema` (§s-6eb92ddch7shuvu), as follows:\n  - the schema holds `\"type\": \"object\"`, unless the RecordType is a RecordType variant (§s-z3dnru6qqdf9m6j);\n  - each field becomes a property whose schema is the one given for the field's neutral type (§s-4npdup7mjkva69y);\n  - the field's `text` becomes the property's `description`;\n  - each field that the RecordType marks as required is listed in the schema's `required`;\n  - a field that is required only \"where it holds a value\" becomes an optional property;\n  - `unknown: \"refused\"` becomes `unevaluatedProperties: false`, and a RecordType variant loses its `unknown`;\n- the source of a field's values becomes the field's `enumSource` (§s-xfu2gpzddjnmgks);\n- `TextRule.list.declaredIn` (§s-eferktypcj7njt5) is removed where it points to the field `kinds` of the project's extension of the schema (§s-xm8rz4uupb73gu5);\n- `TextRule.list.declaredIn` becomes `TextRule.list.jsonSchema`, and its key `declaration` becomes `pointer`, where it points to any other place in a JSON Schema;\n- `TextRule.list.declaredIn` becomes `TextRule.list.valueList`, and its key `declaration` becomes `symbol`, where it names a declaration in code;\n- a link of the type `supersedes` is removed (§s-sn6au3vcr9uy5pm);\n- each `N` in a link's ratio (§s-bckzdwd35d2nefa) becomes `*`;\n- a node of the archive loses its sid and every link that points to it (§s-f2b5zvc565s242f, §s-bpdqd9v72wg7vsz).\n\nA renamed key keeps its place among the node's keys.\n\nThe name of a kind of node is also changed in each of these places:\n- the source of a field's values, where those values are the sids of that kind's nodes;\n- the `fields` of the project's extension of the schema, where the name is the key under which those `fields` add properties to that kind.\n\nA bare sid is a word that has the form of a sid and meets one of these conditions:\n- it opens a test's name, followed by a space or by the end of the name;\n- it is the only argument of a test's mark.\n\n`sheriff reindex` also makes the following changes:\n- `specs/_confirmations.jsonl` becomes `specs/_approvals.jsonl`;\n- the key `owner` in each line of `specs/_confirmations.jsonl` becomes `by`;\n- where `specs/_approvals.jsonl` already exists, the lines of `specs/_confirmations.jsonl`, with `owner` renamed to `by`, are appended to it, and `specs/_confirmations.jsonl` is removed;\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, an approved rule of `project.json` that refines the rule on that status (§s-qzthyh7yqvfhsa2) is replaced by an entry that approves the specification (§s-d3nkw9b6mn98vuw);\n- the entry that approves the specification names the owner who last approved the rule that the entry replaces;\n- the rule that the entry replaces is moved to the archive (§s-f2b5zvc565s242f), with the reason \"Replaced by the entry in `sheriff.config.json` that records the specification's approval status\";\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, a draft rule of `project.json` that refines the rule on that status is moved to the archive with the reason \"The specification's approval status is recorded in `sheriff.config.json`\" if it was ever approved, and is deleted otherwise (§s-f2b5zvc565s242f);\n- in a run that archives or deletes a rule of `project.json` that refines the rule on the specification's approval status, regardless of whether the archived or deleted rule is approved or a draft, and where `project.json` is left with no rule that refines the rule on when the tests must pass (§s-x8uzc8z44pwtd3h), the draft rule on when the tests run, which `sheriff init` writes (§s-7unxytshhc4md54), is added under the top node of `project.json`;\n- the key `writesSpecSheriffGuidelines` is removed from `sheriff.config.json` (§s-zefk589ykh37b8u) before the SpecSheriff tools validate that file;\n- in each file that `sheriff.config.json` names as tests of the system's code (§s-hheus6f395ynqvc) or of a project's own check (§s-2fau85dfyyeq66m) or generator (§s-km4x4s26kv7pjze), `@spec ` is inserted before each bare sid.\n\n`sheriff reindex` leaves unchanged a RecordType that holds a field of type `variant`, a field whose values come from the source `domains`, or a field whose own list of values is empty, and names that RecordType and each such field.\n\nWhere a node of the specification is of a kind, or holds a link of a type, that an extension of the guidelines (§s-mbmnsnxenmavu3z) adds, and the project has not chosen that extension (§s-9ttvcwpqkehm58g), `sheriff reindex` names that extension.\n\nWhen `sheriff reindex` adds the draft rule on when the tests run, it names that rule, since the SpecSheriff tools read the rule only after an owner approves it (§s-t9j29hppag2nren).\n\nA renamed key and a renamed kind of node leave a node's fingerprint (§s-f5brvuuu6xmkj6t) unchanged, so the approval of the node's wording stays in force (§s-v4qus7raqnwzneb).\n\n`sheriff reindex` names each file that it rewrites because an earlier release wrote or read that file differently, including the files of the specification.",
               "refs": [
                 {
                   "type": "implements",
@@ -1256,6 +1263,14 @@
                 },
                 {
                   "type": "cites",
+                  "to": "s-yggv9myedprnaa7"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-bckzdwd35d2nefa"
+                },
+                {
+                  "type": "cites",
                   "from": "s-f5rz6b7dhxejjts"
                 },
                 {
@@ -1346,14 +1361,32 @@
                     "problem": "Whether the owner agrees to group 7 of stage 2 of task T25, items 51 to 56 and the seven proposals to change agreed nodes that the group holds, shown on one page with each node in full, and to option A in both of the group's questions.",
                     "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
                     "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-26",
+                    "problem": "The schemas of earlier releases accepted a range with no upper bound in a ratio only as `1..N` or `0..N`. Under the owner's ruling of 2026-11-17 on s-bckzdwd35d2nefa, such a range ends in `*`, so a schema that follows that ruling refuses every ratio holding `N`.",
+                    "ruling": "In the owner's name, carrying out the owner's ruling of 2026-11-17: `sheriff reindex` rewrites each `N` in a ratio as `*`, so that no project has to rewrite its ratios by hand.",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-26",
+                    "problem": "The schemas of earlier releases required a domain's header to hold the key `code`. Under the owner's ruling of 2026-11-17 on s-yggv9myedprnaa7, the header no longer says where the domain's code is, so a schema that follows that ruling refuses every header holding `code`.",
+                    "ruling": "In the owner's name, carrying out the owner's ruling of 2026-11-17: `sheriff reindex` removes the key `code` of a domain's header.",
+                    "type": "textual"
                   }
                 ],
                 "tests": [
+                  "skills/tools/test/unit/approve.test.ts::@spec s-gb8s9657a65hqmv reads the confirmations an earlier release wrote, each owner as by, after the lines of the approvals file",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv archives a draft rule on the specification's approval status if the rule has ever been approved, deletes one that was never approved, and records no entry",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv leaves a rule on the specification's approval status unchanged where sheriff.config.json already holds an entry for that status",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv leaves unchanged a RecordType holding a field of type variant, a field whose values the domains add, or a field whose own list of values is empty, and names that RecordType and each such field of the three kinds",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes every link of the type supersedes, which earlier releases wrote, and the schema then refuses one",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes from sheriff.config.json the setting by which an earlier release recognized the repository where the SpecSheriff guidelines are written, and keeps every other setting in its place",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes its sid and every link pointing at it from a node of the archive that an earlier release wrote, and builds no link pointing from it to another node",
-                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv replaces an approved rule of project.json on the specification's approval status with an entry that names the owner who last approved the rule, archives the rule, adds the draft rule on when the tests run, and reports that rule's sid"
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes the key `code` that earlier releases wrote in a domain's header, and rewrites each N that they wrote in a link's ratio as *",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv replaces an approved rule of project.json on the specification's approval status with an entry that names the owner who last approved the rule, archives the rule, adds the draft rule on when the tests run, and reports that rule's sid",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv rewrites a list's declaredIn, in the form that earlier releases wrote, into jsonSchema or valueList, renames the key declaration in them, removes one that points to the field kinds of the project's extension, and names each file that it rewrites",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv rewrites the keys `fields` and `unknown` that an earlier release wrote in a RecordType as its schema in JSON Schema form, in the position of the key `fields`"
                 ]
               }
             },
@@ -1406,6 +1439,10 @@
                     "ruling": "The owner agreed to the node with the example that specsheriff-rule-reviewer proposed, and with the merge covering the project's extension of the schema (\"ok\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/e2e/commands.test.ts::@spec s-w5wg69pvvhedsws sheriff reindex names the merge of a key written twice in a file whose lists of tests it rewrites",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-w5wg69pvvhedsws rewriting the tests that name a node by a bare sid keeps every value of a key written twice in a file it rewrites"
                 ]
               }
             },
@@ -1548,7 +1585,12 @@
                   "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk reports a node whose last approved wording is found neither in the files nor on the branch, and takes the latest wording that an earlier approval records",
                   "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk takes a node's last approved wording from the files of the specification where they hold it",
                   "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk takes a node's last approved wording from the latest commit on the current branch whose files hold it, where the files of the specification hold a different wording",
-                  "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk treats a node that has never been approved as having no approved wording"
+                  "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk treats a node that has never been approved as having no approved wording",
+                  "skills/tools/test/unit/types.test.ts::@spec s-a8fn72xa782wvbk generates from the values gathered beside a field as the files hold them, even where the RecordType's approved wording comes from a commit",
+                  "skills/tools/test/unit/types.test.ts::@spec s-a8fn72xa782wvbk generates the types of a RecordType that is a draft from its last approved wording",
+                  "skills/tools/test/unit/types.test.ts::@spec s-a8fn72xa782wvbk leaves out a RecordType that has never been approved, and names each RecordType that it leaves out because it relies on one that has never been approved",
+                  "skills/tools/test/unit/types.test.ts::@spec s-a8fn72xa782wvbk sheriff types writes only a file that is missing or whose content, line endings aside, differs from what it generates, and names each file it writes",
+                  "skills/tools/test/unit/types.test.ts::@spec s-a8fn72xa782wvbk takes the refines links of a RecordType from the commit that added its last approval"
                 ]
               }
             },
@@ -1598,6 +1640,9 @@
                     "ruling": "The owner agreed (\"ok\") to the agent's proposals: `sheriff types` refuses a generator that prints a path outside the system's code, and one that prints a file whose `sids` name a node outside the model that the generator is handed. The node had been shown in full with both refusals, and the owner's answer agreed to the node as well.",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/binding.test.ts::@spec s-y5yk7eu6h4zrjpr hands a project's generator each node in its last approved wording, and refuses a path that it prints outside the system's code"
                 ]
               }
             },
@@ -1797,6 +1842,9 @@
                     "ruling": "The owner agreed (\"ok\") to the agent's proposal: `sheriff guide` prints the appendix of the tools after the guidelines, under a heading that says the appendix is not part of them. The node had been shown in full with that paragraph, and the owner's answer agreed to the node as well.",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/generated.test.ts::@spec s-jk8v3srrved7ram sheriff guide writes each node of the guidelines as the export does, except its metadata"
                 ]
               }
             },
@@ -1889,6 +1937,13 @@
                     "ruling": "The owner agreed to the node (\"ok\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/e2e/commands.test.ts::@spec s-chsfpkgpmfk4fft sheriff settings prints the settings when no terminal is attached, and, given arguments, records the change that they name as an entry that names the owner",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-chsfpkgpmfk4fft prints the settings that only an owner changes and every extension that the plugin delivers",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-chsfpkgpmfk4fft reads one change from its arguments, and accepts `--confirm` only with `status approved`",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-chsfpkgpmfk4fft records a change only when an owner of the specification makes it, naming that owner, and refuses a change that anyone else makes",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-chsfpkgpmfk4fft records the choice of an extension only where the plugin delivers it"
                 ]
               }
             },
@@ -1974,7 +2029,8 @@
                   "skills/tools/test/unit/config.test.ts::@spec s-d3nkw9b6mn98vuw reads the entries of the approval status, of the strict flag and of the choice of each extension, and gives each setting the value of the last entry that sets it",
                   "skills/tools/test/unit/config.test.ts::@spec s-d3nkw9b6mn98vuw refuses an entry that holds a key other than those of its list, or a value its list does not allow",
                   "skills/tools/test/unit/config.test.ts::@spec s-d3nkw9b6mn98vuw treats the specification as a draft where no entry sets its approval status, and gives the strict flag the default value that the schema of sheriff.config.json specifies where no entry sets the flag",
-                  "skills/tools/test/unit/model.test.ts::@spec s-d3nkw9b6mn98vuw gives the model the approval status that the last entry of approvalStatus sets, whatever the rules of project.json say"
+                  "skills/tools/test/unit/model.test.ts::@spec s-d3nkw9b6mn98vuw gives the model the approval status that the last entry of approvalStatus sets, whatever the rules of project.json say",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-d3nkw9b6mn98vuw appends each entry to the end of its list, and records none that leaves its setting's value as it is"
                 ]
               }
             },
@@ -2063,6 +2119,11 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 6?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/settings.test.ts::@spec s-m59dqwkw2e96wne approves a specification at once where the checks before an approval find nothing",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-m59dqwkw2e96wne judges the working tree as if one commit added every node, the approvals in force, all the code and the tests, and records the approval only once the owner confirms it",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-m59dqwkw2e96wne refuses to approve the specification while the strict flag is on and a check that the flag makes stricter would refuse, naming the command that lists what it finds"
                 ]
               }
             },
@@ -2135,6 +2196,10 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 6?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/settings.test.ts::@spec s-nxgkp988mej79eg refuses to turn the strict flag on while a file of the specification fails the validation against its schema, naming sheriff validate",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-nxgkp988mej79eg refuses to turn the strict flag on while sheriff untagged would list anything, and turns it on once nothing is unbound"
                 ]
               }
             },
@@ -2199,6 +2264,10 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 6?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/settings.test.ts::@spec s-n4ny597qdv9c9bu refuses to withdraw an extension while a node depends on it, naming the node by its file, sid and location, and withdraws it once nothing does",
+                  "skills/tools/test/unit/settings.test.ts::@spec s-n4ny597qdv9c9bu refuses to withdraw an extension while a node has a kind or a type of link that the extension's schema adds, or the project's extension of the schema relies on it"
                 ]
               }
             },
@@ -2267,6 +2336,10 @@
                     "ruling": "The draft carries out option A of question 4.3 of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/binding.test.ts::@spec s-weuyx98r7c923ab lists by file and symbol the system's code and the tests that no SpecTag binds, whether or not the commit changes them",
+                  "skills/tools/test/unit/binding.test.ts::@spec s-weuyx98r7c923ab names the code outside every symbol of a file that no SpecTag binds by the file's name alone"
                 ]
               }
             }
@@ -2471,7 +2544,8 @@
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init has git merge the approvals by union, appending its line to .gitattributes, writing the file where it is missing",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init names each hook of a hooks folder core.hooksPath names by an absolute path, and of a linked worktree's repository",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init names each hook the repository ran from elsewhere before, and sheriff remove each folder of the project's own tools it leaves",
-              "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init refuses an agent it does not know, naming the two it takes",
+              "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init names which of the globs for the code, the globs for the tests and the testCommand an existing sheriff.config.json lacks",
+              "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init refuses an unknown agent, naming the agents it accepts",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init replaces a hook an earlier release of it wrote, line endings aside, naming each",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init replaces no file that differs from what it would write, and names it",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init stages again with the executable mode a hook git's index holds without it",
@@ -2481,9 +2555,9 @@
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init, outside a git repository, appends its line unless the file holds it already, spacing and line endings aside",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init, where it cannot stage a hook, names it and says how to stage it executable",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff remove keeps every other key and hook, and each hook and declaration that differs, naming it",
+              "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff remove removes what sheriff init writes for each agent, keeps specs/ and sheriff.bindings.json and names each, stages nothing, and changes nothing when run again",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff remove takes out a hook an earlier release of sheriff init wrote",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff remove takes out each line of .gitattributes that is the line sheriff init appends, keeping every other line, and the file left holding nothing but blank lines",
-              "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes for both agents, keeps specs/ naming it, stages nothing, and run again changes nothing",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 this repository holds what sheriff init writes, so that running it here writes nothing"
             ]
           }
@@ -2619,10 +2693,14 @@
               }
             ],
             "tests": [
+              "skills/tools/test/e2e/commands.test.ts::@spec s-rpv4fkdqqguptqd sheriff map refuses to run where the project has not chosen the Views extension, naming it",
               "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd draws each node's title in a frame, dotted for a draft and solid for an approved node, a branch standing for no node without one",
+              "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd the map holds the guidelines, the appendix of the tools, the base specification with the contracts first and then the domains row by row, and the technical appendix",
+              "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd the map holds the nodes in the cells of a TableRule under it, each labelled with its location in a frame that shows its status",
               "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd the map's page carries markmap and every library it needs, each with its licence notice, and loads nothing from the network",
               "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd the map's page reads a title as text, so that no title makes it load anything",
-              "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of"
+              "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of",
+              "skills/tools/test/unit/generated.test.ts::@spec s-rpv4fkdqqguptqd writes the map only where the project has chosen the Views extension, and otherwise refuses, naming it"
             ]
           }
         },
@@ -2687,6 +2765,11 @@
                 "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/unit/generated.test.ts::@spec s-jzm6qw992j3bnxt draws a row for each level that a domain's header contains, labelled with its number and its name, and an arrow for each use",
+              "skills/tools/test/unit/generated.test.ts::@spec s-jzm6qw992j3bnxt places first the domains of a row that have no link to another domain of that row, then each after the domains it uses, the domains of a cycle last, the order of their names deciding a tie",
+              "skills/tools/test/unit/generated.test.ts::@spec s-jzm6qw992j3bnxt puts each domain whose header contains none of the listed levels in a row labelled No level, below the rows of the levels, and draws no row for a level that no header contains"
             ]
           }
         },
@@ -2773,15 +2856,16 @@
           ],
           "meta": {
             "tests": [
-              "skills/tools/test/unit/generated.test.ts::@spec s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the export does, except its metadata",
               "skills/tools/test/unit/generated.test.ts::@spec s-k4nqjr96ux7a5m7 the export writes a node with every value its file holds, each that is not text under its key as JSON",
               "skills/tools/test/unit/generated.test.ts::@spec s-k4nqjr96ux7a5m7 the export writes a node's children after it, each under a heading one level deeper than its parent's",
               "skills/tools/test/unit/generated.test.ts::@spec s-k4nqjr96ux7a5m7 the export writes each link with its type, its direction, its ratio and the sid, location and title of the node at the other end",
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 names every link a node makes or receives by its type, its direction, its ratio and the sid, location and title of the node at the other end",
-              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 shows a node alone, without the nodes under it",
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 shows a node found by its sid with every value its file holds, each that is not text under its key as JSON",
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes a list whose members are objects as a table, the property it names first",
-              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field after its JSON, each with the sid, location and title of the node it comes from"
+              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes a node in a cell with its location alone as its heading, and its column, its group and the text cells of its row before its text",
+              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the columns and groups of a TableRule as a table for each group, each node's cell holding its location and its text, and the nodes in its cells after it",
+              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field after the schema's JSON, headed by the field's JSON Pointer, each with the sid, location and title of the node it comes from",
+              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field nested anywhere in a RecordType's schema under the field's JSON Pointer"
             ],
             "decisions": [
               {
@@ -2884,6 +2968,12 @@
                 "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/commands.test.ts::@spec s-e3495enbc5h75c3 sheriff markdown refuses to run where the project has not chosen the Views extension, naming it",
+              "skills/tools/test/unit/generated.test.ts::@spec s-e3495enbc5h75c3 exports every file of the specification to markdown, each node with its sid, text and reason",
+              "skills/tools/test/unit/generated.test.ts::@spec s-e3495enbc5h75c3 exports the files that the project takes from the plugin: those of the guidelines, of each chosen extension and of the appendix of the tools",
+              "skills/tools/test/unit/generated.test.ts::@spec s-e3495enbc5h75c3 writes the export only where the project has chosen the Views extension, and otherwise refuses, naming it"
             ]
           }
         },
@@ -2944,6 +3034,12 @@
                 "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/unit/show.test.ts::@spec s-2dhbqy43tcm6qj2 refuses a key no node holds",
+              "skills/tools/test/unit/show.test.ts::@spec s-2dhbqy43tcm6qj2 shows a node alone, without the nodes under it",
+              "skills/tools/test/unit/show.test.ts::@spec s-2dhbqy43tcm6qj2 shows a node found by its location the same as by its sid",
+              "skills/tools/test/unit/show.test.ts::@spec s-2dhbqy43tcm6qj2 shows a node in a cell of a TableRule, found by its sid or by its location"
             ]
           }
         },
@@ -3222,35 +3318,14 @@
               }
             ],
             "tests": [
-              "skills/tools/test/e2e/codex.test.ts::@spec s-477gtdrkw34dzxw the session start of the agent's hooks for Codex names each setting of the runner codex the user's configuration lacks, with its default, and has the agent ask for them once on each machine",
-              "skills/tools/test/e2e/codex.test.ts::@spec s-477gtdrkw34dzxw the session start of the agent's hooks for Codex turns the git hooks on where core.hooksPath is unset, saying so",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw a changed RecordType is committed before its approval, its types left as they were and their wait reported",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw a commit changing no code passes the hooks, and the export and the map are written",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw a commit goes on where the export and the map cannot be written from the working tree, which reports it",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw after an agent's edit the types are written before the checks run",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw after an agent's edit, a file changed while the checks run is checked at the next edit, not taken as checked",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the agent's hook after an edit runs the checks only where something changed since they last ran",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the agent's hook after an edit tells the agent each node whose status the reindex emptied",
               "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the checks read what is staged, not what the working tree holds beside it",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the pre-commit hook refuses a commit whose specification does not hold together",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the pre-commit hook stops a commit whose staged RecordTypes cannot be generated",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the pre-commit hook writes the types the staged nodes generate into the working tree, stages none of them, and the commit waits for its author to stage them",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the pre-push hook compares every ref the push sends, tags and other branches included, leaving aside the files the working tree ignores",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the pre-push hook refuses a push while the working tree differs from the commit it sends, naming each such file",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the pre-push hook runs the tests by the command the settings name, and refuses a push without one",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-477gtdrkw34dzxw in a repository taking the method the session start names each setting the user's configuration lacks, with its default, and has the agent ask for them once on each machine",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-477gtdrkw34dzxw the plugin's session start names no file of the project's own tools, which run by the interpreter their first line names",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-477gtdrkw34dzxw the session start of the plugin for Claude Code writes each setting the user gave as an option, in any repository, wherever the configuration lacks it or holds another value",
-              "skills/tools/test/unit/config.test.ts::@spec s-477gtdrkw34dzxw reads the command that runs the tests of the system's code"
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-477gtdrkw34dzxw the commit-msg hook refuses a message that leaves out a node the changed code serves"
             ],
             "todos": [
               {
                 "date": "2026-10-28",
                 "by": "the owner",
-                "text": "The export and the map follow a change that reaches the working tree through git — a pull, a merge, a checkout — only at the next edit an agent makes or the next commit; post-merge and post-checkout hooks writing them would close that."
+                "text": "The export that `sheriff markdown` writes and the map that `sheriff map` writes are updated to reflect a change that reaches the working tree through git, such as a pull, a merge or a checkout, only at the next edit that an agent makes or the next commit. Post-merge and post-checkout hooks that write them would close that gap."
               }
             ]
           }
@@ -3337,6 +3412,22 @@
             },
             {
               "type": "cites",
+              "to": "s-bpdqd9v72wg7vsz"
+            },
+            {
+              "type": "cites",
+              "to": "s-sn6au3vcr9uy5pm"
+            },
+            {
+              "type": "cites",
+              "to": "s-hr7j7scmfkkjnws"
+            },
+            {
+              "type": "cites",
+              "to": "s-jau82aq9juv9zzh"
+            },
+            {
+              "type": "cites",
               "from": "s-477gtdrkw34dzxw"
             }
           ],
@@ -3347,11 +3438,38 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-10-26",
+                "problem": "The citation check was run by no hook, so citations it refused reached the main branch through commits every hook had passed, and nothing checked that a citation in a node had a link.",
+                "ruling": "In line with the owner's rulings on citations (§s-bpdqd9v72wg7vsz, §s-sn6au3vcr9uy5pm, §s-hr7j7scmfkkjnws): the pre-commit hook runs the citation check, and the check of the specification refuses a citation with no link.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "Nothing ran sheriff types, so after a change to a data record node the generated types and runtime checks stayed behind the nodes until somebody remembered to run it, while the base requires what is generated from the nodes to be regenerated after every change to them.",
+                "ruling": "The owner: the agent's hooks run sheriff types after every edit, before the checks; the pre-commit hook runs it last, after the checks and whatever they found, on what is staged, its refusal stopping the commit and each file it writes copied into the working tree for the author to stage, nothing staged by the hook.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-10-31",
+                "problem": "The pre-commit hook stopped a commit where the export or the map could not be written from the working tree, as from a specification file broken there and not staged, though the commit holds neither.",
+                "ruling": "Following §s-jau82aq9juv9zzh: a failure to write the export or the map at a commit is reported and stops nothing.",
+                "type": "textual"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-npnmwyt6s3gypwe a changed RecordType is committed before its approval, while its types are still generated from its last approved wording",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-npnmwyt6s3gypwe a commit changing no code passes the hooks, and the export and the map are written only where the Views extension is chosen",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-npnmwyt6s3gypwe a commit proceeds where the Views extension is chosen and the export and the map cannot be written from the working tree, and the hook reports this",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-npnmwyt6s3gypwe the pre-commit hook refuses a commit whose specification sheriff validate refuses",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-npnmwyt6s3gypwe the pre-commit hook runs sheriff binding and sheriff citations only where the check for a key written more than once and the validation against the schema have passed",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-npnmwyt6s3gypwe the pre-commit hook stops a commit if the types cannot be generated from its staged RecordTypes",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-npnmwyt6s3gypwe the pre-commit hook writes the types that the staged nodes generate into the working tree, stages none of them, and stops the commit until its author stages them"
             ]
           }
         },
@@ -3383,11 +3501,21 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-10-31",
+                "problem": "The pre-push hook ran the tests over the working tree, its uncommitted changes and files never added included, while every check reads the commit being made and never what it does not hold.",
+                "ruling": "The owner: the push is refused while the working tree differs from what it sends, files it ignores left aside, rather than the hook setting such changes aside itself; then the tests run in the working tree.",
+                "type": "textual"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-8a5eyy5n5hnsgrs the pre-push hook compares the working tree only with the commits for which the tests run, including the commits that tags and other branches point to, and not counting the files that git ignores",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-8a5eyy5n5hnsgrs the pre-push hook refuses a push while the working tree differs from the commit it sends, naming each such file"
             ]
           }
         },
@@ -3427,11 +3555,29 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-10-30",
+                "problem": "An automated security review found that the plugin's session start turns on whatever hooks `.githooks/` holds in a repository whose root holds `sheriff.config.json`, so a repository someone opens could have git run code it brought, which git never does for a clone until its user turns its hooks on.",
+                "ruling": "The owner: the rule stands, and nothing is built against it. The consent that counts is the trust a user gives a folder in Claude Code, before which a plugin the project declares does not load; a repository taking the method runs its own code at every push anyway, since the pre-push hook runs its tests; and the case left open needs together the plugin installed by the user rather than declared by the project, Claude Code run without its dialog of trust, and a clone nobody looked at.",
+                "type": "procedural"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "A repository whose hooks git's index held without the executable mode, as one set up on Windows did, ran none of its checks in a clone on Linux or macOS, git skipping each hook with a hint, and nothing told its user so.",
+                "ruling": "The owner: the session start names each git hook git's index holds without the executable mode and, where files keep that bit, each whose file lacks it, says how to make it executable on every system, and changes neither a file's mode nor the index.",
+                "type": "textual"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::@spec s-jgcveum8dwdnyzr the session start of the agent's hooks for Codex turns the git hooks on where core.hooksPath is unset, saying so",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-jgcveum8dwdnyzr the plugin's session start names each git hook that is not executable, says how to make it executable, and changes neither the file nor the index",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-jgcveum8dwdnyzr the plugin's session start names no file of the project's own tools, which run with the interpreter that their first line names",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-jgcveum8dwdnyzr the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports a different directory that core.hooksPath names"
             ]
           }
         },
@@ -3487,11 +3633,22 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-11-02",
+                "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
+                "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user.",
+                "type": "textual"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::@spec s-p29yawkkkgk7kxb the session start of the agent's hooks for Codex names each setting of the codex runner that the user's configuration lacks, with its default, and has the agent ask the user about them once on each machine",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-p29yawkkkgk7kxb in a repository that uses the method, the session start names each setting that the user's configuration lacks, with its default, and has the agent ask the user about them once on each machine",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-p29yawkkkgk7kxb the session start of the plugin for Claude Code writes each setting the user set as an option, in any repository, whenever the configuration lacks it or holds a different value"
             ]
           }
         },
@@ -3573,6 +3730,14 @@
             },
             {
               "type": "cites",
+              "to": "s-4kd2pave7vm4hmd"
+            },
+            {
+              "type": "cites",
+              "to": "s-9kfdycuq34beqvs"
+            },
+            {
+              "type": "cites",
               "from": "s-477gtdrkw34dzxw"
             },
             {
@@ -3591,11 +3756,37 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-11-05",
+                "problem": "The after-edit hook ran every step after every shell command, a read-only one included, which took most of a minute on a large repository; it missed PowerShell; and the agent was never told a node its edit had left unchecked. The pre-push hook ran the tests of the system's code alone.",
+                "ruling": "The owner: the checks run after an edit only where the last commit or the working tree changed since they last ran, the regeneration only where `specs/` or the settings changed; PowerShell is read as Bash is; each status emptied is reported; the tests of a project's own checks and generators run before a push with the system's.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-05",
+                "problem": "The rules of how each check is made (§s-4kd2pave7vm4hmd), confirmed by the owner that day, name what this node did not say.",
+                "ruling": "In the owner's name, carrying those rules out: the regeneration after an edit also runs where the code of a project's own generator differs.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-06",
+                "problem": "The agent was told of each node whose status the reindex emptied, which would now take in every section and header whose status follows a changed node.",
+                "ruling": "In line with the owner's ruling on §s-9kfdycuq34beqvs: the agent is told about each node that `sheriff reindex` made a draft, other than a section or a header.",
+                "type": "textual"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-hcmpjmwtgfwzncu after an agent's edit the types are written before the checks run",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-hcmpjmwtgfwzncu after an agent's edit to code alone, the hook reindexes and runs the checks, and writes neither the types nor the export",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-hcmpjmwtgfwzncu after an agent's edit to the code of a project's own generator alone, the hook writes the types and writes neither the export nor the map",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-hcmpjmwtgfwzncu after an agent's edit, a file changed while the checks run is checked at the next edit, not treated as checked",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-hcmpjmwtgfwzncu the agent's hook after an edit runs the checks only where something changed since they last ran",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-hcmpjmwtgfwzncu the agent's hook after an edit tells the agent about each node that the reindex made a draft"
             ]
           }
         },
@@ -3630,6 +3821,10 @@
             {
               "type": "cites",
               "from": "s-477gtdrkw34dzxw"
+            },
+            {
+              "type": "cites",
+              "from": "s-hcmpjmwtgfwzncu"
             }
           ],
           "meta": {
@@ -3833,7 +4028,12 @@
                       "skills/tools/test/unit/reindex.test.ts::@spec s-xzcw3hv4hmxz7h7 the reindex refuses a sid that is not one, since only a sid a node lacks is left out of the validation",
                       "skills/tools/test/unit/reindex.test.ts::@spec s-xzcw3hv4hmxz7h7 the reindex refuses where the schema of an extension refuses the project's extension, naming it, and then writes no file",
                       "skills/tools/test/unit/reindex.test.ts::@spec s-xzcw3hv4hmxz7h7 the reindex validates once it has changed what an earlier release wrote, and leaves out what it writes itself",
+                      "skills/tools/test/unit/schema.test.ts::@spec s-xzcw3hv4hmxz7h7 adds the project's extension after the chosen extensions, so that its fields may set conditions for a kind that a chosen extension adds",
+                      "skills/tools/test/unit/schema.test.ts::@spec s-xzcw3hv4hmxz7h7 adds the schema of the Domains extension only where the project has chosen it: a domain's header and the consumes link",
+                      "skills/tools/test/unit/schema.test.ts::@spec s-xzcw3hv4hmxz7h7 adds the schemas of the chosen extensions in the bytewise order of their names",
                       "skills/tools/test/unit/schema.test.ts::@spec s-xzcw3hv4hmxz7h7 composes a project's extension with the schema: its kinds, the fields it adds to a kind, the properties of a file and of a link",
+                      "skills/tools/test/unit/schema.test.ts::@spec s-xzcw3hv4hmxz7h7 composes the types of link and the definitions that an extension adds",
+                      "skills/tools/test/unit/schema.test.ts::@spec s-xzcw3hv4hmxz7h7 refuses an extension that adds a name the composed schema already holds, naming its file, and stops composing at it",
                       "skills/tools/test/unit/schema.test.ts::@spec s-xzcw3hv4hmxz7h7 refuses an extension that does more than add, and then composes nothing",
                       "skills/tools/test/unit/validate.test.ts::@spec s-xzcw3hv4hmxz7h7 refuses an extension that is no JSON, or whose kind's schema is no JSON Schema, naming it rather than failing on it",
                       "skills/tools/test/unit/validate.test.ts::@spec s-xzcw3hv4hmxz7h7 refuses an extension the schema of an extension refuses, naming it, and takes a project's extension as no copy of the schema"
@@ -3919,6 +4119,9 @@
                         "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-mhsb6fjsq5xn6c9 sheriff validate, sheriff binding, sheriff reindex and sheriff guard refuse to run where the plugin delivers no file for a chosen extension, naming the extension and the version of the SpecSheriff tools, and sheriff reindex writes nothing"
                     ]
                   }
                 },
@@ -4330,6 +4533,7 @@
                       "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w gives the top node of a file of an extension of the guidelines the file's path as its location, and numbers the nodes in the cells of a TableRule after its children, row by row",
                       "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w goes through the files of a part in the code-point order of their paths",
                       "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w numbers the node at the top of a file of contracts like any other node of the base specification, consecutively across the files of contracts",
+                      "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w numbers the nodes of a project's own kind among the rules of their section",
                       "skills/tools/test/unit/reindex.test.ts::@spec s-ygg5kpcxgzq3m7w computes every node's location from where it is"
                     ]
                   }
@@ -4764,6 +4968,49 @@
                 },
                 {
                   "location": "_guidelines/tools/17.1.17",
+                  "sid": "s-68zhvb5vfprznmd",
+                  "kind": "TextRule",
+                  "title": "The bounds of a range in a ratio",
+                  "status": "approved",
+                  "text": "`sheriff validate` refuses a link whose ratio (§s-bckzdwd35d2nefa) holds a range whose lower bound is greater than its upper bound, such as `3..1`. It accepts a range whose upper bound is `*`, whatever its lower bound is. The refusal names the node that declares the link by its file, its sid and its location (§s-kag2m9tzdnduxdx), names the link's target and quotes the ratio.\n\n`sheriff validate` compares the bounds in the ratio of each link declared by a node of the specification in the files that the repository keeps, including a node in a cell of a `TableRule` (§s-5fewsp22mmdz7y6).",
+                  "reason": "The schema of the specification checks how a ratio is written, but cannot compare the two bounds of a range. A range whose lower bound is greater than its upper bound contains no whole number, so the multiplicity it gives can never be satisfied.",
+                  "examples": [
+                    "A term declares a `term-relation` link with the ratio `1:3..1`. `sheriff validate` refuses the link and quotes `1:3..1`. It accepts `1:9..10` and `1:5..*`. The most likely mistake in the check is to compare the bounds as text: compared as text, `9` is greater than `10`, so `1:9..10` would be refused."
+                  ],
+                  "refs": [
+                    {
+                      "type": "implements",
+                      "to": "s-azkbyq7unknavse"
+                    },
+                    {
+                      "type": "cites",
+                      "to": "s-bckzdwd35d2nefa"
+                    },
+                    {
+                      "type": "cites",
+                      "to": "s-kag2m9tzdnduxdx"
+                    },
+                    {
+                      "type": "cites",
+                      "to": "s-5fewsp22mmdz7y6"
+                    }
+                  ],
+                  "meta": {
+                    "decisions": [
+                      {
+                        "date": "2026-11-26",
+                        "problem": "Rule s-bckzdwd35d2nefa says that in a range of a ratio the lower bound is not greater than the upper one, while the schema checks only the notation of a ratio and no check compares the bounds.",
+                        "ruling": "The owner chose to add the check (\"А.\", in answer to \"Добавить ли проверку границ кратности: новую строку таблицы 10.1 и узел описания инструментов в формулировках выше?\"), and agreed to the row and the node as they were shown.",
+                        "type": "textual"
+                      }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-68zhvb5vfprznmd refuses a link whose ratio holds a range whose lower bound is greater than its upper bound, naming the link's target and quoting the ratio, and compares the bounds as numbers"
+                    ]
+                  }
+                },
+                {
+                  "location": "_guidelines/tools/17.1.18",
                   "sid": "s-agc6fb3vx46pc23",
                   "kind": "TextRule",
                   "title": "Values built from other nodes",
@@ -4865,7 +5112,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.18",
+                  "location": "_guidelines/tools/17.1.19",
                   "sid": "s-8esbyvaj2yx5eqf",
                   "kind": "TextRule",
                   "title": "One header for each domain",
@@ -4913,7 +5160,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.19",
+                  "location": "_guidelines/tools/17.1.20",
                   "sid": "s-e2vdhfsndy5stq9",
                   "kind": "TextRule",
                   "title": "A run of words in capitals",
@@ -4972,7 +5219,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.20",
+                  "location": "_guidelines/tools/17.1.21",
                   "sid": "s-zhen42p6mnaxu7w",
                   "kind": "TextRule",
                   "title": "A section with a rule in it",
@@ -5042,7 +5289,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.21",
+                  "location": "_guidelines/tools/17.1.22",
                   "sid": "s-qvgzubkrafadqgf",
                   "kind": "TextRule",
                   "title": "`exempts` links",
@@ -5126,7 +5373,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.22",
+                  "location": "_guidelines/tools/17.1.23",
                   "sid": "s-p3n666zfjdrrw6a",
                   "kind": "TextRule",
                   "title": "`consumes` links",
@@ -5185,7 +5432,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.23",
+                  "location": "_guidelines/tools/17.1.24",
                   "sid": "s-75r4pg4wdqu3gw5",
                   "kind": "TextRule",
                   "title": "A link from the SpecSheriff guidelines to an extension of the guidelines",
@@ -5229,11 +5476,14 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-75r4pg4wdqu3gw5 refuses each link that a rule of the SpecSheriff guidelines declares to a node of an extension of the guidelines, naming the rule, the link's type and its target"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.24",
+                  "location": "_guidelines/tools/17.1.25",
                   "sid": "s-vuujweu57sxsa58",
                   "kind": "TextRule",
                   "title": "Domains that use one another in a cycle",
@@ -5283,7 +5533,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.25",
+                  "location": "_guidelines/tools/17.1.26",
                   "sid": "s-ezq8csd433vj6fj",
                   "kind": "TextRule",
                   "title": "A RecordType that refers to a RecordType outside its part of the system",
@@ -5363,11 +5613,15 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-ezq8csd433vj6fj reports a RecordType that refers to a RecordType of another part of the system, and a fragment of a format that refers to a RecordType outside the contracts section, and lets the change pass",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-ezq8csd433vj6fj where the project has not chosen the Domains extension, reports a reference between RecordTypes of two sections of specs/base whose locations are base/ followed by a single number"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.26",
+                  "location": "_guidelines/tools/17.1.27",
                   "sid": "s-yhe32vrbygjyd66",
                   "kind": "TextRule",
                   "title": "What a `$ref` within a RecordType names",
@@ -5404,11 +5658,14 @@
                         "ruling": "The draft carries out proposal 3.4 of the questions about the base specification, the new row of table 12.12 under which each `$ref` within a RecordType names a RecordType, which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yhe32vrbygjyd66 refuses a $ref within a RecordType's schema, at any depth, whose value is not # followed by the sid of a RecordType, quoting it"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.27",
+                  "location": "_guidelines/tools/17.1.28",
                   "sid": "s-uxmkwbnpgtjzkgv",
                   "kind": "TextRule",
                   "title": "The level in a domain's header",
@@ -5472,7 +5729,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.28",
+                  "location": "_guidelines/tools/17.1.29",
                   "sid": "s-c2r9jndrjbtbsv6",
                   "kind": "TextRule",
                   "title": "What a RecordType variant must agree with",
@@ -5612,11 +5869,22 @@
                         "ruling": "The draft carries out proposals 3.5 and 3.6 of the questions about the base specification (rule 12.6 and rows 12.12.6 and 12.12.7 on the fields that a RecordType variant adds, and the two new rows of table 12.12 on `additionalProperties` and `unevaluatedProperties`), which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/schema.test.ts::@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant whose schema holds additionalProperties or unevaluatedProperties at its top level, or whose answersTo gives a field more than one value",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 passes a RecordType variant that also refines a fragment of a format, and takes the fields that select a variant through refines links",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 refuses a RecordType that has RecordType variants and holds additionalProperties at the top level of its schema",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant declared in a section other than its RecordType's",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant that adds no field, and one that adds a field that has the same name as a field of its RecordType",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant that has no refines link to a RecordType that has fields that select a variant, naming only that condition",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant whose answersTo names fields other than those that select a variant, or names a value that is not one of the field's values",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 refuses each RecordType variant of a RecordType without a chosenBy where the RecordTypes with a chosenBy that it reaches through the fewest refines links name fields that differ from one another, naming those RecordTypes",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c2r9jndrjbtbsv6 refuses two RecordType variants of one RecordType that answer to the same values, each naming the other"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.29",
+                  "location": "_guidelines/tools/17.1.30",
                   "sid": "s-qg2yqec2cgmcg2w",
                   "kind": "TextRule",
                   "title": "`\"type\": \"object\"` in a RecordType's `schema`",
@@ -5664,11 +5932,14 @@
                         "ruling": "The draft carries out proposal 3.7 of the questions about the base specification, the new row of table 12.12 under which the `schema` of each RecordType other than a variant holds `\"type\": \"object\"`, which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/schema.test.ts::@spec s-qg2yqec2cgmcg2w requires \"type\": \"object\" at the top level of the schema of each RecordType other than a RecordType variant"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.30",
+                  "location": "_guidelines/tools/17.1.31",
                   "sid": "s-3anv9qcmx8pwp2w",
                   "kind": "TextRule",
                   "title": "An identifier followed to its end",
@@ -5756,11 +6027,15 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-3anv9qcmx8pwp2w refuses a field whose chain of identifiers has no end, and takes an identifying field through a refines link",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-3anv9qcmx8pwp2w refuses a field with identifierOf, at any depth, whose RecordType names no field that identifies its data records, naming the field by its JSON Pointer"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.31",
+                  "location": "_guidelines/tools/17.1.32",
                   "sid": "s-5nf87c3e3jg9v7c",
                   "kind": "TextRule",
                   "title": "Where the values of a field with `enum` are collected from",
@@ -5893,12 +6168,12 @@
                       }
                     ],
                     "tests": [
-                      "skills/tools/test/unit/validate.test.ts::@spec s-5nf87c3e3jg9v7c refuses a domain's list naming a field holding its own list, and a field naming a kind the schema does not hold"
+                      "skills/tools/test/unit/reindex.test.ts::@spec s-5nf87c3e3jg9v7c collects the sids of the nodes of the kind that enumSource names in the base specification only, including a node in a cell of a TableRule, after the children of that TableRule"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.32",
+                  "location": "_guidelines/tools/17.1.33",
                   "sid": "s-dk3zfkbhc3v6xbp",
                   "kind": "TextRule",
                   "title": "Fields with `enum` that `sheriff validate` accepts",
@@ -5966,11 +6241,15 @@
                         "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you choose A? If so, and you have no remarks on the nodes, the same answer agrees to the whole of group 5.\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/schema.test.ts::@spec s-dk3zfkbhc3v6xbp refuses an enum within a RecordType's schema that holds a value more than once, at any depth",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-dk3zfkbhc3v6xbp refuses a field with enum, at any depth, whose source gives it no value, or whose enumSource names a kind that the project's extension of the schema does not add"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.33",
+                  "location": "_guidelines/tools/17.1.34",
                   "sid": "s-j4t9vusnsajmqdw",
                   "kind": "TextRule",
                   "title": "The meta-schema of a RecordType's `schema`",
@@ -6014,11 +6293,14 @@
                         "ruling": "The draft carries out the answer that decision R8 of the page on RecordType and JSON Schema (accepted by the owner on 2026-11-19) gives to question 4.7 of the questions about the base specification: SpecSheriff's own keywords within a RecordType's `schema` are declared in a vocabulary of its own. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/schema.test.ts::@spec s-j4t9vusnsajmqdw checks enumSource and identifierOf at any depth within a RecordType's schema, as the schema of the RecordType extension defines them, and every other keyword as JSON Schema 2020-12 does"
                     ]
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.34",
+                  "location": "_guidelines/tools/17.1.35",
                   "sid": "s-cdachayybfvg4na",
                   "kind": "TextRule",
                   "title": "An object in a list",
@@ -6079,7 +6361,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.35",
+                  "location": "_guidelines/tools/17.1.36",
                   "sid": "s-6bmnsbskg6en4nf",
                   "kind": "TextRule",
                   "title": "Copies of the files that the SpecSheriff plugin delivers",
@@ -6122,7 +6404,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.36",
+                  "location": "_guidelines/tools/17.1.37",
                   "sid": "s-yprj7d6tnvauggr",
                   "kind": "TextRule",
                   "title": "`implements` and `refines` links in the appendices and in a project's own guidelines",
@@ -6219,7 +6501,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.37",
+                  "location": "_guidelines/tools/17.1.38",
                   "sid": "s-gvafe6bnstwab8b",
                   "kind": "TextRule",
                   "title": "Files of the technical appendix named after the domains",
@@ -6276,7 +6558,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.38",
+                  "location": "_guidelines/tools/17.1.39",
                   "sid": "s-g7auhqvzzbkw644",
                   "kind": "TextRule",
                   "title": "Sections of the technical appendix matched to the base specification",
@@ -6340,7 +6622,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.39",
+                  "location": "_guidelines/tools/17.1.40",
                   "sid": "s-7pk89t8z6wymmj9",
                   "kind": "TextRule",
                   "title": "How a project's own check is run",
@@ -6614,6 +6896,23 @@
                         "ruling": "The draft carries out option A of question 4.3 of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-2x58az67bm6cxq2 counts a change to a SpecTag as a change to the symbol's code",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-2x58az67bm6cxq2 counts a file bound by an entry of the bindings file as changed where the commit changes the entry's SpecTags or the file's code",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-2x58az67bm6cxq2 counts a test whose only change is its sid as a test the commit changes",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-2x58az67bm6cxq2 counts as changed a test whose only change puts @spec before the bare sid it carried, since the commit adds its SpecTag",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-2x58az67bm6cxq2 determines what a commit removes: each symbol of a file that it deletes, with its SpecTags",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-2x58az67bm6cxq2 counts a symbol whose lines the commit deletes as changed, one it deletes whole as removed, and one it writes as added",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-2x58az67bm6cxq2 counts as unchanged a SpecTag whose comment is reformatted around it, and as changed a symbol whose SpecTag's text changes",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-2x58az67bm6cxq2 treats the code outside every symbol, imports aside, as one more symbol, named by its file alone"
+                    ],
+                    "todos": [
+                      {
+                        "date": "2026-11-27",
+                        "by": "the reviewer of a commit, through the agent",
+                        "text": "A git repository nested in the working tree, such as a worktree kept inside the project, is a directory that git does not list as a file of the commit. No rule says that the SpecSheriff tools do not read such a repository as a file, so the test that checked it was removed. A rule on which files the SpecSheriff tools read in the working tree would allow that test to be restored."
+                      }
                     ]
                   }
                 },
@@ -6674,6 +6973,18 @@
                         "ruling": "The draft carries out option B of question 4.4 of the questions about the base specification: a definition of a file in JSON Schema carries its SpecTags in its `$comment`, which JSON Schema 2020-12 makes a comment; the owner agreed to it on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-u6mj5yv8ngnz79v counts as changed a Python line moved out of its block by its indentation alone",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-u6mj5yv8ngnz79v counts as changed a line whose text after // or # is inside a string literal",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-u6mj5yv8ngnz79v counts as changed a symbol in which a name is replaced",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-u6mj5yv8ngnz79v counts as unchanged a symbol whose only change is a comment, a citation's sid in it, or its spacing",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-u6mj5yv8ngnz79v counts as unchanged a symbol whose only change is a line inside a comment of several lines",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-u6mj5yv8ngnz79v compares a file bound as a whole in YAML, CSS, SQL or Bash by its syntax tree, comments and spacing left out",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-u6mj5yv8ngnz79v compares by their text two versions of a file in a language with no grammar, or where the grammar finds a syntax error in either",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-u6mj5yv8ngnz79v counts as unchanged a call re-wrapped onto several lines with a comment added above it, and as changed a renamed identifier",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-u6mj5yv8ngnz79v counts as unchanged a test renamed with its SpecTag kept, and as changed a test whose body changes",
+                      "skills/tools/test/unit/versions.test.ts::@spec s-u6mj5yv8ngnz79v leaves each $comment of a JSON Schema file out of its tree, other than the SpecTags in it"
                     ]
                   }
                 },
@@ -6778,6 +7089,13 @@
                         "ruling": "The draft carries out option A of question 4.3 and option B of question 4.4 of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-9rtrj24myzjvshu refuses a SpecTag naming a node that is not a rule on code the commit adds, and leaves a misplaced SpecTag in code the commit leaves unchanged to the check of code outside the commit",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-9rtrj24myzjvshu refuses a SpecTag that is not above any symbol",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-9rtrj24myzjvshu refuses a symbol of the system's code carrying no SpecTag",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-9rtrj24myzjvshu refuses an entry of the bindings file that the commit adds for a file that is not code other than tests, whose format allows comments, or whose language a description covers",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-9rtrj24myzjvshu refuses code outside every symbol and a file to be bound as a whole that the commit adds and that no SpecTag binds, and a SpecTag after the start of such a file"
                     ]
                   }
                 },
@@ -6826,6 +7144,10 @@
                         "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-36x8amvunmv2kp5 refuses a SpecTag whose sid names no node, on code the commit leaves unchanged, at the start of a file and in the bindings file",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-36x8amvunmv2kp5 refuses a test whose SpecTag names no node, also where the commit leaves the test unchanged"
                     ]
                   }
                 },
@@ -6928,6 +7250,9 @@
                         "ruling": "The draft carries out option A of question 4.3 of the questions about the base specification: the agreed node on SpecTags on the system's code (s-9rtrj24myzjvshu) passes to this check the code outside every symbol of a file that the commit leaves unchanged; the owner agreed to it on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-3xx2eukc8gtd2tx passes code and tests outside the commit that no SpecTag binds while the specification is a draft, warns once while it is approved, and refuses while its strict flag is on"
                     ]
                   }
                 },
@@ -6980,6 +7305,11 @@
                         "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-w93jfnqynfa47pf lets a symbol the commit leaves unchanged keep a SpecTag naming a draft rule",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-w93jfnqynfa47pf refuses a commit that adds, changes or removes code bound to a draft rule, naming the rule and the symbol, and reads the SpecTags of the commit's parent too",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-w93jfnqynfa47pf refuses a test that the commit adds and whose SpecTag names a draft rule"
                     ]
                   }
                 },
@@ -7045,8 +7375,7 @@
                       "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 accepts entries that a commit appends after those of its parent, each naming an owner of the specification",
                       "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 reads the entries of the commit's parent as sheriff reindex would rewrite them; an approved rule of an earlier release is read as an entry",
                       "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 refuses a commit that removes, changes or moves an entry of its parent, and the refusal names the setting, the entries and the specification's owners",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 refuses an entry that names a person who is not an owner of the specification in project.json after the commit, and accepts the entry if the commit makes that person an owner",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 while the commit leaves the specification a draft reports an untagged symbol a commit leaves alone and refuses one it changes; while it leaves it approved refuses both"
+                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 refuses an entry that names a person who is not an owner of the specification in project.json after the commit, and accepts the entry if the commit makes that person an owner"
                     ],
                     "decisions": [
                       {
@@ -7140,6 +7469,10 @@
                     },
                     {
                       "type": "cites",
+                      "to": "s-8xw4mgvpexyvw5q"
+                    },
+                    {
+                      "type": "cites",
                       "from": "s-tjsv2wv4j2cuapa"
                     },
                     {
@@ -7188,12 +7521,19 @@
                         "problem": "Whether the owner agrees to group 2 of stage 2 of task T25, the reviewer's check of a commit and the SpecTag in code and in tests, shown on one page with each node in full.",
                         "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                         "type": "textual"
+                      },
+                      {
+                        "date": "2026-11-11",
+                        "problem": "The decision of 2026-10-31 let a test carry the sid of a term, although a term only introduces an entity and has no tests of its own.",
+                        "ruling": "The owner ruled that a SpecTag binds a rule to the tests and the code that implement it (§s-8xw4mgvpexyvw5q), so the SpecTag of a test names a rule and never a term.",
+                        "type": "textual"
                       }
                     ],
                     "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-utf4mbt7ref8g9c holds the code of a project's own check to a test carrying the sid of the rule listing it, and each of its tests to that sid",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-utf4mbt7ref8g9c in draft mode reports a test carrying no SpecTag that a commit leaves alone and refuses one it adds or changes; in live mode refuses both",
                       "skills/tools/test/unit/binding.test.ts::@spec s-utf4mbt7ref8g9c reads a test carrying a bare sid as carrying no SpecTag, and names sheriff reindex, which writes it",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-utf4mbt7ref8g9c refuses a test that the commit adds and that declares no SpecTag",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-utf4mbt7ref8g9c refuses a test that the commit adds and whose SpecTag names a node that is not a rule, and accepts one naming a RecordType",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-utf4mbt7ref8g9c refuses a test without a SpecTag that the commit changes, and leaves one that it leaves unchanged to the check of code outside the commit",
                       "skills/tools/test/unit/code.test.ts::@spec s-utf4mbt7ref8g9c reads a sid a test carries bare, opening its name or as its mark, as no SpecTag, and keeps it to name"
                     ]
                   }
@@ -7259,6 +7599,9 @@
                         "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-8wp7xm7g3u8gscq refuses a rule whose code, a file bound as a whole included, a commit adds or changes with no test carrying its sid, a skipped test counting"
                     ]
                   }
                 },
@@ -7329,6 +7672,11 @@
                         "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-t383grkn3q68dpf builds the lists of the rule listing a project's own check from the check's code and tests too",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-t383grkn3q68dpf compares a node's list of code by its files alone, in any order",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-t383grkn3q68dpf refuses a node's lists of code and tests that the SpecTags of the code and of the tests do not produce"
                     ]
                   }
                 },
@@ -7387,7 +7735,9 @@
                   ],
                   "meta": {
                     "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-5hb9k2e34dgn284 compares a list whose members are objects by the property it names, and a JSON object by its keys"
+                      "skills/tools/test/unit/binding.test.ts::@spec s-5hb9k2e34dgn284 refuses a list whose values the symbol that valueList names does not declare exactly, naming each value concerned, and a symbol that cannot be found",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-5hb9k2e34dgn284 takes the value of a member that is an object from the property that the list names, and leaves unchecked a list with a member that lacks it",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-5hb9k2e34dgn284 validates each value of a list against the schema at the place that jsonSchema points to, and refuses a value of its enum, reached through $ref, that the list does not hold"
                     ],
                     "decisions": [
                       {
@@ -7452,6 +7802,9 @@
                         "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-czxaqvaesmu3gru refuses a kind of the project's extension that no rule lists, a member that names no kind and a member whose needsCode differs, and accepts a kind listed twice alike"
                     ]
                   }
                 },
@@ -7518,7 +7871,10 @@
                   ],
                   "meta": {
                     "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-nh8b2hjvzasdxmd refuses a location in the files of the tools too, and leaves out those the project's own guidelines list as fixtures"
+                      "skills/tools/test/unit/binding.test.ts::@spec s-nh8b2hjvzasdxmd refuses a location in the files of the tools too, and leaves out those the project's own guidelines list as fixtures",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-nh8b2hjvzasdxmd refuses a location of the new form in a file of the technical appendix, and leaves a location that a longer path or name continues",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-nh8b2hjvzasdxmd refuses a node's location in a file outside the specification",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-nh8b2hjvzasdxmd refuses a node's location in any file the repository keeps outside the specification, a term's and a file's included"
                     ],
                     "decisions": [
                       {
@@ -7677,10 +8033,13 @@
                       }
                     ],
                     "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna compares a generated copy with what the last approved wording of each RecordType generates, while the RecordType is a draft",
                       "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna compares the files a project's own generator prints with what is committed, and refuses one edited by hand",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna holds a generated copy to what the last commit holds while a RecordType is a draft, reporting the node",
                       "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna passes the generated copies the RecordTypes produce, and refuses one edited by hand, left behind or missing",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna refuses a name that cannot be generated, and a second list of the files of the types"
+                      "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna refuses a name that cannot be generated, and a second list of the files of the types",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna refuses a path that two of the project's own generators print with different texts",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-dbk2vyeg8z5jxna refuses each file of a generator whose rule is a draft that the commit changes, adds or removes, and leaves one it keeps",
+                      "skills/tools/test/unit/types.test.ts::@spec s-dbk2vyeg8z5jxna refuses a listed file of another extension, and two rules of the stack each listing files, and then writes nothing"
                     ],
                     "todos": [
                       {
@@ -7820,6 +8179,8 @@
                       }
                     ],
                     "tests": [
+                      "skills/tools/test/unit/binding.test.ts::@spec s-jgejd5rpd9d43pd refuses a rule that loses the implements link through which code and a test were bound to it, and one whose exemption ends",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-jgejd5rpd9d43pd refuses, while the specification is approved, a rule whose approval the commit adds and that lacks code, a test that runs, or both, and checks nothing while it is a draft",
                       "skills/tools/test/unit/code.test.ts::@spec s-jgejd5rpd9d43pd reads a Python test marked to be skipped or expected to fail as skipped",
                       "skills/tools/test/unit/code.test.ts::@spec s-jgejd5rpd9d43pd reads a TypeScript test its framework is told to skip, by its call or by its options, as skipped"
                     ]
@@ -7917,8 +8278,10 @@
                   "meta": {
                     "tests": [
                       "skills/tools/test/unit/binding.test.ts::@spec s-m8nmfsxkcfu7cjp leaves out of the citations the files the project's own guidelines list as fixtures",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-m8nmfsxkcfu7cjp leaves to the check of SpecTags the SpecTags in the system's code and the bindings file, and leaves out binary files",
                       "skills/tools/test/unit/binding.test.ts::@spec s-m8nmfsxkcfu7cjp reads the tests and the documents of the tools for citations where the SpecSheriff guidelines are written",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-m8nmfsxkcfu7cjp refuses a sid in the code, the tests or the documents that names no node, the archive's included, and a number naming a node"
+                      "skills/tools/test/unit/binding.test.ts::@spec s-m8nmfsxkcfu7cjp refuses a SpecTag outside the system's code that names no node or a node that is not a rule of the guidelines",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-m8nmfsxkcfu7cjp refuses a sid that names no node of the model, an archived node's included, and a number naming a node, in every file the repository keeps outside the specification"
                     ],
                     "decisions": [
                       {
@@ -8082,7 +8445,10 @@
                     ],
                     "tests": [
                       "skills/tools/test/unit/gates.test.ts::@spec s-st6td4mua9uqt9z names sheriff reindex where only a test carrying a bare sid names the rule whose code an edit changes",
-                      "skills/tools/test/unit/gates.test.ts::@spec s-st6td4mua9uqt9z reads the tests as the edit would leave the working tree"
+                      "skills/tools/test/unit/gates.test.ts::@spec s-st6td4mua9uqt9z names the file and the location of a node that an edit would leave approved with a wording that no approval records",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-st6td4mua9uqt9z reads the tests as the edit would leave the working tree",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-st6td4mua9uqt9z refuses an edit of sheriff.config.json that changes the specification's approval status, the strict flag or the chosen extensions, naming the list and the command sheriff settings",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-st6td4mua9uqt9z refuses an edit that changes a file bound as a whole to a rule whose SpecTag no test carries"
                     ]
                   }
                 },
@@ -8161,6 +8527,15 @@
                         "ruling": "The draft carries out option A of question 4.3 of the questions about the base specification: the code outside every symbol of a file is bound by SpecTags at the file's start, so a commit that changes it must name the rules that those SpecTags name; the owner agreed to it on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/gates.test.ts::@spec s-qqs2svksmjct753 accepts a message that names a section or a sid of no node",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-qqs2svksmjct753 counts in a merge commit only the code that differs from every parent",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-qqs2svksmjct753 counts the code outside every symbol and a file that the bindings file binds",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-qqs2svksmjct753 excludes the SpecTags on symbols in the tests from what a commit message must name",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-qqs2svksmjct753 ignores git's comment lines, by core.commentChar, and the scissors line with every line after it",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-qqs2svksmjct753 passes a commit message that names every node that the SpecTags on the changed symbols name",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-qqs2svksmjct753 refuses a commit message that leaves out a node that a changed symbol's SpecTag names, naming the node's file, sid and location"
                     ]
                   }
                 },
@@ -8239,11 +8614,10 @@
                   ],
                   "meta": {
                     "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-txbwsthdqhvyzd2 counts no commit whose only change to a file of tests puts @spec before bare sids",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-txbwsthdqhvyzd2 counts the changes one commit makes as made at once",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-txbwsthdqhvyzd2 reads a node's file under every name it had, so that renaming it is no change to the node's text",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-txbwsthdqhvyzd2 reports a node whose code has not caught up with its tests",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-txbwsthdqhvyzd2 reports a node whose tests and code lag behind its text, naming each, and refuses nothing"
+                      "skills/tools/test/unit/gates.test.ts::@spec s-txbwsthdqhvyzd2 counts a wording approved after an earlier reword, and the tests and the code of a node that implements the rule",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-txbwsthdqhvyzd2 counts in a merge commit only what the merge changes relative to every parent",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-txbwsthdqhvyzd2 passes a commit whose message states with the trailer that the rule's implementation needs no change, and checks nothing while the specification is a draft",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-txbwsthdqhvyzd2 refuses, while the specification is approved, a commit that changes a rule's approved wording and leaves its tests and its code as they are, naming the trailer"
                     ],
                     "decisions": [
                       {
@@ -8325,10 +8699,6 @@
                     },
                     {
                       "type": "cites",
-                      "to": "s-hheus6f395ynqvc"
-                    },
-                    {
-                      "type": "cites",
                       "from": "s-rd9nftptjuz6bwv"
                     },
                     {
@@ -8346,18 +8716,6 @@
                   ],
                   "meta": {
                     "decisions": [
-                      {
-                        "date": "2026-11-05",
-                        "problem": "The reviewer was given the commit's change and the nodes it names, and judged the commit as a whole. A tag moved onto a node its symbol does not implement, or a tag naming no node on a symbol carrying the system's logic, passed wherever another named node stated what the code does.",
-                        "ruling": "The owner: the reviewer is given each changed symbol of the system's code with the tags that bind it, and judges each against the nodes its own tags name. A changed symbol is judged whole, not only its changed lines, since a change anywhere in it is a change of the whole symbol.",
-                        "type": "textual"
-                      },
-                      {
-                        "date": "2026-11-05",
-                        "problem": "The system's code came to include its tests, which carry a sid rather than a tag.",
-                        "ruling": "In line with the owner's ruling on §s-hheus6f395ynqvc: the reviewer is given each changed symbol of the system's code other than tests.",
-                        "type": "textual"
-                      },
                       {
                         "date": "2026-11-05",
                         "problem": "The node named a kind of node \"data record\" and a node's place \"address\" or \"id\".",
@@ -8396,8 +8754,20 @@
                       }
                     ],
                     "tests": [
-                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt gives the runner only the symbols of the system's code, telling a symbol with no tag from one whose tag names no node",
-                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt gives the runner the nodes with their reasons and each changed symbol whole with the tags that bind it, and asks it to judge each symbol"
+                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt asks for a verdict on a commit whose message states that a rule's implementation needs no change, and on one that approves a node of the technical appendix implementing a rule of the base specification",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt disregards a finding on a statement that a rule's implementation needs no change while the commit leaves the specification a draft",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt gives the reviewer the change and the wording of the nodes that its message and its SpecTags name, and nothing else",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt gives the reviewer the whole change that the commit makes, including its changes to the specification, the documents and the settings",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt leaves out every file that `sheriff types` writes, including those of a project's generator, names those of them that the commit changes, and keeps the bindings file",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt leaves the files generated from the specification out of the change the reviewer is given",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-vp24dqydygztqbt names each file left out to the reviewer, and counts what a RecordType requires as carried out by the types and runtime checks generated from it"
+                    ],
+                    "todos": [
+                      {
+                        "date": "2026-11-27",
+                        "by": "the agent, after a commit that the reviewer could not review",
+                        "text": "A commit whose change is larger than the reviewer's model can read cannot be reviewed: the runner responds with \"Prompt is too long\", and the review refuses the commit for that reason. Such a commit passes only after it has been split by hand into smaller commits, each of which keeps the lists of tests in each node consistent with the tests that the commit contains. A rule on how the SpecSheriff tools handle a change of that size, or on how they help to split it, would resolve this problem."
+                      }
                     ]
                   }
                 },
@@ -8473,6 +8843,18 @@
                   "meta": {
                     "decisions": [
                       {
+                        "date": "2026-11-05",
+                        "problem": "The reviewer was given the commit's change and the nodes it names, and judged the commit as a whole. A tag moved onto a node its symbol does not implement, or a tag naming no node on a symbol carrying the system's logic, passed wherever another named node stated what the code does.",
+                        "ruling": "The owner: the reviewer is given each changed symbol of the system's code with the tags that bind it, and judges each against the nodes its own tags name. A changed symbol is judged whole, not only its changed lines, since a change anywhere in it is a change of the whole symbol.",
+                        "type": "textual"
+                      },
+                      {
+                        "date": "2026-11-05",
+                        "problem": "The system's code came to include its tests, which carry a sid rather than a tag.",
+                        "ruling": "In line with the owner's ruling on §s-hheus6f395ynqvc: the reviewer is given each changed symbol of the system's code other than tests.",
+                        "type": "textual"
+                      },
+                      {
                         "date": "2026-11-24",
                         "problem": "Whether the owner agrees to group 2 of stage 2 of task T25, the reviewer's check of a commit and the SpecTag in code and in tests, shown on one page with each node in full.",
                         "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
@@ -8490,6 +8872,11 @@
                         "ruling": "The draft carries out option A of question 4.3 of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/gates.test.ts::@spec s-rd9nftptjuz6bwv gives the reviewer each changed file bound as a whole and the changed code outside every symbol, whole, with its lines and the SpecTags at the file's start",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-rd9nftptjuz6bwv gives the runner the changed symbols and tests of the system's code, telling a symbol with no SpecTag from one that carries `@spec none`",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-rd9nftptjuz6bwv gives the runner the nodes with their reasons and each changed symbol in full with the SpecTags that bind it, and asks it to judge each symbol, file and test"
                     ]
                   }
                 },
@@ -8542,6 +8929,9 @@
                         "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/gates.test.ts::@spec s-kgqxg4gunzynwsv gives the reviewer, for each rule that a trailer names, its wording before and after the commit, and the code and the tests bound to it in full, directly or through implements links"
                     ]
                   }
                 },
@@ -8619,7 +9009,17 @@
                         "problem": "Whether the wording of the node changes once the owner has chosen answer A in group 5 of stage 2 of task T25, under which \"a part of the base specification\" names a top-level section of `specs/base/` and the contracts section.",
                         "ruling": "The words \"a part of the base specification\" were replaced by \"a folder of the base specification\", and the words that name the same thing in the same sentences by \"folder\", to carry out the owner's choice of answer A in group 5 (\"A\", 2026-11-24). The node's meaning does not change, so the node stays agreed.",
                         "type": "textual"
+                      },
+                      {
+                        "date": "2026-11-26",
+                        "problem": "Which rules are in the same top-level section of the base specification as a rule that is in no section? The rule on what the reviewer is given (§s-nyh9yk22ba6g77q) gives the reviewer the rules in the same top-level section as each rule that a node of the technical appendix implements.",
+                        "ruling": "The agent, carrying out the owner's ruling of 2026-11-20 on the rule on what the reviewer is given, decided that for a rule in no section, those rules are the other rules of the same folder of the base specification that are in no section either.",
+                        "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/gates.test.ts::@spec s-4bwa4zepd4nwcv8 gives the reviewer each node of the technical appendix that the commit approves and that implements a rule of the base specification, with the rules of the base specification that bear on it",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-4bwa4zepd4nwcv8 gives, for a rule of the base specification in no section, the other rules of its folder that are in no section either"
                     ]
                   }
                 },
@@ -8696,6 +9096,10 @@
                         "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/gates.test.ts::@spec s-7vpsdsy8dpqdy6r asks for a verdict on a commit that changes only comments, and gives the reviewer each changed comment with the code that it describes",
+                      "skills/tools/test/unit/gates.test.ts::@spec s-7vpsdsy8dpqdy6r counts a comment whose text differs only in its SpecTags or its whitespace as unchanged"
                     ]
                   }
                 },
@@ -8816,8 +9220,12 @@
                       }
                     ],
                     "tests": [
-                      "skills/tools/test/e2e/hooks.test.ts::@spec s-b6qdtghnyha3fhk in draft mode the pre-push hook runs no test and compares nothing, and says so",
-                      "skills/tools/test/e2e/hooks.test.ts::@spec s-b6qdtghnyha3fhk the pre-push hook runs the tests where a commit the push sends puts the specification live, and where the push only deletes a ref"
+                      "skills/tools/test/e2e/hooks.test.ts::@spec s-b6qdtghnyha3fhk the pre-push hook names, for each ref that a push creates or updates, the reason why no test ran for it",
+                      "skills/tools/test/e2e/hooks.test.ts::@spec s-b6qdtghnyha3fhk the pre-push hook runs no test where the project's own guidelines do not name a push as the moment at which the tests run, or only a draft rule names it, and names the reason",
+                      "skills/tools/test/e2e/hooks.test.ts::@spec s-b6qdtghnyha3fhk the pre-push hook runs no test where the ref's commit leaves the specification a draft, compares nothing with the working tree, and names the reason for the ref",
+                      "skills/tools/test/e2e/hooks.test.ts::@spec s-b6qdtghnyha3fhk the pre-push hook runs the tests where a ref's commit leaves the specification approved and the project's own guidelines, in their approved wording, name a push as the moment at which the tests run; and runs none where the push only deletes a ref",
+                      "skills/tools/test/e2e/hooks.test.ts::@spec s-b6qdtghnyha3fhk the pre-push hook runs the tests with the command that the settings name, and refuses a push where they name none",
+                      "skills/tools/test/unit/config.test.ts::@spec s-b6qdtghnyha3fhk reads the command that runs the tests of the system's code"
                     ]
                   }
                 }
@@ -9028,13 +9436,9 @@
                   }
                 ],
                 "tests": [
-                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp covers a member by the tag of the class it stands in",
-                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp finds a symbol carrying no tag, and a tag not directly above a symbol",
-                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp lets the first of a run of re-exports say for the whole run that it implements no rule",
-                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp reads a Python tag in the comment lines above a symbol's decorators, and an assignment at the module's level",
-                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp reads a tag in the doc comment directly above a TypeScript symbol, several where it carries several",
-                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp reads nothing of a file in a language no description covers",
-                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp refuses a tag sharing its line with anything but the comment's delimiters"
+                  "skills/tools/test/unit/binding.test.ts::@spec s-5z5gnu7pahr82xp refuses a string of the bindings file that has neither form of a SpecTag",
+                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp refuses a text that opens with @spec but has neither form of a SpecTag, naming the forms",
+                  "skills/tools/test/unit/code.test.ts::@spec s-5z5gnu7pahr82xp refuses each SpecTag on code that carries @spec none together with another SpecTag"
                 ]
               }
             },
@@ -9121,6 +9525,17 @@
                     "ruling": "The draft carries out option A of question 4.3 and option B of question 4.4 of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq covers a member by the SpecTag of the class it is in",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq finds a symbol with no SpecTag, and a SpecTag not directly above a symbol",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq lets the first of a run of re-exports say for the whole run that it implements no rule, and passes no other SpecTag on to the rest of the run",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq reads a Python SpecTag in the comment lines above a symbol's decorators, and one above an assignment at module level",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq reads a SpecTag in the doc comment directly above a TypeScript symbol, and several where the symbol has several",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq reads a file in JSON Schema: its definitions as symbols with the SpecTags in their $comment, the top-level $comment for the code outside them, and $schema as its import",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq reads a run of Python comment lines as one first comment, after a shebang",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq reads the SpecTags of the code outside every symbol in the file's first comment, before any code and after a shebang, and the lines of that code, imports aside",
+                  "skills/tools/test/unit/code.test.ts::@spec s-33fw3ga4ctd94dq refuses a SpecTag sharing its line with anything but the comment's delimiters"
                 ]
               }
             },
@@ -9193,6 +9608,10 @@
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/code.test.ts::@spec s-5qdjyf6t898rsd4 reads no SpecTag after the first line that holds a letter or a digit outside a SpecTag, and none in a file whose format allows no comments",
+                  "skills/tools/test/unit/code.test.ts::@spec s-5qdjyf6t898rsd4 reads the SpecTags at the start of a file in a language that no language description covers, after a shebang or a declaration, as binding the whole file"
                 ]
               }
             },
@@ -9289,6 +9708,10 @@
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/binding.test.ts::@spec s-trwczfskj5zmuft refuses a bindings file that is not valid JSON, or that is not an object whose every key maps to a list of strings",
+                  "skills/tools/test/unit/binding.test.ts::@spec s-trwczfskj5zmuft refuses an entry of the bindings file whose path names no file that the commit leaves, naming the path"
                 ]
               }
             },
@@ -9442,6 +9865,9 @@
                 "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/unit/gates.test.ts::@spec s-7gab4ptjt2khfr5 reads the trailers as git interpret-trailers --parse does, each spelled exactly as given and holding a single sid"
             ]
           }
         },
@@ -9563,6 +9989,10 @@
                 },
                 {
                   "type": "cites",
+                  "from": "s-kq6wmdud9c7j2k9"
+                },
+                {
+                  "type": "cites",
                   "from": "s-ttsc8tpnu46q53s"
                 },
                 {
@@ -9641,18 +10071,6 @@
                     "type": "textual"
                   },
                   {
-                    "date": "2026-11-02",
-                    "problem": "The reviewer ran at the models the tools or the project's settings chose, the same for every clone, though each run is paid for by the user who commits; and at the effort Codex takes by default its verdicts on one and the same change differed from run to run: with Codex CLI 0.166.0, a ChatGPT sign-in and gpt-6-luna, a function no named rule states passed in one run of four at the default effort and in three of three at medium, and was refused in three of three at high and at max.",
-                    "ruling": "The owner: no choice that costs a user tokens is made without their consent. The skills work at the model and the effort the user has chosen in their session; every run outside it, now the reviewer's, at the model and the effort the user has confirmed on their machine, offered first at defaults, one model for each agent at an effort set by the task: opus at high falling back to sonnet, since a model above opus is not worth its cost to the user here and Anthropic itself now recommends opus over fable, and the model Codex chooses at high. Each user confirms on their own machine; where they have not, the defaults run with a notice at every commit.",
-                    "type": "textual"
-                  },
-                  {
-                    "date": "2026-11-05",
-                    "problem": "The rewrite of the tools lost what kept the session that wrote the code away from the runner. Every variable of the environment reached the runner, among them those an agent sets for its session and git's, which the hooks point at the repository. On Windows the CLI ran through a shell, and the time limit ended the shell while the CLI went on. Only the runner `codex` held its answer to the schema of the verdict, and an answer passing the commit with findings passed it.",
-                    "ruling": "The runner's environment holds only the variables a list allows, the exact names settled when the code is written, after trial runs of both runners. The CLI is started as a program, never through a shell. Every runner is given the schema of the verdict. An answer that contradicts itself is read as one that cannot be read.",
-                    "type": "textual"
-                  },
-                  {
                     "date": "2026-11-07",
                     "problem": "The node was written before the rules of one thought to a sentence (s-juucyammgq4shq8) and of what is applied together (s-6j8ystpj2yzcchq), and before the names of the method were settled.",
                     "ruling": "In the owner's name, carrying out those rules and the names the owner settled on 2026-11-07: the wording rewritten, its meaning unchanged.",
@@ -9670,26 +10088,12 @@
                     "date": "2026-10-27",
                     "by": "the owner",
                     "text": "Describe the Gemini CLI as a runner, then any service speaking the OpenAI-compatible API, which covers models run locally."
-                  },
-                  {
-                    "date": "2026-11-06",
-                    "by": "the agent, from a review of the code of the tools",
-                    "text": "On Windows, an npm-installed Codex CLI is started as Node running its script, which starts the native Codex as a child of its own; the time limit ends Node and leaves that child running and billing. End the whole tree of processes the runner started."
                   }
                 ],
                 "tests": [
                   "skills/tools/test/e2e/codex.test.ts::@spec s-xr5xxa9cxf2mq5u the build writes beside each plugin's release the agent whose runner its tools take",
-                  "skills/tools/test/unit/config.test.ts::@spec s-xr5xxa9cxf2mq5u reads the reviewer's runner and time limit from the project's settings, twenty minutes unless set, and no model or effort",
-                  "skills/tools/test/unit/config.test.ts::@spec s-xr5xxa9cxf2mq5u takes the runner of the plugin whose tools run unless the settings name one, and claude for tools naming no agent",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u hands a runner only the variables of the environment it needs, none an agent or git sets",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u holds the Claude Code CLI's answer to the schema of the verdict",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u reads an answer that passes with a finding, or refuses with none, as one that cannot be read",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u reads each runner's settings from the user's git configuration, an empty one confirmed, and takes the default of each it lacks",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u runs the Codex CLI in an empty directory with a Codex home of its own holding a copy of the user's sign-in and nothing else, deleted after the run",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u runs the reviewer at the settings read, and with every review held at a default names each setting it took and how the user confirms it",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u starts the Claude Code CLI in print mode with no tools, settings, memory or session, at the model, the effort and the fallback model given",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u starts the Codex CLI in codex exec, read-only and unkept, with no skill and every tool a setting reaches turned off, its answer held to the verdict's schema",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-xr5xxa9cxf2mq5u starts the program an npm command script starts, with the arguments it gives, rather than the script through a shell"
+                  "skills/tools/test/unit/config.test.ts::@spec s-xr5xxa9cxf2mq5u reads the reviewer's runner from the project's settings, and reads no model or effort from them",
+                  "skills/tools/test/unit/config.test.ts::@spec s-xr5xxa9cxf2mq5u takes the runner of the plugin whose tools run unless the settings name one, and claude for tools naming no agent"
                 ]
               }
             },
@@ -9733,6 +10137,12 @@
               "meta": {
                 "decisions": [
                   {
+                    "date": "2026-11-05",
+                    "problem": "The rewrite of the tools lost what kept the session that wrote the code away from the runner. Every variable of the environment reached the runner, among them those an agent sets for its session and git's, which the hooks point at the repository. On Windows the CLI ran through a shell, and the time limit ended the shell while the CLI went on. Only the runner `codex` held its answer to the schema of the verdict, and an answer passing the commit with findings passed it.",
+                    "ruling": "The runner's environment holds only the variables a list allows, the exact names settled when the code is written, after trial runs of both runners. The CLI is started as a program, never through a shell. Every runner is given the schema of the verdict. An answer that contradicts itself is read as one that cannot be read.",
+                    "type": "textual"
+                  },
+                  {
                     "date": "2026-11-24",
                     "problem": "Whether the owner agrees to group 2 of stage 2 of task T25, the reviewer's check of a commit and the SpecTag in code and in tests, shown on one page with each node in full.",
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
@@ -9743,6 +10153,22 @@
                     "problem": "Whether the owner agrees to group 3 of stage 2 of task T25, items 27 to 32 and the owner's ruling of 2026-11-24 on comments and whitespace, shown on one page with each node in full.",
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                     "type": "textual"
+                  }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/gates.test.ts::@spec s-68ds99w8wd67aae holds the Claude Code CLI's answer to the schema of the verdict",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-68ds99w8wd67aae passes where the reviewer passes, and refuses, naming the nodes, the file and the line of each finding",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-68ds99w8wd67aae reads a verdict that passes with findings on comments alone, each a warning, and one that refuses with a finding under a judgement other than the one on comments",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-68ds99w8wd67aae reads an answer that passes with a finding on code, or refuses with none, as one that cannot be read",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-68ds99w8wd67aae refuses the commit where the review cannot be carried out, and says why",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-68ds99w8wd67aae requires the Codex CLI's answer to match the schema of the verdict, and reads it from the file that the CLI writes",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-68ds99w8wd67aae the schema of the verdict allows the verdicts \\\"pass\\\" and \\\"refuse\\\", and requires each finding to name its nodes, its problem, its judgement, its file and its line"
+                ],
+                "todos": [
+                  {
+                    "date": "2026-11-27",
+                    "by": "the agent, after a commit that the reviewer could not review",
+                    "text": "Where the runner's CLI fails, the review's refusal shows the beginning of the CLI's raw output. For the Claude Code CLI, that output is a JSON object that gives the reason for the failure, such as \"Prompt is too long\", in its `result` field, and this reason may lie beyond the part shown. A rule that makes the refusal name the reason that the runner's CLI gives would tell whoever commits why the review failed."
                   }
                 ]
               }
@@ -9828,11 +10254,24 @@
               "meta": {
                 "decisions": [
                   {
+                    "date": "2026-11-05",
+                    "problem": "The rewrite of the tools lost what kept the session that wrote the code away from the runner. Every variable of the environment reached the runner, among them those an agent sets for its session and git's, which the hooks point at the repository. On Windows the CLI ran through a shell, and the time limit ended the shell while the CLI went on. Only the runner `codex` held its answer to the schema of the verdict, and an answer passing the commit with findings passed it.",
+                    "ruling": "The runner's environment holds only the variables a list allows, the exact names settled when the code is written, after trial runs of both runners. The CLI is started as a program, never through a shell. Every runner is given the schema of the verdict. An answer that contradicts itself is read as one that cannot be read.",
+                    "type": "textual"
+                  },
+                  {
                     "date": "2026-11-24",
                     "problem": "Whether the owner agrees to group 2 of stage 2 of task T25, the reviewer's check of a commit and the SpecTag in code and in tests, shown on one page with each node in full.",
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/gates.test.ts::@spec s-avvnasjhsfkgajh passes a runner only the environment variables that it needs, and none that an agent or git sets",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-avvnasjhsfkgajh starts the Claude Code CLI in an empty directory, with the system prompt that sheriff review writes and with none of the settings, servers, commands, tools, sessions or variables of the session that made the change",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-avvnasjhsfkgajh starts the Claude Code CLI with no tools, settings, MCP servers or slash commands, and with the reviewer's own system prompt",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-avvnasjhsfkgajh starts the Codex CLI with every tool that a setting can turn off turned off, with the reviewer's own system prompt, and with the input on standard input",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-avvnasjhsfkgajh starts the program that an npm command script starts, with the arguments that the script passes, rather than starting the script through a shell"
                 ]
               }
             },
@@ -9874,6 +10313,10 @@
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/config.test.ts::@spec s-wgedv32rdaqca9k reads the time limit of a review from review.minutes in the project's settings, twenty minutes unless set",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-wgedv32rdaqca9k ends the whole tree of the runner's processes when the review runs out of time"
                 ]
               }
             },
@@ -9915,6 +10358,9 @@
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/gates.test.ts::@spec s-3wh8uhgn9jr2k74 starts the Claude Code CLI in print mode, without keeping a session, with the given model, reasoning effort and fallback model"
                 ]
               }
             },
@@ -9963,6 +10409,10 @@
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/gates.test.ts::@spec s-u2n5hwwqkb6zk4z runs the Codex CLI with a Codex home of its own holding a copy of the user's sign-in credentials and nothing else, which is deleted after the run",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-u2n5hwwqkb6zk4z starts the Codex CLI with the codex exec command, in a read-only sandbox, without keeping a session, with no skills and with the given model and reasoning effort"
                 ]
               }
             },
@@ -10038,11 +10488,22 @@
               "meta": {
                 "decisions": [
                   {
+                    "date": "2026-11-02",
+                    "problem": "The reviewer ran at the models the tools or the project's settings chose, the same for every clone, though each run is paid for by the user who commits; and at the effort Codex takes by default its verdicts on one and the same change differed from run to run: with Codex CLI 0.166.0, a ChatGPT sign-in and gpt-6-luna, a function no named rule states passed in one run of four at the default effort and in three of three at medium, and was refused in three of three at high and at max.",
+                    "ruling": "The owner: no choice that costs a user tokens is made without their consent. The skills work at the model and the effort the user has chosen in their session; every run outside it, now the reviewer's, at the model and the effort the user has confirmed on their machine, offered first at defaults, one model for each agent at an effort set by the task: opus at high falling back to sonnet, since a model above opus is not worth its cost to the user here and Anthropic itself now recommends opus over fable, and the model Codex chooses at high. Each user confirms on their own machine; where they have not, the defaults run with a notice at every commit.",
+                    "type": "textual"
+                  },
+                  {
                     "date": "2026-11-24",
                     "problem": "Whether the owner agrees to group 2 of stage 2 of task T25, the reviewer's check of a commit and the SpecTag in code and in tests, shown on one page with each node in full.",
                     "ruling": "The owner agreed to the group (\"agreed\", in answer to \"Do you agree to group 2?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/gates.test.ts::@spec s-tnz9zgqx8c629a7 passes no flag for an empty setting, leaving its value to the runner's CLI",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-tnz9zgqx8c629a7 reads each runner's settings from the user's git configuration, counting an empty setting as confirmed, and uses the default of each setting that the configuration lacks",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-tnz9zgqx8c629a7 runs the reviewer with the settings it has read, and in every review that ran with a default names each setting whose default it used and how the user confirms that setting"
                 ]
               }
             }
@@ -10235,16 +10696,9 @@
                   }
                 ],
                 "tests": [
-                  "skills/tools/test/e2e/commands.test.ts::@spec s-v4qus7raqnwzneb sheriff approve approves as the email git is configured with, and refuses where that is none of the node's owners",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb appends nothing where the latest line for the node and that wording is already an approval, and only sets the status",
                   "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb appends one line per node, naming its sid, its fingerprint and, as by, who approves it, and sets it approved",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb keeps the approvals one JSON object to a line, appended",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb lets anyone withdraw an approval by a line of its own naming them as by, makes the node a draft, and the latest line decides",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb reads the confirmations an earlier release wrote, each owner as by, where the approvals stand in no file of their own yet",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, approving or withdrawing, and writes nothing",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb refuses a section and a domain's header, whose status is built, approving or withdrawing",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb withdraws the approval of each wording of the node for which one stands, whether the node holds that wording or not, a line for each, and appends nothing where none stands"
+                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb gives a node's last approval: the approval in force of its current wording, else the latest approval of any of its wordings, even one withdrawn since",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb keeps the approvals one JSON object to a line, appended"
                 ]
               }
             },
@@ -10254,7 +10708,7 @@
               "kind": "TextRule",
               "title": "The fingerprint of a node's wording",
               "status": "approved",
-              "text": "The fingerprint of a node's wording (§s-5ah25f6gy99panq) is the SHA-256 hash of the UTF-8 bytes of a single string. The hash is written as 64 lowercase hexadecimal digits.\n\nThat string is the text that `JSON.stringify` writes, with no whitespace outside string values, for an object built from the node. In that text, the keys of each object are sorted by their UTF-16 code units. Each list keeps the order of its items.\n\nThe object holds every property of the node except the following:\n- its `location`, its `sid` and its `status`;\n- its links and its `meta`;\n- the nodes under it;\n- the values gathered beside a field (§s-ju5vcanbjph7mgh), since `sheriff reindex` builds those values from other nodes (§s-ztseyetus7np6br);\n- the `archived` field of a node of the archive (§s-f2b5zvc565s242f);\n- in a `TableRule` (§s-5fewsp22mmdz7y6), each cell that holds a node, since that node has a fingerprint of its own.\n\nThe object holds the node's `kind`, except where the kind is `TextRule` or its earlier name, `rule`. So an approval recorded before the kind became part of the wording stays in force for a rule of that kind. A change of a node's kind to or from `TextRule` still changes the fingerprint.\n\nFor a node in a cell of a `TableRule`, the object also holds the key `cell`. Its value is an object that holds the following, which are part of the node's wording:\n- `column`, the heading of the node's column;\n- `group`, the heading of the node's group, which is `null` where the table's rows are not grouped;\n- `row`, an object that holds the text of each cell in the node's row that holds text, under the key of that cell's column.\n\nThe following keys and kinds of node, which `sheriff reindex` renames in what an earlier release wrote (§s-gb8s9657a65hqmv), appear in the object under their earlier names:\n- the node's `reason`, under the key `rationale`;\n- a `TextRule.list.jsonSchema` or a `TextRule.list.valueList` (§s-eferktypcj7njt5), in a `TextRule.list` that holds only one of the two, under the key `declaredIn`, with the `pointer` of the `jsonSchema` or the `symbol` of the `valueList` under the key `declaration`;\n- the node's `kind`: `RecordType` as `recordType` and `header` as `domain`;\n- the name of a kind of node in the source of a field's values (§s-xfu2gpzddjnmgks), where those values are the sids of that kind's nodes: `TextRule` as `rule`, `RecordType` as `recordType`, and `header` as `domain`.\n\nFor a field whose values come from the source `domains` (§s-gb8s9657a65hqmv), earlier releases wrote an empty list of its own values under the key `values`. Where such a field has no list of its own values, the field appears in the object with an empty list under the key `values`.",
+              "text": "The fingerprint of a node's wording (§s-5ah25f6gy99panq) is the SHA-256 hash of the UTF-8 bytes of a single string. The hash is written as 64 lowercase hexadecimal digits.\n\nThat string is the text that `JSON.stringify` writes, with no whitespace outside string values, for an object built from the node. In that text, the keys of each object are sorted by their UTF-16 code units. Each list keeps the order of its items.\n\nThe object holds every property of the node except the following:\n- its `location`, its `sid` and its `status`;\n- its links and its `meta`;\n- the nodes under it;\n- the values gathered beside a field (§s-ju5vcanbjph7mgh), since `sheriff reindex` builds those values from other nodes (§s-ztseyetus7np6br);\n- its `owners`, and its `owner`, which an earlier release wrote instead of it (§s-gb8s9657a65hqmv), since an approval survives a change to who the node's owners are;\n- the index of the sections in a domain's header, since `sheriff reindex` builds that index from the sections (§s-2r59txnms5serdr);\n- the `archived` field of a node of the archive (§s-f2b5zvc565s242f);\n- in a `TableRule` (§s-5fewsp22mmdz7y6), each cell that holds a node, since that node has a fingerprint of its own.\n\nThe object holds the node's `kind`, except where the kind is `TextRule` or its earlier name, `rule`. So an approval recorded before the kind became part of the wording stays in force for a rule of that kind. A change of a node's kind to or from `TextRule` still changes the fingerprint.\n\nFor a node in a cell of a `TableRule`, the object also holds the key `cell`. Its value is an object that holds the following, which are part of the node's wording:\n- `column`, the heading of the node's column;\n- `group`, the heading of the node's group, which is `null` where the table's rows are not grouped;\n- `row`, an object that holds the text of each cell in the node's row that holds text, under the key of that cell's column.\n\nThe following keys and kinds of node, which `sheriff reindex` renames in what an earlier release wrote (§s-gb8s9657a65hqmv), appear in the object under their earlier names:\n- the node's `reason`, under the key `rationale`;\n- a `TextRule.list.jsonSchema` or a `TextRule.list.valueList` (§s-eferktypcj7njt5), in a `TextRule.list` that holds only one of the two, under the key `declaredIn`, with the `pointer` of the `jsonSchema` or the `symbol` of the `valueList` under the key `declaration`;\n- the node's `kind`: `RecordType` as `recordType` and `header` as `domain`;\n- the name of a kind of node in the source of a field's values (§s-xfu2gpzddjnmgks), where those values are the sids of that kind's nodes: `TextRule` as `rule`, `RecordType` as `recordType`, and `header` as `domain`.\n\nFor a field whose values come from the source `domains` (§s-gb8s9657a65hqmv), earlier releases wrote an empty list of its own values under the key `values`. Where such a field has no list of its own values, the field appears in the object with an empty list under the key `values`.",
               "refs": [
                 {
                   "type": "implements",
@@ -10290,6 +10744,14 @@
                 },
                 {
                   "type": "cites",
+                  "to": "s-2r59txnms5serdr"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-t5uw8zfxzhfdg86"
+                },
+                {
+                  "type": "cites",
                   "from": "s-gb8s9657a65hqmv"
                 },
                 {
@@ -10315,6 +10777,12 @@
                     "problem": "Whether a draft that only carries out the owner's answers to the questions about the base specification is shown to the owner before it is agreed to.",
                     "ruling": "The draft carries out option A of question 4.1 of the questions about the base specification, under which a node's kind is part of the wording that an approval covers (s-5ah25f6gy99panq); the owner agreed to it on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                     "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-27",
+                    "problem": "The rule did not list a node's owners or the index of the sections in a domain's header among what the fingerprint leaves out. The code left both out, and the base rule on approvals says that an approval survives a change to who a node's owners are and to what is built into the node from other nodes (§s-5ah25f6gy99panq).",
+                    "ruling": "The agent, applying §s-5ah25f6gy99panq after the independent reviewer of a commit found the gap, added both to the list and approved the rule on behalf of one of its owners (§s-t5uw8zfxzhfdg86).",
+                    "type": "textual"
                   }
                 ],
                 "tests": [
@@ -10324,7 +10792,7 @@
                   "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t includes a node's kind in its fingerprint, except a TextRule's, and reads a kind that an earlier release wrote under its earlier name as the same kind",
                   "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t keeps the reason under its earlier name in the fingerprint, so an approval given before the rename stands",
                   "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves each cell holding a node out of a TableRule's fingerprint, and gives a node in a cell its column, its group and the text cells of its row",
-                  "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves out of the fingerprint only the values gathered in a field's x-enumSource, keeps a property named gathered, and hashes the kind of node that x-enumSource names under that kind's earlier name",
+                  "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves out of the fingerprint only the values gathered in a field's enumSource, keeps a property named gathered, and hashes the kind of node that enumSource names under that kind's earlier name",
                   "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves the values gathered beside a field out of the fingerprint",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5brvuuu6xmkj6t keeps an approval through the renaming of the kind a field's values come from"
                 ]
@@ -10399,6 +10867,14 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 6?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/e2e/commands.test.ts::@spec s-upkur92ry6332y5 sheriff approve approves as the email git is configured with, and refuses where that is none of the node's owners",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-upkur92ry6332y5 appends nothing where the latest line for the node and that wording is already an approval, and only sets the status",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-upkur92ry6332y5 approves each node in the cells of a TableRule together with the table, after it, in the order of the rows and the columns",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-upkur92ry6332y5 refuses a node of the SpecSheriff guidelines or of a chosen extension outside the repository where they are written, and writes nothing",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-upkur92ry6332y5 refuses a sid no node holds, and a node no owner is named for",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-upkur92ry6332y5 refuses to approve a section and a domain's header, whose approval status is derived"
                 ]
               }
             },
@@ -10467,6 +10943,14 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 6?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/e2e/commands.test.ts::@spec s-xybjqp2rxh8gszf sheriff approve --withdraw records the withdrawal under the email address configured in git",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-xybjqp2rxh8gszf lets anyone withdraw an approval by a line of its own naming them as by, makes the node a draft, and the latest line decides",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-xybjqp2rxh8gszf refuses to withdraw the approval of a node of the SpecSheriff guidelines or of a chosen extension outside the repository where they are written",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-xybjqp2rxh8gszf refuses to withdraw the approval of a section and of a domain's header, whose approval status is derived",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-xybjqp2rxh8gszf withdraws only the approvals of a TableRule's own wordings and leaves the nodes in its cells approved",
+                  "skills/tools/test/unit/approve.test.ts::@spec s-xybjqp2rxh8gszf withdraws the approval of each wording of the node for which one stands, whether the node holds that wording or not, a line for each, and appends nothing where none stands"
                 ]
               }
             }
@@ -10544,10 +11028,10 @@
           "meta": {
             "tests": [
               "skills/tools/test/e2e/codex.test.ts::@spec s-4mej6ccn7xu3d3p the session start of the agent's hooks for Codex names each git hook an earlier release of sheriff init wrote",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p a git hook runs the tools of the higher release where it finds both plugins', those of the plugin for Claude Code where the two are equal, and either where it finds one",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p a git hook that finds Node.js missing or older than the version the tools need runs the project's own tools, lets the commit through unless one of them fails, and says why no SpecSheriff check ran",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p a git hook that finds both plugins runs the tools of the higher release, or of either plugin where the two releases are equal, and one that finds a single plugin runs its tools",
               "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets the commit through, keeps the git hooks on, and says at every commit that no check of SpecSheriff ran",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p each git hook sheriff init writes holds the lookup of the tools of both plugins and a call to the script for that hook, and nothing else",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p each git hook that sheriff init writes contains the code that finds the tools of both plugins, a call to the script for that hook, and a call that runs the project's own tools where the SpecSheriff tools cannot run",
               "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p the session start names each git hook an earlier release of sheriff init wrote, saying that sheriff init replaces it",
               "skills/tools/test/e2e/plugin.test.ts::@spec s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing"
             ],
@@ -10666,8 +11150,9 @@
               }
             ],
             "tests": [
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-n4m5zvh96yb299p runs the project's own tools in git's own environment, the locale they are listed in held to the listing",
-              "skills/tools/test/e2e/hooks.test.ts::@spec s-n4m5zvh96yb299p runs the project's own tools of a hook after the checks, names a file it does not run, and fails where one fails or changes the staged files"
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-n4m5zvh96yb299p runs first, in the order in which they are listed, the tools that the project's own guidelines list as rewriting files, which may change what is staged, and names a listed path at which no tool is found",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-n4m5zvh96yb299p runs the project's own tools for a hook, names a file in their folder that it does not run, and fails where one of the tools fails, changes what is staged or changes a file of the working tree",
+              "skills/tools/test/e2e/hooks.test.ts::@spec s-n4m5zvh96yb299p runs the project's own tools in git's own environment, the locale they are listed in held to the listing"
             ]
           }
         },
@@ -10809,12 +11294,11 @@
             ],
             "tests": [
               "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 spec-init offers each setting of the runner the configuration lacks and was not asked for, writing what the user answers and marking it asked; the skills set no model and no effort",
               "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative path of its directory",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 the plugin carries the SpecSheriff guidelines, each extension of them, the appendix of the tools, their schemas, and the SpecSheriff tools",
               "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 the plugin declares each setting of the runner claude as an option naming its default and taking no default value",
               "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one run when a session starts",
-              "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, spec-init runs sheriff init, and spec-remove sheriff remove, offering to remove the plugin"
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries"
             ]
           }
         },
@@ -10886,11 +11370,10 @@
           "reason": "An agent can use a skill only where the skill is installed. Codex installs a plugin only for the user who adds it, so each user has to install the plugin for Codex CLI. Each release of that plugin holds the same skills and SpecSheriff tools as the release of the plugin for Claude Code that has the same version, so that a project's users follow the same procedures and are held to the same checks whichever agent each runs.",
           "meta": {
             "tests": [
-              "skills/tools/test/e2e/codex.test.ts::@spec s-2pdy9gw2jrjvfb4 spec-init offers each setting of the runner codex the configuration lacks and was not asked for, writing what the user answers and marking it asked",
               "skills/tools/test/e2e/codex.test.ts::@spec s-2pdy9gw2jrjvfb4 the guide of the plugin for Codex CLI gives the commands that install it on a machine",
               "skills/tools/test/e2e/codex.test.ts::@spec s-2pdy9gw2jrjvfb4 the marketplace lists the plugin for Codex CLI by the relative path of its directory, beside the file listing the plugin for Claude Code",
-              "skills/tools/test/e2e/codex.test.ts::@spec s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares no hooks",
-              "skills/tools/test/e2e/codex.test.ts::@spec s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, by the path of their SKILL.md; spec-init runs sheriff init for Codex, and spec-remove sheriff remove, offering to remove the plugin"
+              "skills/tools/test/e2e/codex.test.ts::@spec s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the skills, the SpecSheriff guidelines, each extension of them, the appendix of the tools, their schemas, and the SpecSheriff tools, and declares no hooks",
+              "skills/tools/test/e2e/codex.test.ts::@spec s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, which they locate from the path of their SKILL.md"
             ],
             "decisions": [
               {
@@ -10948,6 +11431,10 @@
             },
             {
               "type": "cites",
+              "to": "s-xr5xxa9cxf2mq5u"
+            },
+            {
+              "type": "cites",
               "from": "s-zh2vcr3xjumppg5"
             },
             {
@@ -10959,11 +11446,32 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-11-02",
+                "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
+                "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user. The plugin for Claude Code declares the settings of the runner claude as its options, each naming its default and taking no default value; spec-init offers the defaults of any setting still lacking that was never asked for; the skills set no model and no effort.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-02",
+                "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
+                "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user. spec-init offers the defaults of any setting still lacking that was never asked for; the skills set no model and no effort.",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-03",
+                "problem": "Whether the skills should be renamed from spec and spec-* to ss and ss-*, short for SpecSheriff, to be quicker to call and more distinctive.",
+                "ruling": "The owner: the skills keep their names. Claude Code shows a plugin's skill under the plugin's name, as specsheriff:spec-review, and loads a user's skill of the same name beside it, so the plugin's name already keeps them distinct. A call by hand keeps that name either way, so a shorter skill name would save almost nothing, and the agent mostly takes the skills up by their descriptions. The name spec-review says what the skill works on, where ss-review has to be decoded. And ss reads first as the abbreviation of the Nazi SS, besides being a standard Linux command.",
+                "type": "procedural"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::@spec s-kq6wmdud9c7j2k9 each SpecSheriff plugin holds the skills spec, spec-review, spec-adopt, spec-init, spec-remove and spec-settings, none of which sets a model or a reasoning effort"
             ]
           }
         },
@@ -11019,11 +11527,22 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-11-02",
+                "problem": "The reviewer runs at the settings each user confirms (§s-xr5xxa9cxf2mq5u), and nothing asked a user for them or wrote them where the git hooks read them.",
+                "ruling": "The owner: the settings of the reviewer are a decision taken once, when the plugin is installed, not a question at each session; Claude Code asks for them as the plugin's options, which the session start of the plugin for Claude Code writes into the git configuration in any repository and wherever they differ, so that a change made in /config reaches the reviewer; Codex, which asks nothing at installation, has the agent ask at the first session in a repository taking the method, or spec-init where it runs first; the question is put once on each machine, and after it only the notice at each review reminds the user. The plugin for Claude Code declares the settings of the runner claude as its options, each naming its default and taking no default value; spec-init offers the defaults of any setting still lacking that was never asked for; the skills set no model and no effort.",
+                "type": "textual"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::@spec s-ttsc8tpnu46q53s spec-init offers each setting of the codex runner that the configuration lacks and that has not been asked about yet, writing what the user answers and marking the setting as asked about",
+              "skills/tools/test/e2e/codex.test.ts::@spec s-ttsc8tpnu46q53s spec-init runs sheriff init, for Codex with --agent codex, and asks only for what sheriff.config.json lacks",
+              "skills/tools/test/e2e/plugin.test.ts::@spec s-ttsc8tpnu46q53s spec-init offers each setting of the claude runner that the configuration lacks and that has not been asked about yet, writing what the user answers and marking the setting as asked about"
             ]
           }
         },
@@ -11057,6 +11576,9 @@
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::@spec s-jn3rauw6a8zeefn spec-remove runs sheriff remove and then offers to remove its own plugin from the machine"
             ]
           }
         },
@@ -11088,11 +11610,20 @@
           "meta": {
             "decisions": [
               {
+                "date": "2026-11-18",
+                "problem": "How an owner who works on a machine whose screen they cannot see, for example through Remote Control, changes the settings that only an owner changes. A skill cannot tell whether the user sees the desktop of the machine that runs the session.",
+                "ruling": "The owner ruled that the skill offers both `sheriff settings` in a separate terminal window on that machine and questions in the chat, and leaves the choice to the user. The window is offered first, since the owner named running the program in a terminal as the main way (\"да делаем\").",
+                "type": "textual"
+              },
+              {
                 "date": "2026-11-25",
                 "problem": "Whether the owner agrees to group 8 of stage 2 of task T25, items 57 to 63 and the new row 10.1.37b of the main table of checks, shown on one page with each node in full, and to option A in each of the group's three questions.",
                 "ruling": "The owner agreed to the group and to option A in all three questions (\"A\", in answer to \"Do you agree to group 8 and to option A in all three questions?\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/codex.test.ts::@spec s-h343yq2mua648eg spec-settings shows the settings as sheriff settings prints them, offers a terminal window only where it finds a graphical desktop, and otherwise changes them through questions in the chat"
             ]
           }
         },
@@ -11267,10 +11798,11 @@
           ],
           "meta": {
             "tests": [
-              "skills/tools/test/unit/binding.test.ts::@spec s-pvzms7d8kxb8dk2 reads a file of types as the system's code where the globs naming the code do not reach it",
-              "skills/tools/test/unit/types.test.ts::@spec s-pvzms7d8kxb8dk2 refuses a listed file of another extension, and two rules of the stack each listing files, and then writes nothing",
+              "skills/tools/test/unit/types.test.ts::@spec s-pvzms7d8kxb8dk2 reads the list in the last approved wording of the stack's rule, and a rule that has never been approved lists no file",
+              "skills/tools/test/unit/types.test.ts::@spec s-pvzms7d8kxb8dk2 takes the implements link of the stack's rule from the commit that added its last approval, and from the files until that commit is made",
               "skills/tools/test/unit/types.test.ts::@spec s-pvzms7d8kxb8dk2 takes the list from a rule of the stack only",
               "skills/tools/test/unit/types.test.ts::@spec s-pvzms7d8kxb8dk2 writes each file the stack's rule lists, its extension saying what goes into it",
+              "skills/tools/test/unit/types.test.ts::@spec s-pvzms7d8kxb8dk2 writes nothing where the project has not chosen the RecordType extension",
               "skills/tools/test/unit/types.test.ts::@spec s-pvzms7d8kxb8dk2 writes nothing where the technical appendix lists no files for the types"
             ],
             "decisions": [
@@ -11432,11 +11964,16 @@
           ],
           "meta": {
             "tests": [
+              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b builds each definition from its RecordType's own schema, keeping its other keywords and leaving out those of the RecordTypes it refines",
               "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b cannot generate a name that is no identifier in its file's language, or that the file already uses",
-              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b holds the fields of every RecordType up the refines links first, the topmost first",
+              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b cannot generate the type that a $ref refers to where no RecordType has the sid it names, and then writes nothing",
+              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b first takes the fields of the RecordTypes it reaches through refines links, in the order of the links, each after those it reaches and none more than once",
+              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b gives each definition its RecordType's sid as its $anchor, to which a $ref in another definition points",
               "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b refers to a RecordType by the name of its type, in Python as a string, and the files compile and run",
               "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b takes the files in the code-point order of their paths and the nodes in the order they stand",
-              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b writes each RecordType as a type tagged with its sid and a definition under $defs, in each language"
+              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b writes a field that several RecordTypes declare once, where it first appears, its definition holding their schemas in an allOf and its type the type of the last",
+              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b writes each RecordType as a type tagged with its sid and a definition under $defs, in each language",
+              "skills/tools/test/unit/types.test.ts::@spec s-suv42g8r3ra2h6b writes the SpecTag as the first line of each definition's $comment, before the text of the $comment of the RecordType's schema"
             ],
             "decisions": [
               {
@@ -11527,11 +12064,14 @@
           ],
           "meta": {
             "tests": [
-              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 follows each node on a property nobody declared, and leaves out a field of type variant whose object would hold nothing",
-              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 gives the other member every value of each choosing field where several choose, and refuses only the combinations a variant answers to",
+              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 adds the if and then pair of each RecordType variant at the end of an allOf that the RecordType's schema already holds",
+              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 gives the type for the combinations that have no variant every value of each field that selects a variant where several do",
+              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 leaves out a RecordType variant that has never been approved, and writes a RecordType none of whose variants was ever approved as an ordinary RecordType without variants",
+              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 leaves out the type for the combinations that have no variant where every combination has one",
               "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 lets exactly one member hold each payment, in every language",
-              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 sets a variant's own fields beside the RecordType's where it has no field of type variant, and leaves out the member nobody needs",
-              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 writes a RecordType its variants refine as the union of each variant and a member for the values no variant answers to"
+              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 takes the fields that select a variant from the nearest RecordType that names them, and gives a variant's definition only the fields that it adds",
+              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 takes the values of a field that selects a variant as the SpecSheriff tools collect them, the values gathered beside it included",
+              "skills/tools/test/unit/types.test.ts::@spec s-nk8td3ez58gahc4 writes a RecordType its variants refine as the union of each variant and a member for the values to which no variant corresponds"
             ],
             "decisions": [
               {
@@ -11685,9 +12225,13 @@
             ],
             "tests": [
               "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y bounds how many members a list holds in the runtime checks alone",
-              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives a field of type one of the values the lists of domains declare for it, in the order the specification reads",
-              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives an identifier the type of the field identifying the RecordType it names",
-              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives each neutral type the type its table names, in each language"
+              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives a field whose chain of identifiers has no end the same type as {}, and removes its identifierOf from the RuntimeCheck",
+              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives a field with enumSource the values gathered beside it, each once, in their order, and replaces enumSource with enum at any depth",
+              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives an allOf in Python a TypedDict of its own where each member gives one, and the same type as {} otherwise",
+              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives an identifier the type of the field at the end of its chain of identifiers, and its RuntimeCheck every keyword of that field's schema but its description, at any depth",
+              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives each field's schema the type that the table names, in each language",
+              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y gives in Python the same type as {} to a const or an enum that Literal cannot hold, and writes true, false and null in Literal as True, False and None",
+              "skills/tools/test/unit/types.test.ts::@spec s-4npdup7mjkva69y names each TypedDict of its own after the RecordType that holds it and each step down to it, and writes it once, after every type of that RecordType"
             ]
           }
         }

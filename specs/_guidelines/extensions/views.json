@@ -154,7 +154,6 @@
               }
             ],
             "tests": [
-              "skills/tools/test/unit/generated.test.ts::@spec s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last",
               "skills/tools/test/unit/generated.test.ts::@spec s-zu8ne3wq84zchc4 the map shows the structure and each node's status only, nothing of a rule's text"
             ]
           }

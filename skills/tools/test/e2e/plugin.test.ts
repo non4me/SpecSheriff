@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { gitConfig, REPO } from "../repo.ts";
@@ -19,12 +19,14 @@ function gitRepo(config: boolean): string {
   return root;
 }
 
-test("@spec s-zh2vcr3xjumppg5 the plugin carries the skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools", () => {
+test("@spec s-zh2vcr3xjumppg5 the plugin carries the SpecSheriff guidelines, each extension of them, the appendix of the tools, their schemas, and the SpecSheriff tools", () => {
   assert.equal(json(`${PLUGIN}/.claude-plugin/plugin.json`).name, "specsheriff");
-  assert.deepEqual(readdirSync(`${PLUGIN}/skills`).sort(), ["spec", "spec-adopt", "spec-init", "spec-remove", "spec-review"]);
-  for (const skill of readdirSync(`${PLUGIN}/skills`)) assert.ok(existsSync(`${PLUGIN}/skills/${skill}/SKILL.md`), skill);
   for (const name of ["spec.json", "tools.json"]) assert.equal(read(`${PLUGIN}/tools/guidelines/${name}`), read(join(REPO, "specs", "_guidelines", name)), name);
-  for (const name of readdirSync(join(REPO, "specs", "_schema"))) assert.equal(read(`${PLUGIN}/tools/guidelines/_schema/${name}`), read(join(REPO, "specs", "_schema", name)), name);
+  for (const name of readdirSync(join(REPO, "specs", "_guidelines", "extensions"))) {
+    assert.equal(read(`${PLUGIN}/tools/guidelines/extensions/${name}`), read(join(REPO, "specs", "_guidelines", "extensions", name)), name);
+  }
+  const schemaFiles = readdirSync(join(REPO, "specs", "_schema"), { recursive: true, encoding: "utf8" }).filter((n) => statSync(join(REPO, "specs", "_schema", n)).isFile());
+  for (const name of schemaFiles) assert.equal(read(`${PLUGIN}/tools/guidelines/_schema/${name}`), read(join(REPO, "specs", "_schema", name)), name);
   const version = spawnSync(process.execPath, [`${PLUGIN}/tools/dist/cli.js`, "--version"], { encoding: "utf8" });
   assert.equal(version.stdout.trim(), json(join(REPO, "skills", "tools", "package.json")).version, version.stderr);
 });
@@ -60,16 +62,12 @@ test("@spec s-zh2vcr3xjumppg5 the marketplace lists the plugin by the relative p
   assert.deepEqual(marketplace.plugins.map((p: any) => [p.name, p.source]), [["specsheriff", "./skills/claude-code"]]);
 });
 
-test("@spec s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries, spec-init runs sheriff init, and spec-remove sheriff remove, offering to remove the plugin", () => {
+test("@spec s-zh2vcr3xjumppg5 the plugin's skills and the agent's hooks run sheriff from the tools the plugin carries", () => {
   for (const skill of readdirSync(`${PLUGIN}/skills`)) assert.match(read(`${PLUGIN}/skills/${skill}/SKILL.md`), /node "\$\{CLAUDE_PLUGIN_ROOT\}\/tools\/dist\/cli\.js"/, skill);
   for (const hook of ["guard.sh", "after-edit.sh"]) {
     assert.match(read(`${PLUGIN}/hooks/${hook}`), /plugin="\$\{CLAUDE_PLUGIN_ROOT:-/, hook);
     assert.match(read(`${PLUGIN}/hooks/${hook}`), /node "\$plugin\/tools\/dist\/cli\.js"/, hook);
   }
-  assert.match(read(`${PLUGIN}/skills/spec-init/SKILL.md`), /Run `sheriff init`/);
-  const remove = read(`${PLUGIN}/skills/spec-remove/SKILL.md`);
-  assert.match(remove, /Run `sheriff remove`/);
-  assert.match(remove, /claude plugin uninstall specsheriff@specsheriff-marketplace/);
 });
 
 test("@spec s-4mej6ccn7xu3d3p when a session starts, the plugin copies its tools into its data directory where the copy there is of another release or missing", () => {
@@ -95,14 +93,16 @@ function initialised(): string {
   return root;
 }
 
-test("@spec s-4mej6ccn7xu3d3p each git hook sheriff init writes holds the lookup of the tools of both plugins and a call to the script for that hook, and nothing else", () => {
+test("@spec s-4mej6ccn7xu3d3p each git hook that sheriff init writes contains the code that finds the tools of both plugins, a call to the script for that hook, and a call that runs the project's own tools where the SpecSheriff tools cannot run", () => {
   const root = initialised();
   const hooks = ["pre-commit", "commit-msg", "pre-push"].map((h) => read(join(root, ".githooks", h)));
   assert.equal(new Set(hooks).size, 1, "one call, naming its script by the hook's own name");
   assert.match(hooks[0]!, /CLAUDE_CODE_PLUGIN_CACHE_DIR:-\$HOME\/\.claude\/plugins\}\/data\/specsheriff-specsheriff-marketplace/);
   assert.match(hooks[0]!, /CODEX_HOME:-\$HOME\/\.codex\}/);
   assert.match(hooks[0]!, /\/plugins\/cache\/specsheriff-marketplace\/specsheriff\/\*\/tools/);
-  assert.doesNotMatch(hooks[0]!, /sheriff (validate|binding|message|review)/);
+  assert.doesNotMatch(hooks[0]!, /sheriff (validate|binding|commit-message|review)/);
+  assert.match(hooks[0]!, /engines field of their package\.json/);
+  assert.match(hooks[0]!, /\$hook\.d/);
 });
 
 /** Tools as a plugin keeps them at `dir`, of the release `version`, whose script for each git hook says whose it is. */
@@ -112,7 +112,7 @@ function toolsAt(dir: string, version: string, whose: string): void {
   for (const hook of ["pre-commit", "commit-msg", "pre-push"]) writeFileSync(join(dir, "hooks", hook), `echo "${whose} $(basename "$0")"\n`);
 }
 
-test("@spec s-4mej6ccn7xu3d3p a git hook runs the tools of the higher release where it finds both plugins', those of the plugin for Claude Code where the two are equal, and either where it finds one", () => {
+test("@spec s-4mej6ccn7xu3d3p a git hook that finds both plugins runs the tools of the higher release, or of either plugin where the two releases are equal, and one that finds a single plugin runs its tools", () => {
   const root = initialised();
   const p = plugins();
   const codex = codexHome(false);
@@ -154,22 +154,34 @@ test("@spec s-4mej6ccn7xu3d3p the session start names each git hook an earlier r
   assert.doesNotMatch(start.stdout, /\.githooks\/(commit-msg|pre-push).*earlier/);
 });
 
-test("@spec s-4mej6ccn7xu3d3p a hook's script refuses where Node is missing or older than the tools need, naming the version they need", () => {
-  const root = gitRepo(true);
+test("@spec s-4mej6ccn7xu3d3p a git hook that finds Node.js missing or older than the version the tools need runs the project's own tools, lets the commit through unless one of them fails, and says why no SpecSheriff check ran", () => {
+  const root = initialised();
   const p = plugins();
   pluginHook("session-start.sh", p, root);
-  const need = json(`${PLUGIN}/tools/package.json`).engines.node.replace(/\D/g, "");
+  const need = json(`${PLUGIN}/tools/package.json`).engines.node.replace(/^>=\s*/, "");
+  mkdirSync(join(root, ".githooks", "pre-commit.d"));
+  writeFileSync(join(root, ".githooks", "pre-commit.d", "10-ok.sh"), "#!/bin/sh\necho ran >> ran.txt\n");
+  git(root, "add", "-A");
   const fake = mkdtempSync(join(tmpdir(), "sheriff-node-"));
   writeFileSync(join(fake, "node"), "#!/bin/sh\necho 18.0.0\n", { mode: 0o755 });
   const withoutNode = (process.env.PATH ?? "").split(delimiter).filter((d) => !existsSync(join(d, "node")) && !existsSync(join(d, "node.exe")));
-  for (const path of [[fake, process.env.PATH].join(delimiter), withoutNode.join(delimiter)]) {
-    const run = spawnSync("sh", [`${p.data}/hooks/pre-push`], { cwd: root, encoding: "utf8", env: { ...process.env, PATH: path } });
-    assert.notEqual(run.status, 0);
-    assert.match(run.stderr, new RegExp(`Node ${need}`));
+  const cases: Array<[string, RegExp]> = [
+    [[fake, process.env.PATH].join(delimiter), new RegExp(`no check of SpecSheriff ran: the SpecSheriff tools need Node\\.js ${need.replaceAll(".", "\\.")} or later, and this machine runs Node\\.js 18\\.0\\.0`)],
+    [withoutNode.join(delimiter), new RegExp(`no check of SpecSheriff ran: Node\\.js is missing, and the SpecSheriff tools need Node\\.js ${need.replaceAll(".", "\\.")} or later`)],
+  ];
+  for (const [path, why] of cases) {
+    const run = spawnSync("git", ["commit", "-q", "--allow-empty", "-m", "a commit"], { cwd: root, encoding: "utf8", env: { ...p.env, PATH: path } });
+    assert.equal(run.status, 0, run.stderr);
+    assert.match(run.stderr, why);
   }
+  assert.equal(readFileSync(join(root, "ran.txt"), "utf8").trim().split(/\r?\n/).length, 2, "the project's own tool ran at each commit");
+  writeFileSync(join(root, ".githooks", "pre-commit.d", "20-fail.sh"), "#!/bin/sh\nexit 1\n");
+  const failed = spawnSync("git", ["commit", "-q", "--allow-empty", "-m", "a failing tool"], { cwd: root, encoding: "utf8", env: { ...p.env, PATH: cases[0]![0] } });
+  assert.notEqual(failed.status, 0);
+  assert.match(failed.stderr, /20-fail\.sh failed/);
 });
 
-test("@spec s-477gtdrkw34dzxw the plugin's session start names each git hook not executable, says how to make it so, and changes neither the file nor the index", () => {
+test("@spec s-jgcveum8dwdnyzr the plugin's session start names each git hook that is not executable, says how to make it executable, and changes neither the file nor the index", () => {
   const root = gitRepo(true);
   mkdirSync(join(root, ".githooks"));
   for (const hook of ["pre-commit", "commit-msg"]) writeFileSync(join(root, ".githooks", hook), "#!/bin/sh\nexit 0\n");
@@ -190,7 +202,7 @@ test("@spec s-477gtdrkw34dzxw the plugin's session start names each git hook not
   }
 });
 
-test("@spec s-477gtdrkw34dzxw the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports another directory", () => {
+test("@spec s-jgcveum8dwdnyzr the plugin's session start turns the git hooks on where core.hooksPath is unset, saying so, and reports a different directory that core.hooksPath names", () => {
   const root = gitRepo(true);
   const p = plugins();
   const first = pluginHook("session-start.sh", p, root);
@@ -230,7 +242,7 @@ test("@spec s-zh2vcr3xjumppg5 the plugin declares each setting of the runner cla
   assert.deepEqual(userConfig.claudeEffort.options, ["low", "medium", "high", "xhigh", "max"]);
 });
 
-test("@spec s-477gtdrkw34dzxw the session start of the plugin for Claude Code writes each setting the user gave as an option, in any repository, wherever the configuration lacks it or holds another value", () => {
+test("@spec s-p29yawkkkgk7kxb the session start of the plugin for Claude Code writes each setting the user set as an option, in any repository, whenever the configuration lacks it or holds a different value", () => {
   const root = gitRepo(false);
   const m = userMachine({ claudeModel: "sonnet" });
   m.env.CLAUDE_PLUGIN_OPTION_CLAUDEMODEL = "opus";
@@ -243,7 +255,7 @@ test("@spec s-477gtdrkw34dzxw the session start of the plugin for Claude Code wr
   assert.equal(start.stdout, "");
 });
 
-test("@spec s-477gtdrkw34dzxw in a repository taking the method the session start names each setting the user's configuration lacks, with its default, and has the agent ask for them once on each machine", () => {
+test("@spec s-p29yawkkkgk7kxb in a repository that uses the method, the session start names each setting that the user's configuration lacks, with its default, and has the agent ask the user about them once on each machine", () => {
   const root = gitRepo(true);
   const m = userMachine({ claudeModel: "opus" });
   const first = pluginHook("session-start.sh", m, root);
@@ -258,18 +270,13 @@ test("@spec s-477gtdrkw34dzxw in a repository taking the method the session star
   assert.doesNotMatch(second.stdout, /specsheriff\.review/);
 });
 
-test("@spec s-zh2vcr3xjumppg5 spec-init offers each setting of the runner the configuration lacks and was not asked for, writing what the user answers and marking it asked; the skills set no model and no effort", () => {
+test("@spec s-ttsc8tpnu46q53s spec-init offers each setting of the claude runner that the configuration lacks and that has not been asked about yet, writing what the user answers and marking the setting as asked about", () => {
   const init = read(`${PLUGIN}/skills/spec-init/SKILL.md`);
   for (const key of ["claudeModel", "claudeFallbackModel", "claudeEffort", "claudeAsked"]) assert.match(init, new RegExp(`specsheriff\\.review\\.${key}`), key);
   assert.match(init, /git config --global/);
-  for (const skill of readdirSync(`${PLUGIN}/skills`)) {
-    const text = read(`${PLUGIN}/skills/${skill}/SKILL.md`);
-    assert.doesNotMatch(text.split("---")[1] ?? "", /^(model|effort):/m, skill);
-    assert.doesNotMatch(text, /--model|--effort/, skill);
-  }
 });
 
-test("@spec s-477gtdrkw34dzxw the plugin's session start names no file of the project's own tools, which run by the interpreter their first line names", () => {
+test("@spec s-jgcveum8dwdnyzr the plugin's session start names no file of the project's own tools, which run with the interpreter that their first line names", () => {
   const root = gitRepo(true);
   mkdirSync(join(root, ".githooks", "pre-commit.d"), { recursive: true });
   writeFileSync(join(root, ".githooks", "pre-commit"), "#!/bin/sh\nexit 0\n");

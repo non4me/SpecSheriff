@@ -22,75 +22,6 @@
           "$ref": "#/$defs/base"
         },
         {
-          "$comment": "The header of a domain: the node a domain's specification opens with, in its own file. It says what the domain does, its owners where it names them, the level it stands at and where its code is; its consumes links name the sections of other domains it uses; and it carries the index of the domain's sections, which the reindex builds from them and nothing writes by hand.",
-          "if": {
-            "properties": {
-              "kind": {
-                "const": "header"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "owners": {
-                "$ref": "#/$defs/owners"
-              },
-              "level": {
-                "$comment": "The name of the level the domain stands at, one of those the project's own guidelines list; validate checks it against that list, which the schema cannot see.",
-                "type": "string",
-                "minLength": 1
-              },
-              "code": {
-                "$comment": "The directory the domain's code is in, or null where it has none.",
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              },
-              "sections": {
-                "$comment": "The index of the domain's sections, in the order in which they are read: each section's sid, title and text, and the headers of the domains that use it. Built by `sheriff reindex` from the sections; `sheriff validate` refuses an index that the sections do not produce.",
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "sid": {
-                      "$ref": "#/$defs/sid"
-                    },
-                    "title": {
-                      "type": "string"
-                    },
-                    "text": {
-                      "type": "string"
-                    },
-                    "usedBy": {
-                      "$comment": "Read off the section's incoming consumes links; absent where no domain uses it.",
-                      "type": "array",
-                      "minItems": 1,
-                      "items": {
-                        "$ref": "#/$defs/sid"
-                      }
-                    }
-                  },
-                  "required": [
-                    "sid",
-                    "title",
-                    "text"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            },
-            "required": [
-              "code"
-            ]
-          }
-        },
-        {
           "$comment": "A section: a container of rules, whose text states what it is responsible for and requires nothing. It may name owners of its own, any of whom approves every node within it. Its status is built from the nodes under it and approved by nobody.",
           "if": {
             "properties": {
@@ -121,102 +52,6 @@
               "list": {
                 "$ref": "#/$defs/list"
               }
-            }
-          }
-        },
-        {
-          "$comment": "A RecordType: a structure of data the domains pass to one another or keep in a store. It stands in a section as a rule does and is numbered among its rules; its title is the RecordType's name and its text what the RecordType is. The implementation's types and runtime checks are generated from it and never written beside it. A RecordType that refines another RecordType node is a variant of it where it carries answersTo, and an extension of it otherwise: an extension inherits every field of the RecordType it refines and adds its own; a variant declares at least one of its own; nothing refines a variant.",
-          "if": {
-            "properties": {
-              "kind": {
-                "const": "RecordType"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "fields": {
-                "$comment": "The RecordType's own fields, in the order in which they are read; a field inherited from the RecordType it refines is not repeated here. At most one is of type variant, since that field is where the chosen variant's fields go, and a second such field would leave it unclear which of the two holds them.",
-                "type": "array",
-                "items": {
-                  "$ref": "#/$defs/field"
-                },
-                "contains": {
-                  "properties": {
-                    "type": {
-                      "properties": {
-                        "is": {
-                          "const": "variant"
-                        }
-                      }
-                    }
-                  }
-                },
-                "minContains": 0,
-                "maxContains": 1
-              },
-              "unknown": {
-                "$comment": "What happens to a field nobody declared: refused, or kept as it came.",
-                "enum": [
-                  "refused",
-                  "kept"
-                ]
-              },
-              "chosenBy": {
-                "$comment": "On a RecordType whose fields vary with its own values: the fields, its own or inherited, whose values choose its variant.",
-                "type": "array",
-                "minItems": 1,
-                "uniqueItems": true,
-                "items": {
-                  "$ref": "#/$defs/fieldName"
-                }
-              },
-              "answersTo": {
-                "$comment": "On a RecordType variant: the value it answers to of each field choosing the variant, its keys exactly the fields the nearest RecordType up its chain of refines names as choosing it.",
-                "type": "object",
-                "minProperties": 1,
-                "propertyNames": {
-                  "$ref": "#/$defs/fieldName"
-                },
-                "additionalProperties": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "identifiedBy": {
-                "$comment": "Where another RecordType refers to this one by an identifier: the field, its own or inherited, that identifies it, whose type an identifier of it takes.",
-                "$ref": "#/$defs/fieldName"
-              }
-            },
-            "required": [
-              "fields",
-              "unknown"
-            ],
-            "if": {
-              "properties": {
-                "fields": {
-                  "contains": {
-                    "properties": {
-                      "type": {
-                        "properties": {
-                          "is": {
-                            "const": "variant"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "required": [
-                "fields"
-              ]
-            },
-            "then": {
-              "$comment": "A field of type variant stands only on the RecordType that names the fields choosing its variant.",
-              "required": [
-                "chosenBy"
-              ]
             }
           }
         },
@@ -332,13 +167,11 @@
           "$ref": "#/$defs/sid"
         },
         "kind": {
-          "$comment": "`header` is a domain's header; a term's title is the term it defines; a TableRule is a rule set out as a table.",
+          "$comment": "A term's title is the term it defines; a TableRule is a rule set out as a table. An extension of the schema adds kinds of its own, such as a domain's header, which the Domains extension adds, and the RecordType, which the RecordType extension adds (s-xzcw3hv4hmxz7h7).",
           "enum": [
-            "header",
             "section",
             "TextRule",
             "term",
-            "RecordType",
             "TableRule"
           ]
         },
@@ -452,13 +285,11 @@
       "type": "object",
       "properties": {
         "type": {
-          "$comment": "What the link states of the two nodes it binds, chosen from a closed list so that every check knows what each link means.",
+          "$comment": "What the link states about the two nodes it binds, chosen from a closed list so that every check knows what each link means. An extension of the schema adds types of its own, such as consumes, which the Domains extension adds (s-xzcw3hv4hmxz7h7).",
           "enum": [
             "implements",
             "refines",
             "constrains",
-            "consumes",
-            "supersedes",
             "exempts",
             "checks",
             "cites",
@@ -524,9 +355,9 @@
       }
     },
     "ratio": {
-      "$comment": "The multiplicity at each end of a term-relation, the end of the node holding the entry first. Both ends, because one end alone cannot say whether the other may be absent: 1:0..1 and 1:1 differ in exactly that.",
+      "$comment": "The multiplicity at each end of a term-relation in UML notation, the end at the node that holds the entry comes first (s-bckzdwd35d2nefa): a whole number, or a range of whole numbers whose upper bound may be *, meaning no upper bound. Both ends are given, because one end alone cannot say whether the other may be absent: 1:0..1 and 1:1 differ in exactly that respect.",
       "type": "string",
-      "pattern": "^(1|0\\.\\.1|1\\.\\.N|0\\.\\.N):(1|0\\.\\.1|1\\.\\.N|0\\.\\.N)$"
+      "pattern": "^(0|[1-9][0-9]*)(\\.\\.(0|[1-9][0-9]*|\\*))?:(0|[1-9][0-9]*)(\\.\\.(0|[1-9][0-9]*|\\*))?$"
     },
     "list": {
       "$comment": "A list a rule describes — a set of states, the members of a category, the routes of a table — held as members rather than as prose, because a machine compares it with the declaration in the code or in a schema that carries it. declaredIn names that declaration and is absent until the code exists: the rule is written first and implemented second.",
@@ -574,10 +405,6 @@
           ],
           "additionalProperties": false
         },
-        "field": {
-          "$comment": "On a list declaring values of a field choosing a RecordType variant: the name of that field, of the RecordType of contracts the list's rule refines.",
-          "$ref": "#/$defs/fieldName"
-        },
         "jsonSchema": {
           "type": "object",
           "$comment": "The place in a JSON Schema whose values the list states: the file, and a JSON pointer within it.",
@@ -623,314 +450,6 @@
       ],
       "additionalProperties": false
     },
-    "fieldName": {
-      "$comment": "A field's name as the code spells it: an identifier in camelCase, so the generated types use it as it stands.",
-      "type": "string",
-      "pattern": "^[a-z][A-Za-z0-9]*$"
-    },
-    "field": {
-      "$comment": "One field as a RecordType node declares it: its name, its type, whether it is required and what it says.",
-      "type": "object",
-      "properties": {
-        "name": {
-          "$ref": "#/$defs/fieldName"
-        },
-        "type": {
-          "$ref": "#/$defs/neutralType"
-        },
-        "required": {
-          "$comment": "Whether the field is always present: true or false; on a field of type variant, and only there, \"where it holds a value\"."
-        },
-        "text": {
-          "$comment": "What the field says.",
-          "type": "string"
-        },
-        "gathered": {
-          "$comment": "Beside a field whose values come from elsewhere than its own list: every value gathered for it, each with the sid of the node it comes from, gathered anew by the reindex and never written by hand.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "value": {
-                "type": "string"
-              },
-              "sid": {
-                "$ref": "#/$defs/sid"
-              }
-            },
-            "required": [
-              "value",
-              "sid"
-            ],
-            "additionalProperties": false
-          }
-        }
-      },
-      "required": [
-        "name",
-        "type",
-        "required",
-        "text"
-      ],
-      "additionalProperties": false,
-      "if": {
-        "properties": {
-          "type": {
-            "properties": {
-              "is": {
-                "const": "variant"
-              }
-            },
-            "required": [
-              "is"
-            ]
-          }
-        },
-        "required": [
-          "type"
-        ]
-      },
-      "then": {
-        "properties": {
-          "required": {
-            "const": "where it holds a value"
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "required": {
-            "type": "boolean"
-          }
-        }
-      }
-    },
-    "neutralType": {
-      "$comment": "A field's type in neutral terms, named by is; the appendix of the tools says what each generates, and a project's technical appendix names the JSON Schema validator that runs the generated runtime checks. email address is text holding one email address; instant is a moment of time, carrying its offset from UTC; date is a day of the calendar, with no time of day and no time zone; any value is data of no shape the specification declares; one of lists its values; list of, the type of its members and any bounds on how many members it holds; map of, the type of its values, each kept under a key of text; record and identifier of, the sid of the RecordType node they name, a RecordType variant excluded. variant is the object of the fields the chosen RecordType variant declares, beside the fields every variant holds: it stands only as a field's own type, on the RecordType that names the fields choosing its variant.",
-      "type": "object",
-      "properties": {
-        "is": {
-          "enum": [
-            "text",
-            "email address",
-            "whole number",
-            "number",
-            "yes/no",
-            "instant",
-            "date",
-            "duration",
-            "any value",
-            "one of",
-            "list of",
-            "map of",
-            "record",
-            "identifier of",
-            "variant"
-          ]
-        }
-      },
-      "required": [
-        "is"
-      ],
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "is": {
-                "const": "one of"
-              }
-            }
-          },
-          "then": {
-            "$comment": "The one source of the field's values (s-xfu2gpzddjnmgks): its own list, or, under from, the values the domains add, the names of the domains, or the sids of the nodes of the kind it names.",
-            "properties": {
-              "values": {
-                "$comment": "The values the field's own list declares.",
-                "type": "array",
-                "minItems": 1,
-                "uniqueItems": true,
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "from": {
-                "enum": [
-                  "domains",
-                  "domainNames",
-                  "kindSids"
-                ]
-              },
-              "kind": {
-                "$comment": "Under from kindSids: the kind whose nodes' sids are the values.",
-                "type": "string",
-                "minLength": 1
-              }
-            },
-            "oneOf": [
-              {
-                "required": [
-                  "values"
-                ],
-                "not": {
-                  "required": [
-                    "from"
-                  ]
-                }
-              },
-              {
-                "required": [
-                  "from"
-                ],
-                "not": {
-                  "required": [
-                    "values"
-                  ]
-                }
-              }
-            ],
-            "if": {
-              "properties": {
-                "from": {
-                  "const": "kindSids"
-                }
-              },
-              "required": [
-                "from"
-              ]
-            },
-            "then": {
-              "required": [
-                "kind"
-              ]
-            },
-            "else": {
-              "not": {
-                "required": [
-                  "kind"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "is": {
-                "enum": [
-                  "list of",
-                  "map of"
-                ]
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "of": {
-                "$ref": "#/$defs/neutralType"
-              }
-            },
-            "required": [
-              "of"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "is": {
-                "enum": [
-                  "record",
-                  "identifier of"
-                ]
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "record": {
-                "$ref": "#/$defs/sid"
-              }
-            },
-            "required": [
-              "record"
-            ]
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "is": {
-                "const": "variant"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "fields": {
-                "$comment": "The fields held in the field of type variant whatever the variant, beside the chosen variant's own. None is of type variant, and a variant's own field repeats none of them, which validate checks.",
-                "type": "array",
-                "items": {
-                  "$ref": "#/$defs/field"
-                }
-              }
-            }
-          }
-        },
-        {
-          "$comment": "The bounds a whole number or a number may take, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the RecordType.",
-          "if": {
-            "properties": {
-              "is": {
-                "enum": [
-                  "whole number",
-                  "number"
-                ]
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "minimum": {
-                "type": "number"
-              },
-              "exclusiveMinimum": {
-                "type": "number"
-              },
-              "maximum": {
-                "type": "number"
-              },
-              "exclusiveMaximum": {
-                "type": "number"
-              }
-            }
-          }
-        },
-        {
-          "$comment": "The bounds on how many members a list holds, named as JSON Schema names them. The check is generated from them, so a bound is never written by hand beside the RecordType.",
-          "if": {
-            "properties": {
-              "is": {
-                "const": "list of"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "minItems": {
-                "type": "integer",
-                "minimum": 0
-              },
-              "maxItems": {
-                "type": "integer",
-                "minimum": 0
-              }
-            }
-          }
-        }
-      ],
-      "unevaluatedProperties": false
-    },
     "meta": {
       "$comment": "What accumulates around a node without being part of its wording: what was decided about it, the code and tests bound to it, comments and the work deferred on it. Changing it does not change the node's status. It is kept in the node, so that whoever reads a node sees it whole in one place.",
       "type": "object",
@@ -969,7 +488,7 @@
           }
         },
         "code": {
-          "$comment": "The code bound to the node: each file, and the symbols in it that carry the node's tag; compared with the tags by binding.",
+          "$comment": "The code bound to the node: each file that holds a symbol whose SpecTag names the node. sheriff reindex writes the list from the SpecTags (s-ztseyetus7np6br), and sheriff binding compares the list with the one that the SpecTags produce (s-t383grkn3q68dpf).",
           "type": "array",
           "items": {
             "type": "object",
@@ -977,13 +496,6 @@
               "file": {
                 "type": "string",
                 "minLength": 1
-              },
-              "symbols": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
               }
             },
             "required": [

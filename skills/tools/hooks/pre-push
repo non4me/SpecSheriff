@@ -2,24 +2,40 @@
 # The tests of the system's code pass before a commit is pushed, by the command sheriff.config.json names.
 # They run in the working tree, so the push is refused, naming each file, while the working tree differs
 # from the commit any ref the push creates or updates names, the files the working tree ignores left aside.
-# Where the push creates or updates a ref and no commit those refs name holds the specification live, no
-# test runs and nothing is compared (s-b6qdtghnyha3fhk).
+# The tests run only where a ref that the push creates or updates points to a commit that leaves the specification
+# approved and whose project's own guidelines name a push as the moment at which the tests run. Otherwise no test
+# runs, nothing is compared, and the hook names the reason for each ref; a push that only deletes refs runs no test
+# (s-b6qdtghnyha3fhk).
 . "$(dirname "$0")/sheriff.sh"
+hook=pre-push
 root=$(git rev-parse --show-toplevel) || exit 1
 cd "$root" || exit 1
 work=$(mktemp -d) || exit 1
 trap 'rm -rf "$work"' EXIT
+# The project's own tools for this hook run first, each with a copy of the refs that git hands the hook (s-n4m5zvh96yb299p).
+own_input="$work/input"
+cat > "$own_input"
+. "$(dirname "$0")/own-tools.sh"
+own_failed=0
+own_rewriting "$@" || own_failed=1
+own_others "$@" || own_failed=1
 : > "$work/commits"
+: > "$work/refs"
 # git hands the hook one line per ref: local ref, local object, remote ref, remote object.
-while read -r _ object _; do
+while read -r _ object remote _; do
   case "$object" in *[!0]*) ;; *) continue ;; esac
   commit=$(git rev-parse --verify --quiet "$object^{commit}") || continue
   echo "$commit" >> "$work/commits"
-done
-if [ -s "$work/commits" ] && ! node "$tools/dist/push-mode.js" $(cat "$work/commits"); then
-  echo "sheriff: the specification is a draft, so no test ran before the push and nothing was compared" >&2
-  exit 0
+  printf '%s %s\n' "$remote" "$commit" >> "$work/refs"
+done < "$own_input"
+[ -s "$work/commits" ] || exit $own_failed
+if ! node "$tools/dist/push-mode.js" $(cat "$work/refs") > "$work/decided"; then
+  echo "sheriff: no test ran before the push and nothing was compared, for these reasons:" >&2
+  sed 's/^/  /' "$work/decided" >&2
+  exit $own_failed
 fi
+# The working tree is compared only with the commits for which the tests run (s-8a5eyy5n5hnsgrs).
+sed -n 's/^run //p' "$work/decided" > "$work/commits"
 command=$(node -e "process.stdout.write(require('./sheriff.config.json').testCommand ?? '')") || exit 1
 if [ -z "$command" ]; then
   echo "sheriff: sheriff.config.json names no testCommand, so the tests cannot run before the push" >&2
@@ -39,4 +55,5 @@ if [ -s "$work/differ" ]; then
   sed 's/^/  /' "$work/differ" >&2
   exit 1
 fi
-sh -c "$command"
+sh -c "$command" || exit 1
+exit $own_failed

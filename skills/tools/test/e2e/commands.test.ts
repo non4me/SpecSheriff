@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { approve } from "../../src/approvals.ts";
 import { BASE, file, loc, node, OWN, OWNER, repo, sid, taking } from "../fixture.ts";
+import { codeProject, editSpec, nodeIn, put } from "../code-project.ts";
 
 const CLI = fileURLToPath(new URL("../../src/cli.ts", import.meta.url));
 const sheriff = (root: string, ...args: string[]) => spawnSync(process.execPath, [CLI, ...args], { cwd: root, encoding: "utf8" });
@@ -36,6 +37,22 @@ test("@spec s-f5rz6b7dhxejjts sheriff reindex rewrites the files it changed and 
   assert.match(run.stdout, /written: specs\/contracts\/c\.json/);
 });
 
+test("@spec s-w5wg69pvvhedsws sheriff reindex names the merge of a key written twice in a file whose lists of tests it rewrites", () => {
+  const root = codeProject();
+  const open = sid("open");
+  put(root, "test/open.test.ts", `test("${open} opens an account", () => {});\n`);
+  editSpec(root, (d) => (nodeIn(d, "open").meta.tests = [`test/open.test.ts::${open} opens an account`]));
+  const path = join(root, "specs", "contracts", "c.json");
+  const todo = (text: string) => `{ "todos": [{ "date": "2026-11-26", "by": "owner", "text": "${text}" }] }`;
+  writeFileSync(path, readFileSync(path, "utf8").replace('"title": "draft",', `"title": "draft", "meta": ${todo("First.")}, "meta": ${todo("Second.")},`));
+  const run = sheriff(root, "reindex");
+  assert.equal(run.status, 0, run.stdout + run.stderr);
+  assert.match(run.stdout, /merged: specs\/contracts\/c\.json: "meta"/);
+  assert.match(run.stdout, /rewritten: specs\/contracts\/c\.json/);
+  const draft = JSON.parse(readFileSync(path, "utf8")).nodes[0].children[1];
+  assert.deepEqual(draft.meta.todos.map((x: { text: string }) => x.text), ["First.", "Second."]);
+});
+
 test("@spec s-f5rz6b7dhxejjts sheriff validate passes what holds together and refuses what does not, naming where", () => {
   const root = project();
   sheriff(root, "reindex");
@@ -64,7 +81,7 @@ test("@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node an approva
   assert.match(run.stdout, new RegExp(`${sid("term")}.*not in the archive`));
 });
 
-test("@spec s-v4qus7raqnwzneb sheriff approve approves as the email git is configured with, and refuses where that is none of the node's owners", () => {
+test("@spec s-upkur92ry6332y5 sheriff approve approves as the email git is configured with, and refuses where that is none of the node's owners", () => {
   const root = project();
   sheriff(root, "reindex");
   const ok = sheriff(root, "approve", sid("ours"));
@@ -76,19 +93,57 @@ test("@spec s-v4qus7raqnwzneb sheriff approve approves as the email git is confi
   const refused = sheriff(root, "approve", sid("term"));
   assert.equal(refused.status, 1);
   assert.match(refused.stderr, new RegExp(`its owners are ${OWNER}, not someone@example\\.org`));
+});
+
+test("@spec s-xybjqp2rxh8gszf sheriff approve --withdraw records the withdrawal under the email address configured in git", () => {
+  const root = project();
+  sheriff(root, "reindex");
+  assert.equal(sheriff(root, "approve", sid("ours")).status, 0);
+  git(root, "config", "user.email", "someone@example.org");
   const withdrawn = sheriff(root, "approve", "--withdraw", sid("ours"));
   assert.equal(withdrawn.status, 0, withdrawn.stderr);
   assert.match(readFileSync(join(root, "specs", "_approvals.jsonl"), "utf8"), /"withdrawn":true,"by":"someone@example\.org"/);
+});
+
+test("@spec s-f5rz6b7dhxejjts sheriff refuses the confirm command, which an earlier release accepted", () => {
+  const root = project();
+  sheriff(root, "reindex");
   assert.notEqual(sheriff(root, "confirm", sid("ours")).status, 0);
 });
 
-test("@spec s-f5rz6b7dhxejjts sheriff export, render and guide write the export and the map and print the guidelines", () => {
+/** A project in which no Views extension is chosen. */
+function withoutViews(): string {
   const root = project();
   sheriff(root, "reindex");
-  const exported = sheriff(root, "export");
+  const path = join(root, "sheriff.config.json");
+  const settings = JSON.parse(readFileSync(path, "utf8"));
+  settings.extensions = settings.extensions.filter((e: { name: string }) => e.name !== "views");
+  writeFileSync(path, JSON.stringify(settings, null, 2) + "\n");
+  return root;
+}
+
+test("@spec s-rpv4fkdqqguptqd sheriff map refuses to run where the project has not chosen the Views extension, naming it", () => {
+  const refused = sheriff(withoutViews(), "map");
+  assert.notEqual(refused.status, 0);
+  assert.match(refused.stderr, /Views extension/);
+});
+
+test("@spec s-e3495enbc5h75c3 sheriff markdown refuses to run where the project has not chosen the Views extension, naming it", () => {
+  const root = withoutViews();
+  for (const command of ["markdown"]) {
+    const refused = sheriff(root, command);
+    assert.notEqual(refused.status, 0, command);
+    assert.match(refused.stderr, /Views extension/, command);
+  }
+});
+
+test("@spec s-f5rz6b7dhxejjts sheriff markdown, sheriff map and sheriff guide write the export, write the map and print the guidelines", () => {
+  const root = project();
+  sheriff(root, "reindex");
+  const exported = sheriff(root, "markdown");
   assert.equal(exported.status, 0, exported.stderr);
   assert.match(exported.stdout, /written: md-version\/contracts\/c\.md/);
-  const rendered = sheriff(root, "render");
+  const rendered = sheriff(root, "map");
   assert.equal(rendered.status, 0, rendered.stderr);
   assert.match(readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8"), /markmap/);
   const guided = sheriff(root, "guide");
@@ -99,7 +154,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff export, render and guide write the export 
 });
 
 test("@spec s-f5rz6b7dhxejjts sheriff types writes the types where the technical appendix lists them, and refuses what cannot be generated", () => {
-  const customer = (title: string) => node("customer", { kind: "RecordType", title, fields: [{ name: "number", type: { is: "text" }, required: true, text: "" }], unknown: "refused" });
+  const customer = (title: string) => node("customer", { kind: "RecordType", title, schema: { type: "object", properties: { number: { type: "string" } }, required: ["number"], unevaluatedProperties: false } });
   const files = (title: string) => ({
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [customer(title)] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [
@@ -107,16 +162,18 @@ test("@spec s-f5rz6b7dhxejjts sheriff types writes the types where the technical
     ] })),
   });
   const root = taking(files("customer"));
-  const waits = sheriff(root, "types");
-  assert.equal(waits.status, 0, waits.stdout + waits.stderr);
-  assert.match(waits.stdout, new RegExp(`${sid("customer")}: a draft node; the files generated from it wait for its approval`));
-  assert.doesNotMatch(waits.stdout, /written:/);
-  approve(root, [sid("customer")], { me: OWNER });
+  // Neither the RecordType nor the rule that lists the files has ever been approved, so nothing is written.
+  const none = sheriff(root, "types");
+  assert.equal(none.status, 0, none.stdout + none.stderr);
+  assert.doesNotMatch(none.stdout, /written:/);
+  approve(root, [sid("customer"), sid("generated types")], { me: OWNER });
   const run = sheriff(root, "types");
   assert.equal(run.status, 0, run.stdout + run.stderr);
   assert.match(run.stdout, /written: src\/types\.ts/);
   assert.match(readFileSync(join(root, "src", "types.ts"), "utf8"), /^export type Customer = \{$/m);
-  const refused = sheriff(taking(files("3d customer")), "types");
+  const named = taking(files("3d customer"));
+  approve(named, [sid("customer"), sid("generated types")], { me: OWNER });
+  const refused = sheriff(named, "types");
   assert.equal(refused.status, 1);
   assert.match(refused.stdout, /3dCustomer cannot be generated in src\/types\.ts: not an identifier in TypeScript/);
 });
@@ -155,4 +212,21 @@ test("@spec s-xzcw3hv4hmxz7h7 sheriff reindex and sheriff binding refuse a file 
     assert.match(run.stdout + run.stderr, /specs\/contracts\/c\.json: \/nodes\/0\/children\/0: must have required property 'refs'/, command);
     assert.doesNotMatch(run.stdout + run.stderr, /is not iterable|is not a function/, command);
   }
+});
+
+test("@spec s-chsfpkgpmfk4fft sheriff settings prints the settings when no terminal is attached, and, given arguments, records the change that they name as an entry that names the owner", () => {
+  const root = project();
+  sheriff(root, "reindex");
+  const shown = sheriff(root, "settings");
+  assert.equal(shown.status, 0, shown.stderr);
+  assert.match(shown.stdout, /^status: draft$/m);
+  assert.match(shown.stdout, /^strict: off$/m);
+  assert.match(shown.stdout, /^extension views: chosen$/m);
+  const done = sheriff(root, "settings", "strict", "on");
+  assert.equal(done.status, 0, done.stdout + done.stderr);
+  assert.match(done.stdout, /recorded/);
+  assert.deepEqual(JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).strict, [{ on: true, by: OWNER }]);
+  const refused = sheriff(root, "settings", "status");
+  assert.notEqual(refused.status, 0);
+  assert.match(refused.stderr, /sheriff settings/);
 });

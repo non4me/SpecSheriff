@@ -109,7 +109,7 @@ test("@spec s-7unxytshhc4md54 sheriff init --agent codex writes the agent's hook
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
 });
 
-test("@spec s-7unxytshhc4md54 sheriff init refuses an agent it does not know, naming the two it takes", () => {
+test("@spec s-7unxytshhc4md54 sheriff init refuses an unknown agent, naming the agents it accepts", () => {
   const root = fresh();
   const run = sheriff(root, "init", "--agent", "gemini");
   assert.notEqual(run.status, 0);
@@ -156,11 +156,12 @@ function setUpForBoth(): { root: string; claude: object; codex: object } {
   return { root, claude, codex };
 }
 
-test("@spec s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes for both agents, keeps specs/ naming it, stages nothing, and run again changes nothing", () => {
+test("@spec s-7unxytshhc4md54 sheriff remove removes what sheriff init writes for each agent, keeps specs/ and sheriff.bindings.json and names each, stages nothing, and changes nothing when run again", () => {
   const root = fresh();
   sheriff(root, "init");
   sheriff(root, "init", "--agent", "codex");
   writeFileSync(join(root, "sheriff.config.json"), '{ "code": ["src/**/*.ts"], "tests": [], "testCommand": "npm test" }\n');
+  writeFileSync(join(root, "sheriff.bindings.json"), "{}\n");
   git(root, "config", "user.name", "Owner");
   git(root, "add", "-A");
   git(root, "-c", "core.hooksPath=/dev/null", "commit", "-qm", "Set up");
@@ -169,6 +170,8 @@ test("@spec s-7unxytshhc4md54 sheriff remove takes out what sheriff init writes 
   for (const path of [".githooks", ".claude", ".codex", ".gitattributes", "sheriff.config.json"]) assert.ok(!existsSync(join(root, path)), path);
   assert.ok(existsSync(join(root, "specs", "_guidelines", "project.json")));
   assert.match(run.stdout, /left as it is: specs\//);
+  assert.ok(existsSync(join(root, "sheriff.bindings.json")));
+  assert.match(run.stdout, /left as it is: sheriff\.bindings\.json/);
   for (const path of [".githooks/pre-commit", ".githooks/commit-msg", ".githooks/pre-push", ".claude/settings.json", ".codex/hooks.json", ".gitattributes", "sheriff.config.json"]) {
     assert.match(run.stdout, new RegExp(`removed: ${path.replaceAll(".", "\\.")}`), path);
   }
@@ -209,6 +212,16 @@ test("@spec s-7unxytshhc4md54 sheriff remove takes out a hook an earlier release
   assert.equal(run.status, 0, run.stderr);
   assert.ok(!existsSync(join(root, ".githooks")));
   assert.match(run.stdout, /removed: \.githooks\/pre-commit/);
+});
+
+test("@spec s-7unxytshhc4md54 sheriff init names which of the globs for the code, the globs for the tests and the testCommand an existing sheriff.config.json lacks", () => {
+  const root = fresh();
+  writeFileSync(join(root, "sheriff.config.json"), '{ "code": ["src/**"], "tests": [] }\n');
+  const run = sheriff(root, "init");
+  assert.equal(run.status, 0, run.stderr);
+  assert.match(run.stdout, /sheriff\.config\.json names no glob pattern for the tests, and no testCommand/);
+  writeFileSync(join(root, "sheriff.config.json"), '{ "code": ["src/**"], "tests": ["test/**"], "testCommand": "npm test" }\n');
+  assert.doesNotMatch(sheriff(root, "init").stdout, /names no/);
 });
 
 test("@spec s-7unxytshhc4md54 sheriff init replaces no file that differs from what it would write, and names it", () => {

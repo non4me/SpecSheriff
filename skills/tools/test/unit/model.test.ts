@@ -1,8 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { reindex } from "../../src/reindex.ts";
+import { approve } from "../../src/approvals.ts";
 import { loadSpecification } from "../../src/spec-files.ts";
-import { builtStatuses, citations, fingerprint, incoming, locations, modelOf, LEVELS_RULE, ownersOf, partOf } from "../../src/model.ts";
+import { builtStatuses, citations, fingerprint, incoming, locations, modelOf, LEVELS_RULE, ORDER_RULE, ownersOf, partOf, rewritingTools } from "../../src/model.ts";
+import { approvedWordings } from "../../src/approved-wording.ts";
 import { loadConfig, modelFlags } from "../../src/config.ts";
 import { REPO } from "../repo.ts";
 import { BY_NUMBER, file, loc, node, OWNER, repo, sid, table, taking } from "../fixture.ts";
@@ -15,7 +17,7 @@ test("@spec s-ygg5kpcxgzq3m7w computes the location of every node of the SpecShe
 
 test("@spec s-ygg5kpcxgzq3m7w gives a domain's header the domain's name as its location, and numbers its sections consecutively across its files", () => {
   const root = repo({
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", sections: [] })),
     "specs/bank/accounts.json": file("bank", "accounts", node("accounts", { kind: "section", children: [node("open"), node("term", { kind: "term", title: "account" }), node("close")] })),
     "specs/bank/loans.json": file("bank", "loans", node("loans", { kind: "section", children: [node("lend")] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", children: [node("node")] })),
@@ -153,10 +155,10 @@ test("@spec s-bpdqd9v72wg7vsz builds no link of a project into the SpecSheriff g
   assert.ok(spec.nodes.get(sid("our levels"))!.node.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE));
 });
 
-test("@spec s-67vekyup7y8smap takes a node's owners from the nearest section or header naming them, else the specification's", () => {
+test("@spec s-6sk8uet75dmq5qz takes a node's owners from the nearest section or header that names owners, otherwise from the specification's owners", () => {
   const root = repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", owners: ["bank@example.org"], level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", owners: ["bank@example.org"], level: "core", sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("a", { kind: "section", children: [node("r1"), node("inner", { kind: "section", owners: ["inner@example.org", "second@example.org"], children: [node("r2")] })] })),
     "specs/contracts/c.json": file("contracts", "c", node("c", { kind: "section", children: [node("r3")] })),
   });
@@ -168,15 +170,15 @@ test("@spec s-67vekyup7y8smap takes a node's owners from the nearest section or 
   assert.deepEqual(ownersOf(spec, sid("levels")), [OWNER]);
 });
 
-test("@spec s-67vekyup7y8smap names no owner where the specification names none", () => {
+test("@spec s-6sk8uet75dmq5qz names no owner where the specification names none", () => {
   const spec = loadSpecification(repo({ "specs/contracts/c.json": file("contracts", "c", node("lone")) }));
   assert.deepEqual(ownersOf(spec, sid("lone")), []);
 });
 
-test("@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it that are no section, and a domain's header's from every node of the domain", () => {
+test("@spec s-9kfdycuq34beqvs builds a section's approval status from the nodes under it that are not sections", () => {
   const approved = { status: "approved" };
   const root = repo({
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "header", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "header", level: "core", sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("all approved", { kind: "section", children: [node("a1", approved), node("inner", { kind: "section", children: [node("a2", approved)] })] })),
     "specs/bank/b.json": file("bank", "b", node("one draft", { kind: "section", children: [node("b1", approved), node("deep", { kind: "section", children: [node("b2")] })] })),
     "specs/contracts/c.json": file("contracts", "c", node("terms", { kind: "section", children: [node("t1", { kind: "term", ...approved })] })),
@@ -187,7 +189,17 @@ test("@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it 
   assert.equal(built.get(sid("one draft")), "draft");
   assert.equal(built.get(sid("deep")), "draft");
   assert.equal(built.get(sid("terms")), "approved");
-  assert.equal(built.get(sid("bank")), "draft");
+});
+
+test("@spec s-yccuyqbypzzx2gu builds the approval status of a domain's header from every node of the domain other than its sections and the header itself", () => {
+  const approved = { status: "approved" };
+  const domain = (b2: Record<string, unknown>) => repo({
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "header", level: "core", sections: [] })),
+    "specs/bank/a.json": file("bank", "a", node("all approved", { kind: "section", children: [node("a1", approved), node("inner", { kind: "section", children: [node("a2", approved)] })] })),
+    "specs/bank/b.json": file("bank", "b", node("one draft", { kind: "section", children: [node("b1", approved), node("deep", { kind: "section", children: [node("b2", b2)] })] })),
+  });
+  assert.equal(builtStatuses(loadSpecification(domain({}))).get(sid("bank")), "draft");
+  assert.equal(builtStatuses(loadSpecification(domain(approved))).get(sid("bank")), "approved");
 });
 
 test("@spec s-d3nkw9b6mn98vuw gives the model the approval status that the last entry of approvalStatus sets, whatever the rules of project.json say", () => {
@@ -206,7 +218,7 @@ test("@spec s-f5brvuuu6xmkj6t fingerprints a node's wording and the values its k
   assert.equal(fingerprint({ ...base, status: "approved", location: "x/9", refs: [{ type: "cites", to: sid("cited") }], meta: { todos: [] }, owners: ["x@y.z"], owner: "x@y.z" }), same);
   assert.notEqual(fingerprint({ ...base, title: "other" }), same);
   assert.notEqual(fingerprint({ ...base, reason: "other" }), same);
-  const header = node("h", { kind: "header", level: "core", code: null, sections: [] });
+  const header = node("h", { kind: "header", level: "core", sections: [] });
   assert.equal(fingerprint({ ...header, sections: [{ sid: sid("section"), title: "t", text: "" }] }), fingerprint(header));
   assert.notEqual(fingerprint({ ...header, level: "auxiliary" }), fingerprint(header));
   const listed = node("l", { list: { of: "x", members: ["a", "b"] } });
@@ -227,10 +239,10 @@ test("@spec s-zefk589ykh37b8u tells a file's part and whether it holds the SpecS
   assert.deepEqual(partOf("specs/_guidelines/extensions/domains.json"), { part: "_guidelines", file: "extensions/domains", specSheriffGuidelines: true });
 });
 
-test("@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among the rules of their section", () => {
+test("@spec s-ygg5kpcxgzq3m7w numbers the nodes of a project's own kind among the rules of their section", () => {
   const root = repo({
     "specs/_schema/project.schema.json": { kinds: { job: { needsCode: true, schema: {} } } },
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", sections: [] })),
     "specs/bank/accounts.json": file("bank", "accounts", node("accounts", { kind: "section", children: [node("open"), node("nightly", { kind: "job" }), node("close")] })),
   });
   const ids = locations(loadSpecification(root));
@@ -238,14 +250,14 @@ test("@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among th
   assert.equal(ids.get(sid("close")), loc("bank", "1.3"));
 });
 
-test("@spec s-f5brvuuu6xmkj6t leaves out of the fingerprint only the values gathered in a field's x-enumSource, keeps a property named gathered, and hashes the kind of node that x-enumSource names under that kind's earlier name", () => {
+test("@spec s-f5brvuuu6xmkj6t leaves out of the fingerprint only the values gathered in a field's enumSource, keeps a property named gathered, and hashes the kind of node that enumSource names under that kind's earlier name", () => {
   const record = (gathered: object, kind = "TextRule") => node("a record", { kind: "RecordType", schema: { type: "object", properties: {
     gathered: { type: "string", ...gathered },
-    part: { "x-enumSource": { from: "kind", kind, gathered: [{ value: "a", sid: sid("a record") }] } },
+    part: { enumSource: { from: "kind", kind, gathered: [{ value: "a", sid: sid("a record") }] } },
   } } });
   assert.notEqual(fingerprint(record({ minLength: 1 })), fingerprint(record({})));
   const other = record({});
-  ((other.schema as any).properties.part["x-enumSource"].gathered as unknown[]).push({ value: "b", sid: sid("a record") });
+  ((other.schema as any).properties.part.enumSource.gathered as unknown[]).push({ value: "b", sid: sid("a record") });
   assert.equal(fingerprint(other), fingerprint(record({})));
   assert.equal(fingerprint(record({}, "TextRule")), fingerprint(record({}, "rule")));
   assert.notEqual(fingerprint(record({}, "TextRule")), fingerprint(record({}, "section")));
@@ -257,7 +269,7 @@ test("@spec s-f5brvuuu6xmkj6t leaves the values gathered beside a field out of t
   assert.equal(fingerprint(record([{ value: "paid", sid: sid("bank events") }])), fingerprint(record()));
 });
 
-test("@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds it, with its part, its file, the node above it and the owners named nearest above it", () => {
+test("@spec s-f5rz6b7dhxejjts sheriff json prints every node as its file holds it, with its part of the specification, its file, the node above it and the owners that the nearest section or header above it names", () => {
   const root = repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours." })),
     "specs/contracts/c.json": file("contracts", "c", node("accounts", { kind: "section", text: "Accounts.", children: [node("open", { reason: "Why." })] })),
@@ -277,4 +289,21 @@ test("@spec s-f5brvuuu6xmkj6t fingerprints a field taking the values the domains
   const record = (type: object) => node("event", { kind: "RecordType", unknown: "refused", fields: [field({ is: "list of", of: type })] });
   assert.equal(fingerprint(record({ is: "one of", from: "domains" })), fingerprint(record({ is: "one of", values: [] })));
   assert.notEqual(fingerprint(record({ is: "one of", from: "domainNames" })), fingerprint(record({ is: "one of", values: [] })));
+});
+
+test("@spec s-t9j29hppag2nren lists, for one hook, the project's own tools that rewrite files, from the approved rules that refine the rule on the order of tools and checks, in the order of their lists", () => {
+  const root = repo({
+    "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [
+      node("rewriters", { refs: [{ type: "refines", to: ORDER_RULE }], list: { of: "the tools that rewrite files", members: ["pre-commit.d/format", "commit-msg.d/wrap", "pre-commit.d/lint"] } }),
+      node("late rewriters", { refs: [{ type: "refines", to: ORDER_RULE }], list: { of: "the tools that rewrite files", members: ["pre-commit.d/late"] } }),
+    ] })),
+  });
+  reindex(root);
+  approve(root, [sid("rewriters")], { me: OWNER });
+  reindex(root);
+  const spec = loadSpecification(root);
+  const wordings = approvedWordings(root, spec);
+  assert.deepEqual(rewritingTools(spec, wordings, "pre-commit"), ["pre-commit.d/format", "pre-commit.d/lint"]);
+  assert.deepEqual(rewritingTools(spec, wordings, "commit-msg"), ["commit-msg.d/wrap"]);
+  assert.deepEqual(rewritingTools(spec, wordings, "pre-push"), []);
 });

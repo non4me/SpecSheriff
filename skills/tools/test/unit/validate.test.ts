@@ -1,9 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { approve } from "../../src/approvals.ts";
+import { binding } from "../../src/binding.ts";
+import { guard } from "../../src/guard.ts";
 import { reindex } from "../../src/reindex.ts";
 import { loadSpecification } from "../../src/spec-files.ts";
 import { fingerprint, LEVELS_RULE } from "../../src/model.ts";
@@ -27,15 +29,15 @@ function good(): string {
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], text: "Ours.", children: [
       node("our levels", { refs: [{ type: "refines", to: sid("levels rule") }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
     ] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "header", level: "core", code: null, sections: [] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("bank", { kind: "header", level: "core", sections: [] })),
     "specs/bank/a.json": file("bank", "a", node("accounts", { kind: "section", text: "Accounts.", children: [
       node("open", { text: "An account is opened (§" + sid("close") + ").", refs: [{ type: "cites", to: sid("close") }] }),
       node("close"),
-      node("account record", { kind: "RecordType", title: "account", fields: [{ name: "kind", type: { is: "one of", values: ["plain", "savings"] }, required: true, text: "" }], unknown: "refused", chosenBy: ["kind"] }),
-      node("savings record", { kind: "RecordType", title: "savings account", fields: [{ name: "rate", type: { is: "number" }, required: true, text: "" }], unknown: "refused", answersTo: { kind: "savings" }, refs: [{ type: "refines", to: sid("account record") }] }),
+      node("account record", { kind: "RecordType", title: "account", schema: { type: "object", properties: { kind: { enum: ["plain", "savings"] } }, required: ["kind"] }, chosenBy: ["kind"] }),
+      node("savings record", { kind: "RecordType", title: "savings account", schema: { properties: { rate: { type: "number" } }, required: ["rate"] }, answersTo: { kind: "savings" }, refs: [{ type: "refines", to: sid("account record") }] }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [
-      node("user", { kind: "term", title: "user", refs: [{ type: "term-relation", to: sid("session"), ratio: "1:0..N" }] }),
+      node("user", { kind: "term", title: "user", refs: [{ type: "term-relation", to: sid("session"), ratio: "1:0..*" }] }),
       node("session", { kind: "term", title: "session" }),
     ] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [node("node runtime")] })),
@@ -187,7 +189,7 @@ test(`@spec s-76becsjwmasc2r2 refuses a term of a domain that a node outside the
   reindex(root);
   assert.ok(!messages(root).some((m) => m.includes(sid("domain term"))), messages(root).join("\n"));
   mkdirSync(join(root, "specs", "loans"));
-  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", code: null }))));
+  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header" }))));
   writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [node("lend", { text: `A loan goes through a teller (§${sid("domain term")}).`, refs: [{ type: "cites", to: sid("domain term") }] }), node("repay", { refs: [{ type: "refines", to: sid("domain term") }] })] }))));
   reindex(root);
   expectOne(root, new RegExp(`${sid("domain term")} .*cited or linked to from outside the domain bank: specs/loans/l\\.json ${sid("lend")}, specs/loans/l\\.json ${sid("repay")}`));
@@ -241,6 +243,9 @@ test(`@spec s-agc6fb3vx46pc23 builds the approval status of a domain's header fr
   edit(root, "specs/bank/00-bank.json", (d) => (d.nodes[0].children = [node("bank rules", { kind: "section", text: "Kept with the header.", children: [table("bank checks", [["checked by the bank", "refused"]])] })]));
   reindex(root);
   approve(root, [sid("open"), sid("bank checks")], { me: OWNER });
+  // Approving the TableRule approves the node in its cell too (s-upkur92ry6332y5). Once that node's approval is withdrawn, that node keeps
+  // the domain's header a draft.
+  approve(root, [sid("checked by the bank")], { me: OWNER, withdraw: true });
   reindex(root);
   const spec = loadSpecification(root);
   assert.equal(spec.nodes.get(sid("bank"))!.node.status, "draft");
@@ -441,7 +446,7 @@ test(`@spec s-8esbyvaj2yx5eqf refuses a domain whose files hold no header, or tw
   reindex(headless);
   expectOne(headless, /specs\/loans\/: domain loans has no header/);
   const twice = good();
-  writeFileSync(join(twice, "specs", "bank", "b.json"), JSON.stringify(file("bank", "b", node("second header", { kind: "header", code: null }))));
+  writeFileSync(join(twice, "specs", "bank", "b.json"), JSON.stringify(file("bank", "b", node("second header", { kind: "header" }))));
   reindex(twice);
   expectOne(twice, new RegExp(`specs/bank/: domain bank has more than one header: specs/bank/00-bank\\.json ${sid("bank")}, specs/bank/b\\.json ${sid("second header")}`));
 });
@@ -548,6 +553,9 @@ test(`@spec s-gvafe6bnstwab8b refuses each file of the technical appendix, at an
 test(`@spec s-gvafe6bnstwab8b leaves the names of the files of the technical appendix unchecked where the project has not chosen the Domains extension`, () => {
   const root = good();
   edit(root, "sheriff.config.json", (d) => delete d.extensions);
+  // Without the Domains extension, the schema holds no domain's header, and without the RecordType extension no RecordType.
+  rmSync(join(root, "specs/bank/00-bank.json"));
+  edit(root, "specs/bank/a.json", (d) => (d.nodes[0].children = d.nodes[0].children.filter((n: any) => n.kind !== "RecordType")));
   writeFileSync(join(root, "specs/tech/ledger.json"), JSON.stringify(file("tech", "ledger", node("ledger tech", { kind: "section", text: "Ledger, built.", children: [node("posting", { refs: [{ type: "implements", to: sid("open") }] })] })), null, 2) + "\n");
   reindex(root);
   assert.ok(!messages(root).some((m) => /named after no domain/.test(m)), messages(root).join("\n"));
@@ -585,7 +593,7 @@ test(`@spec s-g7auhqvzzbkw644 matches the sections of the technical appendix wit
 test(`@spec s-vuujweu57sxsa58 accepts two domains of which one cites a rule of the other, against the direction of the citing domain's consumes link`, () => {
   const root = good();
   mkdirSync(join(root, "specs", "loans"));
-  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] }))));
+  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", sections: [], refs: [{ type: "consumes", to: sid("accounts") }] }))));
   writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [node("lend")] }))));
   edit(root, "specs/bank/a.json", (d) => nodeIn(d, "close").refs.push({ type: "refines", to: sid("lend") }));
   reindex(root);
@@ -595,129 +603,201 @@ test(`@spec s-vuujweu57sxsa58 accepts two domains of which one cites a rule of t
 test(`@spec s-vuujweu57sxsa58 refuses domains using one another in a cycle`, () => {
   const root = good();
   mkdirSync(join(root, "specs", "loans"));
-  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] }))));
+  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", sections: [], refs: [{ type: "consumes", to: sid("accounts") }] }))));
   writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [node("lend")] }))));
   edit(root, "specs/bank/00-bank.json", (d) => d.nodes[0].refs.push({ type: "consumes", to: sid("lending") }));
   reindex(root);
   expectOne(root, /specs\/: the domains use one another in a cycle: bank → loans → bank/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field does not declare, or declaring no field of its own`, () => {
+
+/** Adds the given nodes to the first section of the file of the domain `bank`. */
+const addToBank = (root: string, ...nodes: object[]) => edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(...nodes));
+/** A RecordType with the given schema. */
+const recordType = (name: string, title: string, schema: object, more: Record<string, unknown> = {}) => node(name, { kind: "RecordType", title, schema, ...more });
+
+test(`@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant that has no refines link to a RecordType that has fields that select a variant, naming only that condition`, () => {
   const root = good();
-  edit(root, "specs/bank/a.json", (d) => {
-    nodeIn(d, "savings record").answersTo = { kind: "gold" };
-    nodeIn(d, "savings record").fields = [{ name: "kind", type: { is: "text" }, required: true, text: "" }];
-  });
-  expectOne(root, /"gold".*not declared/);
-  expectOne(root, /declares no field of its own/);
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").refs = []));
+  const found = messages(root).filter((m) => m.includes(sid("savings record")));
+  assert.equal(found.length, 1, found.join("\n"));
+  assert.match(found[0]!, /a refines link to exactly one RecordType that has fields that select a variant/);
+  assert.doesNotMatch(found[0]!, /adds|answersTo|section/);
 });
 
-test(`@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field declares in no list of values`, () => {
+test(`@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant declared in a section other than its RecordType's`, () => {
   const root = good();
-  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "account record").fields[0].type = { is: "text" }));
-  expectOne(root, new RegExp(`${sid("savings record")}.*"savings" for kind.*no list of values`));
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses a RecordType variant whose own fields only repeat those its RecordType's field of type variant holds`, () => {
-  const root = good();
-  edit(root, "specs/bank/a.json", (d) => nodeIn(d, "account record").fields.push({ name: "terms", type: { is: "variant", fields: [{ name: "rate", type: { is: "number" }, required: true, text: "" }] }, required: "where it holds a value", text: "" }));
-  expectOne(root, new RegExp(`${sid("savings record")}.*declares no field of its own`));
-});
-
-/** good(), with a RecordType of contracts whose kinds the bank declares in a list of its own, and a variant of one of them. */
-function withEvents(): string {
-  const root = good();
-  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(
-    node("event record", { kind: "RecordType", title: "event", fields: [{ name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "" }], unknown: "refused", chosenBy: ["kind"] }),
-  ));
-  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(
-    node("bank events", { list: { of: "the kinds of event the bank brings", members: ["opened", "paid"], field: "kind" }, refs: [{ type: "refines", to: sid("event record") }] }),
-    node("paid event", { kind: "RecordType", title: "paid event", fields: [{ name: "amount", type: { is: "number" }, required: true, text: "" }], unknown: "refused", answersTo: { kind: "paid" }, refs: [{ type: "refines", to: sid("event record") }] }),
-  ));
-  reindex(root);
-  return root;
-}
-
-test(`@spec s-jau82aq9juv9zzh passes a value a domain declares for a RecordType of contracts, its variant standing in that domain`, () => {
-  assert.deepEqual(messages(withEvents()), []);
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses a value of a choosing field declared twice, or by a variant in another part than the one declaring it`, () => {
-  const root = withEvents();
-  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("more events", { list: { of: "more kinds of event", members: ["paid"], field: "kind" }, refs: [{ type: "refines", to: sid("event record") }] })));
-  reindex(root);
-  expectOne(root, /"paid".*declared more than once/);
-  const moved = withEvents();
-  let paid: any;
-  edit(moved, "specs/bank/a.json", (d) => (paid = d.nodes[0].children.splice(d.nodes[0].children.findIndex((n: any) => n.sid === sid("paid event")), 1)[0]));
-  edit(moved, "specs/contracts/c.json", (d) => d.nodes[0].children.push(paid));
-  reindex(moved);
-  expectOne(moved, new RegExp(`${sid("paid event")}.*stands in contracts.*declared in bank`));
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses a list of values standing outside a domain, refining no RecordType of contracts, or naming a field whose values the domains do not add`, () => {
-  const root = withEvents();
-  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "bank events").list.field = "amount"));
-  expectOne(root, new RegExp(`${sid("bank events")}.*amount.*whose values the domains do not add`));
-  const own = withEvents();
-  edit(own, "specs/bank/a.json", (d) => (nodeIn(d, "bank events").refs = [{ type: "refines", to: sid("account record") }]));
-  reindex(own);
-  expectOne(own, new RegExp(`${sid("bank events")}.*refines no RecordType described in contracts`));
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses a RecordType holding two fields of type variant, the ones it inherits counted`, () => {
-  const root = good();
-  edit(root, "specs/bank/a.json", (d) => {
-    nodeIn(d, "account record").fields.push({ name: "terms", type: { is: "variant" }, required: "where it holds a value", text: "" });
-    d.nodes[0].children.push(node("premium record", { kind: "RecordType", title: "premium account", fields: [{ name: "perks", type: { is: "variant" }, required: "where it holds a value", text: "" }], unknown: "refused", chosenBy: ["kind"], refs: [{ type: "refines", to: sid("account record") }] }));
-  });
-  reindex(root);
-  expectOne(root, new RegExp(`${sid("premium record")}.*two fields of type variant`));
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses an identifier of a RecordType that names no field identifying it among its fields`, () => {
-  const root = good();
-  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("statement record", { kind: "RecordType", title: "statement", fields: [{ name: "account", type: { is: "list of", of: { is: "identifier of", record: sid("account record") } }, required: true, text: "" }], unknown: "refused" })));
-  reindex(root);
-  expectOne(root, new RegExp(`${sid("statement record")}.*account.*names no field identifying it`));
-  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "account record").identifiedBy = "number"));
-  expectOne(root, new RegExp(`${sid("account record")}.*identified by number, which is none of its fields`));
-  edit(root, "specs/bank/a.json", (d) => nodeIn(d, "account record").fields.push({ name: "number", type: { is: "text" }, required: true, text: "" }));
-  assert.deepEqual(messages(root), []);
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses a field of type one of holding no value, in its own list or in a list of a domain`, () => {
-  const root = good();
-  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(node("flag record", { kind: "RecordType", title: "flag", fields: [{ name: "colours", type: { is: "list of", of: { is: "one of", values: [] } }, required: true, text: "" }], unknown: "refused" })));
-  expectOne(root, /fields\/0\/type\/of\/values: must NOT have fewer than 1 items/);
-  const events = withEvents();
-  edit(events, "specs/bank/a.json", (d) => (d.nodes[0].children = d.nodes[0].children.filter((n: any) => n.sid !== sid("bank events"))));
-  reindex(events);
-  expectOne(events, new RegExp(`${sid("event record")}.*kind is of type one of with no value`));
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses identifiers that lead, from one identifying field to the next, back to a RecordType already passed`, () => {
-  const root = good();
-  edit(root, "specs/bank/a.json", (d) => d.nodes[0].children.push(
-    node("left record", { kind: "RecordType", title: "left", identifiedBy: "right", fields: [{ name: "right", type: { is: "identifier of", record: sid("right record") }, required: true, text: "" }], unknown: "refused" }),
-    node("right record", { kind: "RecordType", title: "right", identifiedBy: "left", fields: [{ name: "left", type: { is: "identifier of", record: sid("left record") }, required: true, text: "" }], unknown: "refused" }),
-  ));
-  reindex(root);
-  expectOne(root, new RegExp(`${sid("left record")}.*right leads, from one identifying field to the next, back to`));
-});
-
-test(`@spec s-jau82aq9juv9zzh refuses a RecordType variant standing outside the domain whose RecordType declares the value it answers to`, () => {
-  const root = good();
-  mkdirSync(join(root, "specs", "loans"));
-  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", code: null, sections: [] }))));
   let savings: any;
   edit(root, "specs/bank/a.json", (d) => {
     savings = nodeIn(d, "savings record");
     d.nodes[0].children = d.nodes[0].children.filter((n: any) => n !== savings);
+    d.nodes.push(node("savings", { kind: "section", text: "Savings.", children: [savings] }));
   });
-  writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [savings] }))));
   reindex(root);
-  expectOne(root, new RegExp(`${sid("savings record")}.*stands in loans.*declared in bank`));
+  expectOne(root, new RegExp(`${sid("savings record")}.*declared in the same section as its RecordType`));
+});
+
+test(`@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant that adds no field, and one that adds a field that has the same name as a field of its RecordType`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").schema = { properties: {} }));
+  expectOne(root, new RegExp(`${sid("savings record")}.*adds at least one field`));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").schema = { properties: { kind: { type: "string" }, rate: { type: "number" } } }));
+  expectOne(root, new RegExp(`${sid("savings record")}.*adds a field that its RecordType already has: kind`));
+});
+
+test(`@spec s-c2r9jndrjbtbsv6 refuses a RecordType variant whose answersTo names fields other than those that select a variant, or names a value that is not one of the field's values`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").answersTo = { rate: "high" }));
+  expectOne(root, new RegExp(`${sid("savings record")}.*answersTo names rate, while the fields that select a variant are kind`));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "savings record").answersTo = { kind: "gold" }));
+  expectOne(root, new RegExp(`${sid("savings record")}.*"gold" is not one of the values of kind`));
+});
+
+test(`@spec s-c2r9jndrjbtbsv6 refuses two RecordType variants of one RecordType that answer to the same values, each naming the other`, () => {
+  const root = good();
+  addToBank(root, recordType("bonus record", "bonus account", { properties: { bonus: { type: "number" } } }, { answersTo: { kind: "savings" }, refs: [{ type: "refines", to: sid("account record") }] }));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("savings record")}.*answers to the same values as ${sid("bonus record")}`));
+  expectOne(root, new RegExp(`${sid("bonus record")}.*answers to the same values as ${sid("savings record")}`));
+});
+
+test(`@spec s-c2r9jndrjbtbsv6 refuses a RecordType that has RecordType variants and holds additionalProperties at the top level of its schema`, () => {
+  const root = good();
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "account record").schema.additionalProperties = false));
+  expectOne(root, new RegExp(`${sid("account record")}.*has RecordType variants and holds additionalProperties`));
+});
+
+test(`@spec s-c2r9jndrjbtbsv6 passes a RecordType variant that also refines a fragment of a format, and takes the fields that select a variant through refines links`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(
+    recordType("kinded", "kinded", { type: "object", properties: { kind: { enum: ["plain", "savings"] } }, required: ["kind"] }),
+    recordType("dated", "dated", { type: "object", properties: { since: { type: "string", format: "date" } } }),
+  ));
+  edit(root, "specs/bank/a.json", (d) => {
+    const account = nodeIn(d, "account record");
+    account.schema = { type: "object", properties: { owner: { type: "string" } } };
+    account.refs = [{ type: "refines", to: sid("kinded") }];
+    nodeIn(d, "savings record").refs.push({ type: "refines", to: sid("dated") });
+  });
+  reindex(root);
+  assert.deepEqual(messages(root), []);
+});
+
+test(`@spec s-c2r9jndrjbtbsv6 refuses each RecordType variant of a RecordType without a chosenBy where the RecordTypes with a chosenBy that it reaches through the fewest refines links name fields that differ from one another, naming those RecordTypes`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(
+    recordType("by colour", "by colour", { type: "object", properties: { colour: { enum: ["red"] } } }, { chosenBy: ["colour"] }),
+    recordType("by size", "by size", { type: "object", properties: { size: { enum: ["big"] } } }, { chosenBy: ["size"] }),
+  ));
+  addToBank(root,
+    recordType("parcel", "parcel", { type: "object", properties: { weight: { type: "number" } } }, { refs: [{ type: "refines", to: sid("by colour") }, { type: "refines", to: sid("by size") }] }),
+    recordType("red parcel", "red parcel", { properties: { paint: { type: "string" } } }, { answersTo: { colour: "red" }, refs: [{ type: "refines", to: sid("parcel") }] }),
+  );
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("red parcel")}.*${sid("by colour")}.*${sid("by size")}`));
+});
+
+test(`@spec s-3anv9qcmx8pwp2w refuses a field with identifierOf, at any depth, whose RecordType names no field that identifies its data records, naming the field by its JSON Pointer`, () => {
+  const root = good();
+  addToBank(root, recordType("statement record", "statement", { type: "object", properties: { accounts: { type: "array", items: { identifierOf: sid("account record") } } } }));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("statement record")}.*/properties/accounts/items.*names no field that identifies its data records`));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "account record").identifiedBy = "number"));
+  expectOne(root, new RegExp(`${sid("statement record")}.*/properties/accounts/items.*names no field that identifies its data records`));
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "account record").schema.properties.number = { type: "string" }));
+  assert.deepEqual(messages(root), []);
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "statement record").schema.properties.accounts.items.identifierOf = sid("close")));
+  expectOne(root, new RegExp(`${sid("statement record")}.*/properties/accounts/items.*names no field that identifies its data records`));
+});
+
+test(`@spec s-3anv9qcmx8pwp2w refuses a field whose chain of identifiers has no end, and takes an identifying field through a refines link`, () => {
+  const root = good();
+  addToBank(root,
+    recordType("left record", "left", { type: "object", properties: { right: { identifierOf: sid("right record") } } }, { identifiedBy: "right" }),
+    recordType("right record", "right", { type: "object", properties: { left: { identifierOf: sid("left record") } } }, { identifiedBy: "left" }),
+  );
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("left record")}.*/properties/right.*the chain of identifiers that starts at it does not end in a field without identifierOf`));
+  const inherited = good();
+  edit(inherited, "specs/contracts/c.json", (d) => d.nodes[0].children.push(recordType("numbered", "numbered", { type: "object", properties: { number: { type: "string" } } })));
+  addToBank(inherited,
+    recordType("ledger", "ledger", { type: "object", properties: { owner: { type: "string" } } }, { identifiedBy: "number", refs: [{ type: "refines", to: sid("numbered") }] }),
+    recordType("entry", "entry", { type: "object", properties: { ledger: { identifierOf: sid("ledger") } } }),
+  );
+  reindex(inherited);
+  assert.deepEqual(messages(inherited), []);
+});
+
+test(`@spec s-dk3zfkbhc3v6xbp refuses a field with enum, at any depth, whose source gives it no value, or whose enumSource names a kind that the project's extension of the schema does not add`, () => {
+  const root = good();
+  addToBank(root, recordType("flag record", "flag", { type: "object", properties: { colours: { type: "array", items: { enum: [] } } } }));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("flag record")}.*/properties/colours/items.*its source gives it no value`));
+  const kinds = good();
+  addToBank(kinds, recordType("about record", "about", { type: "object", properties: { about: { enumSource: { from: "kind", kind: "TextRule" } } } }));
+  reindex(kinds);
+  expectOne(kinds, new RegExp(`${sid("about record")}.*/properties/about.*names the kind TextRule, which the project's extension of the schema does not add`));
+  writeFileSync(join(kinds, "specs/_schema/project.schema.json"), JSON.stringify({ kinds: { job: { needsCode: false, schema: {} } } }));
+  edit(kinds, "specs/bank/a.json", (d) => (nodeIn(d, "about record").schema.properties.about.enumSource.kind = "job"));
+  reindex(kinds);
+  expectOne(kinds, new RegExp(`${sid("about record")}.*/properties/about.*its source gives it no value`));
+  addToBank(kinds, node("close books", { kind: "job" }));
+  reindex(kinds);
+  assert.deepEqual(messages(kinds), []);
+});
+
+test(`@spec s-agc6fb3vx46pc23 refuses values gathered beside a field that are not what its source produces`, () => {
+  const root = good();
+  addToBank(root, recordType("audit record", "audit", { type: "object", properties: { part: { enumSource: { from: "parts" } } } }));
+  reindex(root);
+  assert.deepEqual(messages(root), []);
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "audit record").schema.properties.part.enumSource.gathered = [{ value: "loans", sid: sid("bank") }]));
+  expectOne(root, new RegExp(`${sid("audit record")}.*values gathered beside /properties/part`));
+});
+
+test(`@spec s-yhe32vrbygjyd66 refuses a $ref within a RecordType's schema, at any depth, whose value is not # followed by the sid of a RecordType, quoting it`, () => {
+  const root = good();
+  addToBank(root, recordType("statement record", "statement", { type: "object", properties: { owner: { $ref: `#${sid("account record")}` }, lines: { type: "array", items: { $ref: "#/$defs/line" } } } }));
+  reindex(root);
+  const found = messages(root).filter((m) => m.includes(sid("statement record")));
+  assert.equal(found.length, 1, found.join("\n"));
+  assert.match(found[0]!, /"#\/\$defs\/line"/);
+  edit(root, "specs/bank/a.json", (d) => (nodeIn(d, "statement record").schema.properties.lines.items.$ref = `#${sid("close")}`));
+  expectOne(root, new RegExp(`${sid("statement record")}.*"#${sid("close")}"`));
+});
+
+test(`@spec s-ezq8csd433vj6fj reports a RecordType that refers to a RecordType of another part of the system, and a fragment of a format that refers to a RecordType outside the contracts section, and lets the change pass`, () => {
+  const root = good();
+  mkdirSync(join(root, "specs", "loans"));
+  writeFileSync(join(root, "specs", "loans", "00-loans.json"), JSON.stringify(file("loans", "00-loans", node("loans", { kind: "header", level: "core", sections: [] }))));
+  writeFileSync(join(root, "specs", "loans", "l.json"), JSON.stringify(file("loans", "l", node("lending", { kind: "section", text: "Lending.", children: [
+    recordType("loan record", "loan", { type: "object", properties: { account: { $ref: `#${sid("account record")}` } } }),
+  ] }))));
+  edit(root, "specs/contracts/c.json", (d) => d.nodes[0].children.push(
+    recordType("address", "address", { type: "object", properties: { street: { type: "string" } } }),
+    recordType("postal", "postal", { type: "object", properties: { owner: { $ref: `#${sid("account record")}` } } }),
+  ));
+  addToBank(root, recordType("branch record", "branch", { type: "object", properties: { where: { $ref: `#${sid("address")}` }, kind: { $ref: `#${sid("account record")}` } } }));
+  reindex(root);
+  const found = run(root);
+  const reported = found.filter((f) => f.reported).map((f) => `${f.where}: ${f.message}`);
+  assert.ok(reported.some((m) => m.includes(sid("loan record")) && m.includes(sid("account record"))), reported.join("\n"));
+  assert.ok(reported.some((m) => m.includes(sid("postal")) && m.includes(sid("account record"))), reported.join("\n"));
+  assert.ok(!reported.some((m) => m.includes(sid("branch record"))), reported.join("\n"));
+  assert.deepEqual(found.filter((f) => !f.reported).map((f) => f.message), []);
+});
+
+test(`@spec s-ezq8csd433vj6fj where the project has not chosen the Domains extension, reports a reference between RecordTypes of two sections of specs/base whose locations are base/ followed by a single number`, () => {
+  const root = repo({
+    "sheriff.config.json": { code: [], tests: [], extensions: [{ name: "recordtype", chosen: true, by: OWNER }] },
+    "specs/base/b.json": file("base", "b",
+      node("requests", { kind: "section", text: "Requests.", children: [recordType("request", "request", { type: "object", properties: { by: { $ref: `#${sid("member")}` } } })] }),
+      node("users", { kind: "section", text: "Users.", children: [recordType("member", "member", { type: "object", properties: { name: { type: "string" } } })] }),
+    ),
+  });
+  reindex(root);
+  const reported = run(root).filter((f) => f.reported).map((f) => `${f.where}: ${f.message}`);
+  assert.ok(reported.some((m) => m.includes(sid("request")) && m.includes(sid("member"))), reported.join("\n"));
 });
 
 test(`@spec s-yprj7d6tnvauggr refuses a node of the technical appendix that implements no node of the base specification and is outside the stack and the technical debt, and accepts one that implements a section`, () => {
@@ -740,6 +820,19 @@ test(`@spec s-yprj7d6tnvauggr refuses a rule of the appendix of the tools that i
   edit(root, "specs/_guidelines/tools.json", (d) => (nodeIn(d, "tool").refs = [{ type: "implements", to: sid("base") }]));
   reindex(root);
   expectOne(root, new RegExp(`${sid("tool")}.*implements no rule of the SpecSheriff guidelines`));
+});
+
+test(`@spec s-75r4pg4wdqu3gw5 refuses each link that a rule of the SpecSheriff guidelines declares to a node of an extension of the guidelines, naming the rule, the link's type and its target`, () => {
+  const root = good();
+  mkdirSync(join(root, "specs", "_guidelines", "extensions"), { recursive: true });
+  writeFileSync(join(root, "specs", "_guidelines", "extensions", "views.json"), JSON.stringify(file("_guidelines/extensions", "views", node("views", { kind: "section", text: "Views.", children: [node("a view")] })), null, 2) + "\n");
+  edit(root, "specs/_guidelines/spec.json", (d) => (nodeIn(d, "one rule").refs = [{ type: "refines", to: sid("a view") }]));
+  reindex(root);
+  expectOne(root, new RegExp(`specs/_guidelines/spec\\.json: ${sid("one rule")} \\([^)]*\\): declares a link of the type refines to ${sid("a view")}, a node of the extension views of the guidelines`));
+  edit(root, "specs/_guidelines/spec.json", (d) => (nodeIn(d, "one rule").refs = []));
+  edit(root, "specs/_guidelines/tools.json", (d) => (nodeIn(d, "tool").refs = [{ type: "implements", to: sid("a view") }]));
+  reindex(root);
+  assert.ok(!messages(root).some((m) => m.includes("a node of the extension")), messages(root).join("\n"));
 });
 
 test(`@spec s-yprj7d6tnvauggr accepts a rule of the appendix of the tools that implements a node of an extension of the guidelines, and reads no file of an extension as the project's own guidelines`, () => {
@@ -812,22 +905,6 @@ test("@spec s-cdachayybfvg4na refuses a member of a list that is an object lacki
   expectOne(root, new RegExp(`${sid("kinds listed")} .*member 2 of its list .*"name"`));
 });
 
-test("@spec s-agc6fb3vx46pc23 refuses values gathered beside a field that are not what its source produces", () => {
-  const root = withEvents();
-  edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "event record").fields[0].gathered = [{ value: "paid", sid: sid("bank events") }]));
-  expectOne(root, new RegExp(`${sid("event record")}.*values gathered beside kind`));
-});
-
-test("@spec s-5nf87c3e3jg9v7c refuses a domain's list naming a field holding its own list, and a field naming a kind the schema does not hold", () => {
-  const root = withEvents();
-  edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "event record").fields[0].type = { is: "one of", values: ["opened", "paid"] }));
-  reindex(root);
-  expectOne(root, new RegExp(`${sid("bank events")}.*kind.*whose values the domains do not add`));
-  const kinds = good();
-  edit(kinds, "specs/bank/a.json", (d) => nodeIn(d, "account record").fields.push({ name: "about", type: { is: "one of", from: "kindSids", kind: "chapter" }, required: true, text: "" }));
-  reindex(kinds);
-  expectOne(kinds, new RegExp(`${sid("account record")}.*about names the kind chapter, which the schema does not hold`));
-});
 
 /**
  * A project whose own guidelines list the check "no plain accounts" as the given member, with the rule approved unless
@@ -922,5 +999,41 @@ test("@spec s-xzcw3hv4hmxz7h7 refuses an extension that is no JSON, or whose kin
     writeFileSync(join(root, "specs", "_schema", "project.schema.json"), text);
     expectOne(root, /^specs\/_schema\/project\.schema\.json: /);
     assert.throws(() => reindex(root), /specs\/_schema\/project\.schema\.json: /);
+  }
+});
+
+test("@spec s-mhsb6fjsq5xn6c9 sheriff validate, sheriff binding, sheriff reindex and sheriff guard refuse to run where the plugin delivers no file for a chosen extension, naming the extension and the version of the SpecSheriff tools, and sheriff reindex writes nothing", async () => {
+  const version = JSON.parse(readFileSync(join(REPO, "skills", "tools", "package.json"), "utf8")).version as string;
+  const missing = (text: string) => text.includes('"audit"') && text.includes(version) && !text.includes('"domains"');
+  const contents = (root: string) =>
+    readdirSync(root, { recursive: true })
+      .map(String)
+      .filter((p) => statSync(join(root, p)).isFile())
+      .sort()
+      .map((p) => [p, readFileSync(join(root, p), "utf8")] as const);
+  for (const writes of [true, false]) {
+    const root = repo({ "sheriff.config.json": { code: [], tests: [], extensions: [...ALL_EXTENSIONS, { name: "audit", chosen: true, by: OWNER }] } }, { writes });
+    if (writes) rmSync(join(root, "specs", "_guidelines", "extensions", "audit.json"));
+    else rmSync(join(root, "specs", "_schema"), { recursive: true });
+    const where = writes ? "where the SpecSheriff guidelines are written" : "in a project";
+    assert.ok(validate(root).some((f) => missing(f.message)), `sheriff validate, ${where}`);
+    assert.ok((await binding(root)).some((f) => missing(f.message)), `sheriff binding, ${where}`);
+    const before = contents(root);
+    assert.throws(() => reindex(root), (e: Error) => missing(e.message), `sheriff reindex, ${where}`);
+    assert.deepEqual(contents(root), before, `sheriff reindex writes nothing, ${where}`);
+    const refused = await guard(root, { tool_name: "Write", tool_input: { file_path: join(root, "notes.md"), content: "x\n" } });
+    assert.ok(refused && missing(refused), `sheriff guard, ${where}`);
+  }
+});
+
+test(`@spec s-68zhvb5vfprznmd refuses a link whose ratio holds a range whose lower bound is greater than its upper bound, naming the link's target and quoting the ratio, and compares the bounds as numbers`, () => {
+  const root = good();
+  edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "user").refs = [{ type: "term-relation", to: sid("session"), ratio: "1:3..1" }]));
+  reindex(root);
+  expectOne(root, new RegExp(`${sid("user")} .*${sid("session")}.*a range whose lower bound is greater than its upper bound: "1:3\\.\\.1"`));
+  for (const ratio of ["1:9..10", "1:5..*", "2..2:0..1"]) {
+    edit(root, "specs/contracts/c.json", (d) => (nodeIn(d, "user").refs[0].ratio = ratio));
+    reindex(root);
+    assert.deepEqual(messages(root), [], ratio);
   }
 });

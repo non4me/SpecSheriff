@@ -1074,7 +1074,7 @@
               }
             ],
             "tests": [
-              "skills/tools/test/unit/reindex.test.ts::@spec s-ju5vcanbjph7mgh writes beside a field the values gathered from its source, each with the node it comes from, and none beside a field holding its own list"
+              "skills/tools/test/unit/reindex.test.ts::@spec s-ju5vcanbjph7mgh writes beside a field with enumSource, at any depth, the values gathered from its source, each with the node it comes from, in the order of those nodes, and none beside a field holding its own enum"
             ]
           }
         },

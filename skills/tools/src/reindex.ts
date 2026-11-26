@@ -2,13 +2,14 @@ import { randomInt } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, posix } from "node:path";
 import { readCode } from "./code.ts";
-import { loadConfig, readsAs } from "./config.ts";
+import { loadConfig, ownerSettings, readsAs, strictDefault } from "./config.ts";
 import { trackedFiles } from "./diff.ts";
 import { migrateApprovals, readApprovals, stands } from "./approvals.ts";
 import { mergeKeys, type KeyTwice } from "./json-text.ts";
 import { APPROVAL_RULE, builtStatuses, fingerprint, incoming, isContainer, locations, partOf, PROJECT, SID, statusNow, TESTS_PASS_RULE, testsRunRule } from "./model.ts";
-import { EXTENSION, isArchive, schemaRefusals, type Extension } from "./schema.ts";
-import { fieldKey, fieldsOf, gather } from "./values.ts";
+import { EXTENSION, isArchive, missingExtensions, schemaRefusals, type Extension } from "./schema.ts";
+import { fieldKey, gather, schemasWithin, sourcedFields } from "./values.ts";
+import { boundLists, readBound } from "./lists.ts";
 import { canonical, cellNodes, specPaths, withTaken, writesGuidelines, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface ReindexReport {
@@ -20,6 +21,8 @@ export interface ReindexReport {
   written: string[];
   /** The sids of the draft rules added to the project's own guidelines: rules that the SpecSheriff tools read only after they are approved. */
   added: string[];
+  /** The files of the specification rewritten because an earlier release wrote them differently (s-gb8s9657a65hqmv). */
+  rewritten: string[];
 }
 
 /**
@@ -96,13 +99,110 @@ const RENAMED_KEYS: Record<string, string> = { id: "location", rationale: "reaso
 /** The kinds earlier releases wrote under another name. */
 const RENAMED_KINDS: Record<string, string> = { record: "RecordType", recordType: "RecordType", rule: "TextRule", domain: "header" };
 
-/** Renames the kind a field's values come from, in the field's type and in every type nested in it. */
-function renameSourceKind(type: unknown): void {
-  if (!type || typeof type !== "object" || Array.isArray(type)) return;
-  const t = type as { from?: unknown; kind?: unknown; of?: unknown; fields?: unknown };
-  if (t.from === "kindSids" && typeof t.kind === "string" && RENAMED_KINDS[t.kind]) t.kind = RENAMED_KINDS[t.kind];
-  renameSourceKind(t.of);
-  if (Array.isArray(t.fields)) for (const f of t.fields) renameSourceKind((f as { type?: unknown })?.type);
+/** A field of a RecordType, and the neutral type of a field, as earlier releases wrote them. */
+type EarlierType = { is: string; values?: string[]; from?: string; kind?: string; of?: EarlierType; record?: string } & Record<string, unknown>;
+type EarlierField = { name: string; type: EarlierType; required: unknown; text?: string };
+
+/** The bounds that earlier releases allowed on a number and on a list, each kept under the same name in JSON Schema. */
+const NUMBER_BOUNDS = ["minimum", "exclusiveMinimum", "maximum", "exclusiveMaximum"];
+const LIST_BOUNDS = ["minItems", "maxItems"];
+
+/**
+ * The JSON Schema of a neutral type that an earlier release wrote (s-gb8s9657a65hqmv), as the table of s-4npdup7mjkva69y
+ * gives it. It is null for the type of a field that has no such form: a field of type `variant`, a field whose values the
+ * domains add, and a field whose own list of values is empty.
+ */
+function neutralSchema(t: EarlierType | undefined): Record<string, unknown> | null {
+  if (!t || typeof t !== "object") return null;
+  const bounds = (keys: string[]) => Object.fromEntries(keys.filter((k) => k in t).map((k) => [k, t[k]]));
+  switch (t.is) {
+    case "text":
+      return { type: "string" };
+    case "email address":
+      return { type: "string", format: "email" };
+    case "instant":
+      return { type: "string", format: "date-time" };
+    case "date":
+      return { type: "string", format: "date" };
+    case "duration":
+      return { type: "string", format: "duration" };
+    case "whole number":
+      return { type: "integer", ...bounds(NUMBER_BOUNDS) };
+    case "number":
+      return { type: "number", ...bounds(NUMBER_BOUNDS) };
+    case "yes/no":
+      return { type: "boolean" };
+    case "any value":
+      return {};
+    case "record":
+      return { $ref: `#${t.record}` };
+    case "identifier of":
+      return { identifierOf: t.record };
+    case "one of":
+      if (Array.isArray(t.values) && t.values.length) return { enum: t.values };
+      if (t.from === "domainNames") return { enumSource: { from: "parts" } };
+      if (t.from === "kindSids" && typeof t.kind === "string") return { enumSource: { from: "kind", kind: RENAMED_KINDS[t.kind] ?? t.kind } };
+      return null;
+    case "list of": {
+      const of = neutralSchema(t.of);
+      return of && { type: "array", items: of, ...bounds(LIST_BOUNDS) };
+    }
+    case "map of": {
+      const of = neutralSchema(t.of);
+      return of && { type: "object", additionalProperties: of };
+    }
+    default:
+      return null;
+  }
+}
+
+/**
+ * The list as this release writes it, with each key kept in the position it had (s-gb8s9657a65hqmv). Earlier releases recorded,
+ * in `declaredIn` under the key `declaration`, where a list is declared. Such a `declaredIn` is:
+ * - removed, where it points to the field `kinds` of the project's extension of the schema;
+ * - replaced by a `jsonSchema` entry with the key `pointer`, where the file that it names is a JSON file;
+ * - replaced by a `valueList` entry with the key `symbol`, where it names a declaration in code.
+ * In a `jsonSchema` or a `valueList` that an earlier release wrote, the key `declaration` becomes `pointer` or `symbol` respectively.
+ */
+function rewrittenList(list: Record<string, unknown>): Record<string, unknown> {
+  const isObject = (v: unknown): v is Record<string, unknown> => Boolean(v) && typeof v === "object" && !Array.isArray(v);
+  const renamed = (v: Record<string, unknown>, to: string) => Object.fromEntries(Object.entries(v).map(([k, x]) => [k === "declaration" ? to : k, x]));
+  return Object.fromEntries(
+    Object.entries(list).flatMap(([k, v]): Array<[string, unknown]> => {
+      if (k === "declaredIn" && isObject(v)) {
+        if (v.file === EXTENSION && typeof v.declaration === "string" && /^#?\/kinds$/.test(v.declaration)) return [];
+        return String(v.file).endsWith(".json") ? [["jsonSchema", renamed(v, "pointer")]] : [["valueList", renamed(v, "symbol")]];
+      }
+      if (k === "jsonSchema" && isObject(v)) return [[k, renamed(v, "pointer")]];
+      if (k === "valueList" && isObject(v)) return [[k, renamed(v, "symbol")]];
+      return [[k, v]];
+    }),
+  );
+}
+
+/**
+ * Rewrites a RecordType's `fields` and `unknown`, as an earlier release wrote them, as its `schema`, in place of
+ * `fields` (s-gb8s9657a65hqmv). The schema begins with `"type": "object"`, unless the RecordType is a RecordType variant.
+ * `unknown: "refused"` becomes `unevaluatedProperties: false`, and a RecordType variant loses its `unknown`. A RecordType
+ * holding a field that has no form in JSON Schema is left unchanged, and the function returns the names of such fields.
+ */
+function rewriteFields(node: SpecNode): string[] {
+  const fields = node.fields as EarlierField[];
+  const unconverted = fields.filter((f) => neutralSchema(f.type) === null).map((f) => f.name);
+  if (unconverted.length) return unconverted;
+  const variant = "answersTo" in node;
+  const properties = Object.fromEntries(fields.map((f) => [f.name, { ...neutralSchema(f.type), ...(f.text ? { description: f.text } : {}) }]));
+  const required = fields.filter((f) => f.required === true).map((f) => f.name);
+  const schema = {
+    ...(variant ? {} : { type: "object" }),
+    ...(fields.length ? { properties } : {}),
+    ...(required.length ? { required } : {}),
+    ...(node.unknown === "refused" && !variant ? { unevaluatedProperties: false } : {}),
+  };
+  const entries = Object.entries(node).flatMap(([k, v]): Array<[string, unknown]> => (k === "fields" ? [["schema", schema]] : k === "unknown" ? [] : [[k, v]]));
+  for (const k of Object.keys(node)) delete (node as Record<string, unknown>)[k];
+  Object.assign(node, Object.fromEntries(entries));
+  return [];
 }
 
 /**
@@ -125,10 +225,13 @@ function renamedExtension(root: string): Extension | null {
 }
 
 /**
- * Renames, in every node of every file, the archive's included, what an earlier release wrote under another name,
- * each key where it stood; an old key whose new name the node already holds is dropped.
+ * Renames, in every node of every file, including the archive, what an earlier release wrote under another name, each
+ * key keeping its position. An old key is dropped if the node already has a key under its new name. Returns a line for each
+ * RecordType that the function leaves as an earlier release wrote it, naming the fields that keep it in that form
+ * (s-gb8s9657a65hqmv).
  */
-export function renameEarlier(files: SpecFile[]): void {
+export function renameEarlier(files: SpecFile[]): string[] {
+  const left: string[] = [];
   const rename = (n: SpecNode): SpecNode => {
     // The files are validated only after this, so what is not a node is left for the validation to name.
     if (!n || typeof n !== "object" || Array.isArray(n)) return n;
@@ -147,13 +250,20 @@ export function renameEarlier(files: SpecFile[]): void {
       for (const k of Object.keys(node)) delete (node as Record<string, unknown>)[k];
       Object.assign(node, Object.fromEntries(renamed));
     }
-    // A field whose values are the sids of a kind's nodes names that kind as an earlier release wrote it.
-    if (node.kind === "RecordType") for (const f of fieldsOf(node)) renameSourceKind(f.type);
-    // An empty own list was how earlier releases said a field takes the values the domains add.
-    if (node.kind === "RecordType") for (const f of fieldsOf(node)) {
-      if (f.type.is === "one of" && Array.isArray(f.type.values) && !f.type.values.length && !f.type.from) {
-        const { values: _, ...rest } = f.type;
-        f.type = { ...rest, from: "domains" };
+    // A list declared in a JSON file or in the code is rewritten in the form that this release writes (s-gb8s9657a65hqmv).
+    if (node.list && typeof node.list === "object" && !Array.isArray(node.list)) node.list = rewrittenList(node.list as Record<string, unknown>);
+    // A link of type `supersedes`, which earlier releases wrote, is removed (s-gb8s9657a65hqmv).
+    if (Array.isArray(node.refs)) node.refs = node.refs.filter((r) => !(r && r.type === "supersedes"));
+    // A domain's header no longer says where the domain's code is, and a ratio ends in * where earlier releases wrote N (s-gb8s9657a65hqmv).
+    if (node.kind === "header") delete (node as Record<string, unknown>).code;
+    if (Array.isArray(node.refs)) for (const r of node.refs) if (r && typeof r.ratio === "string") r.ratio = r.ratio.replaceAll("N", "*");
+    // A RecordType's fields, as earlier releases wrote them, become its schema in JSON Schema form.
+    if (node.kind === "RecordType" && Array.isArray(node.fields)) {
+      const unconverted = rewriteFields(node);
+      if (unconverted.length) {
+        left.push(
+          `${node.sid ?? node.title}: the RecordType "${node.title}" is left as an earlier release wrote it, since these of its fields have no form in JSON Schema: ${unconverted.map((f) => `"${f}"`).join(", ")}. A field of type variant, a field whose values the domains add and a field whose own list of values is empty are rewritten by hand.`,
+        );
       }
     }
     if (Array.isArray(node.children)) node.children = node.children.map(rename);
@@ -168,9 +278,11 @@ export function renameEarlier(files: SpecFile[]): void {
       if (Array.isArray(n.refs)) n.refs = n.refs.filter((r) => !r.from);
     }
   }
+  return left;
 }
 
-const A_SID = "s-222222222222222";
+// Written in two pieces, so that the check of citations does not read it as a sid that names no node (s-m8nmfsxkcfu7cjp).
+const A_SID = ["s", "222222222222222"].join("-");
 
 /**
  * A copy of a file in which what the reindex writes itself holds a value the schema takes, so that the validation
@@ -182,12 +294,8 @@ function asValidated(f: SpecFile): unknown {
   const archived = partOf(f.path).part.startsWith("_archive");
   const copy = structuredClone(f.data) as { nodes?: unknown };
   const isObject = (v: unknown): v is Record<string, unknown> => Boolean(v) && typeof v === "object" && !Array.isArray(v);
-  const ungathered = (fields: unknown): void => {
-    if (!Array.isArray(fields)) return;
-    for (const field of fields.filter(isObject)) {
-      delete field.gathered;
-      if (isObject(field.type)) ungathered(field.type.fields);
-    }
+  const ungathered = (schema: unknown): void => {
+    for (const { schema: s } of schemasWithin(schema)) if (isObject(s.enumSource)) delete s.enumSource.gathered;
   };
   const visit = (n: unknown): void => {
     if (!isObject(n)) return;
@@ -197,7 +305,13 @@ function asValidated(f: SpecFile): unknown {
       n.location = "x";
       if (n.kind === "header") n.sections = [];
       if (isContainer(n.kind as string)) n.status = "draft";
-      ungathered(n.fields);
+      if (n.kind === "RecordType") ungathered(n.schema);
+      // A node's `meta.code` and `meta.tests` lists are left out of the validation: `writeLists` rewrites them from the SpecTags in
+      // the code and the tests (s-ztseyetus7np6br).
+      if (isObject(n.meta)) {
+        delete n.meta.code;
+        delete n.meta.tests;
+      }
     }
     if (Array.isArray(n.children)) n.children.forEach(visit);
     if (Array.isArray(n.groups)) for (const g of n.groups.filter(isObject)) for (const r of (Array.isArray(g.rows) ? g.rows : []).filter(isObject)) {
@@ -265,8 +379,11 @@ export function judgedHere(path: string, writesSpecSheriffGuidelines: boolean): 
 
 export function reindex(root: string): ReindexReport {
   loadConfig(root);
+  // Nothing is written while a chosen extension of the guidelines is missing from the plugin (s-mhsb6fjsq5xn6c9).
+  const missing = missingExtensions(root);
+  if (missing.length) throw new Error(`the installed plugin lacks a chosen extension, so the reindex writes no file:\n${missing.map((m) => `${m.where}: ${m.message}`).join("\n")}`);
   const writesSpecSheriffGuidelines = writesGuidelines(root);
-  const report: ReindexReport = { merged: [], drafted: [], written: [], added: [] };
+  const report: ReindexReport = { merged: [], drafted: [], written: [], added: [], rewritten: [] };
   const texts = new Map<string, string>();
   const files: SpecFile[] = specPaths(root).map((path) => {
     const text = readFileSync(join(root, path), "utf8");
@@ -279,11 +396,13 @@ export function reindex(root: string): ReindexReport {
       throw new Error(`${path}: ${(error as Error).message}`);
     }
   });
-  renameEarlier(files);
+  const earlier = files.map((f) => JSON.stringify(f.data));
+  const left = renameEarlier(files);
+  files.forEach((f, i) => JSON.stringify(f.data) !== earlier[i] && report.rewritten.push(f.path));
   const extension = renamedExtension(root);
   // Validated once what an earlier release wrote is changed, and before anything is computed (s-xzcw3hv4hmxz7h7).
   const refused = schemaRefusals(root, files.map((f) => ({ path: f.path, data: asValidated(f) })), extension ?? undefined);
-  if (refused.length) throw new Error(`the schema refuses what the reindex reads, so it writes no file:\n${refused.map((r) => `${r.where}: ${r.message}`).join("\n")}`);
+  if (refused.length) throw new Error(`the schema refuses what the reindex reads, so it writes no file:\n${[...left, ...refused.map((r) => `${r.where}: ${r.message}`)].join("\n")}`);
   const testsRun = replaceApprovingRule(root, files, report);
   giveSids(files);
   if (testsRun) report.added.push(...addedTestsRule(files));
@@ -303,13 +422,13 @@ export function reindex(root: string): ReindexReport {
     if (index) header.sections = index;
     else delete header.sections;
   }
-  // Beside each field whose values come from elsewhere than its own list, the values gathered for it (s-ju5vcanbjph7mgh).
-  const gathered = gather(spec);
-  for (const [, { node }] of spec.nodes) {
-    if (node.kind !== "RecordType") continue;
-    for (const f of fieldsOf(node)) {
-      if (f.type.is === "one of" && f.type.from) f.gathered = gathered.get(fieldKey(node, f.name)) ?? [];
-      else delete f.gathered;
+  // Where the RecordType extension is chosen, the values gathered from the source of each field with enumSource are written beside the field (s-ju5vcanbjph7mgh, s-5nf87c3e3jg9v7c).
+  const chosen = ownerSettings(loadConfig(root), strictDefault(root)).extensions;
+  if (chosen.has("recordtype")) {
+    const gathered = gather(spec, { domains: chosen.has("domains") });
+    for (const [, { node }] of spec.nodes) {
+      if (node.kind !== "RecordType") continue;
+      for (const { pointer, source } of sourcedFields(node)) source.gathered = gathered.get(fieldKey(node, pointer)) ?? [];
     }
   }
 
@@ -358,10 +477,47 @@ export function reindex(root: string): ReindexReport {
 const escaped = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /**
- * Rewrites each test naming its node by a bare sid, as an earlier release of the SpecSheriff tools read it, opening its
- * name or standing alone as the argument of its mark: `@spec ` is put before that sid, in the files the settings name as
- * the tests of the system's code or of a project's own check or generator, and each node's list of tests names the test
- * by its new name. Returns each file it rewrote (s-f5rz6b7dhxejjts).
+ * Writes each node's `meta.code` and `meta.tests` as the lists that the SpecTags of the code and of the tests produce
+ * (s-ztseyetus7np6br, s-rwqzepmrt77rv35). It writes them in the files of the specification that the repository keeps, for every
+ * node, including the nodes in the cells of a TableRule. A list that no SpecTag produces is removed. Returns the path of each
+ * file that it writes.
+ */
+export async function writeLists(root: string): Promise<string[]> {
+  const config = loadConfig(root);
+  const spec = withTaken(root, specPaths(root).map((path) => ({ path, data: JSON.parse(readFileSync(join(root, path), "utf8")) })));
+  const { codeFiles, testFiles } = await readBound(root, config, spec);
+  const lists = boundLists(codeFiles, testFiles);
+  const written: string[] = [];
+  for (const f of spec.files.filter((f) => !f.taken && !isArchive(f.path))) {
+    const before = canonical(f.data);
+    const visit = (n: SpecNode): void => {
+      const meta = { ...((n.meta as Record<string, unknown> | undefined) ?? {}) };
+      const code = [...(lists.code.get(n.sid) ?? [])].sort();
+      const tests = [...(lists.tests.get(n.sid) ?? [])].sort();
+      if (code.length) meta.code = code.map((file) => ({ file }));
+      else delete meta.code;
+      if (tests.length) meta.tests = tests;
+      else delete meta.tests;
+      if (Object.keys(meta).length) n.meta = meta;
+      else delete n.meta;
+      (n.children ?? []).forEach(visit);
+      cellNodes(n).forEach(({ node }) => visit(node));
+    };
+    (f.data.nodes ?? []).forEach(visit);
+    if (canonical(f.data) !== before) {
+      writeFileSync(join(root, f.path), canonical(f.data));
+      written.push(f.path);
+    }
+  }
+  return written;
+}
+
+/**
+ * Rewrites each test that names its node by a bare sid, which an earlier release of the SpecSheriff tools read. The sid opens
+ * the test's name or stands alone as the argument of its mark. `@spec ` is put before that sid in the files that the settings
+ * name as the tests of the system's code or of a project's own check or generator. Each node's list of tests then names the
+ * test by its new name. Returns each file it rewrote, the files of the specification included (s-f5rz6b7dhxejjts). A file of
+ * the specification is read with every value of a key written twice merged, so that rewriting it drops none (s-w5wg69pvvhedsws).
  */
 export async function rewriteTests(root: string): Promise<string[]> {
   const config = loadConfig(root);
@@ -389,7 +545,7 @@ export async function rewriteTests(root: string): Promise<string[]> {
   }
   if (renamed.size) {
     for (const path of specPaths(root)) {
-      const data = JSON.parse(readFileSync(join(root, path), "utf8")) as SpecFile["data"];
+      const data = mergeKeys(readFileSync(join(root, path), "utf8")).value as SpecFile["data"];
       let changed = false;
       const walk = (nodes: SpecNode[] = []) => nodes.forEach((n) => {
         const meta = n.meta as { tests?: string[] } | undefined;
@@ -403,7 +559,10 @@ export async function rewriteTests(root: string): Promise<string[]> {
         walk(n.children);
       });
       walk(data.nodes);
-      if (changed) writeFileSync(join(root, path), canonical(data));
+      if (changed) {
+        writeFileSync(join(root, path), canonical(data));
+        rewritten.push(path);
+      }
     }
   }
   return rewritten.sort();

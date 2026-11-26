@@ -483,6 +483,10 @@
                         "ruling": "The owner: the rule moves ahead of them, so that the notion of an owner is introduced before it is first used.",
                         "type": "procedural"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/model.test.ts::@spec s-6sk8uet75dmq5qz names no owner where the specification names none",
+                      "skills/tools/test/unit/model.test.ts::@spec s-6sk8uet75dmq5qz takes a node's owners from the nearest section or header that names owners, otherwise from the specification's owners"
                     ]
                   }
                 }
@@ -778,9 +782,6 @@
                         "ruling": "The owner: only a node of the technical appendix may name such an artifact, together with its version. The checks compare the code with that version, and adopting a new version is a change to the node.",
                         "type": "textual"
                       }
-                    ],
-                    "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-xqs2e24mx5253ye refuses a list its declaration in the code or in a schema does not match"
                     ]
                   }
                 },
@@ -1213,9 +1214,7 @@
                     ],
                     "tests": [
                       "skills/tools/test/unit/approve.test.ts::@spec s-67vekyup7y8smap lets any one of a node's owners approve it, the line naming which",
-                      "skills/tools/test/unit/approve.test.ts::@spec s-67vekyup7y8smap refuses a node none of whose owners is the one approving, naming its owners, and approves none of those named",
-                      "skills/tools/test/unit/model.test.ts::@spec s-67vekyup7y8smap names no owner where the specification names none",
-                      "skills/tools/test/unit/model.test.ts::@spec s-67vekyup7y8smap takes a node's owners from the nearest section or header naming them, else the specification's"
+                      "skills/tools/test/unit/approve.test.ts::@spec s-67vekyup7y8smap refuses a node none of whose owners is the one approving, naming its owners, and approves none of those named"
                     ]
                   }
                 },
@@ -1453,6 +1452,10 @@
                     {
                       "type": "cites",
                       "from": "s-4bwa4zepd4nwcv8"
+                    },
+                    {
+                      "type": "cites",
+                      "from": "s-f5brvuuu6xmkj6t"
                     }
                   ],
                   "reason": "An owner's approval is worth waiting for only where a wording states something new that nothing else checks. A wording that restates an approved one, or does not change the meaning, states nothing new. What a node of the technical appendix adds to the rule it implements is checked by the independent reviewer in the commit in which the node is approved (§s-nyh9yk22ba6g77q). The agent's report informs the owner of each such approval, so that the owner can withdraw an approval they disagree with (§s-fpq35tf3pehgk64).",
@@ -1595,6 +1598,10 @@
                     },
                     {
                       "type": "cites",
+                      "from": "s-hcmpjmwtgfwzncu"
+                    },
+                    {
+                      "type": "cites",
                       "from": "s-ynqb8zt3fy28asp"
                     },
                     {
@@ -1643,7 +1650,7 @@
                       }
                     ],
                     "tests": [
-                      "skills/tools/test/unit/model.test.ts::@spec s-9kfdycuq34beqvs builds a section's status from the nodes under it that are no section, and a domain's header's from every node of the domain",
+                      "skills/tools/test/unit/model.test.ts::@spec s-9kfdycuq34beqvs builds a section's approval status from the nodes under it that are not sections",
                       "skills/tools/test/unit/reindex.test.ts::@spec s-9kfdycuq34beqvs writes the status of each section and domain's header from the nodes under it, after every change"
                     ]
                   }
@@ -1811,11 +1818,6 @@
                         "ruling": "The owner: that requirement moves to a node of its own.",
                         "type": "textual"
                       }
-                    ],
-                    "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-rah8b37kytb682y counts as unchanged a test whose only change puts @spec before the bare sid it carried",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-rah8b37kytb682y refuses a rule whose code a commit adds or changes with no test carrying its sid",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-rah8b37kytb682y refuses a test carrying the sid of a node that is neither a rule nor a term"
                     ]
                   }
                 },
@@ -2119,15 +2121,6 @@
                         "ruling": "The owner agreed (\"ok\", in answer to \"Do you agree to the recommended option in all six questions?\"): option A in questions 4.1, 4.2 and 4.3, and option B in questions 4.4, 4.5 and 4.6.",
                         "type": "textual"
                       }
-                    ],
-                    "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts a change to a tag as a change to the symbol's code",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as changed a Python line moved out of its block by its indentation alone",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as changed a line whose text after // or # stands inside a string",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as changed a symbol where a name is replaced but the old one is still spelled",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose lines differ only in a comment, a citation's sid or a name renamed throughout",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 counts as unchanged a symbol whose only change is a line inside a comment of several lines",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-kgbzk2ph9e6jfb4 lets a symbol the commit leaves unchanged keep a tag naming a draft node"
                     ]
                   }
                 }
@@ -4252,12 +4245,12 @@
                 ],
                 "tests": [
                   "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 accepts ${what}",
+                  "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 accepts a RecordType whose schema is an object in JSON Schema form only where the project has chosen the RecordType extension, and refuses the form that earlier releases wrote",
                   "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 accepts a list whose members are objects naming the property that holds each one's value",
                   "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 accepts every file of the specification as it stands",
                   "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 names a field nobody declared, and a required field that is missing",
                   "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 names the field that is wrong",
-                  "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 refuses ${what}",
-                  "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 takes a field of type one of naming its source, with the values gathered beside it, and refuses one naming two sources"
+                  "skills/tools/test/unit/schema.test.ts::@spec s-eferktypcj7njt5 refuses ${what}"
                 ]
               }
             },
@@ -4458,6 +4451,10 @@
                 {
                   "type": "cites",
                   "from": "s-477gtdrkw34dzxw"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-npnmwyt6s3gypwe"
                 },
                 {
                   "type": "cites",
@@ -4726,6 +4723,10 @@
                   "from": "s-477gtdrkw34dzxw"
                 },
                 {
+                  "type": "cites",
+                  "from": "s-npnmwyt6s3gypwe"
+                },
+                {
                   "type": "implements",
                   "from": "s-hw84ynkvhgzcnpr"
                 },
@@ -4842,8 +4843,20 @@
                   "from": "s-bpdqd9v72wg7vsz"
                 },
                 {
+                  "type": "checks",
+                  "from": "s-azkbyq7unknavse"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-gb8s9657a65hqmv"
+                },
+                {
                   "type": "cites",
                   "from": "s-k4nqjr96ux7a5m7"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-68zhvb5vfprznmd"
                 }
               ],
               "reason": "A ratio gives both ends because neither end's multiplicity follows from the other's. With the ends swapped, the same multiplicities mean something different, so the order is fixed.\n\nAny multiplicity in that notation can be written, since an exact number, such as the two teams of a match, is as much a part of the relation as \"one\" or \"many\".",
@@ -4859,6 +4872,9 @@
                     "ruling": "The owner agreed that a ratio may state any multiplicity in UML notation: a whole number, or a range of whole numbers whose upper bound may be `*`.",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/schema.test.ts::@spec s-bckzdwd35d2nefa accepts a ratio in UML notation and refuses one written in the notation of earlier releases"
                 ]
               }
             }
@@ -6096,7 +6112,6 @@
                 ],
                 "tests": [
                   "skills/tools/test/unit/binding.test.ts::@spec s-vsh384ybt4w25a2 reports an approved node of a project's own kind that needs code and has none, but not one that needs no code, and lets a test carry its sid",
-                  "skills/tools/test/unit/model.test.ts::@spec s-vsh384ybt4w25a2 numbers the nodes of a project's own kind among the rules of their section",
                   "skills/tools/test/unit/validate.test.ts::@spec s-vsh384ybt4w25a2 counts a node of a project's own kind as a rule of its section, and lets an exempts link reach it"
                 ]
               }
@@ -6308,6 +6323,10 @@
                 {
                   "type": "cites",
                   "from": "s-pvnnr844f3y964m"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-68zhvb5vfprznmd"
                 },
                 {
                   "type": "cites",
@@ -6534,6 +6553,10 @@
                 {
                   "type": "cites",
                   "from": "s-pvnnr844f3y964m"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-68zhvb5vfprznmd"
                 },
                 {
                   "type": "cites",
@@ -6794,10 +6817,6 @@
                 },
                 {
                   "type": "cites",
-                  "from": "s-vp24dqydygztqbt"
-                },
-                {
-                  "type": "cites",
                   "from": "s-rd9nftptjuz6bwv"
                 },
                 {
@@ -7033,9 +7052,8 @@
                   }
                 ],
                 "tests": [
-                  "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf counts a tag and a test of a rule implementing it, through rules implementing those in turn",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf leaves out a rule a node of the project's own guidelines exempts, by a link to it or to a section above it, and the guidelines and the technical debt",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf reports an approved rule no tagged symbol or no test that runs carries out, and refuses nothing for it"
+                  "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf counts, for a rule, the SpecTags and the tests of each rule that implements it, directly or through rules that implement those in turn",
+                  "skills/tools/test/unit/binding.test.ts::@spec s-6fw72j65jkqrfpf leaves out a rule a node of the project's own guidelines exempts, by a link to it or to a section above it, and the guidelines and the technical debt"
                 ]
               }
             },
@@ -7074,6 +7092,10 @@
                 {
                   "type": "cites",
                   "from": "s-kkbqcb9xrpaepwn"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-jau82aq9juv9zzh"
                 },
                 {
                   "type": "checks",
@@ -7138,6 +7160,10 @@
                 {
                   "type": "cites",
                   "from": "s-w93jfnqynfa47pf"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-utf4mbt7ref8g9c"
                 },
                 {
                   "type": "cites",
@@ -7449,12 +7475,6 @@
                     "ruling": "The owner: the node refers to code that a SpecTag binds, rather than to a symbol.",
                     "type": "textual"
                   }
-                ],
-                "tests": [
-                  "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr leaves out of what a message must name the tags on symbols in the tests",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr passes a message naming every node the tags on the changed symbols name",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr refuses a message leaving out a node a changed symbol's tag names",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-ef93u6cnbs2sevr refuses a message naming a section or a node that does not exist, its comment lines left out"
                 ]
               }
             },
@@ -7540,9 +7560,7 @@
                   }
                 ],
                 "tests": [
-                  "skills/tools/test/unit/binding.test.ts::@spec s-rwqzepmrt77rv35 holds a node naming the symbols in a file to them",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-rwqzepmrt77rv35 refuses a node naming the symbols in a file that leaves out one its tag stands on",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-rwqzepmrt77rv35 refuses a node's lists of code and tests that the tags and the tests' sids do not produce"
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-rwqzepmrt77rv35 writes each node's meta.code and meta.tests from the SpecTags of the code and the tests, each file once, sorted, and removes a list that no SpecTag produces"
                 ]
               }
             },
@@ -7761,6 +7779,10 @@
                   "to": "s-pcnyfp7gev7syax"
                 },
                 {
+                  "type": "cites",
+                  "to": "s-8xw4mgvpexyvw5q"
+                },
+                {
                   "type": "refines",
                   "from": "s-rp2nxe3cga2p26x"
                 },
@@ -7823,6 +7845,10 @@
                 {
                   "type": "cites",
                   "from": "s-477gtdrkw34dzxw"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-npnmwyt6s3gypwe"
                 },
                 {
                   "type": "cites",
@@ -8378,6 +8404,42 @@
                         "check": {
                           "node": {
                             "location": "_guidelines/spec/10.1.15",
+                            "sid": "s-azkbyq7unknavse",
+                            "kind": "TextRule",
+                            "status": "approved",
+                            "text": "In the ratio of a `term-relation` link (§s-bckzdwd35d2nefa), the lower bound of each range is not greater than its upper bound",
+                            "refs": [
+                              {
+                                "type": "checks",
+                                "to": "s-bckzdwd35d2nefa"
+                              },
+                              {
+                                "type": "implements",
+                                "from": "s-68zhvb5vfprznmd"
+                              }
+                            ],
+                            "meta": {
+                              "decisions": [
+                                {
+                                  "date": "2026-11-26",
+                                  "problem": "Rule s-bckzdwd35d2nefa says that in a range of a ratio the lower bound is not greater than the upper one, while the schema checks only the notation of a ratio and no check compares the bounds.",
+                                  "ruling": "The owner chose to add the check (\"А.\", in answer to \"Добавить ли проверку границ кратности: новую строку таблицы 10.1 и узел описания инструментов в формулировках выше?\"), and agreed to the row and the node as they were shown.",
+                                  "type": "textual"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "cost": {
+                          "text": "refused"
+                        }
+                      }
+                    },
+                    {
+                      "cells": {
+                        "check": {
+                          "node": {
+                            "location": "_guidelines/spec/10.1.16",
                             "sid": "s-xdk44dt9uxdeb2b",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8403,7 +8465,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.16",
+                            "location": "_guidelines/spec/10.1.17",
                             "sid": "s-83natrftdsmttsu",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8448,7 +8510,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.17",
+                            "location": "_guidelines/spec/10.1.18",
                             "sid": "s-exxuckgakfxkycp",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8482,7 +8544,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.18",
+                            "location": "_guidelines/spec/10.1.19",
                             "sid": "s-6u54kfn4ze29r6h",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8525,7 +8587,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.19",
+                            "location": "_guidelines/spec/10.1.20",
                             "sid": "s-zyaf34chxugtjyn",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8548,13 +8610,6 @@
                                   "ruling": "The owner accepted a new check that enforces it.",
                                   "type": "textual"
                                 }
-                              ],
-                              "todos": [
-                                {
-                                  "date": "2026-11-20",
-                                  "by": "agent",
-                                  "text": "In the step that changes the SpecSheriff tools, a node of the appendix of the tools implements this check. The check's test is written first, and it fails until the check is implemented."
-                                }
                               ]
                             }
                           }
@@ -8568,7 +8623,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.20",
+                            "location": "_guidelines/spec/10.1.21",
                             "sid": "s-694brc6fytwxc5v",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8608,7 +8663,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.21",
+                            "location": "_guidelines/spec/10.1.22",
                             "sid": "s-ujnb23vbw3y8cne",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8656,7 +8711,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.22",
+                            "location": "_guidelines/spec/10.1.23",
                             "sid": "s-9c8t99cz34p28sg",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8682,7 +8737,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.23",
+                            "location": "_guidelines/spec/10.1.24",
                             "sid": "s-3dashdedvu4xgfb",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8728,7 +8783,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.24",
+                            "location": "_guidelines/spec/10.1.25",
                             "sid": "s-rnbm4v8hsta6heq",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8754,7 +8809,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.25",
+                            "location": "_guidelines/spec/10.1.26",
                             "sid": "s-4p9amamvp2bry7b",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8812,7 +8867,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.26",
+                            "location": "_guidelines/spec/10.1.27",
                             "sid": "s-k6dzuajejrw4cej",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8878,7 +8933,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.27",
+                            "location": "_guidelines/spec/10.1.28",
                             "sid": "s-ay6wntm2dxcgpnp",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8934,7 +8989,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.28",
+                            "location": "_guidelines/spec/10.1.29",
                             "sid": "s-ffkv5qnqvet7bga",
                             "kind": "TextRule",
                             "status": "approved",
@@ -8970,7 +9025,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.29",
+                            "location": "_guidelines/spec/10.1.30",
                             "sid": "s-pa8t49pqpwscuq7",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9013,7 +9068,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.30",
+                            "location": "_guidelines/spec/10.1.31",
                             "sid": "s-y5w6xwvwh857azx",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9049,7 +9104,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.31",
+                            "location": "_guidelines/spec/10.1.32",
                             "sid": "s-dxzq5rd6eeteza4",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9085,7 +9140,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.32",
+                            "location": "_guidelines/spec/10.1.33",
                             "sid": "s-j5qmmdq4m26mdvw",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9129,7 +9184,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.33",
+                            "location": "_guidelines/spec/10.1.34",
                             "sid": "s-w4g56n2bs753rt3",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9165,7 +9220,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.34",
+                            "location": "_guidelines/spec/10.1.35",
                             "sid": "s-69pwmwyrk6efag2",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9205,7 +9260,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.35",
+                            "location": "_guidelines/spec/10.1.36",
                             "sid": "s-wpadgy2budcxa3v",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9247,7 +9302,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.36",
+                            "location": "_guidelines/spec/10.1.37",
                             "sid": "s-m82tz4mp3f9r3fg",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9273,7 +9328,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.37",
+                            "location": "_guidelines/spec/10.1.38",
                             "sid": "s-tqdmk6jakx97wra",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9315,7 +9370,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.38",
+                            "location": "_guidelines/spec/10.1.39",
                             "sid": "s-f5mm7tagez38ffz",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9368,7 +9423,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.39",
+                            "location": "_guidelines/spec/10.1.40",
                             "sid": "s-cgkkksc7efxhcst",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9412,7 +9467,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.40",
+                            "location": "_guidelines/spec/10.1.41",
                             "sid": "s-yuu4ccgch68yzxb",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9438,7 +9493,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.41",
+                            "location": "_guidelines/spec/10.1.42",
                             "sid": "s-ujm7nfxkk9j3464",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9464,7 +9519,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.42",
+                            "location": "_guidelines/spec/10.1.43",
                             "sid": "s-vj67ztqkuhxbv7s",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9507,7 +9562,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.43",
+                            "location": "_guidelines/spec/10.1.44",
                             "sid": "s-yn5tdx2bp4f5rq7",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9551,7 +9606,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.44",
+                            "location": "_guidelines/spec/10.1.45",
                             "sid": "s-u5hfbygfyqv4wmf",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9581,7 +9636,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.45",
+                            "location": "_guidelines/spec/10.1.46",
                             "sid": "s-e84nggntkrcyumq",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9614,13 +9669,6 @@
                                   "ruling": "The owner: the row refers to the documentation, so that \"document\" keeps only the meaning that rule gives it.",
                                   "type": "textual"
                                 }
-                              ],
-                              "todos": [
-                                {
-                                  "date": "2026-11-20",
-                                  "by": "agent",
-                                  "text": "In the step that changes the SpecSheriff tools, `sheriff citations` stops looking for sids among the archived nodes, since an archived node has no sid of its own, as s-f2b5zvc565s242f states."
-                                }
                               ]
                             }
                           }
@@ -9634,7 +9682,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.46",
+                            "location": "_guidelines/spec/10.1.47",
                             "sid": "s-dwxjxb7rw4w5yn3",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9680,7 +9728,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.47",
+                            "location": "_guidelines/spec/10.1.48",
                             "sid": "s-f8fmudceuyaj942",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9726,7 +9774,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.48",
+                            "location": "_guidelines/spec/10.1.49",
                             "sid": "s-ddd2e96uke4y83j",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9776,18 +9824,6 @@
                                   "ruling": "The owner: while the specification is a draft, the checks that new code is bound to its rules still run. Every check of whether the implementation is complete stays silent, so this row passes.",
                                   "type": "textual"
                                 }
-                              ],
-                              "todos": [
-                                {
-                                  "date": "2026-11-20",
-                                  "by": "agent",
-                                  "text": "In the step that changes the SpecSheriff tools, `sheriff binding` stops reporting a draft rule whose tests or code lag behind it. At present, the function `drift` checks draft rules as well."
-                                },
-                                {
-                                  "date": "2026-11-20",
-                                  "by": "agent",
-                                  "text": "In the step that changes the SpecSheriff tools, the check that reports a node whose tests or code lag behind it (s-txbwsthdqhvyzd2) is changed as follows:\n- It looks only at the rules whose wording or tests change in the commit.\n- It looks at the changes to the tests and to the symbols in the code that are bound to the rule, not at changes to whole files.\n- It reads the trailer in the commit message.\n- It refuses the commit only while the specification is approved."
-                                }
                               ]
                             }
                           }
@@ -9801,7 +9837,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.49",
+                            "location": "_guidelines/spec/10.1.50",
                             "sid": "s-c4y63t285gg7jz7",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9893,7 +9929,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.50",
+                            "location": "_guidelines/spec/10.1.51",
                             "sid": "s-7sk3s553ukzwtbm",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9929,7 +9965,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.51",
+                            "location": "_guidelines/spec/10.1.52",
                             "sid": "s-zn4vrdpnv9bch62",
                             "kind": "TextRule",
                             "status": "approved",
@@ -9990,7 +10026,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.52",
+                            "location": "_guidelines/spec/10.1.53",
                             "sid": "s-nudrdn5xvcg262k",
                             "kind": "TextRule",
                             "status": "approved",
@@ -10045,7 +10081,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.53",
+                            "location": "_guidelines/spec/10.1.54",
                             "sid": "s-td4e3rdga6azav9",
                             "kind": "TextRule",
                             "status": "approved",
@@ -10089,7 +10125,7 @@
                       "cells": {
                         "check": {
                           "node": {
-                            "location": "_guidelines/spec/10.1.54",
+                            "location": "_guidelines/spec/10.1.55",
                             "sid": "s-aufnqn6t7y2me7a",
                             "kind": "TextRule",
                             "status": "approved",
@@ -10341,35 +10377,22 @@
                     "problem": "Once each extension had a table of checks of its own, the title \"The table of checks\" no longer named this table alone.",
                     "ruling": "The owner: the table is called \"the main table of checks\".",
                     "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-11",
+                    "problem": "The decision of 2026-10-31 let a test carry the sid of a term, although a term only introduces an entity and has no tests of its own.",
+                    "ruling": "The owner ruled that a SpecTag binds a rule to the tests and the code that implement it (§s-8xw4mgvpexyvw5q), so the SpecTag of a test names a rule and never a term.",
+                    "type": "textual"
                   }
                 ],
                 "tests": [
                   "skills/tools/test/e2e/commands.test.ts::@spec s-jau82aq9juv9zzh sheriff validate refuses a removed node an approval was given for, read against the last commit",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh counts a test whose only change is its sid as a test the commit changes",
                   "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh passes code and tests that agree with the specification",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a node's location in a file outside the specification",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a node's location in any file the repository keeps outside the specification, a term's and a file's included",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a symbol of the system's code carrying no tag",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a tag naming no node, and a tag naming a draft node on a symbol a commit changes",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a tag that stands on no symbol",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh refuses a test carrying no sid or the sid of no node, and a test a commit changes carrying a draft node's sid",
-                  "skills/tools/test/unit/binding.test.ts::@spec s-jau82aq9juv9zzh reports a rule whose text changed after its code, and refuses nothing for it",
                   "skills/tools/test/unit/gates.test.ts::@spec s-jau82aq9juv9zzh asks no review of a commit that changes no code",
                   "skills/tools/test/unit/gates.test.ts::@spec s-jau82aq9juv9zzh passes a message of a commit that changes no code",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes a specification that holds together",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes a value a domain declares for a RecordType of contracts, its variant standing in that domain",
                   "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh passes the SpecSheriff guidelines as this repository holds them, their approvals aside",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType holding two fields of type variant, the ones it inherits counted",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field declares in no list of values",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant answering to a value its choosing field does not declare, or declaring no field of its own",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant standing outside the domain whose RecordType declares the value it answers to",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a RecordType variant whose own fields only repeat those its RecordType's field of type variant holds",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a field of type one of holding no value, in its own list or in a list of a domain",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a file that does not match its schema",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a list of values standing outside a domain, refining no RecordType of contracts, or naming a field whose values the domains do not add",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a value of a choosing field declared twice, or by a variant in another part than the one declaring it",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses an identifier of a RecordType that names no field identifying it among its fields",
-                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses identifiers that lead, from one identifying field to the next, back to a RecordType already passed"
+                  "skills/tools/test/unit/validate.test.ts::@spec s-jau82aq9juv9zzh refuses a file that does not match its schema"
                 ]
               }
             },
@@ -10646,8 +10669,8 @@
                   "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp judges no tool that makes no edit, and no file outside the repository's code, tests and specification",
                   "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp lets an edit change a node's owners, an approved node keeping its approval, and leaves a section's status to the reindex",
                   "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp lets an edit through where a test carries the sid of every rule whose code it changes, and an edit to a test",
+                  "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp refuses an edit before it is made, where the edit would leave a node approved with a wording that no approval records",
                   "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp refuses before it is made an edit changing the code of a rule no test carries the sid of",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp refuses before it is made an edit leaving a node approved over a wording for which no approval stands",
                   "skills/tools/test/unit/gates.test.ts::@spec s-83ev4wwesbwnhnp refuses before it is made an edit of the approvals made with the agent's file tools"
                 ]
               }
@@ -10840,14 +10863,6 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 3?\").",
                     "type": "textual"
                   }
-                ],
-                "tests": [
-                  "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q gives the reviewer the change and the text of the nodes its message and tags name, and nothing else",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q gives the reviewer the whole change of the commit, its specification, documents and settings included",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q leaves the files generated from the specification out of the change the reviewer is given",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q names each file left out to the reviewer, and counts what a RecordType requires as carried out by the types and runtime checks generated from it",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q passes where the reviewer passes, and refuses naming the rule and the line of each finding",
-                  "skills/tools/test/unit/gates.test.ts::@spec s-nyh9yk22ba6g77q refuses a review that cannot be held, and says why"
                 ]
               }
             },
@@ -12089,8 +12104,7 @@
                   }
                 ],
                 "tests": [
-                  "skills/tools/test/unit/generated.test.ts::@spec s-kh8qcd5kxgh9z3j exports every file of the specification to markdown, each node with its sid, text and reason",
-                  "skills/tools/test/unit/types.test.ts::@spec s-kh8qcd5kxgh9z3j each generated file waits only for the nodes it is generated from: a generator's file for its nodes and its rule, the types for the RecordTypes"
+                  "skills/tools/test/unit/types.test.ts::@spec s-kh8qcd5kxgh9z3j each generated file waits only for the nodes it is generated from: a generator's file for its nodes and its rule, while the types wait for no draft"
                 ]
               }
             },

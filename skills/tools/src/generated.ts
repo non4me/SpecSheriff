@@ -1,9 +1,10 @@
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { approvedWordings } from "./approved-wording.ts";
-import { domainOrder, isDomain, levelsOf, partOf, statusNow, type Wordings } from "./model.ts";
+import { domainDiagram, isDomain, levelsOf, partOf, PROJECT, statusNow, type Wordings } from "./model.ts";
+import { loadConfig, ownerSettings, strictDefault } from "./config.ts";
 import { nodeMarkdown } from "./show.ts";
-import { loadSpecification, type SpecNode, type Specification } from "./spec-files.ts";
+import { cellNodes, loadSpecification, type SpecNode, type Specification } from "./spec-files.ts";
 
 const EXPORT = "md-version";
 
@@ -43,11 +44,28 @@ function regenerated(root: string, dir: string): void {
   writeFileSync(join(root, dir, ".gitignore"), "*\n");
 }
 
+/**
+ * The extensions of the guidelines that the project has chosen. A command that writes a view of the specification runs only where
+ * the Views extension is among them (s-e3495enbc5h75c3, s-rpv4fkdqqguptqd), and is otherwise refused, naming that extension.
+ */
+function requireViews(root: string, command: string): Set<string> {
+  const chosen = ownerSettings(loadConfig(root), strictDefault(root)).extensions;
+  if (!chosen.has("views")) throw new Error(`${command} runs only where the project has chosen the Views extension of the guidelines, which an owner chooses with sheriff settings extension views on`);
+  return chosen;
+}
+
+/** The files whose nodes a view shows: every file of the specification, except the file of an extension that the project takes from the plugin and has not chosen. */
+function viewedFiles(spec: Specification, chosen: Set<string>): Specification["files"] {
+  const extension = (path: string) => path.match(/^specs\/_guidelines\/extensions\/(.+)\.json$/)?.[1];
+  return spec.files.filter((f) => !(f.taken && extension(f.path) && !chosen.has(extension(f.path)!)));
+}
+
 /** Writes the readable export: one markdown file for each file of the specification under md-version/, which git ignores. */
 export function exportMarkdown(root: string): string[] {
+  const chosen = requireViews(root, "sheriff markdown");
   const spec = loadSpecification(root);
   regenerated(root, EXPORT);
-  return spec.files.map((f) => {
+  return viewedFiles(spec, chosen).map((f) => {
     const path = f.path.replace(/^specs\//, `${EXPORT}/`).replace(/\.json$/, ".md");
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), f.data.nodes.map((n) => nodeMarkdown(spec, n, 1)).join("\n\n") + "\n");
@@ -58,45 +76,58 @@ export function exportMarkdown(root: string): string[] {
 /** One line of the outline for a branch that stands for no node: its title only, so it cannot be read as markdown of the outline. */
 const item = (depth: number, title: string) => `${"  ".repeat(depth)}- ${title.replace(/[\\`*_[\]<>#]/g, "\\$&")}`;
 
-/** One line of the outline for a node: its title, escaped, in an element whose class names its status (s-rpv4fkdqqguptqd). */
+/** One line of the outline for a node: its title, or the location of a node in a cell, escaped, in an element whose class names its status (s-rpv4fkdqqguptqd). */
 const nodeItem = (depth: number, n: SpecNode) => {
-  const title = n.title.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+  const title = (n.title || n.location).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
   return `${"  ".repeat(depth)}- <span class="${statusNow(n.status)}">${title}</span>`;
 };
 
+/** Each node with the nodes under it, and the nodes in the cells of a TableRule after its children. */
 function branch(nodes: SpecNode[], depth: number, out: string[]): void {
   for (const n of nodes) {
     out.push(nodeItem(depth, n));
     branch(n.children ?? [], depth + 1, out);
+    if (n.kind === "TableRule") branch(cellNodes(n).map((c) => c.node), depth + 1, out);
   }
 }
 
-/** The outline of the map: the guidelines, contracts, a branch per level from the top, the technical appendix last. */
-export function outline(spec: Specification, wordings: Wordings): string {
+/**
+ * The outline of the map (s-rpv4fkdqqguptqd): the guidelines, the appendix of the tools, the base specification and the technical
+ * appendix. In the base specification, the contracts come first; where the Domains extension is chosen, the domains follow row by row
+ * in the order of the diagram of the domains, with each domain's other top-level nodes placed under its header.
+ */
+export function outline(spec: Specification, wordings: Wordings, chosen: Set<string>): string {
   const out = ["# Specification"];
-  const files = (part: (p: string) => boolean) => spec.files.filter((f) => part(partOf(f.path).part));
+  const shown = viewedFiles(spec, chosen);
+  const byPath = (a: { path: string }, b: { path: string }) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  const at = (path: string) => shown.filter((f) => f.path === path);
   out.push(item(0, "Guidelines"));
-  for (const f of files((p) => p === "_guidelines")) branch(f.data.nodes, 1, out);
-  out.push(item(0, "Contracts"));
-  for (const f of files((p) => p === "contracts")) branch(f.data.nodes, 1, out);
-  const levels = levelsOf(spec, wordings);
-  const order = domainOrder(spec);
-  const domainFiles = (d: string) => files((p) => p === d);
-  const levelOf = (d: string) => domainFiles(d).flatMap((f) => f.data.nodes).find((n) => n.kind === "header")?.level as string | undefined;
-  const branches = [...levels.map((l, i) => ({ title: `${i + 1} ${l}`, has: (lv?: string) => lv === l })), { title: "No level listed", has: (lv?: string) => !lv || !levels.includes(lv) }];
-  for (const b of branches) {
-    const domains = order.filter((d) => isDomain(d) && b.has(levelOf(d)));
-    if (!domains.length && b.title === "No level listed") continue;
-    out.push(item(0, b.title));
-    for (const d of domains) {
-      const nodes = domainFiles(d).flatMap((f) => f.data.nodes);
-      const header = nodes.find((n) => n.kind === "header");
-      out.push(header ? nodeItem(1, header) : item(1, d));
-      branch(nodes.filter((n) => n !== header), 2, out);
+  const extensions = shown.filter((f) => f.path.startsWith("specs/_guidelines/extensions/")).sort(byPath);
+  for (const f of [...at("specs/_guidelines/spec.json"), ...extensions, ...at(PROJECT)]) branch(f.data.nodes, 1, out);
+  out.push(item(0, "Appendix of the tools"));
+  for (const f of at("specs/_guidelines/tools.json")) branch(f.data.nodes, 1, out);
+  out.push(item(0, "Base specification"));
+  const base = shown.filter((f) => !["_guidelines", "tech", "_archive"].includes(partOf(f.path).part));
+  for (const f of base.filter((f) => partOf(f.path).part === "contracts")) branch(f.data.nodes, 1, out);
+  const others = base.filter((f) => partOf(f.path).part !== "contracts").sort(byPath);
+  if (chosen.has("domains")) {
+    for (const row of domainDiagram(spec, levelsOf(spec, wordings)).rows) {
+      for (const d of row.domains) {
+        const nodes = others.filter((f) => partOf(f.path).part === d).flatMap((f) => f.data.nodes);
+        const header = nodes.find((n) => n.kind === "header");
+        if (!header) {
+          branch(nodes, 1, out);
+          continue;
+        }
+        out.push(nodeItem(1, header));
+        branch([...(header.children ?? []), ...nodes.filter((n) => n !== header)], 2, out);
+      }
     }
+  } else {
+    for (const f of others) branch(f.data.nodes, 1, out);
   }
   out.push(item(0, "Technical appendix"));
-  for (const f of files((p) => p === "tech")) branch(f.data.nodes, 1, out);
+  for (const f of shown.filter((f) => partOf(f.path).part === "tech")) branch(f.data.nodes, 1, out);
   return out.join("\n") + "\n";
 }
 
@@ -105,9 +136,10 @@ export function outline(spec: Specification, wordings: Wordings): string {
  * library it needs, so that it loads nothing from the network.
  */
 export function render(root: string): string {
+  const chosen = requireViews(root, "sheriff map");
   const spec = loadSpecification(root);
   // Every `<` written as its escape, so that no title ends the script it stands in.
-  const carried = JSON.stringify(outline(spec, approvedWordings(root, spec))).replace(/</g, "\\u003c");
+  const carried = JSON.stringify(outline(spec, approvedWordings(root, spec), chosen)).replace(/</g, "\\u003c");
   const page = `<!doctype html>
 <html lang="en">
 <head>

@@ -1,9 +1,14 @@
-// What changed since the agent's hook last ran the checks (s-477gtdrkw34dzxw). `changed.mjs diff` prints "none"
-// where the last commit and the working tree, the files git ignores left aside, are what the hook noted; "regen"
-// where a file under specs/, sheriff.config.json or the code of a project's own generator differs, or nothing is
-// noted; "checks" otherwise. `changed.mjs snapshot` keeps the present state aside, taken once the files are
-// regenerated and before the checks run, so that a file changed while they run is not taken as checked;
-// `changed.mjs note` then notes that state, or the present one where none was kept, in the clone's git directory.
+// What changed since the agent's hook last ran the checks (s-hcmpjmwtgfwzncu). `changed.mjs diff` prints "none"
+// where the last commit and the working tree, not counting the files that git ignores, match what the hook recorded.
+// Otherwise it prints one word for each of these kinds of file in which at least one file differs, the words separated by spaces:
+// - "spec": a file under specs/, or sheriff.config.json;
+// - "tags": a file read for SpecTags, that is, a file that a glob for the code or for the tests matches; a file with the code or
+//   the tests of a project's own check or generator; or sheriff.bindings.json;
+// - "generator": the code of a project's own generator.
+// It prints all three words where nothing has been recorded, and "checks" where only files of other kinds differ. `changed.mjs snapshot`
+// saves the current state, taken once the files are regenerated and before the checks run, so that a file changed while
+// they run is not treated as checked; `changed.mjs note` then records that state, or the current one where none was saved,
+// in the clone's git directory.
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join, posix } from "node:path";
@@ -40,7 +45,7 @@ if (process.argv[2] === "snapshot") {
     was = JSON.parse(readFileSync(note, "utf8"));
   } catch {}
   if (!was) {
-    process.stdout.write("regen");
+    process.stdout.write("spec tags generator");
   } else {
     const changed = new Set();
     for (const p of new Set([...Object.keys(now.files), ...Object.keys(was.files)])) if (now.files[p] !== was.files[p]) changed.add(p);
@@ -52,10 +57,18 @@ if (process.argv[2] === "snapshot") {
       }
     }
     let generators = [];
+    let read = [];
     try {
-      generators = (JSON.parse(readFileSync("sheriff.config.json", "utf8")).generators ?? []).flatMap((g) => g.code ?? []);
+      const settings = JSON.parse(readFileSync("sheriff.config.json", "utf8"));
+      generators = (settings.generators ?? []).flatMap((g) => g.code ?? []);
+      const own = [...(settings.checks ?? []), ...(settings.generators ?? [])];
+      read = [...(settings.code ?? []), ...(settings.tests ?? []), ...own.flatMap((t) => [...(t.code ?? []), ...(t.tests ?? [])])];
     } catch {}
-    const regen = [...changed].some((p) => p.startsWith("specs/") || p === "sheriff.config.json" || generators.some((g) => posix.matchesGlob(p, g)));
-    process.stdout.write(!changed.size ? "none" : regen ? "regen" : "checks");
+    const kinds = [
+      [...changed].some((p) => p.startsWith("specs/") || p === "sheriff.config.json") && "spec",
+      [...changed].some((p) => p === "sheriff.bindings.json" || read.some((g) => posix.matchesGlob(p, g))) && "tags",
+      [...changed].some((p) => generators.some((g) => posix.matchesGlob(p, g))) && "generator",
+    ].filter(Boolean);
+    process.stdout.write(!changed.size ? "none" : kinds.length ? kinds.join(" ") : "checks");
   }
 }
