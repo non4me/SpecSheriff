@@ -3657,7 +3657,11 @@
         "type": "textual"
       }
     ],
-    "englishRead": "EngStickler's reader, 2026-11-22: the English corrected without changing its meaning by fix-counted-b.mjs; the word order of \"reading as text each file ...\" kept, since the object is long"
+    "englishRead": "EngStickler's reader, 2026-11-22: the English corrected without changing its meaning by fix-counted-b.mjs; the word order of \"reading as text each file ...\" kept, since the object is long",
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "s-vke5hakwf3uyrjs": {
     "agreed": "2026-11-22",
@@ -3904,7 +3908,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "new:tools-7-1-location": {
     "from": "s-stxmhq3hgfndvn6",
@@ -4075,7 +4083,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step A (41e3778); reindex.test.ts:25 re-tagged in step B"
+    }
   },
   "s-95w92rnjuv3sst8": {
     "location": "tools 7.1.5",
@@ -4187,7 +4199,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "new:tools-7-1-approval-by": {
     "from": "s-95w92rnjuv3sst8",
@@ -4307,7 +4323,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 5; recording entries through sheriff settings stays with group 6"
+    }
   },
   "s-agc6fb3vx46pc23": {
     "location": "tools 7.1.9",
@@ -4562,7 +4582,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "s-qzyacnqwvaeaps4": {
     "location": "tools 7.1.7",
@@ -4803,7 +4827,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "s-e2vdhfsndy5stq9": {
     "location": "tools 7.1.10",
@@ -4927,7 +4955,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "s-zhen42p6mnaxu7w": {
     "location": "tools 7.1.11",
@@ -5177,7 +5209,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "new:tools-7-1-consumes": {
     "from": "s-qvgzubkrafadqgf",
@@ -5267,7 +5303,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "new:tools-7-1-guidelines-to-extension": {
     "location": "tools 7.1.12b (new, after \"`consumes` links\")",
@@ -5504,7 +5544,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "s-6bmnsbskg6en4nf": {
     "location": "tools 7.1.20",
@@ -5602,7 +5646,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 4 (staged.sh points the variable at the directory written out for a commit)"
+    }
   },
   "new:tools-7-1-link-target": {
     "from": "s-qzyacnqwvaeaps4",
@@ -5680,7 +5728,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "proposal:s-kag2m9tzdnduxdx": {
     "question": "Q1: where a node that a part of the base specification opens with, such as a domain's header, is located",
@@ -9664,7 +9716,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 5; recording entries through sheriff settings stays with group 6"
+    }
   },
   "new:tools-7-1-extensions-delivered": {
     "location": "tools 7.1.2a (new, after \"How the schema of the specification is composed\")",
@@ -10491,7 +10547,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "proposal:s-ztseyetus7np6br-g3": {
     "question": "None: carries out row 10.1.34 and rule 1.5.2",
@@ -12800,7 +12860,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 3; running the checks from sheriff settings stays with new:tools-2-approve-spec and new:tools-2-strict (group 6)"
+    }
   },
   "s-nh8b2hjvzasdxmd": {
     "location": "tools 7.2.7",
@@ -14555,7 +14619,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 5.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 1"
+    }
   },
   "s-gvafe6bnstwab8b": {
     "location": "tools 7.1.22",
@@ -14667,7 +14735,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 5.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "s-uxmkwbnpgtjzkgv": {
     "location": "tools 7.1.15",
@@ -14769,7 +14841,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 5.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 3"
+    }
   },
   "s-3anv9qcmx8pwp2w": {
     "location": "tools 7.1.17",
@@ -15971,7 +16047,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "new:tools-11-approve": {
     "location": "tools 11.3 (new)",
@@ -16365,7 +16445,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 5; recording entries through sheriff settings stays with group 6"
+    }
   },
   "new:tools-2-approve-spec": {
     "location": "tools 2.10b (new, after “The entries of the settings that only an owner changes”)",
@@ -17694,7 +17778,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 3; running the checks from sheriff settings stays with new:tools-2-approve-spec and new:tools-2-strict (group 6)"
+    }
   },
   "s-k4nqjr96ux7a5m7": {
     "location": "tools 5",
@@ -26078,7 +26166,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out proposal 2.9 and question 4.6 of the questions about the base specification (rule 3.2, row 10.1.6 and the rule of the Domains extension on a term defined in a domain), which the owner agreed to on 2026-11-25, and the todo of this node. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "new:tools-7-1-term-domain": {
     "question": "None: carries out the two new rows of the table of checks of the Domains extension in proposal 2.9 of the questions about the base specification, which the owner agreed to on 2026-11-25 (question 4.6, option B, keeps the second of them)",
@@ -26188,7 +26280,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out the two new rows of the table of checks of the Domains extension in proposal 2.9 of the questions about the base specification, which the owner agreed to on 2026-11-25 (question 4.6, option B, keeps the second of them). The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "new:tools-7-1-ref-names": {
     "question": "None: carries out proposal 3.4 of the questions about the base specification, the new row of table 12.12 under which each `$ref` within a RecordType names a RecordType, which the owner agreed to on 2026-11-25",
@@ -26733,7 +26829,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.1 of the questions about the base specification, option A, under which a node's kind is part of the wording that an approval covers (s-5ah25f6gy99panq); the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step A (41e3778); reindex.test.ts:25 re-tagged in step B"
+    }
   },
   "proposal:s-gvafe6bnstwab8b-bq": {
     "question": "None: carries out question 4.2 of the questions about the base specification, option A: row 11.3.5 checks only the names of the files of the technical appendix, and a new row of the main table checks the sections in every project; the owner agreed to it on 2026-11-25",
@@ -26816,7 +26916,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.2 of the questions about the base specification, option A: row 11.3.5 checks only the names of the files of the technical appendix, and a new row of the main table checks the sections in every project; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "new:tools-7-1-appendix-sections": {
     "question": "None: carries out question 4.2 of the questions about the base specification, option A, the new row of the main table on the structure of the technical appendix in every project; the owner agreed to it on 2026-11-25",
@@ -26929,7 +27033,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.2 of the questions about the base specification, option A, the new row of the main table on the structure of the technical appendix in every project; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 2"
+    }
   },
   "proposal:new-tools-8-symbol-bq": {
     "question": "None: carries out questions 4.3, option A, and 4.4, option B, of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25",
