@@ -5,8 +5,8 @@ import { join } from "node:path";
 import { approve, readApprovals } from "../../src/approvals.ts";
 import { reindex, rewriteTests } from "../../src/reindex.ts";
 import { loadSpecification, specPaths } from "../../src/spec-files.ts";
-import { APPROVAL_RULE, fingerprint, LEVELS_RULE, SID } from "../../src/model.ts";
-import { file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
+import { APPROVAL_RULE, fingerprint, LEVELS_RULE, SID, TESTS_PASS_RULE } from "../../src/model.ts";
+import { ALL_EXTENSIONS, file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
 import { codeProject, editSpec, nodeIn, put } from "../code-project.ts";
 
 const read = (root: string) => Object.fromEntries(specPaths(root).map((p) => [p, readFileSync(join(root, p), "utf8")]));
@@ -22,7 +22,7 @@ function bank(extra: Record<string, unknown> = {}) {
   });
 }
 
-test("@spec s-kag2m9tzdnduxdx computes every node's location from where it is", () => {
+test("@spec s-ygg5kpcxgzq3m7w computes every node's location from where it is", () => {
   const root = bank();
   reindex(root);
   assert.equal(at(root, "header").location, "bank");
@@ -36,6 +36,11 @@ test("@spec s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from t
   assert.deepEqual(at(root, "open").refs, [{ type: "cites", to: sid("close") }]);
   assert.deepEqual(at(root, "close").refs, [{ type: "cites", from: sid("open") }]);
   assert.deepEqual(at(root, "shared").refs, [{ type: "consumes", from: sid("header") }]);
+});
+
+test("@spec s-gb8s9657a65hqmv removes from sheriff.config.json the setting by which an earlier release recognized the repository where the SpecSheriff guidelines are written, and keeps every other setting in its place", () => {
+  const root = taking({ "sheriff.config.json": { code: ["src/**"], writesSpecSheriffGuidelines: false, tests: [] } });
+  assert.equal(readFileSync(join(root, "sheriff.config.json"), "utf8"), JSON.stringify({ extensions: ALL_EXTENSIONS, code: ["src/**"], tests: [] }, null, 2) + "\n");
 });
 
 test("@spec s-gb8s9657a65hqmv removes its sid and every link pointing at it from a node of the archive that an earlier release wrote, and builds no link pointing from it to another node", () => {
@@ -119,16 +124,53 @@ test("@spec s-9kfdycuq34beqvs writes the status of each section and domain's hea
   assert.deepEqual(report.drafted, [sid("close")]);
 });
 
-test("@spec s-f5rz6b7dhxejjts adds to the project's own guidelines the rule approving the specification, a draft, where none refines the base's rule on it", () => {
+/** A project that takes the guidelines, and whose own guidelines hold a rule on the specification's approval status as an earlier release wrote it, approved by `by` unless `by` is null. */
+function approvedByRule(by: string | null): string {
   const root = taking();
-  const children = (at: string) => loadSpecification(at).nodes.get(sid("project"))!.node.children ?? [];
-  const rules = children(root).filter((n) => n.refs.some((r) => r.type === "refines" && r.to === APPROVAL_RULE));
-  assert.equal(rules.length, 1);
-  assert.deepEqual([rules[0]!.title, rules[0]!.text, rules[0]!.status], ["The specification is approved", "This project's specification is approved.", "draft"]);
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  const rule = node("live", { title: "The specification is live", status: by ? "approved" : "draft", refs: [{ type: "refines", to: APPROVAL_RULE }] });
+  data.nodes[0].children.push(rule);
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  if (by) writeFileSync(join(root, "specs", "_approvals.jsonl"), JSON.stringify({ sid: rule.sid, fingerprint: fingerprint(rule), by }) + "\n");
+  return root;
+}
+const settingsOf = (root: string) => JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8"));
+const archived = (root: string) => (existsSync(join(root, "specs", "_archive", "guidelines.json")) ? JSON.parse(readFileSync(join(root, "specs", "_archive", "guidelines.json"), "utf8")).nodes : []);
+const projectRules = (root: string) => loadSpecification(root).nodes.get(sid("project"))!.node.children ?? [];
+
+test("@spec s-gb8s9657a65hqmv replaces an approved rule of project.json on the specification's approval status with an entry that names the owner who last approved the rule, archives the rule, adds the draft rule on when the tests run, and reports that rule's sid", () => {
+  const root = approvedByRule("boss@example.org");
+  const report = reindex(root);
+  assert.deepEqual(settingsOf(root).approvalStatus, [{ status: "approved", by: "boss@example.org" }]);
+  assert.deepEqual(archived(root).map((n: any) => [n.title, n.archived.reason]), [["The specification is live", "Replaced by the entry in `sheriff.config.json` that records the specification's approval status"]]);
+  const rules = projectRules(root);
+  assert.ok(!rules.some((n) => n.sid === sid("live")));
+  const added = rules.find((n) => n.title === "When the tests run")!;
+  assert.deepEqual([added.text, added.status, added.refs.filter((r) => r.to).map((r) => [r.type, r.to]), (added.list as any).members], ["The tests run before every push.", "draft", [["refines", TESTS_PASS_RULE]], ["push"]]);
+  assert.deepEqual(report.added, [added.sid]);
+});
+
+test("@spec s-gb8s9657a65hqmv archives a draft rule on the specification's approval status if the rule has ever been approved, deletes one that was never approved, and records no entry", () => {
+  const once = approvedByRule("boss@example.org");
+  const path = join(once, "specs", "_guidelines", "project.json");
+  writeFileSync(path, readFileSync(path, "utf8").replace('"status": "approved"', '"status": "draft"'));
+  reindex(once);
+  assert.equal(settingsOf(once).approvalStatus, undefined);
+  assert.deepEqual(archived(once).map((n: any) => n.archived.reason), ["The specification's approval status is recorded in `sheriff.config.json`"]);
+  const never = approvedByRule(null);
+  reindex(never);
+  assert.deepEqual(archived(never), []);
+  assert.ok(!projectRules(never).some((n) => n.sid === sid("live")));
+});
+
+test("@spec s-gb8s9657a65hqmv leaves a rule on the specification's approval status unchanged where sheriff.config.json already holds an entry for that status", () => {
+  const root = approvedByRule("boss@example.org");
+  const settings = settingsOf(root);
+  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify({ ...settings, approvalStatus: [{ status: "draft", by: OWNER }] }, null, 2) + "\n");
   reindex(root);
-  assert.equal(children(root).length, 2);
-  const live = taking({ "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("live", { title: "The specification is live", refs: [{ type: "refines", to: APPROVAL_RULE }] })] })) });
-  assert.deepEqual(children(live).map((n) => n.sid), [sid("live")]);
+  assert.ok(projectRules(root).some((n) => n.sid === sid("live")));
+  assert.deepEqual(settingsOf(root).approvalStatus, [{ status: "draft", by: OWNER }]);
 });
 
 test("@spec s-f5rz6b7dhxejjts rewrites the statuses, the owners and the confirmations an earlier release wrote, keeping every approval", () => {
@@ -203,7 +245,7 @@ test("@spec s-f5rz6b7dhxejjts renames the kinds an earlier release wrote, where 
   assert.deepEqual(Object.keys(extension.fields), ["TextRule", "RecordType"]);
 });
 
-test("@spec s-v4qus7raqnwzneb keeps an approval through the renaming of the kind a field's values come from", () => {
+test("@spec s-f5brvuuu6xmkj6t keeps an approval through the renaming of the kind a field's values come from", () => {
   const event = (kind: string) => node("event", { kind: "RecordType", title: "event", unknown: "refused", fields: [{ name: "rule", type: { is: "one of", from: "kindSids", kind }, required: true, text: "" }] });
   assert.equal(fingerprint(event("TextRule")), fingerprint(event("rule")));
 });

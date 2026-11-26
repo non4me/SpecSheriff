@@ -245,18 +245,22 @@ test("@spec s-7unxytshhc4md54 this repository holds what sheriff init writes, so
   assert.doesNotMatch(run.stdout, /written|replaced|left as it is/, run.stdout);
 });
 
-test("@spec s-7unxytshhc4md54 sheriff init writes, as a draft, the rule that approves the specification, whatever code the repository keeps", () => {
-  const approving = (root: string) => JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].children?.find((n: { text: string }) => n.text === "This project's specification is approved.");
+test("@spec s-7unxytshhc4md54 sheriff init writes, as a draft and under the section that names the owner, the rule on when the tests run, whatever code the repository keeps", () => {
+  const rules = (root: string) => JSON.parse(readFileSync(join(root, "specs", "_guidelines", "project.json"), "utf8")).nodes[0].children ?? [];
   const empty = fresh();
   sheriff(empty, "init");
   const coded = fresh();
   writeFileSync(join(coded, "app.ts"), "export const a = 1;\n");
   sheriff(coded, "init");
   for (const root of [empty, coded]) {
-    const rule = approving(root);
-    assert.ok(rule, "the rule approving the specification");
-    assert.deepEqual([rule.title, rule.status], ["The specification is approved", "draft"]);
-    assert.deepEqual(rule.refs, [{ type: "refines", to: "s-qzthyh7yqvfhsa2" }]);
+    const [rule, ...more] = rules(root);
+    assert.deepEqual(more, []);
+    assert.deepEqual([rule.title, rule.text, rule.status, rule.reason], [
+      "When the tests run", "The tests run before every push.", "draft",
+      "Running the tests before every push keeps a change whose tests fail from reaching the project's shared branch.",
+    ]);
+    assert.deepEqual(rule.refs, [{ type: "refines", to: "s-x8uzc8z44pwtd3h" }]);
+    assert.deepEqual(rule.list, { of: "the moments at which the tests run", members: ["push"] });
   }
 });
 

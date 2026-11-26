@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "config.schema.json",
+  "title": "The settings of the SpecSheriff tools in a project, sheriff.config.json",
+  "$comment": "The project-wide settings of the SpecSheriff tools (s-zefk589ykh37b8u). The entries of the settings that only an owner of the specification changes are kept in a list for each setting, with the latest entry last (s-d3nkw9b6mn98vuw). This schema sets the value that the strict flag has where no entry sets the flag.",
+  "type": "object",
+  "properties": {
+    "code": {
+      "$comment": "The glob patterns that match the files of the system's code.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tests": {
+      "$comment": "The glob patterns that match the files of the system's tests.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "writesSpecSheriffGuidelines": {
+      "$comment": "A setting that an earlier release wrote; the SpecSheriff tools ignore it, and sheriff reindex removes it (s-gb8s9657a65hqmv).",
+      "type": "boolean"
+    },
+    "testCommand": {
+      "$comment": "The command that runs the tests of the system's code.",
+      "type": "string"
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "runner": {
+          "enum": [
+            "claude",
+            "codex"
+          ]
+        },
+        "minutes": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "checks": {
+      "$comment": "The project's own checks.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tool"
+      }
+    },
+    "generators": {
+      "$comment": "The project's own generators.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tool"
+      }
+    },
+    "approvalStatus": {
+      "$comment": "The entries of the specification's approval status (s-qzthyh7yqvfhsa2).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "enum": [
+              "approved",
+              "draft"
+            ]
+          },
+          "by": {
+            "$ref": "#/$defs/email"
+          }
+        },
+        "required": [
+          "status",
+          "by"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "strict": {
+      "$comment": "The entries of the specification's strict flag (s-q3pfzyaxvpr2zj2). The default of the property `on` is the value that the flag has where no entry sets the flag.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "on": {
+            "type": "boolean",
+            "default": false
+          },
+          "by": {
+            "$ref": "#/$defs/email"
+          }
+        },
+        "required": [
+          "on",
+          "by"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "extensions": {
+      "$comment": "The entries that record whether each extension of the guidelines is chosen (s-9ttvcwpqkehm58g).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "chosen": {
+            "type": "boolean"
+          },
+          "by": {
+            "$ref": "#/$defs/email"
+          }
+        },
+        "required": [
+          "name",
+          "chosen",
+          "by"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "code",
+    "tests"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "email": {
+      "$comment": "The email address of the owner who recorded the entry, as set in git's configuration.",
+      "type": "string",
+      "minLength": 1
+    },
+    "tool": {
+      "type": "object",
+      "properties": {
+        "rule": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "rule",
+        "name",
+        "command"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

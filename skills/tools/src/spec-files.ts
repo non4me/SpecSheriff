@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, posix } from "node:path";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join, posix, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export interface SpecNode {
@@ -20,6 +20,8 @@ export interface SpecFile {
   /** The file's path from the root of the repository, with forward slashes. */
   path: string;
   data: { schemaVersion: number; scope: string; section: string; nodes: SpecNode[] };
+  /** `taken` is true for a file that the SpecSheriff plugin delivers, and absent for one that the repository keeps. */
+  taken?: true;
 }
 
 /** The place of a node in a cell of a TableRule (s-5fewsp22mmdz7y6): the headings of its column and its group, and its row's text cells. */
@@ -122,13 +124,28 @@ export function loadSpecification(root: string): Specification {
 /** The SpecSheriff guidelines and their schema as the SpecSheriff tools carry them. */
 export const CARRIED = fileURLToPath(new URL("../guidelines/", import.meta.url));
 
+/** For the repository at the given root, the folder from which the SpecSheriff tools read the schema of the SpecSheriff guidelines (s-zefk589ykh37b8u). */
+export function schemaDir(root: string): string {
+  return takesGuidelines(root) ? join(CARRIED, "_schema") : join(root, "specs", "_schema");
+}
+
+/**
+ * Whether the SpecSheriff guidelines are written in the repository at the given root. The SpecSheriff tools recognize the
+ * repository only by the environment variable SPECSHERIFF_GUIDELINES_REPO, which holds the path to its root (s-zefk589ykh37b8u).
+ */
+export function writesGuidelines(root: string): boolean {
+  const named = process.env.SPECSHERIFF_GUIDELINES_REPO;
+  if (!named) return false;
+  const canonicalPath = (p: string) => {
+    const full = resolve(p);
+    return process.platform === "win32" ? full.toLowerCase() : full;
+  };
+  return canonicalPath(named) === canonicalPath(root);
+}
+
 /** Whether the repository is set up for the SpecSheriff tools and takes the SpecSheriff guidelines from them, rather than writing them. */
 export function takesGuidelines(root: string): boolean {
-  try {
-    return JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).writesSpecSheriffGuidelines !== true;
-  } catch {
-    return false;
-  }
+  return existsSync(join(root, "sheriff.config.json")) && !writesGuidelines(root);
 }
 
 /**
@@ -139,7 +156,7 @@ export function withTaken(root: string, own: SpecFile[]): Specification {
   if (!takesGuidelines(root)) return specificationOf(own);
   // The base of the guidelines, the appendix of the tools and every extension of the guidelines, as the plugin delivers them.
   const extensions = readdirSync(join(CARRIED, "extensions")).filter((n) => n.endsWith(".json")).sort().map((n) => `extensions/${n}`);
-  const taken = ["spec.json", "tools.json", ...extensions].map((name) => ({ path: `specs/_guidelines/${name}`, data: JSON.parse(readFileSync(join(CARRIED, name), "utf8")) }));
+  const taken = ["spec.json", "tools.json", ...extensions].map((name) => ({ path: `specs/_guidelines/${name}`, data: JSON.parse(readFileSync(join(CARRIED, name), "utf8")), taken: true as const }));
   return specificationOf([...own.filter((f) => !taken.some((t) => t.path === f.path)), ...taken]);
 }
 

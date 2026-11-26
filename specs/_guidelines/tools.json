@@ -291,11 +291,11 @@
           "reason": "The SpecSheriff tools find every file without a setting that says where it is kept, whatever the project and wherever the plugin is installed. A person or an agent who knows where a file is kept in one project finds it in any other. The SpecSheriff tools recognize the repository where the SpecSheriff guidelines are written by an environment variable, so that the settings of every project contain nothing that only that repository needs. The variable holds the path to that repository's root, so that no other repository on the same machine is recognized as that repository.",
           "meta": {
             "tests": [
+              "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u accepts the setting writesSpecSheriffGuidelines that an earlier release wrote, and ignores it",
               "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u reads each of the project's own checks and generators: the rule listing it, its name there, its command and the globs of its code and tests",
               "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u reads the code for tags, the tests for sids, and a file neither names for neither",
               "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u reads the globs naming where the system's code and its tests live",
               "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u reads this repository's settings, whose tests are the tools' own",
-              "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u reads whether the SpecSheriff guidelines are written in the repository",
               "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u refuses a model or an effort in the project's settings, naming the key of the user's git configuration that holds it",
               "skills/tools/test/unit/config.test.ts::@spec s-zefk589ykh37b8u refuses settings that are missing, not JSON, or hold a key nobody declared",
               "skills/tools/test/unit/generated.test.ts::@spec s-zefk589ykh37b8u keeps the readable export and the map out of git",
@@ -303,7 +303,8 @@
               "skills/tools/test/unit/spec-files.test.ts::@spec s-zefk589ykh37b8u finds each node with the file it stands in and its parent",
               "skills/tools/test/unit/spec-files.test.ts::@spec s-zefk589ykh37b8u outside the repository the SpecSheriff guidelines are written in, reads them and their schema from the SpecSheriff tools",
               "skills/tools/test/unit/spec-files.test.ts::@spec s-zefk589ykh37b8u reads every file of the specification under specs/, and neither the schema nor the archive as a part",
-              "skills/tools/test/unit/spec-files.test.ts::@spec s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file"
+              "skills/tools/test/unit/spec-files.test.ts::@spec s-zefk589ykh37b8u refuses a file of the specification that is not JSON, naming the file",
+              "skills/tools/test/unit/spec-files.test.ts::@spec s-zefk589ykh37b8u uses SPECSHERIFF_GUIDELINES_REPO alone, a variable that holds the path to a repository's root, to recognize the repository where the SpecSheriff guidelines are written"
             ],
             "decisions": [
               {
@@ -656,6 +657,9 @@
                 "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you choose A? If so, and you have no remarks on the nodes, the same answer agrees to the whole of group 4.\").",
                 "type": "textual"
               }
+            ],
+            "tests": [
+              "skills/tools/test/unit/approved-wording.test.ts::@spec s-t9j29hppag2nren takes a rule's refines links from the commit that added its last approval, and from the files until that commit is made"
             ]
           }
         },
@@ -968,7 +972,6 @@
                   "skills/tools/test/unit/json-text.test.ts::@spec s-f5rz6b7dhxejjts merges two values JSON Schema holds equal into one",
                   "skills/tools/test/unit/json-text.test.ts::@spec s-f5rz6b7dhxejjts refuses two values it cannot merge, naming the key and each one's line and value",
                   "skills/tools/test/unit/model.test.ts::@spec s-f5rz6b7dhxejjts sheriff model gives every node as its file holds it, with its part, its file, the node above it and the owners named nearest above it",
-                  "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts adds to the project's own guidelines the rule approving the specification, a draft, where none refines the base's rule on it",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts gives a field of type one of whose own list an earlier release wrote empty the values the domains add",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts gives a sid to a node that has none, its location and sid first",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-f5rz6b7dhxejjts merges the values an object holds under one key and names every merge",
@@ -1346,7 +1349,11 @@
                   }
                 ],
                 "tests": [
-                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes its sid and every link pointing at it from a node of the archive that an earlier release wrote, and builds no link pointing from it to another node"
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv archives a draft rule on the specification's approval status if the rule has ever been approved, deletes one that was never approved, and records no entry",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv leaves a rule on the specification's approval status unchanged where sheriff.config.json already holds an entry for that status",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes from sheriff.config.json the setting by which an earlier release recognized the repository where the SpecSheriff guidelines are written, and keeps every other setting in its place",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes its sid and every link pointing at it from a node of the archive that an earlier release wrote, and builds no link pointing from it to another node",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv replaces an approved rule of project.json on the specification's approval status with an entry that names the owner who last approved the rule, archives the rule, adds the draft rule on when the tests run, and reports that rule's sid"
                 ]
               }
             },
@@ -1536,6 +1543,12 @@
                     "ruling": "The owner agreed (\"ok\") to the agent's proposals: the types and RuntimeChecks are generated from the gathered values as the files of the specification hold them when `sheriff types` runs; `sheriff types` takes a RecordType's `refines` links from the commit that added the RecordType's last approval to `specs/_approvals.jsonl`, and from the files while that commit has yet to be made. The node had been shown in full with both paragraphs, and the owner's answer agreed to the node as well.",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk reports a node whose last approved wording is found neither in the files nor on the branch, and takes the latest wording that an earlier approval records",
+                  "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk takes a node's last approved wording from the files of the specification where they hold it",
+                  "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk takes a node's last approved wording from the latest commit on the current branch whose files hold it, where the files of the specification hold a different wording",
+                  "skills/tools/test/unit/approved-wording.test.ts::@spec s-a8fn72xa782wvbk treats a node that has never been approved as having no approved wording"
                 ]
               }
             },
@@ -1956,6 +1969,12 @@
                     "ruling": "The owner agreed to the group (\"ok\", in answer to \"Do you agree to group 6?\").",
                     "type": "textual"
                   }
+                ],
+                "tests": [
+                  "skills/tools/test/unit/config.test.ts::@spec s-d3nkw9b6mn98vuw reads the entries of the approval status, of the strict flag and of the choice of each extension, and gives each setting the value of the last entry that sets it",
+                  "skills/tools/test/unit/config.test.ts::@spec s-d3nkw9b6mn98vuw refuses an entry that holds a key other than those of its list, or a value its list does not allow",
+                  "skills/tools/test/unit/config.test.ts::@spec s-d3nkw9b6mn98vuw treats the specification as a draft where no entry sets its approval status, and gives the strict flag the default value that the schema of sheriff.config.json specifies where no entry sets the flag",
+                  "skills/tools/test/unit/model.test.ts::@spec s-d3nkw9b6mn98vuw gives the model the approval status that the last entry of approvalStatus sets, whatever the rules of project.json say"
                 ]
               }
             },
@@ -2458,7 +2477,7 @@
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init stages again with the executable mode a hook git's index holds without it",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init stages each hook it holds with the executable mode, naming each, where files keep no such bit, and stages nothing else",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init writes the git hooks and turns them on, declares the marketplace and the plugin, and starts the settings and the project's guidelines",
-              "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init writes, as a draft, the rule that approves the specification, whatever code the repository keeps",
+              "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init writes, as a draft and under the section that names the owner, the rule on when the tests run, whatever code the repository keeps",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init, outside a git repository, appends its line unless the file holds it already, spacing and line endings aside",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff init, where it cannot stage a hook, names it and says how to stage it executable",
               "skills/tools/test/e2e/init.test.ts::@spec s-7unxytshhc4md54 sheriff remove keeps every other key and hook, and each hook and declaration that differs, naming it",
@@ -3714,7 +3733,9 @@
                     "tests": [
                       "skills/tools/test/unit/json-text.test.ts::@spec s-7zqsstgnuc772ba finds a key an object holds twice, naming the key and both lines",
                       "skills/tools/test/unit/json-text.test.ts::@spec s-7zqsstgnuc772ba finds nothing where every key is held once",
-                      "skills/tools/test/unit/json-text.test.ts::@spec s-7zqsstgnuc772ba refuses text that is not JSON, naming the line"
+                      "skills/tools/test/unit/json-text.test.ts::@spec s-7zqsstgnuc772ba refuses text that is not JSON, naming the line",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-7zqsstgnuc772ba reads every file of the schema that the repository keeps, including those in the folders under specs/_schema, and names the line at which parsing fails in a file that is not valid JSON",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-7zqsstgnuc772ba refuses a key written more than once in one object, naming the file, the key and the line of each value, and says that sheriff reindex merges such values"
                     ]
                   }
                 },
@@ -4011,6 +4032,11 @@
                         "ruling": "The owner agreed to the node (\"ok\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-vke5hakwf3uyrjs refuses a sid that two nodes hold, including a node in a cell of a TableRule, naming the file and the location of each node",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-vke5hakwf3uyrjs refuses two term nodes naming the same term, and two RecordTypes sharing a name",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-vke5hakwf3uyrjs refuses two term nodes, or two RecordTypes, whose names differ only in the case of their letters"
                     ]
                   }
                 },
@@ -4070,6 +4096,10 @@
                         "ruling": "The draft carries out proposal 2.9 and the recommended option of question 4.6 of the questions about the base specification (rule 3.2, row 10.1.6 and the rule of the Domains extension on a term defined in a domain), which the owner agreed to on 2026-11-25, and the todo of this node. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yauyedny2yzvs4c refuses a term node in the folder of the base specification where the project has not chosen the Domains extension",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yauyedny2yzvs4c refuses a term node outside the contracts section, naming its file and location, and accepts one in a domain's folder where the project has chosen the Domains extension"
                     ]
                   }
                 },
@@ -4134,6 +4164,10 @@
                         "ruling": "The draft carries out the two new rows of the table of checks of the Domains extension in proposal 2.9 of the questions about the base specification, which the owner agreed to on 2026-11-25 (question 4.6, option B, keeps the second of them). The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-76becsjwmasc2r2 refuses a term of a domain that a node outside the domain and its part of the technical appendix cites or links to, naming each such node",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-76becsjwmasc2r2 refuses a term of the contracts section that only the nodes of one domain cite or link to, naming that domain"
                     ]
                   }
                 },
@@ -4185,6 +4219,10 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-stxmhq3hgfndvn6 checks the locations of the nodes in the files that the repository keeps, including those in the cells of a TableRule",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-stxmhq3hgfndvn6 refuses a location other than the one computed for the node, naming the node's file and sid and both locations"
                     ]
                   }
                 },
@@ -4291,7 +4329,8 @@
                       "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w gives a domain's header the domain's name as its location, and numbers its sections consecutively across its files",
                       "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w gives the top node of a file of an extension of the guidelines the file's path as its location, and numbers the nodes in the cells of a TableRule after its children, row by row",
                       "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w goes through the files of a part in the code-point order of their paths",
-                      "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w numbers the node at the top of a file of contracts like any other node of the base specification, consecutively across the files of contracts"
+                      "skills/tools/test/unit/model.test.ts::@spec s-ygg5kpcxgzq3m7w numbers the node at the top of a file of contracts like any other node of the base specification, consecutively across the files of contracts",
+                      "skills/tools/test/unit/reindex.test.ts::@spec s-ygg5kpcxgzq3m7w computes every node's location from where it is"
                     ]
                   }
                 },
@@ -4362,7 +4401,8 @@
                       }
                     ],
                     "tests": [
-                      "skills/tools/test/unit/validate.test.ts::@spec s-95w92rnjuv3sst8 refuses an approval the commit records by someone none of the node's owners, as the commit holds them, and judges the rule approving the specification by the specification's owners"
+                      "skills/tools/test/unit/validate.test.ts::@spec s-95w92rnjuv3sst8 leaves the approvals of the SpecSheriff guidelines that a project takes to the repository where those guidelines are written",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-95w92rnjuv3sst8 refuses an approved node for whose wording no approval is in force"
                     ]
                   }
                 },
@@ -4423,6 +4463,10 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-75ue25v6r23jkk8 refuses an approval of a sid that is held by no node in the files that the repository keeps, naming the sid and the approver's email address",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-75ue25v6r23jkk8 refuses an approval that the commit records and that was given by someone who is not one of the node's owners as the commit lists them"
                     ]
                   }
                 },
@@ -4583,6 +4627,10 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c4rn9fj4czk768b refuses a link to a nonexistent node, declared by a node that a cell of a TableRule holds",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-c4rn9fj4czk768b refuses a link whose target is not a node of the model, naming the link's type and its target, and accepts a link to a node of the SpecSheriff guidelines that a project takes"
                     ]
                   }
                 },
@@ -4644,7 +4692,11 @@
                     ],
                     "tests": [
                       "skills/tools/test/unit/model.test.ts::@spec s-qzyacnqwvaeaps4 reads the citations of a TableRule from its text and its text cells, and leaves out what the nodes in its cells cite",
-                      "skills/tools/test/unit/model.test.ts::@spec s-qzyacnqwvaeaps4 reads the citations of a node everywhere except in its links, the nodes under it and the values gathered beside a field, including text quoted as code"
+                      "skills/tools/test/unit/model.test.ts::@spec s-qzyacnqwvaeaps4 reads the citations of a node everywhere except in its links, the nodes under it and the values gathered beside a field, including text quoted as code",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-qzyacnqwvaeaps4 refuses a citation that has no link, both in a node that a cell of a TableRule holds and in a text cell of that TableRule",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-qzyacnqwvaeaps4 refuses a citation without a link, and a cites link without a citation",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-qzyacnqwvaeaps4 refuses a cites link beside a link of another type to the same node",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-qzyacnqwvaeaps4 refuses a node citing another by its location"
                     ]
                   }
                 },
@@ -4703,6 +4755,10 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-pvnnr844f3y964m leaves a term-relation whose target is not a node to the check on a link's target",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-pvnnr844f3y964m refuses a term-relation that does not bind two terms, and a link of another type that binds two terms, naming the link's type and target and referring the link's author to the specification's owners"
                     ]
                   }
                 },
@@ -4786,6 +4842,10 @@
                   "meta": {
                     "tests": [
                       "skills/tools/test/unit/model.test.ts::@spec s-agc6fb3vx46pc23 builds a section's status from the nodes in the cells of its TableRules too",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-agc6fb3vx46pc23 builds the approval status of a domain's header from the header's own children and from the nodes in the cells of a TableRule",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-agc6fb3vx46pc23 refuses a header whose index is not the one built from its domain's sections, and an index in the header of a domain without sections",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-agc6fb3vx46pc23 refuses a section or a domain's header whose status is not the one the nodes under it produce",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-agc6fb3vx46pc23 refuses incoming links that the outgoing links do not produce",
                       "skills/tools/test/unit/validate.test.ts::@spec s-agc6fb3vx46pc23 refuses values gathered beside a field that are not what its source produces"
                     ],
                     "decisions": [
@@ -4845,6 +4905,10 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-8esbyvaj2yx5eqf checks no domain where the project has not chosen the Domains extension",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-8esbyvaj2yx5eqf refuses a domain whose files hold no header, or two headers, naming each header's file and sid"
                     ]
                   }
                 },
@@ -4899,6 +4963,11 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-e2vdhfsndy5stq9 reads each string of the members of a list, each text cell of a TableRule and each node in its cells",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-e2vdhfsndy5stq9 refuses in any node, whatever its status, three or more words in capitals in a row, and passes two such words and a quoted name",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-e2vdhfsndy5stq9 refuses three or more words in capitals in a row, including words in non-ASCII letters, and passes two such words"
                     ]
                   }
                 },
@@ -4965,6 +5034,10 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-zhen42p6mnaxu7w counts a TableRule, a term and a node of a project's own kind as rules of their section",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-zhen42p6mnaxu7w refuses every section, whatever the section's status, that contains no rule, and the section that contains that section"
                     ]
                   }
                 },
@@ -5045,6 +5118,10 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-qvgzubkrafadqgf passes an exempts link from a node of the project's own guidelines that cites a rule, a TableRule, a RecordType or a section, and refuses every other exempts link",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-qvgzubkrafadqgf passes an exempts link to a node of a project's own kind"
                     ]
                   }
                 },
@@ -5101,6 +5178,9 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-p3n666zfjdrrw6a refuses a consumes link that does not go from a header to a section of another domain, naming its target, and leaves a link to a nonexistent node to the check on a link's target"
                     ]
                   }
                 },
@@ -5195,6 +5275,10 @@
                         "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you choose A? If so, and you have no remarks on the nodes, the same answer agrees to the whole of group 5.\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-vuujweu57sxsa58 accepts two domains of which one cites a rule of the other, against the direction of the citing domain's consumes link",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-vuujweu57sxsa58 refuses domains using one another in a cycle"
                     ]
                   }
                 },
@@ -5380,6 +5464,10 @@
                         "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you choose A? If so, and you have no remarks on the nodes, the same answer agrees to the whole of group 5.\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-uxmkwbnpgtjzkgv refuses a level the project's own guidelines do not list, and passes a header that contains no level",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-uxmkwbnpgtjzkgv takes the levels from every rule that refines the rule on levels, each in its last approved wording, and takes none from a rule that was never approved"
                     ]
                   }
                 },
@@ -6027,6 +6115,9 @@
                         "ruling": "The owner agreed to the group and to option A in both questions (\"ok\", in answer to \"Do you agree to group 1 and to option A in both questions?\").",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-6bmnsbskg6en4nf refuses, outside the repository where the SpecSheriff guidelines are written, each copy of a file that the plugin delivers, and runs no other check while any such copy is kept"
                     ]
                   }
                 },
@@ -6119,7 +6210,11 @@
                       }
                     ],
                     "tests": [
-                      "skills/tools/test/unit/validate.test.ts::@spec s-yprj7d6tnvauggr accepts a rule of the appendix of the tools that implements a node of an extension of the guidelines, and reads no file of an extension as the project's own guidelines"
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yprj7d6tnvauggr accepts a rule of a project's own guidelines that refines a rule of an extension, only where the project has chosen that extension",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yprj7d6tnvauggr accepts a rule of the appendix of the tools that implements a node of an extension of the guidelines, and reads no file of an extension as the project's own guidelines",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yprj7d6tnvauggr refuses a node of the technical appendix that implements no node of the base specification and is outside the stack and the technical debt, and accepts one that implements a section",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yprj7d6tnvauggr refuses a rule of a project's own guidelines that refines no rule of the SpecSheriff guidelines or of an extension the project has chosen; an implements link does not count",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-yprj7d6tnvauggr refuses a rule of the appendix of the tools that implements no rule of the SpecSheriff guidelines or of an extension of them; a section does not count"
                     ]
                   }
                 },
@@ -6173,6 +6268,10 @@
                         "ruling": "The draft carries out option A of question 4.2 of the questions about the base specification: row 11.3.5 checks only the names of the files of the technical appendix, and a new row of the main table checks the sections in every project; the owner agreed to it on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-gvafe6bnstwab8b leaves the names of the files of the technical appendix unchecked where the project has not chosen the Domains extension",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-gvafe6bnstwab8b refuses each file of the technical appendix, at any depth, that is named after no domain, reporting each such file once, by its path, except the files of the stack and of the technical debt"
                     ]
                   }
                 },
@@ -6233,6 +6332,10 @@
                         "ruling": "The draft carries out option A of question 4.2 of the questions about the base specification: a new row of the main table checks the structure of the technical appendix in every project; the owner agreed to it on 2026-11-25. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                         "type": "textual"
                       }
+                    ],
+                    "tests": [
+                      "skills/tools/test/unit/validate.test.ts::@spec s-g7auhqvzzbkw644 matches the sections of the technical appendix with those of the base specification where the project has not chosen the Domains extension",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-g7auhqvzzbkw644 refuses a section of the technical appendix that lies below the first node of a file named after a folder of the base specification and whose path of titles leads to no section of that folder"
                     ]
                   }
                 },
@@ -6324,7 +6427,11 @@
                   ],
                   "meta": {
                     "tests": [
-                      "skills/tools/test/unit/validate.test.ts::@spec s-7pk89t8z6wymmj9 runs each of the project's own checks on the model, refusing or reporting as the rule listing it says, its output shown"
+                      "skills/tools/test/unit/validate.test.ts::@spec s-7pk89t8z6wymmj9 reads reportedUnlessStrict as reported while the strict flag is off, and as refused while the flag is on or sheriff validate runs with --strict; the option --strict gives the check a model in which the specification is approved and the flag is on",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-7pk89t8z6wymmj9 reads the rule that lists a check in the rule's last approved wording, and refuses a check that this wording does not list",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-7pk89t8z6wymmj9 runs each of the project's own checks on the model, refusing or reporting as the rule listing it says, its output shown",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-7pk89t8z6wymmj9 runs the project's own checks after the check for keys written more than once and the validation against the schema have passed, and before the other checks",
+                      "skills/tools/test/unit/validate.test.ts::@spec s-7pk89t8z6wymmj9 takes a list member that is a string as the name of the check"
                     ],
                     "todos": [
                       {
@@ -6935,10 +7042,10 @@
                   ],
                   "meta": {
                     "tests": [
-                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 counts a withdrawal of the rule's approval of whichever wording, by one of the specification's owners as the commit holds them",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 reads the specification before the commit as an earlier release wrote it, checked standing for approved",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 refuses a commit approving the specification while a symbol carries no SpecTag",
-                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 refuses a commit approving the specification while a test carries no SpecTag",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 accepts entries that a commit appends after those of its parent, each naming an owner of the specification",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 reads the entries of the commit's parent as sheriff reindex would rewrite them; an approved rule of an earlier release is read as an entry",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 refuses a commit that removes, changes or moves an entry of its parent, and the refusal names the setting, the entries and the specification's owners",
+                      "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 refuses an entry that names a person who is not an owner of the specification in project.json after the commit, and accepts the entry if the commit makes that person an owner",
                       "skills/tools/test/unit/binding.test.ts::@spec s-j9r8z4xdrfkfs47 while the commit leaves the specification a draft reports an untagged symbol a commit leaves alone and refuses one it changes; while it leaves it approved refuses both"
                     ],
                     "decisions": [
@@ -10137,8 +10244,7 @@
                   "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb refuses a node of the SpecSheriff guidelines outside the repository they are written in, approving or withdrawing, and writes nothing",
                   "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb refuses a section and a domain's header, whose status is built, approving or withdrawing",
                   "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb refuses a sid no node holds, and a node no owner is named for",
-                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb withdraws the approval of each wording of the node for which one stands, whether the node holds that wording or not, a line for each, and appends nothing where none stands",
-                  "skills/tools/test/unit/reindex.test.ts::@spec s-v4qus7raqnwzneb keeps an approval through the renaming of the kind a field's values come from"
+                  "skills/tools/test/unit/approve.test.ts::@spec s-v4qus7raqnwzneb withdraws the approval of each wording of the node for which one stands, whether the node holds that wording or not, a line for each, and appends nothing where none stands"
                 ]
               }
             },
@@ -10218,7 +10324,9 @@
                   "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t includes a node's kind in its fingerprint, except a TextRule's, and reads a kind that an earlier release wrote under its earlier name as the same kind",
                   "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t keeps the reason under its earlier name in the fingerprint, so an approval given before the rename stands",
                   "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves each cell holding a node out of a TableRule's fingerprint, and gives a node in a cell its column, its group and the text cells of its row",
-                  "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves the values gathered beside a field out of the fingerprint"
+                  "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves out of the fingerprint only the values gathered in a field's x-enumSource, keeps a property named gathered, and hashes the kind of node that x-enumSource names under that kind's earlier name",
+                  "skills/tools/test/unit/model.test.ts::@spec s-f5brvuuu6xmkj6t leaves the values gathered beside a field out of the fingerprint",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-f5brvuuu6xmkj6t keeps an approval through the renaming of the kind a field's values come from"
                 ]
               }
             },

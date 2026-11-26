@@ -4,6 +4,11 @@
     "skills/tools/test/**/*.test.ts",
     "skills/pytest-specsheriff/tests/**/test_*.py"
   ],
-  "writesSpecSheriffGuidelines": true,
-  "testCommand": "npm test"
+  "testCommand": "npm test",
+  "approvalStatus": [
+    {
+      "status": "approved",
+      "by": "vladimir.troyanenko@gmail.com"
+    }
+  ]
 }

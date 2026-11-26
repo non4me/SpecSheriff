@@ -1,14 +1,17 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join } from "node:path";
-import { loadConfig, type Config } from "./config.ts";
-import { addedApprovals, everApproved, readApprovals, stands } from "./approvals.ts";
+import { join, posix } from "node:path";
+import { createHash } from "node:crypto";
+import { loadConfig, modelFlags, ownerSettings, strictDefault, type Config } from "./config.ts";
+import { git as gitIn } from "./diff.ts";
+import { approvedWordings } from "./approved-wording.ts";
+import { addedApprovals, APPROVALS, everApproved, readApprovals, stands } from "./approvals.ts";
 import { keysTwice } from "./json-text.ts";
-import { APPROVAL_RULE, BASE_KINDS, builtStatuses, citations, fingerprint, isContainer, isProjectKind, locations, modelOf, incoming, isDomain, LEVELS_RULE, levelsOf, ownersOf, partOf, PROJECT, specificationOwners } from "./model.ts";
+import { BASE_KINDS, builtStatuses, citations, fingerprint, isContainer, isProjectKind, locations, modelOf, incoming, isDomain, levelsOf, ownersOf, partOf, PROJECT } from "./model.ts";
 import { headerIndex, judgedHere } from "./reindex.ts";
-import { EXTENSION, isArchive, loadSchema, readExtension, SCHEMA_FILES } from "./schema.ts";
+import { EXTENSION, isArchive, loadSchema, readExtension } from "./schema.ts";
 import { fieldKey, gather } from "./values.ts";
-import { cellNodes, specPaths, withTaken, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
+import { cellNodes, specPaths, withTaken, writesGuidelines, type Located, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
 
 export interface Finding {
   /** The file, and the node where there is one. */
@@ -21,25 +24,28 @@ export interface Finding {
 export interface ValidateOptions {
   /** The specification as the commit before this one holds it, for what the commit removes. */
   before?: Specification;
+  /** `--strict`: the project's own checks are given an approved specification with the `strict` flag on (s-7pk89t8z6wymmj9). */
+  strict?: boolean;
 }
 
 /** Every kind but a section and a domain's header requires something, a project's own kinds included (s-vsh384ybt4w25a2). */
 const REQUIRING = { has: (kind: string) => kind !== "section" && kind !== "header" };
 const isBase = (path: string) => !["_guidelines", "tech"].includes(partOf(path).part);
 
-export function validate(root: string, { before }: ValidateOptions = {}): Finding[] {
+export function validate(root: string, { before, strict = false }: ValidateOptions = {}): Finding[] {
   const findings: Finding[] = [];
   const config = loadConfig(root);
   const paths = specPaths(root);
 
-  // A project taking the SpecSheriff guidelines holds no copy of them or of their schema.
-  if (!config.writesSpecSheriffGuidelines) {
+  // Outside the repository where the SpecSheriff guidelines are written, no copy of a file that the plugin delivers is kept (s-6bmnsbskg6en4nf).
+  const writes = writesGuidelines(root);
+  if (!writes) {
     const schemaDir = join(root, "specs", "_schema");
     const schemaFiles = existsSync(schemaDir)
       ? readdirSync(schemaDir, { recursive: true, encoding: "utf8" }).filter((p) => statSync(join(schemaDir, p)).isFile()).map((p) => `specs/_schema/${p.replaceAll("\\", "/")}`).filter((p) => p !== EXTENSION)
       : [];
-    for (const path of [...paths.filter((p) => partOf(p).specSheriffGuidelines), ...schemaFiles]) {
-      findings.push({ where: path, message: "a copy of the SpecSheriff guidelines or of their schema, which a project reads from the SpecSheriff tools" });
+    for (const path of [...paths.filter((p) => partOf(p).specSheriffGuidelines), ...schemaFiles].sort()) {
+      findings.push({ where: path, message: "a copy of a file that the SpecSheriff plugin delivers, which the SpecSheriff tools read from the plugin" });
     }
     if (findings.length) return findings;
   }
@@ -51,7 +57,9 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   for (const path of [...paths, ...schemaPaths(root)]) {
     const text = readFileSync(join(root, path), "utf8");
     try {
-      for (const k of keysTwice(text)) findings.push({ where: path, message: `"${k.key}" at ${k.path || "/"} is written twice, lines ${k.lines.join(", ")}` });
+      for (const k of keysTwice(text)) {
+        findings.push({ where: path, message: `"${k.key}" is written ${k.lines.length} times in one object, on lines ${k.lines.join(", ")}; sheriff reindex merges such values wherever it can keep all of them` });
+      }
     } catch (error) {
       findings.push({ where: path, message: (error as Error).message });
       continue;
@@ -69,8 +77,13 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     return `${n.file.path}: ${sid} (${n.node.location})`;
   };
   const refuse = (sid: string, message: string) => findings.push({ where: at(sid), message });
+  // The project's own checks run after the files have passed the check for keys written more than once and the validation against the schema, and before the other checks (s-7pk89t8z6wymmj9).
+  findings.push(...projectChecks(root, config, spec, strict));
+  const chosen = ownerSettings(config, strictDefault(root)).extensions;
+  // The nodes of the files that the repository keeps, the nodes in the cells of a TableRule included.
+  const kept = [...spec.nodes].filter(([, { file }]) => !file.taken);
 
-  // Sids and locations held once, terms and RecordTypes named once.
+  // Each sid, each term and each name of a RecordType belongs to one node only (s-vke5hakwf3uyrjs).
   const count = (values: Array<[string, string]>, what: (v: string) => string) => {
     const seen = new Map<string, string[]>();
     for (const [v, where] of values) seen.set(v, [...(seen.get(v) ?? []), where]);
@@ -78,49 +91,56 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
   };
   const live: Array<{ node: SpecNode; path: string }> = [];
   for (const f of spec.files) walk(f.data.nodes, (node) => live.push({ node, path: f.path }));
-  count(live.map(({ node, path }) => [node.sid, path]), (v) => `sid ${v} is held by more than one node`);
-  count(live.map(({ node, path }) => [node.location, path]), (v) => `location ${v} is held by more than one node`);
-  count(live.filter(({ node }) => node.kind === "term").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `term "${v}" is named by more than one term node`);
-  count(live.filter(({ node }) => node.kind === "RecordType").map(({ node, path }) => [node.title.toLowerCase(), path]), (v) => `RecordType "${v}" is the name of more than one RecordType`);
-  for (const { node, path } of live) if (node.kind === "term" && partOf(path).part !== "contracts") refuse(node.sid, "a term node outside contracts, where alone a term is declared");
-
-  const ids = locations(spec);
-  for (const [sid, { node }] of spec.nodes) {
-    if (ids.has(sid) && ids.get(sid) !== node.location) refuse(sid, `location ${node.location} is not the one its place gives, ${ids.get(sid)}`);
+  const held = ({ node, path }: { node: SpecNode; path: string }) => `${path} (${node.location})`;
+  count(live.map((l) => [l.node.sid, held(l)]), (v) => `sid ${v} is held by more than one node`);
+  count(live.filter(({ node }) => node.kind === "term").map((l) => [l.node.title.toLowerCase(), held(l)]), (v) => `term "${v}" is named by more than one term node`);
+  count(live.filter(({ node }) => node.kind === "RecordType").map((l) => [l.node.title.toLowerCase(), held(l)]), (v) => `RecordType "${v}" is the name of more than one RecordType`);
+  // A term node is kept in the contracts section, or in a domain's folder where the Domains extension is chosen (s-yauyedny2yzvs4c).
+  for (const [sid, { node, file }] of kept) {
+    const { part } = partOf(file.path);
+    if (node.kind !== "term" || part === "contracts" || (chosen.has("domains") && isDomain(part))) continue;
+    refuse(sid, `a term node outside the contracts section${chosen.has("domains") ? " and outside the folder of every domain" : ""}`);
   }
 
-  // Approvals, the statuses of sections and headers, and the archive.
+  // Each location is the one computed for its node (s-stxmhq3hgfndvn6).
+  const ids = locations(spec);
+  for (const [sid, { node }] of kept) {
+    const want = ids.get(sid);
+    if (want === undefined || want === node.location) continue;
+    refuse(sid, node.location ? `location ${node.location} differs from the location computed for it, ${want}` : `has no location; the location computed for it is ${want}`);
+  }
+
+  // Approvals, the approval statuses of sections and headers (s-95w92rnjuv3sst8, s-agc6fb3vx46pc23), and the archive.
   const lines = readApprovals(root);
   const statuses = builtStatuses(spec);
-  for (const [sid, { node, file, cell }] of spec.nodes) {
-    if (judgedHere(file.path, config.writesSpecSheriffGuidelines)) {
-      if (isContainer(node.kind)) {
-        if (statuses.get(sid) !== node.status) refuse(sid, `its status is ${node.status}, while the nodes under it make it ${statuses.get(sid)} (s-9kfdycuq34beqvs)`);
-      } else if (node.status === "approved" && !stands(lines, sid, fingerprint(node, cell))) {
-        refuse(sid, "approved, but no approval stands for its wording");
-      }
+  for (const [sid, { node, cell }] of kept) {
+    if (isContainer(node.kind)) {
+      if (statuses.get(sid) !== node.status) refuse(sid, `its status is ${node.status}, while the nodes under it make it ${statuses.get(sid)} (s-9kfdycuq34beqvs)`);
+    } else if (node.status === "approved" && !stands(lines, sid, fingerprint(node, cell))) {
+      refuse(sid, "approved, but no approval stands for its wording");
     }
-    if (node.archived) refuse(sid, "carries the reason of its removal, but is not in the archive");
   }
-  // Who an approval names is judged at the commit recording it, against the owners as that commit holds them.
+  for (const [sid, { node }] of spec.nodes) if (node.archived) refuse(sid, "carries the reason of its removal, but is not in the archive");
+  // Who an approval names is checked in the commit that records it, against the owners as they are recorded in that commit.
+  // An approval that a commit adds names a node in the files that the repository keeps and one of that node's owners (s-75ue25v6r23jkk8).
   for (const line of addedApprovals(root, lines)) {
+    if (line.withdrawn) continue;
     const at = spec.nodes.get(line.sid);
-    if (!at || line.withdrawn || !judgedHere(at.file.path, config.writesSpecSheriffGuidelines)) continue;
-    const approving = at.node.refs?.some((r) => r.type === "refines" && r.to === APPROVAL_RULE);
-    const owners = approving ? specificationOwners(spec) : ownersOf(spec, line.sid);
-    if (!owners.includes(line.by)) refuse(line.sid, `approved by ${line.by}, who is none of its ${approving ? "specification's " : ""}owners (${owners.join(", ") || "none named"})`);
+    if (!at || at.file.taken) {
+      findings.push({ where: APPROVALS, message: `an approval of ${line.sid} by ${line.by}, a sid that no node of the files that the repository keeps holds` });
+      continue;
+    }
+    const owners = ownersOf(spec, line.sid);
+    if (!owners.includes(line.by)) refuse(line.sid, `approved by ${line.by}, who is none of its owners (${owners.join(", ") || "none named"})`);
   }
-  if (before) findings.push(...archiveFindings(spec, before, lines, config.writesSpecSheriffGuidelines));
+  if (before) findings.push(...archiveFindings(spec, before, lines, writes));
 
-  // Links and citations.
+  // Links and citations (s-c4rn9fj4czk768b, s-qzyacnqwvaeaps4, s-pvnnr844f3y964m).
   const built = incoming(spec);
   const isTerm = (sid: string) => spec.nodes.get(sid)?.node.kind === "term";
-  for (const [sid, { node }] of spec.nodes) {
+  for (const [sid, { node }] of kept) {
     const out = node.refs.filter((r) => r.to);
-    for (const r of out) {
-      const named = spec.nodes.has(r.to!);
-      if (!named) refuse(sid, `its ${r.type} link to ${r.to} names no node`);
-    }
+    for (const r of out) if (!spec.nodes.has(r.to!)) refuse(sid, `its ${r.type} link to ${r.to} names no node`);
     const cited = citations(node);
     for (const c of cited.sids) if (!out.some((r) => r.to === c)) refuse(sid, `cites ${c} but holds no link to it`);
     for (const a of cited.locations) refuse(sid, `cites ${a} by its location, not its sid`);
@@ -128,10 +148,10 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
       if (!cited.sids.includes(r.to!)) refuse(sid, `holds a cites link to ${r.to} but does not cite it`);
       if (out.some((o) => o.to === r.to && o.type !== "cites")) refuse(sid, `holds a cites link to ${r.to} beside a link of another type to it`);
     }
-    for (const r of out) {
+    for (const r of out.filter((r) => spec.nodes.has(r.to!))) {
       const twoTerms = isTerm(sid) && isTerm(r.to!);
-      if ((r.type === "term-relation" || r.type === "uses") && !twoTerms) refuse(sid, `its ${r.type} link to ${r.to} does not bind two terms; settle it with the specification's owner`);
-      if (r.type !== "term-relation" && r.type !== "uses" && twoTerms) refuse(sid, `a ${r.type} link binds two terms; settle it with the specification's owner`);
+      if ((r.type === "term-relation" || r.type === "uses") && !twoTerms) refuse(sid, `its ${r.type} link to ${r.to} does not bind two terms; settle it with the specification's owners`);
+      if (r.type !== "term-relation" && r.type !== "uses" && twoTerms) refuse(sid, `its ${r.type} link to ${r.to} binds two terms; settle it with the specification's owners`);
     }
     const key = (r: { type: string; from?: string; ratio?: string }) => `${r.type} ${r.from} ${r.ratio ?? ""}`;
     const stored = node.refs.filter((r) => r.from).map(key).sort();
@@ -139,58 +159,100 @@ export function validate(root: string, { before }: ValidateOptions = {}): Findin
     if (stored.join("|") !== want.join("|")) refuse(sid, "its incoming links are not what the outgoing ones produce");
   }
 
-  // Words in capitals in approved nodes and in every section and header, and every section holding a rule.
-  for (const [sid, { node }] of spec.nodes) {
+  // Each section contains at least one rule (s-zhen42p6mnaxu7w), and no node contains a run of words in capitals (s-e2vdhfsndy5stq9).
+  // A word in capitals consists of two or more capital letters or digits of any script, beginning and ending with a letter; a run is three or more such words in a row.
+  const word = String.raw`(?<![\p{L}\p{N}_])\p{Lu}[\p{Lu}\p{N}-]*[\p{Lu}\p{N}](?![\p{L}\p{N}_])`;
+  const run = new RegExp(`${word}(?:[ \\t]+${word}){2,}`, "gu");
+  for (const [sid, { node }] of kept) {
     if (node.kind === "section" && !holdsRule(node)) refuse(sid, "a section that holds no rule");
-    if (node.status !== "approved" && !isContainer(node.kind)) continue;
-    for (const field of ["title", "text", "reason"] as const) {
-      const value = node[field];
-      if (typeof value !== "string") continue;
+    for (const [field, value] of wordsRead(node)) {
       const bare = value.replace(/`[^`]*`/g, "").replace(/"[^"]*"|“[^”]*”/g, "");
-      // A word in capitals of any script, two characters or more; three or more of them running.
-      const word = String.raw`(?<![\p{L}\p{N}_])\p{Lu}[\p{Lu}\p{N}-]*[\p{Lu}\p{N}](?![\p{L}\p{N}_])`;
-      for (const m of bare.matchAll(new RegExp(`${word}(?:[ \\t]+${word}){2,}`, "gu"))) {
-        refuse(sid, `${isContainer(node.kind) ? "a section or a header" : "approved"}, but its ${field} sets "${m[0]}" in capitals`);
+      for (const m of bare.matchAll(run)) refuse(sid, `its ${field} sets "${m[0]}" in capitals`);
+    }
+  }
+
+  // An `exempts` link goes from a node of the project's own guidelines that cites its target, to a section or a rule (s-qvgzubkrafadqgf).
+  for (const [sid, { node, file }] of kept) {
+    for (const r of node.refs.filter((r) => r.type === "exempts" && r.to && spec.nodes.has(r.to))) {
+      const target = spec.nodes.get(r.to!)!.node.kind;
+      const rule = ["section", "TextRule", "TableRule", "RecordType"].includes(target) || isProjectKind(target);
+      if (file.path !== PROJECT || !rule || !citations(node).sids.includes(r.to!)) {
+        refuse(sid, `its exempts link to ${r.to} is not allowed: an exempts link goes from a node of the project's own guidelines that cites its target, to a section or a rule`);
       }
     }
   }
 
-  domains(spec, built, refuse, findings);
-  objectsInLists(spec, refuse);
+  if (chosen.has("domains")) domains(root, spec, kept, built, refuse, findings);
+  objectsInLists(kept, refuse);
   variants(spec, refuse, new Set([...BASE_KINDS, ...Object.keys(readExtension(root)?.kinds ?? {})]));
-  appendices(spec, refuse);
-  findings.push(...projectChecks(root, config, spec));
+  appendices(spec, kept, chosen, refuse, findings);
   return findings;
 }
 
 /**
- * Runs each check a project's own guidelines add (s-2fau85dfyyeq66m) by the command the settings name, in the directory
- * the other checks read, the model on its standard input. An exit status other than zero refuses, or is reported where
- * the rule listing the check says so; what it printed is shown with it.
+ * Runs each check a project's own guidelines add (s-2fau85dfyyeq66m) with the command that the settings name, in the directory
+ * the other checks read, with the model on its standard input (s-7pk89t8z6wymmj9). The rule that lists the check is read
+ * in its last approved wording. An exit status other than zero makes `sheriff validate` refuse the change, or only report
+ * it where that rule says so; what the check printed is shown with the refusal or the report. A check that changes a file that git does not ignore is refused (s-vj67ztqkuhxbv7s).
  */
-function projectChecks(root: string, config: Config, spec: Specification): Finding[] {
+function projectChecks(root: string, config: Config, spec: Specification, strict: boolean): Finding[] {
   const found: Finding[] = [];
   if (!config.checks.length) return found;
-  const model = JSON.stringify(modelOf(spec));
+  const flags = strict ? { approved: true, strict: true } : modelFlags(root, config, spec);
+  const model = JSON.stringify(modelOf(spec, flags));
+  const wordings = approvedWordings(root, spec);
   for (const check of config.checks) {
     const where = `check "${check.name}"`;
-    const list = spec.nodes.get(check.rule)?.node.list as { members?: unknown[]; property?: string } | undefined;
-    const member = list?.members?.find((m) => Boolean(m) && typeof m === "object" && (m as Record<string, unknown>)[list.property ?? "name"] === check.name) as Record<string, unknown> | undefined;
-    if (!member) {
-      found.push({ where, message: `the settings name a check the rule ${check.rule} does not list` });
+    const list = wordings.wording(check.rule)?.list as { members?: unknown[]; property?: string } | undefined;
+    // A member's value is the member itself, or, if the member is an object, the value of the property that the list names (s-5hb9k2e34dgn284).
+    const valueOf = (m: unknown) => (m && typeof m === "object" ? (m as Record<string, unknown>)[list?.property ?? ""] : m);
+    const member = list?.members?.find((m) => valueOf(m) === check.name);
+    if (member === undefined) {
+      found.push({ where, message: `the last approved wording of the rule ${check.rule} does not list the check` });
       continue;
     }
+    const before = snapshot(root);
     const run = spawnSync(check.command, { cwd: root, input: model, shell: true, encoding: "utf8", maxBuffer: 1 << 26 });
+    const after = snapshot(root);
+    if (before && after) {
+      const changed = [...new Set([...before.keys(), ...after.keys()])].filter((p) => before.get(p) !== after.get(p)).sort();
+      if (changed.length) found.push({ where, message: `the check changed files it may not change: ${changed.join(", ")}` });
+    }
     if (run.status === 0) continue;
     const output = `${run.stdout ?? ""}${run.stderr ?? ""}`.trim();
-    found.push({ where, message: output || `ended with exit status ${run.status}`, ...(member.onFailure === "reported" ? { reported: true as const } : {}) });
+    const onFailure = member && typeof member === "object" ? (member as Record<string, unknown>).onFailure : undefined;
+    const reported = onFailure === "reported" || (onFailure === "reportedUnlessStrict" && !flags.strict);
+    found.push({ where, message: output || `ended with exit status ${run.status}`, ...(reported ? { reported: true as const } : {}) });
   }
   return found;
 }
 
+/**
+ * The content of each of the directory's files that git lists either as untracked and not ignored, or as changed. Outside a
+ * repository, the function returns null. A file that a check adds, changes or removes has different content in the listing
+ * taken before the check runs and in the one taken after it.
+ */
+function snapshot(root: string): Map<string, string> | null {
+  const listed = (...args: string[]) => {
+    const run = gitIn(root, ...args);
+    return run.ok ? run.out.split("\n").filter(Boolean) : null;
+  };
+  const untracked = listed("ls-files", "-o", "--exclude-standard");
+  const changed = listed("diff", "--name-only", "--relative");
+  if (!untracked || !changed) return null;
+  const content = (p: string) => (existsSync(join(root, p)) ? createHash("sha1").update(readFileSync(join(root, p))).digest("hex") : "");
+  return new Map([...new Set([...untracked, ...changed])].map((p) => [p, content(p)]));
+}
+
+/** Every JSON file of the schema that the repository keeps, in `specs/_schema/` and the folders under it (s-7zqsstgnuc772ba). */
 function schemaPaths(root: string): string[] {
   const dir = join(root, "specs", "_schema");
-  return existsSync(dir) ? [...SCHEMA_FILES, "project.schema.json"].filter((n) => existsSync(join(dir, n))).map((n) => `specs/_schema/${n}`) : [];
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir, { recursive: true, encoding: "utf8" })
+    .map((p) => p.replaceAll("\\", "/"))
+    .filter((p) => p.endsWith(".json") && statSync(join(dir, p)).isFile())
+    .sort()
+    .map((p) => `specs/_schema/${p}`);
 }
 
 /**
@@ -235,48 +297,59 @@ function holdsRule(section: SpecNode): boolean {
   return (section.children ?? []).some((c) => REQUIRING.has(c.kind) || (c.kind === "section" && holdsRule(c)));
 }
 
+/** What the check for words in capitals reads in a node: its title, text and reason, each string in the members of its list, and each text cell of a TableRule (s-e2vdhfsndy5stq9). */
+function wordsRead(node: SpecNode): Array<[string, string]> {
+  const read: Array<[string, string]> = [];
+  for (const field of ["title", "text", "reason"] as const) if (typeof node[field] === "string") read.push([field, node[field] as string]);
+  const strings = (v: unknown): string[] => (typeof v === "string" ? [v] : Array.isArray(v) ? v.flatMap(strings) : v && typeof v === "object" ? Object.values(v).flatMap(strings) : []);
+  for (const s of strings((node.list as { members?: unknown } | undefined)?.members)) read.push(["list", s]);
+  for (const g of (node.groups as Array<{ rows?: Array<{ cells?: Record<string, { text?: unknown }> }> }> | undefined) ?? []) {
+    for (const r of g.rows ?? []) for (const c of Object.values(r.cells ?? {})) if (typeof c.text === "string") read.push(["text cell", c.text]);
+  }
+  return read;
+}
+
 type Refuse = (sid: string, message: string) => void;
 
-function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse: Refuse, findings: Finding[]): void {
-  const parts = new Map<string, { header?: SpecNode; sections: SpecNode[] }>();
+/** The checks of the domains, run only where the project has chosen the Domains extension. */
+function domains(root: string, spec: Specification, kept: Array<[string, Located]>, built: ReturnType<typeof incoming>, refuse: Refuse, findings: Finding[]): void {
+  const parts = new Map<string, { headers: Array<{ node: SpecNode; path: string }>; sections: SpecNode[] }>();
   for (const f of spec.files) {
     const { part } = partOf(f.path);
-    if (!isBase(f.path) || part === "contracts") continue;
-    if (!parts.has(part)) parts.set(part, { sections: [] });
+    if (!isDomain(part)) continue;
+    if (!parts.has(part)) parts.set(part, { headers: [], sections: [] });
     const entry = parts.get(part)!;
     for (const n of f.data.nodes) {
-      if (n.kind === "header") (entry.header = n), entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
+      if (n.kind === "header") entry.headers.push({ node: n, path: f.path }), entry.sections.push(...(n.children ?? []).filter((c) => c.kind === "section"));
       else if (n.kind === "section") entry.sections.push(n);
     }
   }
-  const levels = levelsOf(spec);
+  const levels = levelsOf(spec, approvedWordings(root, spec));
   const domainOf = new Map<string, string>();
   for (const [part, { sections }] of parts) for (const s of sections) walk([s], (n) => domainOf.set(n.sid, part));
   const uses = new Map<string, Set<string>>();
-  for (const [part, { header, sections }] of parts) {
-    if (!header) {
-      findings.push({ where: `specs/${part}/`, message: `domain ${part} has no header` });
+  // Each domain's files hold exactly one header (s-8esbyvaj2yx5eqf), whose index is built from the domain's sections (s-agc6fb3vx46pc23).
+  for (const [part, { headers, sections }] of parts) {
+    if (headers.length !== 1) {
+      const named = headers.map((h) => `${h.path} ${h.node.sid}`).join(", ");
+      findings.push({ where: `specs/${part}/`, message: headers.length ? `domain ${part} has more than one header: ${named}` : `domain ${part} has no header` });
       continue;
     }
+    const header = headers[0]!.node;
     domainOf.set(header.sid, part);
     if (JSON.stringify(header.sections) !== JSON.stringify(headerIndex(spec, sections, built))) {
       refuse(header.sid, "the index in its header is not what the domain's sections produce");
     }
-    const level = header.level as string;
-    if (!levels?.includes(level)) refuse(header.sid, `level "${level}" is not listed in the project's own guidelines`);
+    const level = header.level as string | undefined;
+    if (level !== undefined && !levels.includes(level)) refuse(header.sid, `level "${level}" is not listed in the last approved wording of a rule of the project's own guidelines`);
   }
-  for (const [sid, { node, file }] of spec.nodes) {
-    for (const r of node.refs.filter((r) => r.type === "exempts" && r.to)) {
-      const target = spec.nodes.get(r.to!)?.node.kind;
-      if (file.path !== PROJECT || !target || (target !== "TextRule" && target !== "section" && !isProjectKind(target))) {
-        refuse(sid, "an exempts link must go from a node of the project's own guidelines to a rule, a node of a project's own kind or a section");
-      }
-    }
-    for (const r of node.refs.filter((r) => r.type === "consumes" && r.to)) {
+  // A `consumes` link goes from a domain's header to a section of another domain (s-p3n666zfjdrrw6a).
+  for (const [sid, { node }] of kept) {
+    for (const r of node.refs.filter((r) => r.type === "consumes" && r.to && spec.nodes.has(r.to))) {
       const from = node.kind === "header" ? domainOf.get(sid) : undefined;
       const to = spec.nodes.get(r.to!)?.node.kind === "section" ? domainOf.get(r.to!) : undefined;
       if (!from || !to || from === to) {
-        refuse(sid, "a consumes link must go from a domain's header to a section of another domain");
+        refuse(sid, `its consumes link to ${r.to} must go from a domain's header to a section of another domain`);
         continue;
       }
       if (!uses.has(from)) uses.set(from, new Set());
@@ -285,6 +358,31 @@ function domains(spec: Specification, built: ReturnType<typeof incoming>, refuse
   }
   const cycle = findCycle(uses);
   if (cycle) findings.push({ where: "specs/", message: `the domains use one another in a cycle: ${cycle.join(" → ")}` });
+
+  // The nodes that cite a term or link to it determine where the term is defined (s-76becsjwmasc2r2).
+  const users = new Map<string, Array<{ sid: string; path: string }>>();
+  for (const [sid, { node, file }] of spec.nodes) {
+    const targets = new Set([...node.refs.filter((r) => r.to).map((r) => r.to!), ...citations(node).sids]);
+    for (const t of targets) if (t !== sid && spec.nodes.get(t)?.node.kind === "term") users.set(t, [...(users.get(t) ?? []), { sid, path: file.path }]);
+  }
+  // The domain that a node belongs to, determined from the folder that holds the node's file or from the file of the technical appendix named after the domain.
+  const domainAt = (path: string) => {
+    const { part, file } = partOf(path);
+    return isDomain(part) ? part : part === "tech" && parts.has(file) ? file : undefined;
+  };
+  for (const [sid, { node, file }] of kept) {
+    if (node.kind !== "term") continue;
+    const { part } = partOf(file.path);
+    const using = users.get(sid) ?? [];
+    if (isDomain(part)) {
+      const outside = using.filter((u) => domainAt(u.path) !== part);
+      if (outside.length) refuse(sid, `a term of the domain ${part}, cited or linked to from outside the domain ${part}: ${outside.map((u) => `${u.path} ${u.sid}`).join(", ")}`);
+    } else if (part === "contracts" && using.length) {
+      const only = new Set(using.map((u) => domainAt(u.path)));
+      const [domain] = only;
+      if (only.size === 1 && domain) refuse(sid, `only the domain ${domain} cites or links to it; move it into that domain`);
+    }
+  }
 }
 
 function findCycle(uses: Map<string, Set<string>>): string[] | null {
@@ -313,9 +411,9 @@ function findCycle(uses: Map<string, Set<string>>): string[] | null {
 type NeutralType = { is: string; values?: string[]; from?: string; kind?: string; fields?: Field[]; of?: NeutralType; record?: string };
 type Field = { name: string; type: NeutralType; gathered?: Array<{ value: string; sid: string }> };
 
-/** Each member of a list that is an object holds the property the list names (s-v7vd4ydrwexsgsj). */
-function objectsInLists(spec: Specification, refuse: Refuse): void {
-  for (const [sid, { node }] of spec.nodes) {
+/** In any list, each member that is an object has the property that the list names (s-cdachayybfvg4na). */
+function objectsInLists(kept: Array<[string, Located]>, refuse: Refuse): void {
+  for (const [sid, { node }] of kept) {
     const list = node.list as { members?: unknown[]; property?: string } | undefined;
     (list?.members ?? []).forEach((m, i) => {
       if (!m || typeof m !== "object" || Array.isArray(m)) return;
@@ -458,29 +556,76 @@ function variants(spec: Specification, refuse: Refuse, kinds: Set<string>): void
   }
 }
 
-function appendices(spec: Specification, refuse: Refuse): void {
-  const linksTo = (n: SpecNode, types: string[], ok: (path: string) => boolean) =>
-    n.refs.some((r) => r.to && types.includes(r.type) && spec.nodes.has(r.to) && ok(spec.nodes.get(r.to)!.file.path));
-  // A section of the technical appendix stands under the name of the domain it implements.
-  const domains = new Set(spec.files.map((f) => partOf(f.path).part).filter(isDomain));
-  for (const f of spec.files) {
-    const { part, file: name } = partOf(f.path);
-    if (part !== "tech" || name === "stack" || name === "debt" || domains.has(name)) continue;
-    for (const top of f.data.nodes) refuse(top.sid, `a section of the technical appendix stands under the name ${name}, which no domain has`);
+function appendices(spec: Specification, kept: Array<[string, Located]>, chosen: Set<string>, refuse: Refuse, findings: Finding[]): void {
+  const linksTo = (n: SpecNode, type: string, ok: (target: Located) => boolean) =>
+    n.refs.some((r) => r.to && r.type === type && spec.nodes.has(r.to) && ok(spec.nodes.get(r.to)!));
+  const SPEC = "specs/_guidelines/spec.json";
+  const EXTENSIONS = "specs/_guidelines/extensions/";
+  const rule = (t: Located) => t.node.kind !== "section";
+  const ownFiles = spec.files.filter((f) => !f.taken);
+
+  // Where the project has chosen the Domains extension, each file of the technical appendix is named after a domain (s-gvafe6bnstwab8b).
+  if (chosen.has("domains")) {
+    const domains = new Set(spec.files.map((f) => partOf(f.path).part).filter(isDomain));
+    for (const f of ownFiles) {
+      const { part, file: name } = partOf(f.path);
+      if (part === "tech" && name !== "stack" && name !== "debt" && !domains.has(name)) findings.push({ where: f.path, message: "a file of the technical appendix named after no domain" });
+    }
   }
-  for (const [sid, { node, file }] of spec.nodes) {
+
+  // The links that the appendices and the project's own guidelines declare to the rules they build on (s-yprj7d6tnvauggr).
+  for (const [sid, { node, file }] of kept) {
     const { part, file: name } = partOf(file.path);
     if (node.kind === "section") continue;
-    if (part === "tech" && name === "debt") {
-      if (!linksTo(node, ["refines"], isBase)) refuse(sid, "a rule of the technical debt that refines no node of the base");
-    } else if (part === "tech" && name !== "stack") {
-      if (!linksTo(node, ["implements"], isBase)) refuse(sid, "a node of the technical appendix that implements no node of the base");
+    if (part === "tech" && name !== "stack" && name !== "debt") {
+      if (!linksTo(node, "implements", (t) => isBase(t.file.path))) refuse(sid, "a node of the technical appendix that implements no node of the base specification");
     } else if (part === "_guidelines" && name === "tools") {
-      if (!linksTo(node, ["implements"], (p) => p === "specs/_guidelines/spec.json" || p.startsWith("specs/_guidelines/extensions/"))) refuse(sid, "a rule of the appendix of the tools that implements no node of the base of the guidelines");
+      if (!linksTo(node, "implements", (t) => rule(t) && (t.file.path === SPEC || t.file.path.startsWith(EXTENSIONS)))) {
+        refuse(sid, "a rule of the appendix of the tools that implements no rule of the SpecSheriff guidelines or of an extension of them");
+      }
     } else if (part === "_guidelines" && name === "project") {
-      if (!linksTo(node, ["refines", "implements"], (p) => partOf(p).specSheriffGuidelines) && !node.refs.some((r) => r.type === "refines" && r.to === LEVELS_RULE)) {
-        refuse(sid, "a rule of the project's own guidelines that neither refines nor implements a rule of the SpecSheriff guidelines");
+      const extensionChosen = (path: string) => path.startsWith(EXTENSIONS) && chosen.has(posix.basename(path, ".json"));
+      if (!linksTo(node, "refines", (t) => rule(t) && (t.file.path === SPEC || extensionChosen(t.file.path)))) {
+        refuse(sid, "a rule of the project's own guidelines that refines no rule of the SpecSheriff guidelines or of an extension the project has chosen");
       }
     }
+  }
+
+  // Each section of the technical appendix has the same path of titles as a section of the base specification (s-g7auhqvzzbkw644).
+  const key = (titles: string[]) => JSON.stringify(titles);
+  const paths = new Map<string, Set<string>>();
+  const collect = (nodes: SpecNode[], above: string[], into: Set<string>) => {
+    for (const n of nodes) {
+      if (n.kind === "section") {
+        const here = [...above, n.title];
+        into.add(key(here));
+        collect(n.children ?? [], here, into);
+      } else if (n.kind === "header" && chosen.has("domains")) collect(n.children ?? [], above, into);
+    }
+  };
+  for (const f of spec.files) {
+    const { part } = partOf(f.path);
+    if (!isBase(f.path)) continue;
+    if (!paths.has(part)) paths.set(part, new Set());
+    collect(f.data.nodes, [], paths.get(part)!);
+  }
+  const everywhere = new Set([...paths.values()].flatMap((s) => [...s]));
+  const match = (nodes: SpecNode[], above: string[], known: Set<string>) => {
+    for (const n of nodes) {
+      if (n.kind !== "section") continue;
+      const here = [...above, n.title];
+      if (!known.has(key(here))) refuse(n.sid, `a section of the technical appendix titled "${n.title}" whose path of titles leads to no section of the base specification`);
+      match(n.children ?? [], here, known);
+    }
+  };
+  for (const f of ownFiles) {
+    const { part, file: name } = partOf(f.path);
+    if (part !== "tech" || name === "stack" || name === "debt") continue;
+    const [first, ...more] = f.data.nodes;
+    if (!first) continue;
+    // The nodes after the first top-level node are treated as nodes under it.
+    const under = [...(first.children ?? []), ...more];
+    if (paths.has(name)) match(under, [], paths.get(name)!);
+    else match([{ ...first, children: under }], [], everywhere);
   }
 }

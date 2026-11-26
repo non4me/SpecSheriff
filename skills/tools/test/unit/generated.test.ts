@@ -28,7 +28,7 @@ function project(): string {
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [node("runtime")] })),
   });
   reindex(root);
-  approve(root, [sid("base rule")], { me: OWNER });
+  approve(root, [sid("base rule"), sid("our levels")], { me: OWNER });
   reindex(root);
   return root;
 }
@@ -151,7 +151,7 @@ test("@spec s-k4nqjr96ux7a5m7 the export writes a node's children after it, each
 test("@spec s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the export does, except its metadata", () => {
   const root = everything();
   exportMarkdown(root);
-  const out = guide(loadSpecification(root));
+  const out = guide(loadSpecification(root), false);
   const md = exported(root, loc("_guidelines", "spec"));
   const metadata = md.slice(md.indexOf("**meta:**"), md.indexOf("**Links:**", md.indexOf("**meta:**")));
   assert.ok(metadata.includes("Which colours."));
@@ -267,16 +267,16 @@ test("@spec s-zu8ne3wq84zchc4 the map shows the structure and each node's status
 
 test("@spec s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines and the figures counted off the model as it prints", () => {
   const root = project();
-  const out = guide(loadSpecification(root));
+  const out = guide(loadSpecification(root), false);
   for (const name of ["base", "base rule", "project", "our levels"]) assert.ok(out.includes(sid(name)), name);
   assert.ok(!out.includes(sid("shared rule")));
-  assert.match(out, /_guidelines: 4 nodes, 2 approved/);
+  assert.match(out, /_guidelines: 4 nodes, 4 approved/);
   assert.match(out, /alpha: 3 nodes, 0 approved/);
   assert.match(out, /The specification is a draft\./);
 });
 
 test("@spec s-f5rz6b7dhxejjts sheriff guide prints the SpecSheriff guidelines of this repository whole", () => {
   const spec = loadSpecification(REPO);
-  const out = guide(spec);
+  const out = guide(spec, false);
   for (const [s, at] of spec.nodes) if (at.file.path.startsWith("specs/_guidelines/")) assert.ok(out.includes(s), s);
 });

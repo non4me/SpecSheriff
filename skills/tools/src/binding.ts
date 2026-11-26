@@ -1,14 +1,14 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, posix } from "node:path";
 import { onlySpecTagged, readCode, type CodeFile, type CodeSymbol } from "./code.ts";
-import { loadConfig, readsAs, type Config } from "./config.ts";
+import { loadConfig, ownerSettings, readsAs, type Config } from "./config.ts";
 import { before, changes, codeChanges, commitTexts, git, trackedFiles, type FileChange } from "./diff.ts";
-import { addedApprovals, readApprovals } from "./approvals.ts";
-import { approvalRule, fixtureGlobs, isFixture, isProjectKind, locations, partOf, PROJECT, specificationOwners, statusNow } from "./model.ts";
+import { APPROVALS, parseApprovals } from "./approvals.ts";
+import { APPROVAL_RULE, fixtureGlobs, isFixture, isProjectKind, locations, partOf, PROJECT, specificationOwners, statusNow } from "./model.ts";
 import { needsCode, schemaRefusals } from "./schema.ts";
 import { runGenerators } from "./generators.ts";
 import { judgedHere } from "./reindex.ts";
-import { loadSpecification, specPaths, type SpecFile, type SpecNode, type Specification } from "./spec-files.ts";
+import { loadSpecification, specPaths, writesGuidelines, type SpecNode, type Specification } from "./spec-files.ts";
 import { generateTypes, typeFiles, waitingRecords } from "./types.ts";
 import type { Finding } from "./validate.ts";
 
@@ -135,31 +135,8 @@ export async function binding(root: string): Promise<BindingFinding[]> {
   const needs = needsCode(root);
   const coded = (kind?: string) => kind === "TextRule" || Boolean(kind && isProjectKind(kind) && needs(kind));
   const { codeFiles, testFiles, changedSymbols, changedTests } = await readCommit(root, config, spec);
-  // The specification is approved while the rule of the project's own guidelines approving it is; before the commit it
-  // is as the last commit holds it, read as the reindex would rewrite it, and a commit putting it back to draft records
-  // a withdrawal of that rule's approval by one of the specification's owners (s-j9r8z4xdrfkfs47).
-  const projectNodes = (file: SpecFile | undefined) => {
-    const out: SpecNode[] = [];
-    const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (out.push(n), walk(n.children)));
-    walk(file?.data.nodes);
-    return out;
-  };
-  const nowRule = approvalRule(projectNodes(spec.files.find((f) => f.path === PROJECT)));
-  const lastProject = before(root, PROJECT);
-  let wasRule: SpecNode | undefined;
-  try {
-    wasRule = lastProject ? approvalRule(projectNodes({ path: PROJECT, data: JSON.parse(lastProject) })) : undefined;
-  } catch {
-    wasRule = undefined;
-  }
-  const live = nowRule?.status === "approved";
-  if (wasRule && statusNow(wasRule.status) === "approved" && !live) {
-    const owners = specificationOwners(spec);
-    const withdrawn = addedApprovals(root, readApprovals(root)).some((a) => a.withdrawn && a.sid === wasRule!.sid && owners.includes(a.by));
-    if (!withdrawn) {
-      findings.push({ where: nowRule ? nodeWhere(spec, nowRule.sid) : PROJECT, message: `puts the specification back to draft without a withdrawal of the approval of ${wasRule.sid} by one of the specification's owners (${owners.join(", ") || "none named"})` });
-    }
-  }
+  const live = ownerSettings(config, false).approved;
+  findings.push(...entryFindings(root, config, spec));
   const at = (path: string, line: number) => `${path}:${line}`;
 
   // SpecTags on the code.
@@ -229,7 +206,7 @@ export async function binding(root: string): Promise<BindingFinding[]> {
     producedTests.get(t.sid)!.add(`${file.path}::${t.name}`);
   }
   for (const [sid, { node, file }] of spec.nodes) {
-    if (!judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
+    if (!judgedHere(file.path, writesGuidelines(root))) continue;
     const meta = (node.meta ?? {}) as { code?: Array<{ file: string; symbols?: string[] }>; tests?: string[] };
     const produced = producedCode.get(sid) ?? new Map<string, Set<string>>();
     const listed = (meta.code ?? []).map((c) => c.file).sort();
@@ -494,7 +471,7 @@ function drift(root: string, spec: Specification, config: Config): BindingFindin
     const meta = (node.meta ?? {}) as { code?: Array<{ file: string }>; tests?: string[] };
     const code = (meta.code ?? []).map((c) => c.file);
     const tests = [...new Set((meta.tests ?? []).map((t) => t.split("::")[0]!))];
-    if ((!code.length && !tests.length) || !judgedHere(file.path, config.writesSpecSheriffGuidelines)) continue;
+    if ((!code.length && !tests.length) || !judgedHere(file.path, writesGuidelines(root))) continue;
     const history = historyOf(file.path);
     let textChanged: string | null = null;
     for (let i = 0; i < history.length; i++) {
@@ -534,4 +511,54 @@ export async function citationsOutside(root: string): Promise<Finding[]> {
     });
   }
   return found;
+}
+
+/**
+ * The entries of the settings that only an owner of the specification changes (s-j9r8z4xdrfkfs47): after the commit,
+ * each list of entries begins with the entries of the commit's parent, unchanged and in the same order, and each later
+ * entry names one of the owners of the specification that `project.json` lists after the commit. The parent's entries are read as `sheriff reindex`
+ * would rewrite them: an approved rule of its `project.json` on the specification's approval status is read as an entry.
+ */
+function entryFindings(root: string, config: Config, spec: Specification): BindingFinding[] {
+  const found: BindingFinding[] = [];
+  let parent: Record<string, unknown> = {};
+  try {
+    parent = JSON.parse(before(root, "sheriff.config.json") ?? "{}");
+  } catch {
+    parent = {};
+  }
+  if (!(Array.isArray(parent.approvalStatus) && parent.approvalStatus.length)) {
+    const by = approvingRuleOwner(root);
+    if (by) parent.approvalStatus = [{ status: "approved", by }];
+  }
+  const owners = specificationOwners(spec);
+  const named = owners.join(", ") || "none named";
+  for (const key of ["approvalStatus", "strict", "extensions"] as const) {
+    const was = Array.isArray(parent[key]) ? (parent[key] as unknown[]) : [];
+    const now = config[key] as unknown[];
+    if (!was.every((e, i) => JSON.stringify(e) === JSON.stringify(now[i]))) {
+      found.push({ where: "sheriff.config.json", message: `${key}: the entries ${JSON.stringify(was)} of the commit's parent are not the first entries, unchanged and in the same order; the specification's owners are ${named}` });
+      continue;
+    }
+    for (const e of now.slice(was.length) as Array<{ by: string }>) {
+      if (!owners.includes(e.by)) found.push({ where: "sheriff.config.json", message: `${key}: the entry ${JSON.stringify(e)} names no owner of the specification; the specification's owners are ${named}` });
+    }
+  }
+  return found;
+}
+
+/** Who last approved the approved rule of the parent's `project.json` on the specification's approval status, as an earlier release recorded it. */
+function approvingRuleOwner(root: string): string | undefined {
+  let nodes: SpecNode[] = [];
+  try {
+    nodes = (JSON.parse(before(root, PROJECT) ?? "{}") as { nodes?: SpecNode[] }).nodes ?? [];
+  } catch {
+    return undefined;
+  }
+  const all: SpecNode[] = [];
+  const walk = (ns: SpecNode[] = []) => ns.forEach((n) => (all.push(n), walk(n.children)));
+  walk(nodes);
+  const rule = all.find((n) => n.refs?.some((r) => r.type === "refines" && r.to === APPROVAL_RULE) && statusNow(n.status) === "approved");
+  if (!rule) return undefined;
+  return parseApprovals(before(root, APPROVALS) ?? "").filter((a) => a.sid === rule.sid && !a.withdrawn).at(-1)?.by;
 }

@@ -55,6 +55,11 @@ CLAUDE_PLUGIN_DATA="$HOME/.claude/plugins/data/specsheriff-specsheriff-marketpla
 CLAUDE_PROJECT_DIR="$PWD" sh skills/claude-code/hooks/session-start.sh
 ```
 
+The SpecSheriff tools treat the clone as the repository where the SpecSheriff guidelines are written only while the
+environment variable `SPECSHERIFF_GUIDELINES_REPO` is set to the path of the clone's root (§s-zefk589ykh37b8u). Otherwise,
+the checks of the SpecSheriff tools refuse the guidelines and their schema as copies of the files that the plugin delivers.
+On this machine, the variable is set in the Windows user environment variables and in `.claude/settings.local.json`.
+
 Claude Code keeps one marketplace of a name for each user, so on that machine every project reads
 this working tree.
 

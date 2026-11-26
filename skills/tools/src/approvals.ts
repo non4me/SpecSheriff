@@ -1,7 +1,7 @@
 import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { before as committed } from "./diff.ts";
-import { APPROVAL_RULE, fingerprint, isContainer, ownersOf, partOf, specificationOwners } from "./model.ts";
+import { fingerprint, isContainer, ownersOf, partOf } from "./model.ts";
 import { loadSpecification, takesGuidelines, writeSpecFile } from "./spec-files.ts";
 
 export interface Approval {
@@ -84,7 +84,7 @@ export function standingPrints(lines: Approval[], sid: string): string[] {
 export function approve(root: string, sids: string[], { me, withdraw = false }: { me: string; withdraw?: boolean }): void {
   const spec = loadSpecification(root);
   const lines = readApprovals(root);
-  const specOwners = specificationOwners(spec);
+
   for (const sid of sids) {
     const at = spec.nodes.get(sid);
     if (!at) throw new Error(`${sid}: no node holds this sid`);
@@ -94,10 +94,7 @@ export function approve(root: string, sids: string[], { me, withdraw = false }: 
     if (takesGuidelines(root) && partOf(at.file.path).specSheriffGuidelines) {
       throw new Error(`${sid}: a node of the SpecSheriff guidelines, approved only in the repository they are written in`);
     }
-    if (at.node.refs?.some((r) => r.type === "refines" && r.to === APPROVAL_RULE)) {
-      if (!specOwners.includes(me)) throw new Error(`${sid}: the rule that approves the specification, which only the specification's owners (${specOwners.join(", ") || "none named"}) approve or withdraw, not ${me}`);
-      continue;
-    }
+
     if (withdraw) continue;
     const owners = ownersOf(spec, sid);
     if (!owners.length) throw new Error(`${sid}: no owner is named for this node`);
@@ -125,8 +122,8 @@ export function approve(root: string, sids: string[], { me, withdraw = false }: 
 }
 
 /**
- * The approvals a commit records: the lines the approvals hold beyond those of the last commit, read with what an
- * earlier release kept as confirmations, so that the lines a release carries over are not judged again (s-95w92rnjuv3sst8).
+ * The approvals a commit records: the lines that the approvals file holds beyond those in the last commit, read together
+ * with what an earlier release kept as confirmations, so that the lines a release carries over are not judged again (s-75ue25v6r23jkk8).
  */
 export function addedApprovals(root: string, lines: Approval[]): Approval[] {
   const key = (a: Approval) => [a.sid, a.fingerprint, a.by, a.withdrawn ? 1 : 0].join(" ");

@@ -1,14 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { binding, citationsOutside } from "../../src/binding.ts";
-import { FIXTURES_RULE } from "../../src/model.ts";
+import { APPROVAL_RULE, FIXTURES_RULE, fingerprint } from "../../src/model.ts";
 import { approve } from "../../src/approvals.ts";
 import { reindex } from "../../src/reindex.ts";
 import { DATA_STRUCTURES } from "../../src/types.ts";
 import { BY_NUMBER, loc, node, NONE, OWNER, sid } from "../fixture.ts";
-import { approvalRuleSid, approveSpecification, codeProject as project, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, typedProject, withGenerator } from "../code-project.ts";
+import { approveSpecification, codeProject as project, editSpec, git, nodeIn, OPEN, OPEN_TEST, put, typedProject, withGenerator } from "../code-project.ts";
 
 const messages = async (root: string) => (await binding(root)).filter((f) => !f.reported).map((f) => `${f.where}: ${f.message}`);
 async function expectOne(root: string, pattern: RegExp): Promise<void> {
@@ -461,14 +461,6 @@ test("@spec s-j9r8z4xdrfkfs47 while the commit leaves the specification a draft 
   await expectOne(live, /legacy carries no SpecTag/);
 });
 
-test("@spec s-j9r8z4xdrfkfs47 refuses a commit approving the specification while a symbol carries no SpecTag", async () => {
-  const untagged = project();
-  put(untagged, "src/old.ts", "export const legacy = 1;\n");
-  git(untagged, "add", "-A");
-  git(untagged, "commit", "-qm", "old code");
-  approveSpecification(untagged);
-  await expectOne(untagged, /legacy carries no SpecTag/);
-});
 
 /** A project whose specification is approved, committed. */
 function approvedProject(): string {
@@ -479,45 +471,55 @@ function approvedProject(): string {
   return root;
 }
 
-test("@spec s-qzthyh7yqvfhsa2 refuses a commit putting the specification back to draft by an edit of its rule's wording or by its removal, and passes one recording an owner's withdrawal", async () => {
-  const path = (root: string) => join(root, "specs", "_guidelines", "project.json");
-  const edited = approvedProject();
-  writeFileSync(path(edited), readFileSync(path(edited), "utf8").replace("This project's specification is approved.", "This project's specification is approved, for now."));
-  reindex(edited);
-  await expectOne(edited, /puts the specification back to draft without a withdrawal/);
-  const removed = approvedProject();
-  const rule = approvalRuleSid(removed);
-  const data = JSON.parse(readFileSync(path(removed), "utf8"));
-  data.nodes[0].children = data.nodes[0].children.filter((n: { sid: string }) => n.sid !== rule);
-  writeFileSync(path(removed), JSON.stringify(data, null, 2) + "\n");
-  reindex(removed);
-  await expectOne(removed, /puts the specification back to draft without a withdrawal/);
-  const withdrawn = approvedProject();
-  approveSpecification(withdrawn, { withdraw: true });
-  assert.deepEqual(await messages(withdrawn), []);
-});
+/** Rewrites the settings of the project at the given root. */
+function setSettings(root: string, change: (settings: Record<string, any>) => void): void {
+  const path = join(root, "sheriff.config.json");
+  const settings = JSON.parse(readFileSync(path, "utf8"));
+  change(settings);
+  writeFileSync(path, JSON.stringify(settings, null, 2) + "\n");
+}
 
-test("@spec s-j9r8z4xdrfkfs47 counts a withdrawal of the rule's approval of whichever wording, by one of the specification's owners as the commit holds them", async () => {
-  const path = (root: string) => join(root, "specs", "_guidelines", "project.json");
-  const reworded = approvedProject();
-  writeFileSync(path(reworded), readFileSync(path(reworded), "utf8").replace("This project's specification is approved.", "This project's specification is approved, for now."));
-  reindex(reworded);
-  approve(reworded, [approvalRuleSid(reworded)], { me: OWNER, withdraw: true });
-  assert.deepEqual(await messages(reworded), []);
-  const stranger = approvedProject();
-  writeFileSync(join(stranger, "specs", "_approvals.jsonl"), readFileSync(join(stranger, "specs", "_approvals.jsonl"), "utf8") + JSON.stringify({ sid: approvalRuleSid(stranger), fingerprint: "0", withdrawn: true, by: "stranger@example.org" }) + "\n");
-  writeFileSync(path(stranger), readFileSync(path(stranger), "utf8").replace('"status": "approved",\n          "text": "This project', '"status": "draft",\n          "text": "This project'));
-  await expectOne(stranger, /puts the specification back to draft without a withdrawal/);
-});
-
-test("@spec s-j9r8z4xdrfkfs47 reads the specification before the commit as an earlier release wrote it, checked standing for approved", async () => {
+test("@spec s-j9r8z4xdrfkfs47 accepts entries that a commit appends after those of its parent, each naming an owner of the specification", async () => {
   const root = approvedProject();
-  const path = join(root, "specs", "_guidelines", "project.json");
-  const was = readFileSync(path, "utf8");
-  writeFileSync(path, was.replace('"status": "approved",\n          "text": "This project', '"status": "checked",\n          "text": "This project'));
-  git(root, "commit", "-qam", "as an earlier release wrote it");
-  writeFileSync(path, was);
+  approveSpecification(root, { withdraw: true });
+  setSettings(root, (s) => s.strict = [{ on: true, by: OWNER }]);
   assert.deepEqual(await messages(root), []);
+});
+
+test("@spec s-j9r8z4xdrfkfs47 refuses a commit that removes, changes or moves an entry of its parent, and the refusal names the setting, the entries and the specification's owners", async () => {
+  const removed = approvedProject();
+  setSettings(removed, (s) => (s.approvalStatus = []));
+  await expectOne(removed, new RegExp(`sheriff\\.config\\.json: approvalStatus: the entries .*"approved".* are not the first entries, unchanged and in the same order; the specification's owners are ${OWNER.replaceAll(".", "\\.")}`));
+  const changed = approvedProject();
+  setSettings(changed, (s) => (s.approvalStatus[0].by = "other@example.org"));
+  await expectOne(changed, /approvalStatus: the entries .* are not the first entries/);
+});
+
+test("@spec s-j9r8z4xdrfkfs47 refuses an entry that names a person who is not an owner of the specification in project.json after the commit, and accepts the entry if the commit makes that person an owner", async () => {
+  const root = approvedProject();
+  setSettings(root, (s) => s.approvalStatus.push({ status: "draft", by: "stranger@example.org" }));
+  await expectOne(root, /sheriff\.config\.json: approvalStatus: the entry .*"stranger@example\.org".* names no owner of the specification/);
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  data.nodes[0].owners = [OWNER, "stranger@example.org"];
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  assert.ok(!(await messages(root)).some((m) => /names no owner/.test(m)));
+});
+
+test("@spec s-j9r8z4xdrfkfs47 reads the entries of the commit's parent as sheriff reindex would rewrite them; an approved rule of an earlier release is read as an entry", async () => {
+  const root = project();
+  const path = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  const rule = node("approved spec", { title: "The specification is approved", text: "This project's specification is approved.", status: "approved", refs: [{ type: "refines", to: APPROVAL_RULE }] });
+  (data.nodes[0].children ??= []).push(rule);
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  const approvals = join(root, "specs", "_approvals.jsonl");
+  writeFileSync(approvals, (existsSync(approvals) ? readFileSync(approvals, "utf8") : "") + JSON.stringify({ sid: rule.sid, fingerprint: fingerprint(rule), by: OWNER }) + "\n");
+  git(root, "add", "-A");
+  git(root, "commit", "-qm", "as an earlier release wrote it");
+  reindex(root);
+  assert.deepEqual(JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8")).approvalStatus, [{ status: "approved", by: OWNER }]);
+  assert.ok(!(await messages(root)).some((m) => /sheriff\.config\.json/.test(m)), (await messages(root)).join("\n"));
 });
 
 test("@spec s-xzcw3hv4hmxz7h7 sheriff binding refuses a file the schema refuses before it checks anything, naming the file and every refusal in it", async () => {
@@ -593,14 +595,6 @@ test("@spec s-utf4mbt7ref8g9c in draft mode reports a test carrying no SpecTag t
   await expectOne(live, /"checks the old way" carries no SpecTag/);
 });
 
-test("@spec s-j9r8z4xdrfkfs47 refuses a commit approving the specification while a test carries no SpecTag", async () => {
-  const root = project();
-  put(root, "test/old.test.ts", `test("checks the old way", () => {});\n`);
-  git(root, "add", "-A");
-  git(root, "commit", "-qm", "old tests");
-  approveSpecification(root);
-  await expectOne(root, /"checks the old way" carries no SpecTag/);
-});
 
 test("@spec s-txbwsthdqhvyzd2 counts no commit whose only change to a file of tests puts @spec before bare sids", async () => {
   const root = earlierForm();

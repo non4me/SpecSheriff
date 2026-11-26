@@ -21,11 +21,18 @@ export function plugins(): { dir: string; data: string; env: NodeJS.ProcessEnv }
   return { dir, data: `${dir}/data/specsheriff-specsheriff-marketplace`, env: { ...process.env, CLAUDE_CODE_PLUGIN_CACHE_DIR: dir, CODEX_HOME: codex } };
 }
 
+/** The environment with SPECSHERIFF_GUIDELINES_REPO as the tests have last set it, or without it where they have unset it. */
+export function current(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const { SPECSHERIFF_GUIDELINES_REPO: _, ...rest } = env;
+  const repo = process.env.SPECSHERIFF_GUIDELINES_REPO;
+  return repo ? { ...rest, SPECSHERIFF_GUIDELINES_REPO: repo } : rest;
+}
+
 /** Runs one of the plugin's hooks as Claude Code does, in the project at `cwd`. */
 export function pluginHook(name: string, p: ReturnType<typeof plugins>, cwd: string, input = "") {
   return spawnSync("sh", [`${PLUGIN}/hooks/${name}`], {
     cwd, input, encoding: "utf8",
-    env: { ...p.env, CLAUDE_PLUGIN_ROOT: PLUGIN, CLAUDE_PLUGIN_DATA: p.data, CLAUDE_PROJECT_DIR: slashed(cwd) },
+    env: { ...current(p.env), CLAUDE_PLUGIN_ROOT: PLUGIN, CLAUDE_PLUGIN_DATA: p.data, CLAUDE_PROJECT_DIR: slashed(cwd) },
   });
 }
 
