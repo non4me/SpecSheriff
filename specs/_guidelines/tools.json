@@ -10780,8 +10780,8 @@
                   },
                   {
                     "date": "2026-11-27",
-                    "problem": "The rule did not list a node's owners or the index of the sections in a domain's header among what the fingerprint leaves out. The code left both out, and the base rule on approvals says that an approval survives a change to who a node's owners are and to what is built into the node from other nodes (§s-5ah25f6gy99panq).",
-                    "ruling": "The agent, applying §s-5ah25f6gy99panq after the independent reviewer of a commit found the gap, added both to the list and approved the rule on behalf of one of its owners (§s-t5uw8zfxzhfdg86).",
+                    "problem": "The rule did not list a node's owners or the index of the sections in a domain's header among the things that the fingerprint leaves out. The code left both out, and the base rule on approvals says that an approval survives a change to who a node's owners are and to what is built into the node from other nodes (§s-5ah25f6gy99panq).",
+                    "ruling": "After the independent reviewer of a commit found the gap between the rule and the code, the agent added a node's owners and the index of the sections to the rule's list of what the fingerprint leaves out, as §s-5ah25f6gy99panq requires, and approved the rule on behalf of one of its owners (§s-t5uw8zfxzhfdg86).",
                     "type": "textual"
                   }
                 ],

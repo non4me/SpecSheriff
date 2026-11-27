@@ -83,15 +83,21 @@ the rules it serves: each is refused, with the reason. The tests of the system r
 is shared. The git hooks hold every machine where the plugin is installed; a team that needs the
 gate to hold whatever machine a change came from runs the same checks in CI.
 
-### One judgement, by an independent reviewer
+### The judgements of an independent reviewer
 
-One question is beyond any deterministic check: does the code do only what its rules say? So at
-every commit that changes code an independent model is asked. It is given nothing of the session that wrote the code,
-only the change and the text of the rules the commit names. If the code does something no named rule
-states, or leaves out what one requires, it refuses the commit and names the rule and the line
-(§s-nyh9yk22ba6g77q).
+Some questions are beyond the reach of any deterministic check, so an independent model answers them.
+It is given nothing from the session that wrote the code, only the change and the rules that bear on it
+(§s-nyh9yk22ba6g77q). At every commit that changes code, it judges whether the code does only what
+its rules say. If the code does something that no named rule states, or leaves out what a rule requires,
+it refuses the commit and names the rule and the line.
 
-![What stops bad code? The gate of every commit: the checks, then, where the code changes, the reviewer.](../images/png/2-what-stops-bad-code.png)
+The reviewer also judges whether each comment that a commit adds or changes agrees with the code and
+its rules, and only warns where it does not. Where a commit message states that a rule's
+implementation needs no change, the reviewer judges whether that is true. When a node of the technical
+appendix is approved, it judges whether the node refines the rules of the base specification that it
+implements and contradicts none of them.
+
+![What stops bad code? The gate that every commit passes through: the checks, then the reviewer's judgements.](../images/png/2-what-stops-bad-code.png)
 
 ### A rule is self-sufficient
 
@@ -136,7 +142,7 @@ guides one change and is not kept. Spec-anchored: it is kept for the life of the
 is held to it. Spec-as-source: it is maintained instead of the code, which is generated from it. Most
 tools for coding agents are spec-first. SpecSheriff is spec-anchored, with the code held to the
 specification mechanically, at every edit and every commit; and spec-as-source in part, since the
-types and the runtime checks of data are generated from it.
+types and the RuntimeChecks, which check data at run time, are generated from it.
 
 ![How does it differ from Spec Kit? Where the specification lives, and what holds the code to it.](../images/png/4-map-of-approaches.png)
 

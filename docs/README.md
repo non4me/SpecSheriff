@@ -17,7 +17,9 @@ The specification is a set of small rules, each a node with a permanent identifi
 its reason kept apart from what it requires (§s-kh8qcd5kxgh9z3j, §s-kag2m9tzdnduxdx,
 §s-dpe5kcz4eamv39g). A rule is implemented only once one of its owners has approved its wording, and a
 changed wording is a draft again until one of them approves it (§s-5ah25f6gy99panq,
-§s-67vekyup7y8smap, §s-utvqbypzhmgndug).
+§s-67vekyup7y8smap, §s-utvqbypzhmgndug). An agent approves a node on an owner's behalf only where the
+change states nothing new, or where the agent wrote a node of the technical appendix while implementing
+an approved rule (§s-t5uw8zfxzhfdg86). It reports each such approval to that owner.
 
 Every change runs one way: the rule first, then its test, then the code (§s-ef93u6cnbs2sevr,
 §s-rah8b37kytb682y). Every test carries the SpecTag `@spec <sid>` of the rule it is written from, and every symbol
@@ -25,11 +27,19 @@ of the code carries the SpecTag of the rule it implements (§s-rah8b37kytb682y, 
 change touches is traced exactly, and an agent is given the rules that bear on its task rather than
 the whole specification.
 
-Checks that answer the same for the same change hold the chain together, at each edit an agent makes
-and at every commit (§s-83ev4wwesbwnhnp, §s-jau82aq9juv9zzh). The one judgement no such check can make
-— whether the code does only what its rules say — is made at every commit that changes code by an
-independent reviewer, which sees only the change and the text of the rules the commit names, and
-refuses with the rule and the line (§s-nyh9yk22ba6g77q).
+Checks that give the same result for the same change hold the chain of rule, test and code together. The agent's hooks run them
+at each edit that the agent makes. The git hooks run them at every commit, as the last checks on each machine
+that can refuse the commit (§s-83ev4wwesbwnhnp, §s-jau82aq9juv9zzh). An independent reviewer,
+which sees only the change and the rules that bear on it, makes the judgements that no such check can
+make (§s-m4h279nbaqkpa3t, §s-nyh9yk22ba6g77q):
+- on every commit that changes code, whether that code does only what its rules say;
+- on every commit that adds or changes a comment in the code, whether the comment is consistent with
+  the code and with its rules;
+- on a commit whose message states that a rule's implementation needs no change, whether that is true;
+- on a commit that approves a node of the technical appendix, whether the node refines the rules of the
+  base specification that it implements and contradicts none of them.
+
+A finding about a comment is only a warning. Where the reviewer refuses a commit, it names the rule and the line.
 
 The base specification names no technology; a technical appendix beside it says how the system is
 built, so that the same rules can be implemented again on another stack (§s-5x737t9nee4zgaa,
@@ -49,11 +59,13 @@ Each in full in [the principles](principles.md):
   the rule, then its test, then the code.
 - [Rule, test and code bound by the sid](principles.md#rule-test-and-code-bound-by-the-sid).
 - [Deterministic checks hold every participant to the contract](principles.md#deterministic-checks-hold-every-participant-to-the-contract):
-  at each edit an agent makes and at every commit, with one reviewer for what no check can judge.
+  at each edit an agent makes and at every commit, with an independent reviewer for the judgements
+  that no check can make.
 - [A rule is self-sufficient](principles.md#a-rule-is-self-sufficient): everything that bears on a
   rule is in its node.
 - [Nothing unapproved is implemented](principles.md#nothing-unapproved-is-implemented): a rule
-  waits for its owners.
+  waits for an approval by one of its owners, or on an owner's behalf in the cases that the
+  principle names.
 
 ## How it differs from what exists
 

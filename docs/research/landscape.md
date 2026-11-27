@@ -15,8 +15,8 @@ levels:
 - **spec-as-source** — the specification is what people maintain, and the code is produced from it.
 
 SpecSheriff is spec-anchored with mechanical enforcement, and spec-as-source in part: the types,
-the runtime checks of data and any registry the code reads as data are generated from the
-specification.
+the RuntimeChecks that check data at run time, and any registry that the code reads as data are
+generated from the specification.
 
 ## What exists
 
