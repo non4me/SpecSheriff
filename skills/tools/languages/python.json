@@ -10,6 +10,7 @@
     "type_alias_statement",
     "assignment"
   ],
+  "imports": ["import_statement", "import_from_statement", "future_import_statement"],
   "export": null,
   "decorated": "decorated_definition",
   "tests": { "functions": "test", "mark": "pytest.mark.spec", "skips": ["pytest.mark.skip", "pytest.mark.skipif", "pytest.mark.xfail"] }

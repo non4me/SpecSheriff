@@ -20,6 +20,9 @@ mkdirSync(new URL("_schema/", guidelines), { recursive: true });
 for (const name of ["node.schema.json", "section-file.schema.json", "archive-file.schema.json", "extension.schema.json", "config.schema.json"]) {
   cpSync(new URL(`../../../specs/_schema/${name}`, import.meta.url), new URL(`_schema/${name}`, guidelines));
 }
+// The schema of each extension of the guidelines that has one (s-zefk589ykh37b8u).
+rmSync(new URL("_schema/extensions/", guidelines), { recursive: true, force: true });
+cpSync(new URL("../../../specs/_schema/extensions/", import.meta.url), new URL("_schema/extensions/", guidelines), { recursive: true });
 
 const grammars = new URL("../grammars/", import.meta.url);
 mkdirSync(grammars, { recursive: true });
@@ -28,9 +31,13 @@ for (const wasm of [
   "tree-sitter-typescript/tree-sitter-tsx.wasm",
   "tree-sitter-javascript/tree-sitter-javascript.wasm",
   "tree-sitter-python/tree-sitter-python.wasm",
+  "tree-sitter-json/tree-sitter-json.wasm",
 ]) {
   cpSync(require.resolve(wasm), new URL(basename(wasm), grammars));
 }
+// The grammars whose npm packages cannot be installed alongside the others are kept in the repository (vendor/grammars/README.md).
+const vendored = new URL("../vendor/grammars/", import.meta.url);
+for (const wasm of readdirSync(vendored).filter((n) => n.endsWith(".wasm"))) cpSync(new URL(wasm, vendored), new URL(wasm, grammars));
 
 /** The directory a package is installed in, found as Node finds it, since a package's exports may hide its own files. */
 function installedAt(name) {
@@ -110,7 +117,7 @@ layOut(codex, "codex");
 const SHERIFF = '`node "${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js"`';
 const OVERLAYS = [
   {
-    skills: ["spec", "spec-review", "spec-adopt", "spec-init", "spec-remove"],
+    skills: ["spec", "spec-review", "spec-adopt", "spec-init", "spec-remove", "spec-settings"],
     from: SHERIFF,
     to: '`node "<plugin>/tools/dist/cli.js"`, `<plugin>` being the directory\nof this plugin, which holds this skill as `<plugin>/skills/<skill>/SKILL.md`',
   },
@@ -118,17 +125,12 @@ const OVERLAYS = [
   { skills: ["spec-init"], from: "Run `sheriff init` at the root", to: "Run `sheriff init --agent codex` at the root" },
   {
     skills: ["spec-init"],
-    from: "so that every clone takes the git hooks and the plugin with it.",
-    to: "so that every clone takes the git hooks and the agent's hooks with\n   it; each person working on it installs the plugin for Codex CLI, as its guide says.",
+    from: "For this plugin's\n   runner, `claude`, the settings are `specsheriff.review.claudeModel` (default `opus`),\n   `specsheriff.review.claudeFallbackModel` (default `sonnet`) and `specsheriff.review.claudeEffort`\n   (default `high`), and the flag that records that the user has been asked about these settings is\n   `specsheriff.review.claudeAsked`.",
+    to: "For this plugin's\n   runner, `codex`, the settings are `specsheriff.review.codexModel` (default empty, the model Codex\n   chooses for the signed-in account) and `specsheriff.review.codexEffort` (default `high`), and the\n   flag that records that the user has been asked about these settings is\n   `specsheriff.review.codexAsked`.",
   },
   {
     skills: ["spec-init"],
-    from: "For this plugin's runner, `claude`, they\n   are `specsheriff.review.claudeModel` (default `opus`), `specsheriff.review.claudeFallbackModel`\n   (default `sonnet`) and `specsheriff.review.claudeEffort` (default `high`), and the mark that the\n   question was put is `specsheriff.review.claudeAsked`.",
-    to: "For this plugin's runner, `codex`, they\n   are `specsheriff.review.codexModel` (default empty, the model Codex chooses for the signed-in\n   account) and `specsheriff.review.codexEffort` (default `high`), and the mark that the question\n   was put is `specsheriff.review.codexAsked`.",
-  },
-  {
-    skills: ["spec-init"],
-    from: " A setting the user gave as an option of this plugin is\n   changed in `/config`, since the session start writes the option over the git configuration.",
+    from: " A setting that the user set as an option of this plugin must be changed\n   in `/config`, since at the start of each session the plugin overwrites that setting in the git\n   configuration with the option's value.",
     to: "",
   },
   { skills: ["spec-adopt"], from: "the git hooks, the plugin declared for every\nclone,", to: "the git hooks, the agent's hooks for\nCodex," },

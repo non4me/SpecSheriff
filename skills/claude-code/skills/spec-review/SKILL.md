@@ -15,19 +15,23 @@ and you never write into the specification what the owner has not seen. Load the
 
 1. Draft it by the guidelines' section on how a rule is written, and weigh it against every rule it
    touches: what it contradicts, repeats or leaves uncovered.
-2. Read it once more before anyone else does. Cut every word that carries no thought and no needed
-   detail, but never a condition or a subject. Then look for the signals of a sentence holding more
-   than one thought, or a node holding requirements carried out apart: a sentence over 25 words, a
-   semicolon, a parenthesis holding a second thought, a paragraph of more than three sentences, a
-   node of more than three requirements. Each signal is a reason to check, never a limit: rewrite
-   what it finds unless it states one thought. A paragraph holds one main thought with its
+2. Read it once more before anyone else does. Shorten each sentence as the rule on the length of a
+   sentence says (s-v8pes6wsgnqbrxw): keep every condition and every exception, and never leave out a
+   subject or a verb. Then look for the signs that a sentence holds more
+   than one thought, or that a node holds requirements that can be implemented separately: a sentence over 25
+   words, a semicolon, a remark in parentheses that adds a second thought, a paragraph of more than
+   three sentences, a node with more than three requirements. Each sign is a reason to check, never a
+   limit: rewrite the sentence or the node that a sign points to, unless it states one thought. A paragraph holds one main thought with its
    qualifications and the reasoning it rests on.
 3. Have it checked apart: give a reviewer that did not write it — another agent, with the guidelines
    and the draft and nothing of your reasoning — the task of finding what is wrong with it. A
    finding that fixes the wording against the guidelines is applied; a doubt that would change what
    the node states goes to the owner with its reason, never written in unseen.
-4. Write it to its file with its status `draft`. `sheriff guard` refuses an edit that leaves a node
-   approved over a wording for which no approval stands.
+4. Place it in the narrowest section whose text covers what the draft governs. Where several rules
+   concern the same matter and no section's text names it, propose to the owners a new section for
+   those rules.
+5. Write it to its file with its status set to `draft`. `sheriff guard` refuses an edit that leaves a node
+   approved with a wording that no approval records.
 
 ## Naming
 
@@ -42,13 +46,13 @@ weighed by.
    the documents, and count those in another sense. Where the other sense stands in a few places and
    is itself loosely worded, rewrite those places and keep the word plain: "Node.js" for the runtime,
    "exit code" for "exit status".
-3. **A name is one word, as concrete as possible.** Its words are joined, each opening with a capital:
-   RecordType, SpecTag, RuntimeCheck. It says what the thing is, by its context of use or by what it
-   holds, never only whose it is: SpecList would say only that a list belongs to the specification.
-4. **A property is written through its object.** A property of an object that has a name of its own
-   is written as the object's name, a dot and the property's key, in code font: `TextRule.list`,
-   `RecordType.fields`, `meta.comments`. It gets a name of its own only where it is also used apart
-   from its object, as NodeKind is.
+3. **A name that the method coins is one word, as specific as possible.** It joins several words,
+   each starting with a capital letter: RecordType, SpecTag, RuntimeCheck. It says what the thing is,
+   by the context in which the thing is used or by what it holds, never only what it belongs to: SpecList would say only that a list belongs to the specification.
+4. **A property is written with the name of its object**, as the rule on naming says (s-9w3u3wn37wksyxd). A
+   property of an object that has a name of its own is written as the object's name, a dot and the
+   property's key, in code font: `TextRule.list`, `RecordType.schema`, `meta.comments`. It gets a
+   name of its own only where it is also used independently of its object.
 5. **A value is written as the schema holds it**, in code font: `implements`, `one of`, `draft`.
 6. **A position is said in words.** A thing already named keeps its name wherever it stands: "a
    RecordType of another domain", never DomainRecordType.
@@ -69,10 +73,14 @@ weighed by.
 - Run `sheriff approve <sid>`. It records the approval under the email git is configured with and
   refuses where that is none of the node's owners — so it runs where the owner works. It rebuilds
   the status of every section and header after it.
-- A node whose wording changes only to state what one of its owners approved in another node, or only
-  by a replacement that changes no meaning, such as a renamed term or path, is not shown again:
-  approve it in that owner's name and report it in a table, naming the node it follows from; the
+- A node whose wording changes only in that it now states what one of its owners approved in another
+  node, or only by a replacement that leaves the meaning unchanged, such as a renamed term or path,
+  is not shown again: approve it on behalf of one of its owners and report it in a table, naming the node it follows from; the
   owner may withdraw the approval (s-67vekyup7y8smap).
+- Approve on an owner's behalf, too, each node of the technical appendix that you wrote while
+  implementing an approved rule of the base specification and that has an `implements` link to that
+  rule, and report it in the same table (s-t5uw8zfxzhfdg86). The independent
+  reviewer judges such a node in the commit that approves it.
 - The decision goes to the `meta.decisions` of the node it settled: the date, the problem, the
   owner's ruling, `textual` where it changed the wording and `procedural` where not. Work put off
   goes to its `meta.todos`; an open problem not yet settled to its `meta.comments`, of type

@@ -3,19 +3,21 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { approve, readApprovals } from "../../src/approvals.ts";
-import { reindex, rewriteTests } from "../../src/reindex.ts";
+import { reindex, rewriteTests, writeLists } from "../../src/reindex.ts";
+import { loadSchema } from "../../src/schema.ts";
 import { loadSpecification, specPaths } from "../../src/spec-files.ts";
 import { APPROVAL_RULE, fingerprint, LEVELS_RULE, SID, TESTS_PASS_RULE } from "../../src/model.ts";
-import { ALL_EXTENSIONS, file, loc, node, OWNER, repo, sid, taking } from "../fixture.ts";
-import { codeProject, editSpec, nodeIn, put } from "../code-project.ts";
+import { ALL_EXTENSIONS, file, loc, node, OWNER, repo, sid, table, taking } from "../fixture.ts";
+import { codeProject, editSpec, nodeIn, put, typedProject } from "../code-project.ts";
 
 const read = (root: string) => Object.fromEntries(specPaths(root).map((p) => [p, readFileSync(join(root, p), "utf8")]));
 const at = (root: string, name: string) => loadSpecification(root).nodes.get(sid(name))!.node;
+const codeOf = (root: string, name: string) => (((at(root, name).meta ?? {}) as { code?: Array<{ file: string }> }).code ?? []).map((c) => c.file);
 
 function bank(extra: Record<string, unknown> = {}) {
   return repo({
     "specs/_guidelines/project.json": file("_guidelines", "project", node("project", { kind: "section", owners: [OWNER], children: [node("levels")] })),
-    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
     "specs/bank/a.json": file("bank", "a", node("accounts", { kind: "section", text: "Accounts.", children: [node("open", { refs: [{ type: "cites", to: sid("close") }, { type: "cites", from: sid("lend") }] }), node("close")] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "What is shared.", children: [node("term", { kind: "term", title: "account" })] })),
     ...extra,
@@ -62,7 +64,7 @@ test("@spec s-yggv9myedprnaa7 rebuilds the index in a domain's header from the d
 
 test("@spec s-yggv9myedprnaa7 names in a header's index the headers of the domains using a section", () => {
   const root = bank({
-    "specs/loans/00-loans.json": file("loans", "00-loans", node("loans", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("accounts") }] })),
+    "specs/loans/00-loans.json": file("loans", "00-loans", node("loans", { kind: "header", level: "core", sections: [], refs: [{ type: "consumes", to: sid("accounts") }] })),
   });
   reindex(root);
   assert.deepEqual(at(root, "header").sections, [{ sid: sid("accounts"), title: "accounts", text: "Accounts.", usedBy: [sid("loans")] }]);
@@ -192,7 +194,9 @@ test("@spec s-f5rz6b7dhxejjts rewrites the statuses, the owners and the confirma
   assert.equal(Object.keys(top).indexOf("owners"), Object.keys(data.nodes[0]).indexOf("owner"));
   assert.equal(at(root, "levels").status, "approved");
   assert.ok(!existsSync(join(root, "specs", "_confirmations.jsonl")));
-  assert.deepEqual(readApprovals(root), [{ sid: sid("levels"), fingerprint: print, by: OWNER }, { sid: sid("open"), fingerprint: "0", by: OWNER }]);
+  // The confirmations are appended after the lines that the approvals file already holds (s-gb8s9657a65hqmv).
+  assert.deepEqual(readApprovals(root), [{ sid: sid("open"), fingerprint: "0", by: OWNER }, { sid: sid("levels"), fingerprint: print, by: OWNER }]);
+  assert.deepEqual(readFileSync(join(root, "specs", "_approvals.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l).sid), [sid("open"), sid("levels")]);
 });
 
 test("@spec s-bsya3febm6u64ab leaves the status of the SpecSheriff guidelines a project takes as it stands, and judges it where they are written", () => {
@@ -220,6 +224,7 @@ test("@spec s-f5rz6b7dhxejjts renames what an earlier release wrote under anothe
   assert.equal(lend.location, "bank/2.1");
   assert.equal(lend.reason, "Why lend.");
   assert.equal(at(root, "loan").kind, "RecordType");
+  assert.deepEqual(at(root, "loan").schema, { type: "object", unevaluatedProperties: false });
   const gone = JSON.parse(readFileSync(join(root, "specs", "_archive", "bank.json"), "utf8")).nodes[0];
   assert.equal(gone.reason, "Why it went.");
   assert.equal(gone.rationale, undefined);
@@ -240,13 +245,13 @@ test("@spec s-f5rz6b7dhxejjts renames the kinds an earlier release wrote, where 
   assert.equal(at(root, "header").kind, "header");
   assert.equal(at(root, "open rule").kind, "TextRule");
   assert.equal(at(root, "event").kind, "RecordType");
-  assert.equal((at(root, "event").fields as Array<{ type: { kind: string } }>)[0]!.type.kind, "TextRule");
+  assert.deepEqual((at(root, "event").schema as any).properties.rule.enumSource.kind, "TextRule");
   const extension = JSON.parse(readFileSync(join(root, "specs", "_schema", "project.schema.json"), "utf8"));
   assert.deepEqual(Object.keys(extension.fields), ["TextRule", "RecordType"]);
 });
 
 test("@spec s-f5brvuuu6xmkj6t keeps an approval through the renaming of the kind a field's values come from", () => {
-  const event = (kind: string) => node("event", { kind: "RecordType", title: "event", unknown: "refused", fields: [{ name: "rule", type: { is: "one of", from: "kindSids", kind }, required: true, text: "" }] });
+  const event = (kind: string) => node("event", { kind: "RecordType", title: "event", schema: { type: "object", properties: { rule: { enumSource: { from: "kind", kind } } } } });
   assert.equal(fingerprint(event("TextRule")), fingerprint(event("rule")));
 });
 
@@ -278,37 +283,109 @@ test("@spec s-jsqxdx47wkkj7gp run again on what it left, the reindex changes not
   assert.deepEqual(again.written, []);
 });
 
-test("@spec s-ju5vcanbjph7mgh writes beside a field the values gathered from its source, each with the node it comes from, and none beside a field holding its own list", () => {
+test("@spec s-ju5vcanbjph7mgh writes beside a field with enumSource, at any depth, the values gathered from its source, each with the node it comes from, in the order of those nodes, and none beside a field holding its own enum", () => {
   const root = bank({
+    "specs/_schema/project.schema.json": { kinds: { job: { needsCode: false, schema: {} } } },
     "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
-      node("event", { kind: "RecordType", title: "event", unknown: "refused", fields: [
-        { name: "kind", type: { is: "one of", from: "domains" }, required: true, text: "" },
-        { name: "domain", type: { is: "one of", from: "domainNames" }, required: true, text: "" },
-        { name: "rule", type: { is: "one of", from: "kindSids", kind: "TextRule" }, required: true, text: "" },
-        { name: "colour", type: { is: "one of", values: ["red"] }, required: true, text: "" },
-      ] }),
+      node("event", { kind: "RecordType", title: "event", schema: { type: "object", properties: {
+        part: { enumSource: { from: "parts" } },
+        jobs: { type: "array", items: { enumSource: { from: "kind", kind: "job" } } },
+        colour: { enum: ["red"] },
+      } } }),
     ] })),
-    "specs/bank/e.json": file("bank", "e", node("events", { kind: "section", text: "Events.", children: [
-      node("bank events", { list: { of: "the kinds of event", members: ["opened", "paid"], field: "kind" }, refs: [{ type: "refines", to: sid("event") }] }),
-    ] })),
+    "specs/bank/j.json": file("bank", "j", node("jobs", { kind: "section", text: "Jobs.", children: [node("close books", { kind: "job" }), node("pay out", { kind: "job" })] })),
   });
   reindex(root);
-  const fields = at(root, "event").fields as Array<{ name: string; gathered?: Array<{ value: string; sid: string }> }>;
-  const of = (name: string) => fields.find((f) => f.name === name)!.gathered;
-  assert.deepEqual(of("kind"), [{ value: "opened", sid: sid("bank events") }, { value: "paid", sid: sid("bank events") }]);
-  assert.deepEqual(of("domain"), [{ value: "bank", sid: sid("header") }]);
-  assert.ok(of("rule")!.some((g) => g.value === sid("open") && g.sid === sid("open")), JSON.stringify(of("rule")));
-  assert.equal(of("colour"), undefined);
+  const props = (at(root, "event").schema as any).properties;
+  assert.deepEqual(props.part.enumSource.gathered, [{ value: "bank", sid: sid("header") }, { value: "contracts", sid: sid("shared") }]);
+  assert.deepEqual(props.jobs.items.enumSource.gathered, [{ value: sid("close books"), sid: sid("close books") }, { value: sid("pay out"), sid: sid("pay out") }]);
+  assert.equal(props.colour.enumSource, undefined);
 });
 
-test("@spec s-f5rz6b7dhxejjts gives a field of type one of whose own list an earlier release wrote empty the values the domains add", () => {
-  const root = bank({
-    "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
-      node("event", { kind: "RecordType", title: "event", unknown: "refused", fields: [{ name: "kind", type: { is: "one of", values: [] }, required: true, text: "" }] }),
+test("@spec s-ztseyetus7np6br gathers the names of the parts of the base specification where the project has not chosen the Domains extension: the contracts section, then each top-level section of specs/base by its title", () => {
+  const root = repo({
+    "sheriff.config.json": { code: [], tests: [], extensions: [{ name: "recordtype", chosen: true, by: OWNER }] },
+    "specs/base/b.json": file("base", "b", node("Requests", { kind: "section", text: "Requests.", children: [node("ask")] }), node("Users", { kind: "section", text: "Users.", children: [node("join")] })),
+    "specs/contracts/c.json": file("contracts", "c", node("Contracts", { kind: "section", text: "What is shared.", children: [
+      node("audit", { kind: "RecordType", title: "audit", schema: { type: "object", properties: { part: { enumSource: { from: "parts" } } } } }),
     ] })),
   });
   reindex(root);
-  assert.deepEqual((at(root, "event").fields as Array<{ type: unknown }>)[0]!.type, { is: "one of", from: "domains" });
+  assert.deepEqual((at(root, "audit").schema as any).properties.part.enumSource.gathered, [
+    { value: "Requests", sid: sid("Requests") },
+    { value: "Users", sid: sid("Users") },
+    { value: "contracts", sid: sid("Contracts") },
+  ]);
+});
+
+test("@spec s-gb8s9657a65hqmv rewrites the keys `fields` and `unknown` that an earlier release wrote in a RecordType as its schema in JSON Schema form, in the position of the key `fields`", () => {
+  const field = (name: string, type: object, required = true, text = `What ${name} is.`) => ({ name, type, required, text });
+  const root = bank({
+    "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
+      node("account", { kind: "RecordType", title: "account", fields: [field("number", { is: "text" })], unknown: "refused", identifiedBy: "number" }),
+      node("statement", { kind: "RecordType", title: "statement", unknown: "kept", fields: [
+        field("account", { is: "identifier of", record: sid("account") }),
+        field("owner", { is: "record", record: sid("account") }, false),
+        field("email", { is: "email address" }),
+        field("at", { is: "instant" }),
+        field("day", { is: "date" }),
+        field("term", { is: "duration" }),
+        field("lines", { is: "list of", of: { is: "whole number", minimum: 1 }, minItems: 1, maxItems: 9 }),
+        field("rate", { is: "number", exclusiveMinimum: 0 }),
+        field("open", { is: "yes/no" }),
+        field("tags", { is: "map of", of: { is: "text" } }),
+        field("state", { is: "one of", values: ["open", "closed"] }),
+        field("part", { is: "one of", from: "domainNames" }),
+        field("rule", { is: "one of", from: "kindSids", kind: "TextRule" }),
+        field("extra", { is: "any value" }, false, ""),
+      ] }),
+      node("loan", { kind: "RecordType", title: "loan", refs: [{ type: "refines", to: sid("statement") }], answersTo: { state: "open" }, fields: [field("due", { is: "date" })], unknown: "refused" }),
+    ] })),
+  });
+  reindex(root);
+  assert.deepEqual(Object.keys(at(root, "account")), ["location", "sid", "kind", "title", "status", "text", "refs", "schema", "identifiedBy"]);
+  assert.deepEqual(at(root, "account").schema, { type: "object", properties: { number: { type: "string", description: "What number is." } }, required: ["number"], unevaluatedProperties: false });
+  const statement = at(root, "statement").schema as any;
+  const d = (name: string) => ({ description: `What ${name} is.` });
+  assert.deepEqual(statement.properties, {
+    account: { identifierOf: sid("account"), ...d("account") },
+    owner: { $ref: `#${sid("account")}`, ...d("owner") },
+    email: { type: "string", format: "email", ...d("email") },
+    at: { type: "string", format: "date-time", ...d("at") },
+    day: { type: "string", format: "date", ...d("day") },
+    term: { type: "string", format: "duration", ...d("term") },
+    lines: { type: "array", items: { type: "integer", minimum: 1 }, minItems: 1, maxItems: 9, ...d("lines") },
+    rate: { type: "number", exclusiveMinimum: 0, ...d("rate") },
+    open: { type: "boolean", ...d("open") },
+    tags: { type: "object", additionalProperties: { type: "string" }, ...d("tags") },
+    state: { enum: ["open", "closed"], ...d("state") },
+    part: { enumSource: { from: "parts", gathered: [{ value: "bank", sid: sid("header") }, { value: "contracts", sid: sid("shared") }] }, ...d("part") },
+    rule: statement.properties.rule,
+    extra: {},
+  });
+  assert.equal(statement.properties.rule.enumSource.from, "kind");
+  assert.equal(statement.properties.rule.enumSource.kind, "TextRule");
+  assert.deepEqual(statement.required, ["account", "email", "at", "day", "term", "lines", "rate", "open", "tags", "state", "part", "rule"]);
+  assert.equal(statement.unevaluatedProperties, undefined);
+  assert.equal(at(root, "statement").unknown, undefined);
+  assert.deepEqual(at(root, "loan").schema, { properties: { due: { type: "string", format: "date", description: "What due is." } }, required: ["due"] });
+  assert.equal(at(root, "loan").unknown, undefined);
+});
+
+test("@spec s-gb8s9657a65hqmv leaves unchanged a RecordType holding a field of type variant, a field whose values the domains add, or a field whose own list of values is empty, and names that RecordType and each such field of the three kinds", () => {
+  const field = (name: string, type: object, required: unknown = true) => ({ name, type, required, text: "" });
+  const root = bank({
+    "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
+      node("event", { kind: "RecordType", title: "event", unknown: "refused", chosenBy: ["kind"], fields: [
+        field("kind", { is: "one of", from: "domains" }),
+        field("colour", { is: "one of", values: [] }),
+        field("details", { is: "variant", fields: [field("note", { is: "text" }, false)] }, "where it holds a value"),
+        field("note", { is: "text" }),
+      ] }),
+    ] })),
+  });
+  assert.throws(() => reindex(root), (e: Error) =>
+    e.message.includes(sid("event")) && ["kind", "colour", "details"].every((f) => e.message.includes(`"${f}"`)) && !e.message.includes('"note"'));
 });
 
 /** Rewrites a file of the specification as `change` leaves its data. */
@@ -376,10 +453,155 @@ test("@spec s-f5rz6b7dhxejjts rewrites each test naming its node by a bare sid, 
   put(root, "test/open.test.ts", ts);
   put(root, "test/test_open.py", `import pytest\n\n@pytest.mark.spec("${open}")\ndef test_open():\n    pass\n`);
   editSpec(root, (d) => (nodeIn(d, "open").meta.tests = [`test/open.test.ts::${open} opens an account`, `test/open.test.ts::${open}`, "test/test_open.py::test_open"]));
-  assert.deepEqual(await rewriteTests(root), ["test/open.test.ts", "test/test_open.py"]);
+  assert.deepEqual(await rewriteTests(root), ["specs/contracts/c.json", "test/open.test.ts", "test/test_open.py"]);
   const want = ts.replace(`test("${open} opens`, `test("@spec ${open} opens`).replace(`test("${open}", `, `test("@spec ${open}", `);
   assert.equal(readFileSync(join(root, "test", "open.test.ts"), "utf8"), want);
   assert.equal(readFileSync(join(root, "test", "test_open.py"), "utf8"), `import pytest\n\n@pytest.mark.spec("@spec ${open}")\ndef test_open():\n    pass\n`);
   assert.deepEqual((at(root, "open").meta as { tests: string[] }).tests, [`test/open.test.ts::@spec ${open} opens an account`, `test/open.test.ts::@spec ${open}`, "test/test_open.py::test_open"]);
   assert.deepEqual(await rewriteTests(root), [], "run again, it rewrites nothing");
+});
+
+test("@spec s-w5wg69pvvhedsws rewriting the tests that name a node by a bare sid keeps every value of a key written twice in a file it rewrites", async () => {
+  const root = codeProject();
+  const open = sid("open");
+  put(root, "test/open.test.ts", `test("${open} opens an account", () => {});\n`);
+  editSpec(root, (d) => (nodeIn(d, "open").meta.tests = [`test/open.test.ts::${open} opens an account`]));
+  const path = join(root, "specs", "contracts", "c.json");
+  const todo = (text: string) => `{ "todos": [{ "date": "2026-11-26", "by": "owner", "text": "${text}" }] }`;
+  const text = readFileSync(path, "utf8").replace('"title": "draft",', `"title": "draft", "meta": ${todo("First.")}, "meta": ${todo("Second.")},`);
+  writeFileSync(path, text);
+  await rewriteTests(root);
+  const nodes = JSON.parse(readFileSync(path, "utf8")).nodes[0].children;
+  assert.deepEqual(nodes[0].meta.tests, [`test/open.test.ts::@spec ${open} opens an account`]);
+  assert.deepEqual(nodes[1].meta.todos.map((x: { text: string }) => x.text), ["First.", "Second."]);
+});
+
+test("@spec s-gb8s9657a65hqmv removes the key `code` that earlier releases wrote in a domain's header, and rewrites each N that they wrote in a link's ratio as *", () => {
+  const root = bank({
+    "specs/bank/00-bank.json": file("bank", "00-bank", node("header", { kind: "header", level: "core", code: "src/bank", sections: [], refs: [{ type: "consumes", to: sid("shared") }] })),
+    "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "What is shared.", children: [
+      node("term", { kind: "term", title: "account", refs: [{ type: "term-relation", to: sid("holder"), ratio: "0..N:1..N" }] }),
+      node("holder", { kind: "term", title: "holder", refs: [{ type: "term-relation", to: sid("term"), ratio: "1:0..N" }] }),
+    ] })),
+  });
+  reindex(root);
+  assert.deepEqual(Object.keys(at(root, "header")), ["location", "sid", "kind", "title", "status", "text", "refs", "level", "sections"]);
+  assert.deepEqual(at(root, "term").refs.filter((r) => r.to), [{ type: "term-relation", to: sid("holder"), ratio: "0..*:1..*" }]);
+  assert.deepEqual(at(root, "holder").refs.filter((r) => r.to), [{ type: "term-relation", to: sid("term"), ratio: "1:0..*" }]);
+});
+
+test("@spec s-5nf87c3e3jg9v7c collects the sids of the nodes of the kind that enumSource names in the base specification only, including a node in a cell of a TableRule, after the children of that TableRule", () => {
+  const jobs = table("job table", [["job in a cell", "refused"]], { children: [node("job under the table", { kind: "job" })] });
+  (jobs.groups as any)[0].rows[0].cells.check.node.kind = "job";
+  const root = bank({
+    "specs/_schema/project.schema.json": { kinds: { job: { needsCode: false, schema: {} } } },
+    "specs/contracts/k.json": file("contracts", "k", node("kinds", { kind: "section", text: "Kinds.", children: [
+      node("event", { kind: "RecordType", title: "event", schema: { type: "object", properties: { job: { enumSource: { from: "kind", kind: "job" } } } } }),
+    ] })),
+    "specs/bank/j.json": file("bank", "j", node("jobs", { kind: "section", text: "Jobs.", children: [jobs] })),
+    "specs/tech/bank.json": file("tech", "bank", node("bank tech", { kind: "section", text: "Built.", children: [node("job in the appendix", { kind: "job" })] })),
+  });
+  reindex(root);
+  assert.deepEqual((at(root, "event").schema as any).properties.job.enumSource.gathered.map((g: { value: string }) => g.value), [sid("job under the table"), sid("job in a cell")]);
+});
+
+test("@spec s-gb8s9657a65hqmv rewrites a list's declaredIn, in the form that earlier releases wrote, into jsonSchema or valueList, renames the key declaration in them, removes one that points to the field kinds of the project's extension, and names each file that it rewrites", () => {
+  const listed = (name: string, list: object) => node(name, { list: { of: `the ${name}`, members: ["a"], ...list } });
+  const root = bank({
+    "specs/bank/l.json": file("bank", "l", node("lists", { kind: "section", text: "Lists.", children: [
+      listed("in code", { declaredIn: { file: "src/colour.ts", declaration: "Colour" } }),
+      listed("in a schema", { declaredIn: { file: "config/kinds.json", declaration: "#/kinds" } }),
+      listed("of kinds", { declaredIn: { file: "specs/_schema/project.schema.json", declaration: "#/kinds" } }),
+      listed("pointer", { jsonSchema: { file: "config/kinds.json", declaration: "#/sizes" } }),
+      listed("symbol", { valueList: { file: "src/size.ts", declaration: "Size" } }),
+    ] })),
+  });
+  const report = reindex(root);
+  const list = (name: string) => at(root, name).list as Record<string, unknown>;
+  assert.deepEqual(list("in code").valueList, { file: "src/colour.ts", symbol: "Colour" });
+  assert.deepEqual(list("in a schema").jsonSchema, { file: "config/kinds.json", pointer: "#/kinds" });
+  assert.deepEqual(Object.keys(list("of kinds")), ["of", "members"]);
+  assert.deepEqual(list("pointer").jsonSchema, { file: "config/kinds.json", pointer: "#/sizes" });
+  assert.deepEqual(list("symbol").valueList, { file: "src/size.ts", symbol: "Size" });
+  assert.ok(report.rewritten.includes("specs/bank/l.json"), JSON.stringify(report.rewritten));
+  assert.ok(!report.rewritten.includes("specs/bank/a.json"), JSON.stringify(report.rewritten));
+  assert.deepEqual(reindex(root).rewritten, [], "a second run rewrites nothing");
+});
+
+test("@spec s-gb8s9657a65hqmv removes every link of the type supersedes, which earlier releases wrote, and the schema then refuses one", () => {
+  const root = bank({
+    "specs/bank/s.json": file("bank", "s", node("superseding", { kind: "section", text: "Superseding.", children: [
+      node("new rule", { refs: [{ type: "supersedes", to: sid("close") }, { type: "cites", to: sid("open") }], text: `Opens (§${sid("open")}).` }),
+    ] })),
+  });
+  const report = reindex(root);
+  assert.deepEqual(at(root, "new rule").refs, [{ type: "cites", to: sid("open") }]);
+  assert.ok(!at(root, "close").refs.some((r) => r.type === "supersedes"));
+  assert.ok(report.rewritten.includes("specs/bank/s.json"));
+  assert.notDeepEqual(loadSchema(root).check(file("bank", "s", node("again", { refs: [{ type: "supersedes", to: sid("close") }] }))), [], "a supersedes link that this release reads");
+});
+
+test("@spec s-rwqzepmrt77rv35 writes each node's meta.code and meta.tests from the SpecTags of the code and the tests, each file once, sorted, and removes a list that no SpecTag produces", async () => {
+  const root = codeProject();
+  put(root, "src/more.ts", `/** @spec ${sid("open")} */\nexport const more = 1;\n/** @spec ${sid("open")} */\nexport const most = 2;\n`);
+  editSpec(root, (d) => {
+    nodeIn(d, "draft").meta = { tests: ["test/gone.test.ts::a test nobody keeps"] };
+    nodeIn(d, "states").meta = { code: [{ file: "src/states.ts", symbols: ["State"] }] };
+  });
+  const written = await writeLists(root);
+  assert.deepEqual(written, ["specs/contracts/c.json"]);
+  assert.deepEqual(at(root, "open").meta, { code: [{ file: "src/more.ts" }, { file: "src/open.ts" }], tests: [`test/open.test.ts::@spec ${sid("open")} opens an account`] });
+  assert.deepEqual(at(root, "states").meta, { code: [{ file: "src/states.ts" }] });
+  assert.equal(at(root, "draft").meta, undefined);
+  assert.deepEqual(await writeLists(root), [], "a second run writes nothing");
+});
+
+test("@spec s-ztseyetus7np6br writes the lists of a node that is in a cell of a TableRule, and those of the rule listing a project's own check, from the check's code and tests", async () => {
+  const root = codeProject();
+  editSpec(root, (d) => {
+    d.nodes[0].children.push(node("our checks", { list: { of: "the project's own checks", property: "name", members: [{ name: "scan" }] } }));
+    d.nodes[0].children.push(table("checks table", [["row check", "refused"]]));
+  });
+  const config = JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8"));
+  config.checks = [{ rule: sid("our checks"), name: "scan", command: "node tools/scan.mjs", code: ["tools/scan.mjs"], tests: ["tools/scan.test.mjs"] }];
+  writeFileSync(join(root, "sheriff.config.json"), JSON.stringify(config));
+  put(root, "tools/scan.mjs", `/** @spec ${sid("our checks")} */\nexport const scan = 1;\n`);
+  put(root, "tools/scan.test.mjs", `test("@spec ${sid("our checks")} scans", () => {});\n`);
+  put(root, "src/row.ts", `/** @spec ${sid("row check")} */\nexport const row = 1;\n`);
+  await writeLists(root);
+  assert.deepEqual(at(root, "our checks").meta, { code: [{ file: "tools/scan.mjs" }], tests: [`tools/scan.test.mjs::@spec ${sid("our checks")} scans`] });
+  assert.deepEqual(at(root, "row check").meta, { code: [{ file: "src/row.ts" }] });
+});
+
+test("@spec s-ztseyetus7np6br writes into meta.code each file bound as a whole, by an entry of the bindings file or by SpecTags at its start, and each file in which the first comment or a definition of JSON Schema binds code to the node", async () => {
+  const root = codeProject();
+  put(root, "src/texts.json", `{ "greeting": "hello" }\n`);
+  put(root, "sheriff.bindings.json", JSON.stringify({ "src/texts.json": [`@spec ${sid("states")}`] }));
+  put(root, "src/page.css", `/* @spec ${sid("states")} */\nbody { margin: 0; }\n`);
+  put(root, "src/main.ts", `/** @spec ${sid("states")} */\n\nimport { x } from "./x.ts";\nx();\n`);
+  put(root, "src/shapes.json", JSON.stringify({ $schema: "https://json-schema.org/draft/2020-12/schema", $defs: { State: { $comment: `@spec ${sid("states")}`, enum: ["open", "closed"] } } }, null, 2) + "\n");
+  await writeLists(root);
+  assert.deepEqual(codeOf(root, "states"), ["src/main.ts", "src/page.css", "src/shapes.json", "src/states.ts", "src/texts.json"]);
+});
+
+test("@spec s-ztseyetus7np6br takes the SpecTags of a file whose format the project's own guidelines list as allowing no comments from its entry in the bindings file, never from its start", async () => {
+  const root = codeProject();
+  const project = join(root, "specs", "_guidelines", "project.json");
+  const data = JSON.parse(readFileSync(project, "utf8"));
+  data.nodes[0].children = [...(data.nodes[0].children ?? []), node("no comments", { refs: [{ type: "refines", to: "s-kgbzk2ph9e6jfb4" }], list: { of: "the files whose format allows no comments", members: ["src/**/*.txt"] } })];
+  writeFileSync(project, JSON.stringify(data, null, 2) + "\n");
+  reindex(root);
+  approve(root, [sid("no comments")], { me: OWNER });
+  put(root, "src/a.txt", `@spec ${sid("open")}\n`);
+  put(root, "src/b.txt", "plain\n");
+  put(root, "sheriff.bindings.json", JSON.stringify({ "src/b.txt": [`@spec ${sid("states")}`] }));
+  await writeLists(root);
+  assert.ok(!codeOf(root, "open").includes("src/a.txt"));
+  assert.ok(codeOf(root, "states").includes("src/b.txt"));
+});
+
+test("@spec s-tjsv2wv4j2cuapa reads a file of RuntimeChecks that the stack lists as the system's code, even where the code's glob patterns do not match it", async () => {
+  const root = typedProject();
+  await writeLists(root);
+  assert.deepEqual(codeOf(root, "customer"), ["schemas/checks.json", "src/types.ts"]);
 });

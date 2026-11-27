@@ -8,33 +8,30 @@ description: Setting a repository up for SpecSheriff — its git hooks, the plug
 `sheriff` here is the command of the SpecSheriff tools this plugin carries:
 `node "${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js"`.
 
-1. Check that git names the owner's email, `git config user.email`: `sheriff init` names it as the
-   specification's owner. Where it names nobody, ask the owner to set it.
-2. Run `sheriff init` at the root of the repository and report what it prints: each file written,
-   each one replaced because an earlier release of init wrote it, each file left as it was because it
-   differs from what init would write, and what is left to do. Run again, it changes nothing.
-3. A file left as it was is the owner's to settle: show them how it differs from what init would
-   write, and change nothing in it yourself.
-4. Ask the owner where the system's code lives, where its tests live and which command runs the
-   tests, and write them into `sheriff.config.json`: `code` and `tests` as glob patterns of files,
-   such as `src/**/*.ts` and `test/**/*.test.ts`, since a folder's name alone matches no file inside
-   it; `testCommand` as the command.
-5. The independent reviewer runs at every commit that changes code, at the user's cost, at the
-   settings of its runner in the user's git configuration. For this plugin's runner, `claude`, they
-   are `specsheriff.review.claudeModel` (default `opus`), `specsheriff.review.claudeFallbackModel`
-   (default `sonnet`) and `specsheriff.review.claudeEffort` (default `high`), and the mark that the
-   question was put is `specsheriff.review.claudeAsked`. Where `sheriff.config.json` names another
-   runner as `review.runner`, take that runner's instead. Read each with `git config --get`. Where
-   one is lacking and the mark is not `true`, show the user the default of each lacking setting and
-   ask them to confirm it or name another; write each value they answer, the default included, with
-   `git config --global specsheriff.review.<setting> <value>`, write nothing they have not answered,
-   and then set the mark with `git config --global` to `true`. Until a setting is written, each
-   review runs at its default and says so. A setting the user gave as an option of this plugin is
-   changed in `/config`, since the session start writes the option over the git configuration.
-6. `specs/_guidelines/project.json` holds the rule "The specification is approved" as a draft. Where
-   the repository holds no code yet, offer the owner to approve it now, by `sheriff approve <sid>`;
-   where it holds code, it waits until every symbol and test carries a SpecTag (the skill
-   `spec-adopt`).
-7. Commit what init wrote, so that every clone takes the git hooks and the plugin with it.
+1. Run `sheriff init` at the root of the repository and report what it prints: each file written,
+   each one replaced because an earlier release of SpecSheriff wrote it, each file left as it was
+   because it differs from what `sheriff init` would write, and what is left to do. Running it again
+   changes nothing.
+2. Ask the owner for each of the following that `sheriff.config.json` lacks, and write each answer
+   there: the glob patterns that match the files holding the system's code, under the key `code`, and
+   the files holding its tests, under the key `tests`, such as `src/**/*.ts` and `test/**/*.test.ts`;
+   and the command that runs the tests, under the key `testCommand`. A pattern that is only a folder's
+   name matches none of the files inside that folder.
+3. The independent reviewer runs on each commit in which it has something to judge, at the user's
+   expense, with the settings that the user's git configuration holds for its runner. For this plugin's
+   runner, `claude`, the settings are `specsheriff.review.claudeModel` (default `opus`),
+   `specsheriff.review.claudeFallbackModel` (default `sonnet`) and `specsheriff.review.claudeEffort`
+   (default `high`), and the flag that records that the user has been asked about these settings is
+   `specsheriff.review.claudeAsked`. Where `sheriff.config.json` names another runner as
+   `review.runner`, use that runner's settings instead. Read each setting and the flag with `git config --get`. Where one
+   is missing and the flag is not `true`, show the user the default of each missing setting and ask
+   them to confirm it or name another. Write each value they give, including a default that they confirm, with
+   `git config --global specsheriff.review.<setting> <value>`, and write nothing they have not given.
+   Then set the flag to `true` with `git config --global`. Until a setting is written, each review
+   uses its default and says so. A setting that the user set as an option of this plugin must be changed
+   in `/config`, since at the start of each session the plugin overwrites that setting in the git
+   configuration with the option's value.
 
-To bring the project's existing documents into the specification, use the skill `spec-adopt`.
+To bring the project's existing documents into the specification, use the skill `spec-adopt`. To
+approve the specification, or to change its other settings that only an owner changes, use the
+skill `spec-settings`.

@@ -37,7 +37,9 @@ export const isContainer = (kind: string | undefined) => kind === "section" || k
 export const FIXTURES_RULE = "s-6hha5en226aj8hu";
 
 /** The glob patterns naming the fixtures of tests: the members of each list a node refining the rule on fixtures holds. */
-export function fixtureGlobs(spec: Specification): string[] {
+export function fixtureGlobs(spec: Specification, wordings?: Wordings): string[] {
+  // Read from the last approved wording of each rule that refines the rule on fixtures, where the wordings are given (s-t9j29hppag2nren).
+  if (wordings) return listedBy(spec, wordings, FIXTURES_RULE).filter((m): m is string => typeof m === "string");
   return [...spec.nodes.values()]
     .filter(({ node }) => node.refs?.some((r) => r.type === "refines" && r.to === FIXTURES_RULE))
     .flatMap(({ node }) => ((node.list as { members?: string[] } | undefined)?.members ?? []));
@@ -160,17 +162,21 @@ export function incoming(spec: Specification): Map<string, Incoming[]> {
   return built;
 }
 
-/** One node of the model `sheriff model` prints: as its file holds it, without the nodes under it, with where it stands and its owners. */
+/** One node of the model that `sheriff json` prints: as its file holds it, without the nodes under it, with its place in the specification and its owners. */
 export type ModelNode = Omit<SpecNode, "children"> & { part: string; file: string; parent: string | null; owners: string[]; children?: undefined };
 
 /**
  * The model of the specification (s-w6gybeqn2ttydqx): the specification's approval status and its `strict` flag, and every
  * node as its file holds it, with its part, its file, the node above it and its owners.
  */
-export function modelOf(spec: Specification, flags: { approved: boolean; strict: boolean }): { approvalStatus: "approved" | "draft"; strict: boolean; nodes: ModelNode[] } {
-  const nodes = [...spec.nodes].map(([sid, { node, file, parent }]) => {
-    const { children: _, ...own } = node;
-    return { ...own, part: partOf(file.path).part, file: file.path, parent: parent?.sid ?? null, owners: ownersOf(spec, sid) };
+export function modelOf(spec: Specification, flags: { approved: boolean; strict: boolean }, wordings?: Wordings): { approvalStatus: "approved" | "draft"; strict: boolean; nodes: ModelNode[] } {
+  // Given the last approved wordings, the model holds each section and each domain's header as the files hold them, and each
+  // other node in its last approved wording, leaving out a node that has never been approved (s-y5yk7eu6h4zrjpr).
+  const nodes = [...spec.nodes].flatMap(([sid, { node, file, parent }]) => {
+    const wording = wordings && !isContainer(node.kind) ? wordings.wording(sid) : node;
+    if (!wording) return [];
+    const { children: _, ...own } = wording;
+    return [{ ...own, sid, part: partOf(file.path).part, file: file.path, parent: parent?.sid ?? null, owners: ownersOf(spec, sid) }];
   });
   return { approvalStatus: flags.approved ? "approved" : "draft", strict: flags.strict, nodes };
 }
@@ -259,6 +265,25 @@ export function listedBy(spec: Specification, wordings: Wordings, refined: strin
   return out;
 }
 
+/** The rule on the order in which tools and checks run, which a rule of the project's own guidelines refines by listing the tools that rewrite files. */
+export const ORDER_RULE = "s-pcnyfp7gev7syax";
+
+/**
+ * For one hook, the paths of the project's own tools that rewrite files, relative to `.githooks/`, in the order of the lists that
+ * hold them (s-t9j29hppag2nren, s-n4m5zvh96yb299p).
+ */
+export function rewritingTools(spec: Specification, wordings: Wordings, hook: string): string[] {
+  return listedBy(spec, wordings, ORDER_RULE).filter((m): m is string => typeof m === "string" && m.startsWith(`${hook}.d/`));
+}
+
+/** The rule on how code is bound to its rules, which a rule of the project's own guidelines refines by listing the formats that allow no comments. */
+export const CODE_BINDING_RULE = "s-kgbzk2ph9e6jfb4";
+
+/** The glob patterns, listed by the project's own guidelines, of the files whose format allows no comments, JSON files excepted (s-t9j29hppag2nren). */
+export function noCommentGlobs(spec: Specification, wordings: Wordings): string[] {
+  return listedBy(spec, wordings, CODE_BINDING_RULE).filter((m): m is string => typeof m === "string");
+}
+
 /** The levels at which the domains are placed, from the top: the list members of every rule of the project's own guidelines that refines the rule on levels. */
 export function levelsOf(spec: Specification, wordings: Wordings): string[] {
   return listedBy(spec, wordings, LEVELS_RULE).filter((m): m is string => typeof m === "string");
@@ -271,39 +296,69 @@ export function levelsOf(spec: Specification, wordings: Wordings): string[] {
  */
 export const isDomain = (part: string) => !["_guidelines", "contracts", "tech", "_archive", "base"].includes(part);
 
+/** The diagram of the domains (s-jzm6qw992j3bnxt): its rows from top to bottom, each with its label and its domains in their order, and an arrow from each domain to each domain that it uses. */
+export interface DomainDiagram {
+  rows: Array<{ label: string; domains: string[] }>;
+  arrows: Array<{ from: string; to: string }>;
+}
+
 /**
- * The domains, each after every domain it uses and as close as possible before the first that uses
- * it: the domains nobody uses in the order of their names, each preceded by the domains it uses,
- * taken in the same way; the order of their names decides wherever the links leave a choice.
+ * Draws the diagram of the domains from the domains' headers (s-jzm6qw992j3bnxt). A domain uses each other domain that holds a
+ * node to which a `consumes` link of its header points. Each level listed in `levels` that a header contains has a row, labelled
+ * with the level's number and name; a row labelled `No level` holds the domains whose header contains none of those levels.
+ * Within a row, the domains are taken in the order of s-uw9n84edf7cbe9n, and each is placed after the domains of its row that it uses.
  */
-export function domainOrder(spec: Specification): string[] {
+export function domainDiagram(spec: Specification, levels: string[]): DomainDiagram {
+  const byName = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
   const domainOf = new Map<string, string>();
+  const headers = new Map<string, SpecNode>();
   for (const f of spec.files) {
     const { part } = partOf(f.path);
     if (!isDomain(part)) continue;
     const walk = (nodes: SpecNode[]) => nodes.forEach((n) => (domainOf.set(n.sid, part), walk(n.children ?? [])));
     walk(f.data.nodes);
+    const header = f.data.nodes.find((n) => n.kind === "header");
+    if (header && !headers.has(part)) headers.set(part, header);
   }
-  const domains = [...new Set(domainOf.values())].sort();
+  const domains = [...new Set(domainOf.values())].sort(byName);
   const uses = new Map(domains.map((d) => [d, new Set<string>()]));
-  for (const [sid, part] of domainOf) {
-    for (const r of spec.nodes.get(sid)!.node.refs) {
+  for (const [d, header] of headers) {
+    for (const r of header.refs ?? []) {
       const to = r.type === "consumes" && r.to ? domainOf.get(r.to) : undefined;
-      if (to && to !== part) uses.get(part)!.add(to);
+      if (to && to !== d) uses.get(d)!.add(to);
     }
   }
-  const order: string[] = [];
-  const seen = new Set<string>();
-  const take = (d: string) => {
-    if (seen.has(d)) return;
-    seen.add(d);
-    [...uses.get(d)!].sort().forEach(take);
-    order.push(d);
+  const levelOf = (d: string) => {
+    const level = headers.get(d)?.level;
+    return typeof level === "string" && levels.includes(level) ? level : null;
   };
-  const used = new Set([...uses.values()].flatMap((s) => [...s]));
-  domains.filter((d) => !used.has(d)).forEach(take);
-  domains.forEach(take); // what a cycle leaves, which the check of the specification refuses anyway
-  return order;
+  const rows: DomainDiagram["rows"] = [];
+  const place = (members: string[]): string[] => {
+    const inRow = new Set(members);
+    const usesInRow = (d: string) => [...uses.get(d)!].filter((u) => inRow.has(u)).sort(byName);
+    const usedInRow = (d: string) => members.some((o) => uses.get(o)!.has(d));
+    const placed: string[] = [];
+    const started = new Set<string>();
+    const put = (d: string) => {
+      if (started.has(d)) return;
+      started.add(d);
+      usesInRow(d).forEach(put);
+      placed.push(d);
+    };
+    members.filter((d) => !usesInRow(d).length && !usedInRow(d)).forEach(put);
+    members.filter((d) => !usedInRow(d) && usesInRow(d).length).forEach(put);
+    // What remains: only domains that use one another in a cycle (s-bncp7gtyaukur8e).
+    members.forEach(put);
+    return placed;
+  };
+  levels.forEach((level, i) => {
+    const members = domains.filter((d) => levelOf(d) === level);
+    if (members.length) rows.push({ label: `${i + 1} ${level}`, domains: place(members) });
+  });
+  const unlevelled = domains.filter((d) => levelOf(d) === null);
+  if (unlevelled.length) rows.push({ label: "No level", domains: place(unlevelled) });
+  const arrows = domains.flatMap((d) => [...uses.get(d)!].sort(byName).map((to) => ({ from: d, to })));
+  return { rows, arrows };
 }
 
 /** What a node holds beside its wording: its place, status, links, metadata, owners, and what the reindex builds. */
@@ -360,7 +415,7 @@ export function fingerprint(node: SpecNode, cell?: CellPlace): string {
 
 /**
  * A node's wording as earlier releases wrote it, used to compute the node's fingerprint (s-f5brvuuu6xmkj6t). The values gathered for a
- * field, in its `x-enumSource` or, as earlier releases wrote them, in a member of `fields`, are left out, since
+ * field, in its `enumSource` or, as earlier releases wrote them, in a member of `fields`, are left out, since
  * `sheriff reindex` builds them. The kind of node that a field's values come from is named as earlier releases named it. A
  * field that takes the values that the domains add is kept as earlier releases wrote it, with an empty list of values of its own
  * (s-v4qus7raqnwzneb). In this function, `under` is the key that holds `value`, and `field` marks a member of `fields`.
@@ -374,8 +429,8 @@ function asEarlier(value: unknown, under?: string): unknown {
   else if (rest.is === "one of" && from === "domains" && !("values" in rest)) o = { ...rest, values: [] };
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(o)) {
-    if (k === "gathered" && (under === "x-enumSource" || under === "field")) continue;
-    out[k] = k === "kind" && under === "x-enumSource" && typeof v === "string" ? (EARLIER_KINDS[v] ?? v) : asEarlier(v, k);
+    if (k === "gathered" && (under === "enumSource" || under === "field")) continue;
+    out[k] = k === "kind" && under === "enumSource" && typeof v === "string" ? (EARLIER_KINDS[v] ?? v) : asEarlier(v, k);
   }
   return out;
 }

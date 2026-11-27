@@ -64,14 +64,30 @@ export function writing(root: string | null): void {
   else delete process.env.SPECSHERIFF_GUIDELINES_REPO;
 }
 
+/** The names of the extensions that the given settings choose, the last entry for each name deciding. */
+function chosenIn(settings: unknown): string[] {
+  const entries = typeof settings === "object" && settings ? ((settings as { extensions?: Array<{ name: string; chosen: boolean }> }).extensions ?? []) : [];
+  const chosen = new Map<string, boolean>();
+  for (const e of entries) chosen.set(e.name, e.chosen);
+  return [...chosen].filter(([, on]) => on).map(([name]) => name);
+}
+
 /**
  * A repository in a temporary directory that holds the given files, together with this repository's schema. Unless the
- * caller asks otherwise, it is marked as the repository where the SpecSheriff guidelines are written.
+ * caller asks otherwise, it is marked as the repository where the SpecSheriff guidelines are written. There, each
+ * extension that its settings choose is delivered by a file of the extension holding no nodes, unless the given files hold
+ * one (s-mhsb6fjsq5xn6c9).
  */
 export function repo(files: Record<string, unknown>, { writes = true } = {}): string {
   const root = mkdtempSync(join(tmpdir(), "sheriff-"));
   cpSync(join(REPO, "specs", "_schema"), join(root, "specs", "_schema"), { recursive: true });
   const all: Record<string, unknown> = { "sheriff.config.json": { code: [], tests: [], extensions: ALL_EXTENSIONS }, ...files };
+  if (writes) {
+    for (const name of chosenIn(all["sheriff.config.json"])) {
+      const path = `specs/_guidelines/extensions/${name}.json`;
+      if (!(path in all)) all[path] = file("_guidelines/extensions", name);
+    }
+  }
   for (const [path, content] of Object.entries(all)) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), typeof content === "string" ? content : JSON.stringify(content, null, 2) + "\n");

@@ -40,12 +40,12 @@ export interface Located {
   cell?: CellPlace;
 }
 
-interface TableColumn {
+export interface TableColumn {
   key: string;
   heading: string;
   holds: string;
 }
-interface TableGroup {
+export interface TableGroup {
   heading: string | null;
   rows: Array<{ cells: Record<string, { node?: SpecNode; text?: string }> }>;
 }
@@ -141,6 +141,21 @@ export function writesGuidelines(root: string): boolean {
     return process.platform === "win32" ? full.toLowerCase() : full;
   };
   return canonicalPath(named) === canonicalPath(root);
+}
+
+/**
+ * Whether the installed plugin delivers the extension of the guidelines with the given name (s-mhsb6fjsq5xn6c9). The
+ * extension's file is in the folder of the tools, or under `specs/_guidelines/extensions/` in the repository where the
+ * guidelines are written (s-zefk589ykh37b8u).
+ */
+export function extensionDelivered(root: string, name: string): boolean {
+  const dir = writesGuidelines(root) ? join(root, "specs", "_guidelines", "extensions") : join(CARRIED, "extensions");
+  return existsSync(join(dir, `${name}.json`));
+}
+
+/** The version of the SpecSheriff tools, which `sheriff --version` prints. */
+export function toolsVersion(): string {
+  return (JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as { version: string }).version;
 }
 
 /** Whether the repository is set up for the SpecSheriff tools and takes the SpecSheriff guidelines from them, rather than writing them. */

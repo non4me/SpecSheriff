@@ -1,12 +1,18 @@
 import { existsSync, readFileSync } from "node:fs";
 import { isAbsolute, join, relative, sep } from "node:path";
-import { readCode, type CodeSymbol } from "./code.ts";
+import { readCode, type Tag } from "./code.ts";
 import { loadConfig, readsAs } from "./config.ts";
 import { APPROVALS, readApprovals, stands } from "./approvals.ts";
-import { codeChanges, spelledIn, trackedFiles, type Line } from "./diff.ts";
-import { fingerprint, isContainer } from "./model.ts";
+import { trackedFiles } from "./diff.ts";
+import { compareFiles } from "./versions.ts";
+import { fingerprint, isContainer, isProjectKind } from "./model.ts";
 import { patchedFiles, PatchError, type EditedFile } from "./patch.ts";
 import { judgedHere } from "./reindex.ts";
+import { missingExtensions, needsCode } from "./schema.ts";
+import { BINDINGS, parseBindings } from "./bindings.ts";
+
+/** The keys of `sheriff.config.json` whose lists record the settings that only an owner of the specification changes (s-d3nkw9b6mn98vuw). */
+const OWNER_LISTS = ["approvalStatus", "strict", "extensions"];
 import { loadSpecification, specificationOf, writesGuidelines, type Located, type SpecFile, type SpecNode } from "./spec-files.ts";
 
 interface Edit {
@@ -41,18 +47,6 @@ function afterEdit(tool: string, input: NonNullable<HookInput["tool_input"]>, cu
     return text;
   }
   return null;
-}
-
-/** The lines an edit changes, both sides: what lies between the lines the two texts share at their start and at their end. */
-function changedLines(before: string, after: string): { removed: Line[]; added: Line[] } {
-  const a = before.split("\n");
-  const b = after.split("\n");
-  let start = 0;
-  while (start < a.length && start < b.length && a[start] === b[start]) start++;
-  let end = 0;
-  while (end < a.length - start && end < b.length - start && a[a.length - 1 - end] === b[b.length - 1 - end]) end++;
-  const lines = (all: string[]) => all.slice(start, all.length - end).map((text, i) => ({ line: start + i + 1, text }));
-  return { removed: lines(a), added: lines(b) };
 }
 
 /**
@@ -91,7 +85,28 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
   if (files.some((f) => f.path === APPROVALS)) {
     return `${APPROVALS} is written by sheriff approve alone, which records an approval or its withdrawal: leave the node a draft for one of its owners to approve`;
   }
+  // Only `sheriff settings` changes the lists that record the settings only an owner changes (s-st6td4mua9uqt9z). A settings file
+  // that is missing or is not valid JSON is treated as holding none of those lists.
+  const settings = files.find((f) => f.path === "sheriff.config.json");
+  if (settings) {
+    const lists = (text: string | null) => {
+      let value: Record<string, unknown> = {};
+      try {
+        value = (JSON.parse(text ?? "") ?? {}) as Record<string, unknown>;
+      } catch {
+        // treated as holding none of the lists
+      }
+      return OWNER_LISTS.map((key) => JSON.stringify(value[key] ?? []));
+    };
+    const was = lists(settings.before);
+    const now = lists(settings.after);
+    const changed = OWNER_LISTS.filter((_, i) => was[i] !== now[i]);
+    if (changed.length) return `sheriff.config.json: the edit changes ${changed.join(", ")}, which an owner of the specification changes only with sheriff settings`;
+  }
   const config = loadConfig(root);
+  // Every edit is refused while a chosen extension of the guidelines is missing from the plugin (s-mhsb6fjsq5xn6c9).
+  const missing = missingExtensions(root);
+  if (missing.length) return missing.map((m) => `${m.where}: ${m.message}`).join("\n");
   const reasons: string[] = [];
 
   // The specification as the edit leaves it: each edited file of it read, a deleted one gone, one that is not JSON left to the checks after the edit.
@@ -119,31 +134,36 @@ async function judge(root: string, files: EditedFile[]): Promise<string | null> 
       const old = was.get(sid);
       // A node the edit leaves as it was is the reindex's to make a draft, not this edit's fault.
       const touched = edited.has(file.path) && (!old || old.node.status !== "approved" || fingerprint(old.node, old.cell) !== fingerprint(node, cell));
-      if (touched) reasons.push(`${sid} (${node.location}) would stand approved over a wording for which no approval stands: leave it a draft for one of its owners to approve`);
+      if (touched) reasons.push(`${file.path}: ${sid} (${node.location}) would stand approved over a wording for which no approval stands: leave it a draft for one of its owners to approve`);
     }
   }
 
   const code = files.filter((f) => readsAs(config, f.path) === "code");
-  if (code.length) {
+  const bindingsEdit = files.find((f) => f.path === BINDINGS);
+  if (code.length || bindingsEdit) {
     const instead = new Map(files.map((f) => [f.path, f.after]));
-    const spelled = await spelledIn(root, (p) => readsAs(config, p) !== null, instead);
-    const touched = new Set<CodeSymbol>();
+    // The SpecTags of each unit of code that the edit adds or changes: a symbol, the code outside every symbol, or a file bound as a
+    // whole. The units are found by comparing the file before and after the edit, as s-2x58az67bm6cxq2 compares a file in a commit
+    // with the same file in the commit's parent.
+    const touched: Tag[][] = [];
     for (const { path, before, after } of code) {
-      const next = after ?? "";
-      const now = await readCode(path, next);
-      const old = await readCode(path, before);
+      const now = await readCode(path, after ?? "");
       if (!now) continue;
-      const real = (await codeChanges([{ path, ...changedLines(before, next) }], { before: () => before, after: () => next, spelled })).get(path)!;
-      const all = (symbols: CodeSymbol[]): CodeSymbol[] => symbols.flatMap((s) => [s, ...all(s.inner)]);
-      const at = (symbols: CodeSymbol[], line: number) => all(symbols).filter((s) => (s.start <= line && line <= s.end) || s.tags.some((t) => t.line === line));
-      for (const line of real.added) at(now.symbols, line).forEach((s) => touched.add(s));
-      for (const line of real.removed) {
-        for (const s of at(old?.symbols ?? [], line)) all(now.symbols).filter((n) => n.name === s.name).forEach((n) => touched.add(n));
-      }
+      const { added, changed } = compareFiles(await readCode(path, before), now);
+      for (const u of [...added, ...changed]) touched.push(u.tags);
+    }
+    // An entry of the bindings file that the edit adds or changes is treated as a change to the file that the entry names.
+    if (bindingsEdit) {
+      const was = parseBindings(bindingsEdit.before).entries;
+      const now = parseBindings(bindingsEdit.after).entries;
+      for (const [path, tags] of now) if (JSON.stringify(tags) !== JSON.stringify(was.get(path) ?? null)) touched.push(tags);
     }
     const spec = loadSpecification(root);
+    // The kinds of node that a SpecTag names as a rule (s-5z5gnu7pahr82xp).
+    const needs = needsCode(root);
+    const isRule = (kind?: string) => kind === "TextRule" || kind === "TableRule" || kind === "RecordType" || Boolean(kind && isProjectKind(kind) && needs(kind));
     const rules = new Set<string>();
-    for (const s of touched) for (const t of s.tags) if (t.sid && spec.nodes.get(t.sid)?.node.kind === "TextRule") rules.add(t.sid);
+    for (const tags of touched) for (const g of tags) if (g.sid && isRule(spec.nodes.get(g.sid)?.node.kind)) rules.add(g.sid);
     if (rules.size) {
       // The tests as the edit leaves them: those the working tree holds, and those the edit writes.
       const tested = new Set<string>();

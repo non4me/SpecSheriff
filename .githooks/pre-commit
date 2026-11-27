@@ -1,10 +1,11 @@
 #!/bin/sh
-# Written by sheriff init: runs this hook's script from the SpecSheriff tools a plugin keeps on this
-# machine — the copy in the data directory of the plugin for Claude Code, or the tools of the plugin for
-# Codex CLI in Codex's cache — those of the higher release where both are there; then the project's own
-# tools for this hook, the files of .githooks/<hook>.d/ whose first line names their interpreter, in the
-# byte order of their names, whatever the checks found. Where no tools are found, the commit or the push
-# goes through unless a project's own tool fails, and the hook says that no check of SpecSheriff ran.
+# Written by sheriff init: runs this hook's script from the SpecSheriff tools that a plugin keeps on this machine, the copy in
+# the data directory of the plugin for Claude Code or the tools of the plugin for Codex CLI in Codex's cache, taking those of
+# the higher release where both are there. That script runs the checks and the project's own tools for this hook. Where the
+# SpecSheriff tools cannot run, because no plugin keeps them or Node.js is missing or older than they need, the hook runs the
+# project's own tools for this hook, the files of .githooks/<hook>.d/ whose first line names their interpreter, in the byte
+# order of their names. It then lets the commit or the push through unless one of them fails, and says why no check of
+# SpecSheriff ran.
 newer() {
   a=$1 b=$2
   while [ -n "$a$b" ]; do
@@ -34,15 +35,27 @@ for dir in "${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsher
   if [ -z "$tools" ] || newer "$release" "$version"; then tools=$dir version=$release; fi
 done
 status=0
+# The SpecSheriff tools run only where Node.js meets the version that the engines field of their package.json names.
+why=
 if [ -z "$tools" ]; then
-  case $hook in
-    pre-commit | pre-push) echo "sheriff: no check of SpecSheriff ran: the SpecSheriff tools of no plugin are on this machine" >&2 ;;
-  esac
+  why="the SpecSheriff tools of no plugin are on this machine"
 else
-  sh "$tools/hooks/$hook" "$@" < "$input" || status=1
+  need=$(sed -n 's/.*"node": *">=\([0-9][0-9.]*\).*/\1/p' "$tools/package.json")
+  have=$(node -p "process.versions.node" 2>/dev/null)
+  if [ -z "$have" ]; then
+    why="Node.js is missing, and the SpecSheriff tools need Node.js $need or later"
+  elif newer "$need" "$have"; then
+    why="the SpecSheriff tools need Node.js $need or later, and this machine runs Node.js $have"
+  fi
 fi
-# The project's own tools, each run from the root by the interpreter its first line names, and refused where it
-# fails or changes the staged files or the commit's message.
+if [ -z "$why" ]; then
+  sh "$tools/hooks/$hook" "$@" < "$input" || status=1
+  exit $status
+fi
+case $hook in
+  pre-commit | pre-push) echo "sheriff: no check of SpecSheriff ran: $why" >&2 ;;
+esac
+# The project's own tools, each run from the root by the interpreter its first line names; only the failure of one fails the hook.
 steps="$(dirname "$0")/$hook.d"
 if [ -d "$steps" ]; then
   # Listed in byte order, the C locale held to the listing, so that each tool runs in git's own environment.
@@ -54,12 +67,7 @@ if [ -d "$steps" ]; then
       '#!'*) ;;
       *) echo "sheriff: $path is not run: its first line names no interpreter" >&2; continue ;;
     esac
-    tree=$(git write-tree 2>/dev/null)
-    message=
-    [ "$hook" = commit-msg ] && message=$(cat "$1")
     (cd "$root" && ${first#\#!} "$path" "$@" < "$input") || { echo "sheriff: the project's own tool $path failed" >&2; status=1; }
-    if [ "$(git write-tree 2>/dev/null)" != "$tree" ]; then echo "sheriff: the project's own tool $path changed the staged files" >&2; status=1; fi
-    if [ "$hook" = commit-msg ] && [ "$(cat "$1")" != "$message" ]; then echo "sheriff: the project's own tool $path changed the commit's message" >&2; status=1; fi
   done <<EOF
 $paths
 EOF

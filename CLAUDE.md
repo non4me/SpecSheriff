@@ -56,7 +56,7 @@ is defined in `specs/_schema/` (§s-eferktypcj7njt5). A node holds:
 - `kind` (`section`, which holds rules and states no requirement of its own; `TextRule`; `term`; `RecordType`; `header`,
   a domain's header), `title`, `status` (`"draft"` or `"approved"`; the status of a section or a header is derived from
   the nodes under it), `text` (what must hold), `reason` (why, kept apart from the requirement), `list`
-  (`of`, `members`, `declaredIn`), `owners` on a section or a header, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
+  (`of`, `members`, and `jsonSchema` or `valueList` where the list is declared), `owners` on a section or a header, `refs`, and `meta`: `decisions` (`date`, `problem`, `ruling`, `type`), `todos`, `comments`,
   and `code` and `tests`, which list the code and the tests bound to the node and must agree with the SpecTags on
   the code and on the tests (§s-rwqzepmrt77rv35).
 - `refs` — typed outgoing links `{type, to}`, written by hand, and incoming ones `{type, from}`,
@@ -68,20 +68,25 @@ A file is formatted exactly as `JSON.stringify(data, null, 2) + "\n"` writes it,
 ## Editing the specification
 
 The tools check every edit. The agent's hooks, which the plugin declares, run `sheriff guard` before an
-edit made with the file-editing tools, and after any edit `sheriff reindex`, `export`, `render`, `validate`,
-`binding` and `citations`, reporting to the agent what they find wrong; the git hooks in `.githooks/` (enabled by
-the plugin when a session starts) check what is staged and the commit message, and have the commit
-reviewed where it changes code. `npx sheriff validate`, `binding`, `citations` and `show <sid>` can be run by hand, and
+edit made with the file-editing tools. After an edit that changes a file, they run `sheriff reindex`, `types`,
+`validate`, `binding` and `citations`, and also `markdown` and `map` where the project has chosen the Views
+extension, and report to the agent what these commands find wrong. The git hooks in `.githooks/`, which the plugin enables when
+a session starts, check what is staged and the commit message. They also have the commit reviewed where the reviewer
+has something to judge. `npx sheriff validate`, `binding`, `citations` and `show <sid>` can be run by hand, and
 `npm test` runs the tools' tests.
 
 - **Status.** Any change to a node's wording — title, text, reason, or the fields its kind adds,
   such as `list` — requires its status to be set to `draft`: `sheriff guard` rejects an edit that leaves the node
-  approved. A node is approved with `npx sheriff approve <sid>` (git supplies the approver's identity),
-  and only after an owner has read it and agreed to it, never on your own judgement. The only exception the owner
-  allows is a purely technical replacement that changes no meaning, such as a renamed term or path: you
-  approve it yourself and report it in one line. Changing a node's links, metadata or owners, or moving the node, leaves
-  its status as it is (§s-5ah25f6gy99panq). Nobody approves a section or a domain's header:
-  `sheriff reindex` derives their status from the nodes under them (§s-9kfdycuq34beqvs).
+  approved. Changing a node's links, metadata or owners, or moving the node, leaves its status as it is
+  (§s-5ah25f6gy99panq). Nobody approves a section or a domain's header: `sheriff reindex` derives their
+  status from the nodes under them (§s-9kfdycuq34beqvs). A node is approved with `npx sheriff approve <sid>`
+  (git supplies the approver's identity), and only after an owner has read it and agreed to it, never on your
+  own judgement. You approve a node on an owner's behalf only in the cases that §s-t5uw8zfxzhfdg86 lists, and
+  you report each such approval on a line of its own. The cases are:
+  - the only change to its wording is that it now states what one of its owners approved in another node;
+  - the only change to its wording is a replacement that leaves the meaning unchanged, such as a renamed term or path;
+  - it is a node of the technical appendix that you wrote while implementing an approved rule of the base
+    specification, and it has an `implements` link to that rule.
 - **Citations.** A node cites another as `§<sid>`, in any field but its links and children. For every
   citation, the citing node must have an outgoing link to the cited node (`cites`, unless another type says how the two nodes
   relate), and a `cites` link is allowed only where the node cites its target (§s-bpdqd9v72wg7vsz);

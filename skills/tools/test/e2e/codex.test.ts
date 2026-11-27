@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gitConfig, REPO } from "../repo.ts";
@@ -26,7 +26,7 @@ function setUpForCodex(taking = true): string {
 
 const patch = (...lines: string[]) => JSON.stringify({ tool_name: "apply_patch", tool_input: { command: ["*** Begin Patch", ...lines, "*** End Patch"].join("\n") } });
 
-test("@spec s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, the SpecSheriff guidelines and their schema, and the SpecSheriff tools, and declares no hooks", () => {
+test("@spec s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the skills, the SpecSheriff guidelines, each extension of them, the appendix of the tools, their schemas, and the SpecSheriff tools, and declares no hooks", () => {
   const manifest = json(`${CODEX_PLUGIN}/.codex-plugin/plugin.json`);
   assert.equal(manifest.name, "specsheriff");
   assert.equal(manifest.version, json(`${PLUGIN}/.claude-plugin/plugin.json`).version);
@@ -36,10 +36,12 @@ test("@spec s-2pdy9gw2jrjvfb4 the plugin for Codex CLI carries the five skills, 
   // The scripts the agent's hooks for Codex call, each as the plugin for Claude Code holds it.
   assert.deepEqual(readdirSync(`${CODEX_PLUGIN}/hooks`).sort(), ["after-edit.sh", "changed.mjs", "guard.sh", "session-start.sh"]);
   for (const script of readdirSync(`${CODEX_PLUGIN}/hooks`)) assert.equal(read(`${CODEX_PLUGIN}/hooks/${script}`), read(`${PLUGIN}/hooks/${script}`), script);
-  assert.deepEqual(readdirSync(`${CODEX_PLUGIN}/skills`).sort(), ["spec", "spec-adopt", "spec-init", "spec-remove", "spec-review"]);
-  for (const skill of readdirSync(`${CODEX_PLUGIN}/skills`)) assert.ok(existsSync(`${CODEX_PLUGIN}/skills/${skill}/SKILL.md`), skill);
   for (const name of ["spec.json", "tools.json"]) assert.equal(read(`${CODEX_PLUGIN}/tools/guidelines/${name}`), read(join(REPO, "specs", "_guidelines", name)), name);
-  for (const name of readdirSync(join(REPO, "specs", "_schema"))) assert.equal(read(`${CODEX_PLUGIN}/tools/guidelines/_schema/${name}`), read(join(REPO, "specs", "_schema", name)), name);
+  for (const name of readdirSync(join(REPO, "specs", "_guidelines", "extensions"))) {
+    assert.equal(read(`${CODEX_PLUGIN}/tools/guidelines/extensions/${name}`), read(join(REPO, "specs", "_guidelines", "extensions", name)), name);
+  }
+  const schemaFiles = readdirSync(join(REPO, "specs", "_schema"), { recursive: true, encoding: "utf8" }).filter((n) => statSync(join(REPO, "specs", "_schema", n)).isFile());
+  for (const name of schemaFiles) assert.equal(read(`${CODEX_PLUGIN}/tools/guidelines/_schema/${name}`), read(join(REPO, "specs", "_schema", name)), name);
   const version = spawnSync(process.execPath, [`${CODEX_PLUGIN}/tools/dist/cli.js`, "--version"], { encoding: "utf8" });
   assert.equal(version.stdout.trim(), json(join(REPO, "skills", "tools", "package.json")).version, version.stderr);
 });
@@ -57,17 +59,52 @@ test("@spec s-2pdy9gw2jrjvfb4 the guide of the plugin for Codex CLI gives the co
   assert.ok(guide.includes("codex plugin add specsheriff@specsheriff-marketplace"));
 });
 
-test("@spec s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, by the path of their SKILL.md; spec-init runs sheriff init for Codex, and spec-remove sheriff remove, offering to remove the plugin", () => {
+test("@spec s-2pdy9gw2jrjvfb4 the skills run sheriff from the tools beside them, which they locate from the path of their SKILL.md", () => {
   for (const skill of readdirSync(`${CODEX_PLUGIN}/skills`)) {
     const text = read(`${CODEX_PLUGIN}/skills/${skill}/SKILL.md`);
     assert.match(text, /node "<plugin>\/tools\/dist\/cli\.js"/, skill);
     assert.match(text, /<plugin>\/skills\/<skill>\/SKILL\.md/, skill);
     assert.doesNotMatch(text, /CLAUDE_PLUGIN_ROOT|Claude Code/, skill);
   }
+});
+
+test("@spec s-kq6wmdud9c7j2k9 each SpecSheriff plugin holds the skills spec, spec-review, spec-adopt, spec-init, spec-remove and spec-settings, none of which sets a model or a reasoning effort", () => {
+  for (const plugin of [PLUGIN, CODEX_PLUGIN]) {
+    const skills = readdirSync(`${plugin}/skills`);
+    for (const skill of ["spec", "spec-review", "spec-adopt", "spec-init", "spec-remove", "spec-settings"]) {
+      assert.ok(skills.includes(skill) && existsSync(`${plugin}/skills/${skill}/SKILL.md`), `${plugin}: ${skill}`);
+    }
+    for (const skill of skills) {
+      const text = read(`${plugin}/skills/${skill}/SKILL.md`);
+      assert.doesNotMatch(text.split("---")[1] ?? "", /^(model|effort):/m, skill);
+      assert.doesNotMatch(text, /--model|--effort/, skill);
+    }
+  }
+});
+
+test("@spec s-ttsc8tpnu46q53s spec-init runs sheriff init, for Codex with --agent codex, and asks only for what sheriff.config.json lacks", () => {
+  assert.match(read(`${PLUGIN}/skills/spec-init/SKILL.md`), /Run `sheriff init`/);
   assert.match(read(`${CODEX_PLUGIN}/skills/spec-init/SKILL.md`), /Run `sheriff init --agent codex`/);
-  const remove = read(`${CODEX_PLUGIN}/skills/spec-remove/SKILL.md`);
-  assert.match(remove, /Run `sheriff remove`/);
-  assert.match(remove, /codex plugin remove specsheriff@specsheriff-marketplace/);
+  for (const plugin of [PLUGIN, CODEX_PLUGIN]) assert.match(read(`${plugin}/skills/spec-init/SKILL.md`), /that `sheriff\.config\.json` lacks/, plugin);
+});
+
+test("@spec s-jn3rauw6a8zeefn spec-remove runs sheriff remove and then offers to remove its own plugin from the machine", () => {
+  const claude = read(`${PLUGIN}/skills/spec-remove/SKILL.md`);
+  assert.match(claude, /Run `sheriff remove`/);
+  assert.match(claude, /claude plugin uninstall specsheriff@specsheriff-marketplace/);
+  const codex = read(`${CODEX_PLUGIN}/skills/spec-remove/SKILL.md`);
+  assert.match(codex, /Run `sheriff remove`/);
+  assert.match(codex, /codex plugin remove specsheriff@specsheriff-marketplace/);
+});
+
+test("@spec s-h343yq2mua648eg spec-settings shows the settings as sheriff settings prints them, offers a terminal window only where it finds a graphical desktop, and otherwise changes them through questions in the chat", () => {
+  for (const plugin of [PLUGIN, CODEX_PLUGIN]) {
+    const text = read(`${plugin}/skills/spec-settings/SKILL.md`);
+    assert.match(text, /sheriff settings/, plugin);
+    assert.match(text, /graphical desktop/, plugin);
+    assert.match(text, /questions in the chat/, plugin);
+    assert.match(text, /once the window closes/, plugin);
+  }
 });
 
 test("@spec s-xr5xxa9cxf2mq5u the build writes beside each plugin's release the agent whose runner its tools take", () => {
@@ -142,7 +179,7 @@ test("@spec s-n76wt2bkqdmh78x after an edit, the hook runs the checks over the w
   assert.match(answer.reason, /project\.json/);
 });
 
-test("@spec s-477gtdrkw34dzxw the session start of the agent's hooks for Codex turns the git hooks on where core.hooksPath is unset, saying so", () => {
+test("@spec s-jgcveum8dwdnyzr the session start of the agent's hooks for Codex turns the git hooks on where core.hooksPath is unset, saying so", () => {
   const root = setUpForCodex();
   const run = codexHook("SessionStart", codexHome(), root, "{}");
   assert.equal(run.status, 0, run.stderr);
@@ -158,7 +195,7 @@ test("@spec s-4mej6ccn7xu3d3p the session start of the agent's hooks for Codex n
   assert.match(run.stdout, /\.githooks\/pre-push.*earlier release.*sheriff init replaces it/);
 });
 
-test("@spec s-477gtdrkw34dzxw the session start of the agent's hooks for Codex names each setting of the runner codex the user's configuration lacks, with its default, and has the agent ask for them once on each machine", () => {
+test("@spec s-p29yawkkkgk7kxb the session start of the agent's hooks for Codex names each setting of the codex runner that the user's configuration lacks, with its default, and has the agent ask the user about them once on each machine", () => {
   const root = setUpForCodex();
   const codex = codexHome();
   const file = gitConfig();
@@ -177,7 +214,7 @@ test("@spec s-477gtdrkw34dzxw the session start of the agent's hooks for Codex n
   assert.doesNotMatch(second.stdout, /specsheriff\.review/);
 });
 
-test("@spec s-2pdy9gw2jrjvfb4 spec-init offers each setting of the runner codex the configuration lacks and was not asked for, writing what the user answers and marking it asked", () => {
+test("@spec s-ttsc8tpnu46q53s spec-init offers each setting of the codex runner that the configuration lacks and that has not been asked about yet, writing what the user answers and marking the setting as asked about", () => {
   const init = read(`${CODEX_PLUGIN}/skills/spec-init/SKILL.md`);
   for (const key of ["codexModel", "codexEffort", "codexAsked"]) assert.match(init, new RegExp(`specsheriff\\.review\\.${key}`), key);
   assert.doesNotMatch(init, /specsheriff\.review\.claude/);

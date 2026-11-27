@@ -5,12 +5,13 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, wri
 import { join } from "node:path";
 import { createContext, runInContext } from "node:vm";
 import { approve } from "../../src/approvals.ts";
-import { exportMarkdown, guide, render } from "../../src/generated.ts";
-import { domainOrder } from "../../src/model.ts";
+import { exportMarkdown, guide, outline, render } from "../../src/generated.ts";
+import { domainDiagram } from "../../src/model.ts";
+import { approvedWordings } from "../../src/approved-wording.ts";
 import { reindex } from "../../src/reindex.ts";
 import { loadSpecification, type SpecNode } from "../../src/spec-files.ts";
 import { REPO } from "../repo.ts";
-import { file, loc, node, OWNER, repo, sid } from "../fixture.ts";
+import { file, loc, node, OWNER, repo, sid, table, taking } from "../fixture.ts";
 import { LEVELS_RULE } from "../../src/model.ts";
 
 function project(): string {
@@ -20,11 +21,11 @@ function project(): string {
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core", "auxiliary"] } }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [node("shared rule")] })),
-    "specs/zeta/00-zeta.json": file("zeta", "00-zeta", node("zeta", { kind: "header", level: "core", code: null, sections: [] })),
+    "specs/zeta/00-zeta.json": file("zeta", "00-zeta", node("zeta", { kind: "header", level: "core", sections: [] })),
     "specs/zeta/z.json": file("zeta", "z", node("zeta section", { kind: "section", text: "Z.", children: [node("zeta rule")] })),
-    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "header", level: "core", code: null, sections: [], refs: [{ type: "consumes", to: sid("zeta section") }] })),
+    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "header", level: "core", sections: [], refs: [{ type: "consumes", to: sid("zeta section") }] })),
     "specs/alpha/a.json": file("alpha", "a", node("alpha section", { kind: "section", text: "A.", children: [node("alpha rule")] })),
-    "specs/helper/00-helper.json": file("helper", "00-helper", node("helper", { kind: "header", level: "auxiliary", code: null, sections: [] })),
+    "specs/helper/00-helper.json": file("helper", "00-helper", node("helper", { kind: "header", level: "auxiliary", sections: [] })),
     "specs/tech/stack.json": file("tech", "stack", node("stack", { kind: "section", text: "The stack.", children: [node("runtime")] })),
   });
   reindex(root);
@@ -43,23 +44,61 @@ test("@spec s-zefk589ykh37b8u keeps the readable export and the map out of git",
   }
 });
 
-test("@spec s-uw9n84edf7cbe9n orders the domains each after every domain it uses, the order of their names deciding a tie", () => {
+test("@spec s-jzm6qw992j3bnxt draws a row for each level that a domain's header contains, labelled with its number and its name, and an arrow for each use", () => {
   const spec = loadSpecification(project());
-  assert.deepEqual(domainOrder(spec), ["zeta", "alpha", "helper"]);
+  const diagram = domainDiagram(spec, ["core", "auxiliary"]);
+  assert.deepEqual(diagram.rows, [{ label: "1 core", domains: ["zeta", "alpha"] }, { label: "2 auxiliary", domains: ["helper"] }]);
+  assert.deepEqual(diagram.arrows, [{ from: "alpha", to: "zeta" }]);
 });
 
-test("@spec s-uw9n84edf7cbe9n puts a domain as close as possible before the first domain that uses it", () => {
-  const header = (name: string, uses: string[] = []) => file(name, `00-${name}`, node(name, { kind: "header", level: "core", code: null, sections: [], refs: uses.map((u) => ({ type: "consumes", to: sid(`${u} section`) })) }));
+test("@spec s-jzm6qw992j3bnxt places first the domains of a row that have no link to another domain of that row, then each after the domains it uses, the domains of a cycle last, the order of their names deciding a tie", () => {
+  const header = (name: string, uses: string[] = []) => file(name, `00-${name}`, node(name, { kind: "header", level: "core", sections: [], refs: uses.map((u) => ({ type: "consumes", to: sid(`${u} section`) })) }));
   const section = (name: string) => file(name, "s", node(`${name} section`, { kind: "section", text: "S.", children: [node(`${name} rule`)] }));
-  const root = repo({
-    "specs/a/00-a.json": header("a"), "specs/a/s.json": section("a"),
-    "specs/b/00-b.json": header("b"), "specs/b/s.json": section("b"),
-    "specs/z/00-z.json": header("z", ["a"]), "specs/z/s.json": section("z"),
-  });
-  assert.deepEqual(domainOrder(loadSpecification(root)), ["b", "a", "z"]);
+  const files: Record<string, unknown> = {};
+  for (const [name, uses] of [["a", []], ["b", []], ["w", []], ["x", ["y"]], ["y", ["x"]], ["z", ["a"]]] as Array<[string, string[]]>) {
+    files[`specs/${name}/00-${name}.json`] = header(name, uses);
+    files[`specs/${name}/s.json`] = section(name);
+  }
+  const diagram = domainDiagram(loadSpecification(repo(files)), ["core"]);
+  assert.deepEqual(diagram.rows, [{ label: "1 core", domains: ["b", "w", "a", "z", "y", "x"] }]);
 });
 
-test("@spec s-kh8qcd5kxgh9z3j exports every file of the specification to markdown, each node with its sid, text and reason", () => {
+test("@spec s-jzm6qw992j3bnxt puts each domain whose header contains none of the listed levels in a row labelled No level, below the rows of the levels, and draws no row for a level that no header contains", () => {
+  const spec = loadSpecification(project());
+  assert.deepEqual(domainDiagram(spec, ["edge", "core"]).rows, [{ label: "2 core", domains: ["zeta", "alpha"] }, { label: "No level", domains: ["helper"] }]);
+});
+
+/** A project in which no Views extension is chosen. */
+function withoutViews(): string {
+  const root = project();
+  const path = join(root, "sheriff.config.json");
+  const settings = JSON.parse(readFileSync(path, "utf8"));
+  settings.extensions = settings.extensions.filter((e: { name: string }) => e.name !== "views");
+  writeFileSync(path, JSON.stringify(settings, null, 2) + "\n");
+  return root;
+}
+
+test("@spec s-e3495enbc5h75c3 writes the export only where the project has chosen the Views extension, and otherwise refuses, naming it", () => {
+  const root = withoutViews();
+  assert.throws(() => exportMarkdown(root), /Views extension/);
+  assert.ok(!existsSync(join(root, "md-version")));
+});
+
+test("@spec s-rpv4fkdqqguptqd writes the map only where the project has chosen the Views extension, and otherwise refuses, naming it", () => {
+  const root = withoutViews();
+  assert.throws(() => render(root), /Views extension/);
+  assert.ok(!existsSync(join(root, "specs", "_viewer")));
+});
+
+test("@spec s-e3495enbc5h75c3 exports the files that the project takes from the plugin: those of the guidelines, of each chosen extension and of the appendix of the tools", () => {
+  const root = taking({ "sheriff.config.json": { code: [], tests: [], extensions: [{ name: "views", chosen: true, by: OWNER }] } });
+  reindex(root);
+  const written = exportMarkdown(root);
+  for (const path of ["md-version/_guidelines/spec.md", "md-version/_guidelines/tools.md", "md-version/_guidelines/extensions/views.md"]) assert.ok(written.includes(path), `${path}\n${written.join("\n")}`);
+  assert.ok(!written.includes("md-version/_guidelines/extensions/domains.md"), written.join("\n"));
+});
+
+test("@spec s-e3495enbc5h75c3 exports every file of the specification to markdown, each node with its sid, text and reason", () => {
   const root = project();
   exportMarkdown(root);
   const md = readFileSync(join(root, "md-version", "_guidelines", "spec.md"), "utf8");
@@ -79,7 +118,7 @@ function everything(): string {
       node("listed rule", {
         reason: "Because.",
         refs: [{ type: "implements", to: sid("base") }],
-        list: { of: "the colours", members: ["red", "green"], declaredIn: { file: "src/colour.ts", declaration: "Colour" } },
+        list: { of: "the colours", members: ["red", "green"], valueList: { file: "src/colour.ts", symbol: "Colour" } },
         meta: {
           decisions: [{ date: "2026-11-02", problem: "Which colours.", ruling: "Two of them.", type: "textual" }],
           todos: [{ date: "2026-11-02", by: OWNER, text: "Add blue." }],
@@ -93,10 +132,10 @@ function everything(): string {
       node("our levels", { refs: [{ type: "refines", to: LEVELS_RULE }], list: { of: "the levels", members: ["core"] } }),
     ] })),
     "specs/contracts/c.json": file("contracts", "c", node("shared", { kind: "section", text: "Shared.", children: [
-      node("Invoice", { kind: "RecordType", text: "A bill sent to a customer.", fields: [{ name: "total", type: { is: "whole number" }, required: true, text: "The sum owed." }], unknown: "refused" }),
-      node("customer", { kind: "term", text: "Whoever is billed.", refs: [{ type: "term-relation", to: sid("Invoice"), ratio: "1:0..N" }] }),
+      node("Invoice", { kind: "RecordType", text: "A bill sent to a customer.", schema: { type: "object", properties: { total: { type: "integer", description: "The sum owed." } }, required: ["total"], unevaluatedProperties: false } }),
+      node("customer", { kind: "term", text: "Whoever is billed.", refs: [{ type: "term-relation", to: sid("Invoice"), ratio: "1:0..*" }] }),
     ] })),
-    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "header", owners: [OWNER], level: "core", code: "src/alpha", sections: [] })),
+    "specs/alpha/00-alpha.json": file("alpha", "00-alpha", node("alpha", { kind: "header", owners: [OWNER], level: "core", sections: [] })),
     "specs/alpha/a.json": file("alpha", "a", node("alpha section", { kind: "section", text: "A.", children: [node("alpha rule")] })),
   });
   reindex(root);
@@ -128,8 +167,8 @@ test("@spec s-k4nqjr96ux7a5m7 the export writes each link with its type, its dir
   const spec = loadSpecification(root);
   const at = (name: string) => spec.nodes.get(sid(name))!.node;
   const md = exported(root, "contracts/c");
-  assert.ok(md.includes(`- term-relation 1:0..N → ${sid("Invoice")} ${at("Invoice").location} Invoice`));
-  assert.ok(md.includes(`- term-relation 0..N:1 ← ${sid("customer")} ${at("customer").location} customer`));
+  assert.ok(md.includes(`- term-relation 1:0..* → ${sid("Invoice")} ${at("Invoice").location} Invoice`));
+  assert.ok(md.includes(`- term-relation 0..*:1 ← ${sid("customer")} ${at("customer").location} customer`));
   assert.ok(exported(root, loc("_guidelines", "spec")).includes(`- implements ← ${sid("listed rule")} ${at("listed rule").location} listed rule`));
 });
 
@@ -148,7 +187,7 @@ test("@spec s-k4nqjr96ux7a5m7 the export writes a node's children after it, each
   assert.deepEqual(order, [...order].sort((a, b) => a - b));
 });
 
-test("@spec s-k4nqjr96ux7a5m7 sheriff guide writes each node of the guidelines as the export does, except its metadata", () => {
+test("@spec s-jk8v3srrved7ram sheriff guide writes each node of the guidelines as the export does, except its metadata", () => {
   const root = everything();
   exportMarkdown(root);
   const out = guide(loadSpecification(root), false);
@@ -223,7 +262,7 @@ test("@spec s-rpv4fkdqqguptqd the map's page reads a title as text, so that no t
   const titles = (n: any): string[] => [plain(n.content), ...n.children.flatMap(titles)];
   assert.equal(drawn.tree.content, "Specification");
   assert.ok(titles(drawn.tree).includes("Costs $x$ and &lt;b&gt;more&lt;/b&gt;"), titles(drawn.tree).join(" | "));
-  const zeta = drawn.tree.children.find((c: any) => c.content === "1 core").children.find((c: any) => plain(c.content) === "zeta");
+  const zeta = drawn.tree.children.find((c: any) => c.content === "Base specification").children.find((c: any) => plain(c.content) === "zeta");
   assert.deepEqual(titles(zeta), ["zeta", "zeta section", "Costs $x$ and &lt;b&gt;more&lt;/b&gt;"]);
 });
 
@@ -240,23 +279,37 @@ test("@spec s-rpv4fkdqqguptqd draws each node's title in a frame, dotted for a d
   assert.ok(contents.includes('<span class="node approved">base rule</span>'), contents.join(" | "));
   assert.ok(contents.includes('<span class="node approved">base</span>'), contents.join(" | "));
   assert.ok(contents.includes('<span class="node draft">zeta rule</span>'), contents.join(" | "));
-  for (const branch of ["Guidelines", "Contracts", "1 core", "Technical appendix"]) assert.ok(contents.includes(branch), branch);
+  for (const branch of ["Guidelines", "Appendix of the tools", "Base specification", "Technical appendix"]) assert.ok(contents.includes(branch), branch);
   assert.match(page, /\.node \{[^}]*border: 1\.5px solid/);
   assert.match(page, /\.node\.draft \{ border-style: dotted; \}/);
 });
 
-test("@spec s-zu8ne3wq84zchc4 the map reads guidelines, contracts, a branch per level from the top with its domains in order, the technical appendix last", () => {
+test("@spec s-rpv4fkdqqguptqd the map holds the guidelines, the appendix of the tools, the base specification with the contracts first and then the domains row by row, and the technical appendix", () => {
   const root = project();
-  render(root);
-  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  const spec = loadSpecification(root);
+  const page = outline(spec, approvedWordings(root, spec), new Set(["domains", "recordtype", "views"]));
   const at = (text: string) => {
     const i = page.indexOf(text);
     assert.ok(i >= 0, text);
     return i;
   };
-  const order = ["Guidelines", "Contracts", "1 core", "zeta", "alpha", "2 auxiliary", "helper", "Technical appendix"].map(at);
+  const order = ["- Guidelines", "base rule", "our levels", "- Appendix of the tools", "- Base specification", "shared rule", ">zeta<", "zeta rule", ">alpha<", "alpha rule", ">helper<", "- Technical appendix", "runtime"].map(at);
   assert.deepEqual(order, [...order].sort((a, b) => a - b));
-  assert.ok(page.includes("zeta rule") && page.includes("runtime"));
+  for (const gone of ["- Contracts", "1 core", "2 auxiliary", "No level listed"]) assert.ok(!page.includes(gone), gone);
+});
+
+test("@spec s-rpv4fkdqqguptqd the map holds the nodes in the cells of a TableRule under it, each labelled with its location in a frame that shows its status", () => {
+  const root = project();
+  const path = join(root, "specs", "contracts", "c.json");
+  const data = JSON.parse(readFileSync(path, "utf8"));
+  data.nodes[0].children.push(table("checks table", [["first check", "refused"]]));
+  writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+  reindex(root);
+  const spec = loadSpecification(root);
+  const page = outline(spec, approvedWordings(root, spec), new Set(["domains", "recordtype", "views"]));
+  const cell = spec.nodes.get(sid("first check"))!.node.location;
+  assert.ok(page.includes(`<span class="draft">${cell}</span>`), page);
+  assert.ok(page.indexOf(`>${cell}<`) > page.indexOf(">checks table<"), page);
 });
 
 test("@spec s-zu8ne3wq84zchc4 the map shows the structure and each node's status only, nothing of a rule's text", () => {

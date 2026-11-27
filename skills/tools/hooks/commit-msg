@@ -1,6 +1,18 @@
 #!/bin/sh
-# The message names the nodes the changed code serves, and the independent reviewer judges the commit.
+# The commit-msg hook: the project's own tools for this hook run first (s-n4m5zvh96yb299p); then `sheriff commit-message` checks
+# that the message names the nodes that the changed code serves, and, only where it passes, the independent reviewer judges
+# the commit (s-477gtdrkw34dzxw).
 . "$(dirname "$0")/sheriff.sh"
+hook=commit-msg
+root=$(git rev-parse --show-toplevel) || exit 1
+own_input=$(mktemp) || exit 1
+cat > "$own_input"
+. "$(dirname "$0")/own-tools.sh"
+failed=0
+own_rewriting "$@" || failed=1
+own_others "$@" || failed=1
 message=$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
 . "$(dirname "$0")/staged.sh"
-cd "$staged" && sheriff message "$message" && sheriff review "$message"
+trap 'rm -rf "$staged" "$own_input"' EXIT
+(cd "$staged" && sheriff commit-message "$message" && sheriff review "$message") || failed=1
+exit $failed

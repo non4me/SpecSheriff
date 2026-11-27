@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { APPROVALS, readApprovals, type Approval } from "./approvals.ts";
+import { APPROVALS, lastApproval, readApprovals, type Approval } from "./approvals.ts";
 import { git } from "./diff.ts";
 import { fingerprint } from "./model.ts";
 import { renameEarlier } from "./reindex.ts";
@@ -43,10 +43,12 @@ export function approvedWordings(root: string, spec: Specification, lines: Appro
 
   const wording = (sid: string): SpecNode | undefined => {
     if (cache.has(sid)) return cache.get(sid);
-    const approvals = lines.filter((l) => l.sid === sid && !l.withdrawn);
     const now = spec.nodes.get(sid);
+    // The node's last approval first (s-v4qus7raqnwzneb), then its earlier approvals, latest first.
+    const last = lastApproval(lines, sid, now ? fingerprint(now.node, now.cell) : "");
+    const earlier = lines.filter((l) => l.sid === sid && !l.withdrawn && l !== last).reverse();
     let found: SpecNode | undefined;
-    for (const [i, approval] of [...approvals].reverse().entries()) {
+    for (const [i, approval] of (last ? [last, ...earlier] : []).entries()) {
       if (now && fingerprint(now.node, now.cell) === approval.fingerprint) found = now.node;
       else found = versions(sid).find((v) => fingerprint(v.node, v.cell) === approval.fingerprint)?.node;
       if (found) {
@@ -60,7 +62,8 @@ export function approvedWordings(root: string, spec: Specification, lines: Appro
 
   const links = (sid: string): SpecNode["refs"] => {
     const now = spec.nodes.get(sid)?.node.refs ?? [];
-    const commit = approvingCommit(root, sid);
+    const at = spec.nodes.get(sid);
+    const commit = approvingCommit(root, sid, lastApproval(lines, sid, at ? fingerprint(at.node, at.cell) : "")?.fingerprint);
     return commit ? (nodeAt(root, commit, sid)?.node.refs ?? now) : now;
   };
 
@@ -86,13 +89,13 @@ function nodeAt(root: string, commit: string, sid: string): { node: SpecNode; ce
 }
 
 /** The latest commit on the current branch that added the node's last approval, or none while that approval is not committed. */
-function approvingCommit(root: string, sid: string): string | undefined {
+function approvingCommit(root: string, sid: string, print?: string): string | undefined {
   const path = join(root, APPROVALS);
   if (!existsSync(path)) return undefined;
   const last = readFileSync(path, "utf8").split("\n").filter((l) => {
     try {
       const a = JSON.parse(l) as Approval;
-      return a.sid === sid && !a.withdrawn;
+      return a.sid === sid && !a.withdrawn && (print === undefined || a.fingerprint === print);
     } catch {
       return false;
     }

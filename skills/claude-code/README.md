@@ -10,7 +10,7 @@ up and built with it from the start: [the saloon](https://github.com/non4me/spec
 
 - Claude Code.
 - git, with your email in `git config user.email`: the tools name the specification's owner by it.
-- Node 24 or later on the `PATH`. The hooks refuse to run on an older one and say so.
+- Node.js 24 or later on the `PATH`. The hooks refuse to run on an older one and say so.
 
 ## Installing it
 
@@ -118,11 +118,11 @@ own — with every node's wording and links, and works by them.
 **When.** Whenever a node is drafted, changed or put to an owner, and whenever an owner reads a part
 of the specification. Ask for a new rule in your own words, and the agent drafts it by this skill.
 
-**What it asks.** Whether you approve a node, one node at a time, shown whole: its title, its location
-and sid, its text and its reason, with what changed marked. Before it shows you a node, another agent
+**What it asks.** Whether you approve a node, one node at a time, shown in full: its title, its location
+and sid, its text and its reason, with the changes marked. Before it shows you a node, another agent
 that did not write it looks for what is wrong with it; a doubt that would change what the node states
-comes to you with its reason. Answer with a plain approval, such as "ok": a reply that asks
-something approves nothing.
+comes to you with its reason. Answer with a plain "ok": a reply that asks a question
+approves nothing.
 
 **What it changes.** The node, written as a draft; on your approval, `sheriff approve` records it
 under your git email and marks the node approved. A node is implemented only once approved. A
@@ -145,25 +145,33 @@ approved, binds its code and tests: a SpecTag on every symbol and on every test.
 
 ## What the checks refuse
 
-**At every edit the agent makes.** Before an edit, `sheriff guard` judges it: it refuses code whose
-rule has no test yet, since the test is written first, and a node left approved over a wording no
-approval stands for. After every edit, the specification is reindexed, the readable export, the map
-and the generated types are rebuilt, and `sheriff validate`, `binding` and `citations` run; the agent
-is handed what they refuse and fixes it.
+**At every edit the agent makes.** Before an edit, `sheriff guard` judges it: it refuses an edit that adds
+code whose rule has no test yet, since the test is written first, and an edit that would leave a node
+approved with a wording that no approval records. After an edit that changes a file, the specification is reindexed and the
+generated types are written. Where the project has chosen the Views extension, the readable export and
+the map are written too. Then `sheriff validate`, `binding` and `citations` run, and the agent is
+given what they refuse and fixes it.
 
 **At every commit, whoever makes it.**
 
-- `pre-commit` checks the commit being made: the specification on its own (`sheriff validate`), the
-  specification against the code (`sheriff binding`), and the citations outside it
-  (`sheriff citations`); last, `sheriff types` writes the types generated from the RecordTypes.
-- `commit-msg` checks that a commit changing code names every approved rule the SpecTags on its changed
-  symbols name (`sheriff message`), and then an independent reviewer — Claude Code run with no tools and no
-  settings, given only the change and the text of those rules — judges whether the code does what
-  they say and nothing they do not (`sheriff review`). With the plugin for Codex CLI, Codex runs it
-  the same way.
-- `pre-push` runs the tests by the command `sheriff.config.json` names, after refusing a working tree
-  that differs from what the push sends. While the specification is a draft, it runs no test and
-  compares nothing, and says so.
+- `pre-commit` checks the commit being made. First, the project's own tools that rewrite files run,
+  and `sheriff types` writes the types generated from the RecordTypes. The project's other tools run
+  next. Then `sheriff validate` checks the specification on its own. Once the specification passes the check of its keys and the
+  validation against its schema, `sheriff binding` checks the specification against the code, and `sheriff citations` the citations
+  outside it.
+- `commit-msg` checks that a commit changing code names every approved rule that the SpecTags on its
+  changed symbols name (`sheriff commit-message`). Then an independent reviewer makes the judgements
+  that no check can make (`sheriff review`). The reviewer is Claude Code, run with no tools and no
+  settings and given only the change and the rules that bear on it; with the plugin for Codex CLI, it is
+  Codex, run the same way. It judges whether the code does what its rules say and nothing that they do
+  not say, and whether each comment that the commit adds or changes agrees with the code and its rules.
+  It also judges a commit message's statement that a rule's implementation needs no change, and a node
+  of the technical appendix that the commit approves. A finding about a comment is only a warning.
+- `pre-push` runs the project's own tools for that hook. Where the project's own guidelines name a
+  push as the moment at which the tests run, it also runs the tests with the command that
+  `sheriff.config.json` names. Before that, it refuses the push if the working tree differs from the
+  commits being tested.
+  For a ref whose commit leaves the specification a draft, it runs no test, and says why.
 
 **What a refusal means**, for the ones met most:
 
@@ -214,13 +222,34 @@ background, within ten minutes of the first message of an interactive session; t
 keeps the version it loaded, and the next session runs the new one, the git hooks included. `claude plugin update
 specsheriff@specsheriff-marketplace` takes it at once.
 
-From 0.6.0 a node's status is `draft` or `approved`, a part may name several `owners`, and
-`sheriff approve` replaces `sheriff confirm`. The first `sheriff reindex` of 0.6.0 rewrites what an
+As of 0.7.0, the first `sheriff reindex` rewrites what an earlier release wrote, keeps every
+approval in force, and names each file that it rewrites, for you to commit. It makes these changes:
+- the kind of node `rule` becomes `TextRule`, `record` and `recordType` become `RecordType`, and
+  `domain` becomes `header`;
+- the key `rationale` becomes `reason`;
+- a RecordType's fields become its `schema`, written in JSON Schema;
+- `declaredIn`, which says where a list is declared, becomes `jsonSchema` or `valueList`;
+- the rule of `project.json` that set the specification's approval status becomes an entry in
+  `sheriff.config.json`;
+- `@spec ` is put before each sid that opens a test's name without it.
+
+Four commands are renamed: `sheriff message` is now `sheriff commit-message`, `sheriff model` is
+`sheriff json`, `sheriff export` is `sheriff markdown`, and `sheriff render` is `sheriff map`.
+`sheriff markdown` and `sheriff map` run only where the project has chosen the Views extension. An
+owner changes the specification's approval status, its `strict` flag and the chosen extensions with
+`sheriff settings`, or through the skill `spec-settings`. Where the specification holds a node of a
+kind that an extension adds, such as a domain's header or a RecordType, `sheriff reindex` names that
+extension, and an owner chooses it. A project's own check that reads `sheriff json` must from then on
+read `reason` and the new names of the kinds. Ask the agent to run `spec-init` again: `sheriff init`
+replaces the git hooks that an earlier release wrote.
+
+As of 0.6.0, a node's approval status is `draft` or `approved`, a section or a domain's header may name several `owners`, and
+`sheriff approve` replaces `sheriff confirm`. The first `sheriff reindex` run with 0.6.0 rewrites what an
 earlier release wrote — `""` and `checked`, `owner`, `specs/_confirmations.jsonl` — and keeps every
 approval; it names each file it writes, for you to commit. A project's own check that reads `owner`
-from `sheriff model` reads `owners`, a list, from then on. Ask the agent to set the repository up once more, through
+from `sheriff json` must from then on read `owners`, a list. Ask the agent to set up the repository again, through
 `spec-init`: `sheriff init` then has git merge `specs/_approvals.jsonl` by union, so that the
-approvals two branches record merge without a conflict.
+approvals that two branches record merge without a conflict.
 
 ## The plugin for pytest
 

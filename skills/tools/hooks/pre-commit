@@ -1,20 +1,50 @@
 #!/bin/sh
-# The export and the map are written in the working tree, a failure to write them reported and stopping
-# nothing, since the commit holds neither; the checks of the specification on its own,
-# against the code and of the citations outside it read the commit being made. Last, whatever they found,
-# the types the staged RecordTypes generate are written there, each file written copied into the
-# working tree for its author to stage, and nothing staged; what the generator refuses stops the commit.
+# The pre-commit hook, in the order of s-npnmwyt6s3gypwe. First the project's own tools that its guidelines list as rewriting
+# files run in the working tree, and may change what is staged. Then what is staged is written out, and `sheriff types` runs on
+# a second copy of it; each file that it writes goes into the working tree for its author to stage, and not into the copy that
+# the checks read. Then the project's other tools run, and the checks read the commit being made: `binding` and `citations`
+# only where `validate` has not stopped at the check for a key written more than once or at the schema. Last, where the Views
+# extension is chosen, the export and the map are written in the working tree, a failure to write them stopping nothing.
 . "$(dirname "$0")/sheriff.sh"
-. "$(dirname "$0")/staged.sh"
-(cd "$root" && sheriff export >/dev/null && sheriff render >/dev/null) ||
-  echo "sheriff: the export and the map were not written from the working tree; the commit goes on" >&2
+hook=pre-commit
+root=$(git rev-parse --show-toplevel) || exit 1
+own_input=$(mktemp) || exit 1
+cat > "$own_input"
+. "$(dirname "$0")/own-tools.sh"
 failed=0
-for check in validate binding citations; do
-  (cd "$staged" && sheriff "$check") || failed=1
-done
-written=$(cd "$staged" && sheriff types) || { printf '%s\n' "$written"; exit 1; }
+own_rewriting "$@" || failed=1
+# git's own environment, which the project's own tools run in, kept before the checks point git at a copy of what is staged.
+git_dir=${GIT_DIR-} work_tree=${GIT_WORK_TREE-} marked=${SPECSHERIFF_GUIDELINES_REPO-}
+. "$(dirname "$0")/staged.sh"
+second=$(mktemp -d) || exit 1
+trap 'rm -rf "$staged" "$second" "$own_input"' EXIT
+git checkout-index -a --prefix="$second/" || exit 1
+written=$(cd "$second" && { [ "${SPECSHERIFF_GUIDELINES_REPO-}" = "$staged" ] && SPECSHERIFF_GUIDELINES_REPO="$second"; sheriff types; })
+if [ $? -ne 0 ]; then
+  printf '%s\n' "$written"
+  failed=1
+fi
 printf '%s\n' "$written" | sed -n 's/^written: //p' | while IFS= read -r path; do
-  mkdir -p "$(dirname "$root/$path")" && cp "$staged/$path" "$root/$path" || exit 1
+  mkdir -p "$(dirname "$root/$path")" && cp "$second/$path" "$root/$path" || exit 1
   echo "written: $path, to be staged"
-done || exit 1
+done || failed=1
+(
+  if [ -n "$git_dir" ]; then GIT_DIR=$git_dir; export GIT_DIR; else unset GIT_DIR; fi
+  if [ -n "$work_tree" ]; then GIT_WORK_TREE=$work_tree; export GIT_WORK_TREE; else unset GIT_WORK_TREE; fi
+  if [ -n "$marked" ]; then SPECSHERIFF_GUIDELINES_REPO=$marked; export SPECSHERIFF_GUIDELINES_REPO; fi
+  own_others "$@"
+) || failed=1
+(cd "$staged" && sheriff validate)
+checked=$?
+[ $checked -eq 0 ] || failed=1
+# Exit status 3 means that `sheriff validate` stopped at the check for a key written more than once or at the schema.
+if [ $checked -ne 3 ]; then
+  for check in binding citations; do
+    (cd "$staged" && sheriff "$check") || failed=1
+  done
+fi
+if (cd "$root" && sheriff settings 2>/dev/null | grep -q '^extension views: chosen$'); then
+  (cd "$root" && sheriff markdown >/dev/null && sheriff map >/dev/null) ||
+    echo "sheriff: the export and the map were not written from the working tree; the commit goes on" >&2
+fi
 exit $failed

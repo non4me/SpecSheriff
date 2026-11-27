@@ -3762,7 +3762,11 @@
         "type": "textual"
       }
     ],
-    "englishRead": "EngStickler's reader, 2026-11-22: the English corrected without changing its meaning by fix-counted-english.mjs; \"the RecordType extension\" kept, since it is the extension's name"
+    "englishRead": "EngStickler's reader, 2026-11-22: the English corrected without changing its meaning by fix-counted-english.mjs; \"the RecordType extension\" kept, since it is the extension's name",
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "new:tools-7-1-term-contracts": {
     "agreed": "2026-11-22",
@@ -4498,7 +4502,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "new:tools-7-1-one-header": {
     "from": "s-agc6fb3vx46pc23",
@@ -4738,7 +4746,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-pvnnr844f3y964m": {
     "location": "tools 7.1.8",
@@ -5081,7 +5093,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-qvgzubkrafadqgf": {
     "location": "tools 7.1.12",
@@ -5390,7 +5406,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («ок», in answer to «Согласны с группой 1 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 6, batch 6a (sheriff untagged in binding.ts and cli.ts; validate refuses, in the repository where the guidelines are written, a link from a node of spec.json to a node of an extension of the guidelines; the todo of row 10.1.20a removed)"
+    }
   },
   "s-yprj7d6tnvauggr": {
     "location": "tools 7.1.21",
@@ -6740,7 +6760,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5b (review.ts: the review runs where any of the four judgements is due — code that the commit adds, changes or removes, tests included; a comment that it adds or changes; an Implementation-Needs-No-Change trailer; an approval it adds of a node of the technical appendix with an implements link to a rule of the base specification; every file that sheriff types writes, the project's generators' included, is left out and only those the commit changes are named, the bindings file kept; the reviewer is given the wording of each node (title, text, reason, examples, the fields of its kind), each changed symbol, file bound as a whole, code outside every symbol and test whole with its lines and SpecTags, each changed comment with the code it describes, each trailer rule's wording before and after with its bound code and tests, and each approved appendix node with the base rules bearing on it; findings on a statement are disregarded while the specification is a draft; code.ts reads each file's comments and readCommit names the changed ones; the decisions of 2026-11-05 moved to s-rd9nftptjuz6bwv; s-4bwa4zepd4nwcv8 records what a rule in no section takes)"
+    }
   },
   "new:tools-7-3-review-code": {
     "from": "s-vp24dqydygztqbt",
@@ -6923,7 +6947,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5b (review.ts: the review runs where any of the four judgements is due — code that the commit adds, changes or removes, tests included; a comment that it adds or changes; an Implementation-Needs-No-Change trailer; an approval it adds of a node of the technical appendix with an implements link to a rule of the base specification; every file that sheriff types writes, the project's generators' included, is left out and only those the commit changes are named, the bindings file kept; the reviewer is given the wording of each node (title, text, reason, examples, the fields of its kind), each changed symbol, file bound as a whole, code outside every symbol and test whole with its lines and SpecTags, each changed comment with the code it describes, each trailer rule's wording before and after with its bound code and tests, and each approved appendix node with the base rules bearing on it; findings on a statement are disregarded while the specification is a draft; code.ts reads each file's comments and readCommit names the changed ones; the decisions of 2026-11-05 moved to s-rd9nftptjuz6bwv; s-4bwa4zepd4nwcv8 records what a rule in no section takes)"
+    }
   },
   "new:tools-7-3-review-statement": {
     "from": "s-vp24dqydygztqbt",
@@ -7011,7 +7039,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5b (review.ts: the review runs where any of the four judgements is due — code that the commit adds, changes or removes, tests included; a comment that it adds or changes; an Implementation-Needs-No-Change trailer; an approval it adds of a node of the technical appendix with an implements link to a rule of the base specification; every file that sheriff types writes, the project's generators' included, is left out and only those the commit changes are named, the bindings file kept; the reviewer is given the wording of each node (title, text, reason, examples, the fields of its kind), each changed symbol, file bound as a whole, code outside every symbol and test whole with its lines and SpecTags, each changed comment with the code it describes, each trailer rule's wording before and after with its bound code and tests, and each approved appendix node with the base rules bearing on it; findings on a statement are disregarded while the specification is a draft; code.ts reads each file's comments and readCommit names the changed ones; the decisions of 2026-11-05 moved to s-rd9nftptjuz6bwv; s-4bwa4zepd4nwcv8 records what a rule in no section takes)"
+    }
   },
   "new:tools-7-3-review-appendix": {
     "from": "s-vp24dqydygztqbt",
@@ -7162,7 +7194,11 @@
         "ruling": "The words \"a part of the base specification\" were replaced by \"a folder of the base specification\", and the words that name the same thing in the same sentences by \"folder\", to carry out the owner's choice of answer A in group 5 («А», 2026-11-24). The node's meaning does not change, so the node stays agreed.",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5b (review.ts: the review runs where any of the four judgements is due — code that the commit adds, changes or removes, tests included; a comment that it adds or changes; an Implementation-Needs-No-Change trailer; an approval it adds of a node of the technical appendix with an implements link to a rule of the base specification; every file that sheriff types writes, the project's generators' included, is left out and only those the commit changes are named, the bindings file kept; the reviewer is given the wording of each node (title, text, reason, examples, the fields of its kind), each changed symbol, file bound as a whole, code outside every symbol and test whole with its lines and SpecTags, each changed comment with the code it describes, each trailer rule's wording before and after with its bound code and tests, and each approved appendix node with the base rules bearing on it; findings on a statement are disregarded while the specification is a draft; code.ts reads each file's comments and readCommit names the changed ones; the decisions of 2026-11-05 moved to s-rd9nftptjuz6bwv; s-4bwa4zepd4nwcv8 records what a rule in no section takes)"
+    }
   },
   "new:tools-9-no-change-trailer": {
     "location": "tools 9 (new, after the new section \"SpecTags in the code and the tests\")",
@@ -7233,7 +7269,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 4, batch 4b (message.ts rewritten: the message must contain the sid of each node to which a SpecTag binds the code, other than tests, that the commit adds or changes, symbols, the code outside every symbol and files bound as a whole, a merge counting only what differs from every parent; git's comment lines by core.commentChar or core.commentString and the scissors line with everything after it are left out; noChangeTrailers reads the trailers through git interpret-trailers --parse; the refusals of a sid naming no node, a header or a section are gone; changedTags counts each file's own code)"
+    }
   },
   "new:tools-10-section": {
     "location": "tools 10 (new section, in place of the node \"Who runs the reviewer\")",
@@ -7415,7 +7455,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5c (tests retagged: the runners' starts to s-3wh8uhgn9jr2k74 and s-u2n5hwwqkb6zk4z, the environment and the npm script to s-avvnasjhsfkgajh, the tree of processes and review.minutes to s-wgedv32rdaqca9k; a test of s-avvnasjhsfkgajh runs a stand-in Claude Code CLI and finds an empty directory, sheriff review's system prompt, no variable of the session, and the flags that turn off settings, servers, commands, tools and sessions; a run of the real CLI with those flags found no CLAUDE.md, memory, rule, hook output or tool in its context, only the account's email and the CLI's environment block; the decisions of s-xr5xxa9cxf2mq5u moved to s-tnz9zgqx8c629a7, s-avvnasjhsfkgajh and s-68ds99w8wd67aae)"
+    }
   },
   "new:tools-10-verdict": {
     "from": "s-xr5xxa9cxf2mq5u",
@@ -7503,7 +7547,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5a (review.ts: the verdict's findings hold nodes, problem, judgement, file and line, file and line null where none, every property required; a pass may list findings on comments only, which are warnings, and a refusal lists at least one finding of another judgement; sheriff review exits with a refusal only for findings that are not warnings; an empty setting passes no flag to either runner; runCli runs the CLI under a watchdog that ends the whole tree of its processes at the limit, taskkill /T on Windows, the process group elsewhere; the todo of 2026-11-06 on s-xr5xxa9cxf2mq5u is removed)"
+    }
   },
   "new:tools-10-start": {
     "from": "s-xr5xxa9cxf2mq5u",
@@ -7691,7 +7739,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5c (tests retagged: the runners' starts to s-3wh8uhgn9jr2k74 and s-u2n5hwwqkb6zk4z, the environment and the npm script to s-avvnasjhsfkgajh, the tree of processes and review.minutes to s-wgedv32rdaqca9k; a test of s-avvnasjhsfkgajh runs a stand-in Claude Code CLI and finds an empty directory, sheriff review's system prompt, no variable of the session, and the flags that turn off settings, servers, commands, tools and sessions; a run of the real CLI with those flags found no CLAUDE.md, memory, rule, hook output or tool in its context, only the account's email and the CLI's environment block; the decisions of s-xr5xxa9cxf2mq5u moved to s-tnz9zgqx8c629a7, s-avvnasjhsfkgajh and s-68ds99w8wd67aae)"
+    }
   },
   "new:tools-10-limit": {
     "from": "s-xr5xxa9cxf2mq5u",
@@ -7759,7 +7811,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5a (review.ts: the verdict's findings hold nodes, problem, judgement, file and line, file and line null where none, every property required; a pass may list findings on comments only, which are warnings, and a refusal lists at least one finding of another judgement; sheriff review exits with a refusal only for findings that are not warnings; an empty setting passes no flag to either runner; runCli runs the CLI under a watchdog that ends the whole tree of its processes at the limit, taskkill /T on Windows, the process group elsewhere; the todo of 2026-11-06 on s-xr5xxa9cxf2mq5u is removed)"
+    }
   },
   "new:tools-10-claude": {
     "from": "s-xr5xxa9cxf2mq5u",
@@ -7823,7 +7879,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5c (tests retagged: the runners' starts to s-3wh8uhgn9jr2k74 and s-u2n5hwwqkb6zk4z, the environment and the npm script to s-avvnasjhsfkgajh, the tree of processes and review.minutes to s-wgedv32rdaqca9k; a test of s-avvnasjhsfkgajh runs a stand-in Claude Code CLI and finds an empty directory, sheriff review's system prompt, no variable of the session, and the flags that turn off settings, servers, commands, tools and sessions; a run of the real CLI with those flags found no CLAUDE.md, memory, rule, hook output or tool in its context, only the account's email and the CLI's environment block; the decisions of s-xr5xxa9cxf2mq5u moved to s-tnz9zgqx8c629a7, s-avvnasjhsfkgajh and s-68ds99w8wd67aae)"
+    }
   },
   "new:tools-10-codex": {
     "from": "s-xr5xxa9cxf2mq5u",
@@ -7924,7 +7984,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5c (tests retagged: the runners' starts to s-3wh8uhgn9jr2k74 and s-u2n5hwwqkb6zk4z, the environment and the npm script to s-avvnasjhsfkgajh, the tree of processes and review.minutes to s-wgedv32rdaqca9k; a test of s-avvnasjhsfkgajh runs a stand-in Claude Code CLI and finds an empty directory, sheriff review's system prompt, no variable of the session, and the flags that turn off settings, servers, commands, tools and sessions; a run of the real CLI with those flags found no CLAUDE.md, memory, rule, hook output or tool in its context, only the account's email and the CLI's environment block; the decisions of s-xr5xxa9cxf2mq5u moved to s-tnz9zgqx8c629a7, s-avvnasjhsfkgajh and s-68ds99w8wd67aae)"
+    }
   },
   "new:tools-10-settings": {
     "from": "s-xr5xxa9cxf2mq5u",
@@ -8069,7 +8133,11 @@
         "date": "2026-11-25",
         "change": "Gained an `implements` link to the new rule on who chooses an agent's model and reasoning effort (s-8f6gw8c265cnj2n), proposal 3.2 of the questions about the base specification, agreed on the owner's behalf on 2026-11-25."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5a (review.ts: the verdict's findings hold nodes, problem, judgement, file and line, file and line null where none, every property required; a pass may list findings on comments only, which are warnings, and a refusal lists at least one finding of another judgement; sheriff review exits with a refusal only for findings that are not warnings; an empty setting passes no flag to either runner; runCli runs the CLI under a watchdog that ends the whole tree of its processes at the limit, taskkill /T on Windows, the process group elsewhere; the todo of 2026-11-06 on s-xr5xxa9cxf2mq5u is removed)"
+    }
   },
   "new:tools-8-section": {
     "location": "tools 8 (new section, in place of the node \"The SpecTag, and how a symbol carries it\")",
@@ -8271,7 +8339,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3a (code.ts reads the SpecTags of the code outside every symbol in the file's first comment, of a file in JSON Schema through languages/json-schema.json and the grammar of JSON, and of a file bound as a whole at its start; refuses a text opening with @spec in neither form and @spec none beside another SpecTag; carries only @spec none down a run of re-exports; bindings.ts reads sheriff.bindings.json, which binding refuses where it is not valid JSON, not of its form, or names no file; lists.ts reads the formats without comments from project.json and the files of RuntimeChecks as code). Left to 3c: the refusals only for what a commit adds or changes, and the kinds a test may name; the bindings file in message.ts goes with s-qqs2svksmjct753"
+    }
   },
   "new:tools-8-symbol": {
     "from": "s-5z5gnu7pahr82xp",
@@ -8378,7 +8450,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3a (code.ts reads the SpecTags of the code outside every symbol in the file's first comment, of a file in JSON Schema through languages/json-schema.json and the grammar of JSON, and of a file bound as a whole at its start; refuses a text opening with @spec in neither form and @spec none beside another SpecTag; carries only @spec none down a run of re-exports; bindings.ts reads sheriff.bindings.json, which binding refuses where it is not valid JSON, not of its form, or names no file; lists.ts reads the formats without comments from project.json and the files of RuntimeChecks as code). Left to 3c: the refusals only for what a commit adds or changes, and the kinds a test may name; the bindings file in message.ts goes with s-qqs2svksmjct753"
+    }
   },
   "new:tools-8-file-start": {
     "from": "s-5z5gnu7pahr82xp",
@@ -8480,7 +8556,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3a (code.ts reads the SpecTags of the code outside every symbol in the file's first comment, of a file in JSON Schema through languages/json-schema.json and the grammar of JSON, and of a file bound as a whole at its start; refuses a text opening with @spec in neither form and @spec none beside another SpecTag; carries only @spec none down a run of re-exports; bindings.ts reads sheriff.bindings.json, which binding refuses where it is not valid JSON, not of its form, or names no file; lists.ts reads the formats without comments from project.json and the files of RuntimeChecks as code). Left to 3c: the refusals only for what a commit adds or changes, and the kinds a test may name; the bindings file in message.ts goes with s-qqs2svksmjct753"
+    }
   },
   "new:tools-8-bindings": {
     "location": "tools 8.4 (new)",
@@ -8569,7 +8649,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3a (code.ts reads the SpecTags of the code outside every symbol in the file's first comment, of a file in JSON Schema through languages/json-schema.json and the grammar of JSON, and of a file bound as a whole at its start; refuses a text opening with @spec in neither form and @spec none beside another SpecTag; carries only @spec none down a run of re-exports; bindings.ts reads sheriff.bindings.json, which binding refuses where it is not valid JSON, not of its form, or names no file; lists.ts reads the formats without comments from project.json and the files of RuntimeChecks as code). Left to 3c: the refusals only for what a commit adds or changes, and the kinds a test may name; the bindings file in message.ts goes with s-qqs2svksmjct753"
+    }
   },
   "s-zrsc6asgmhv8tnc": {
     "location": "tools 8.5 (moved from tools 9 into the new section)",
@@ -8686,7 +8770,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (the pytest plugin's tests already carry s-zrsc6asgmhv8tnc in their mark, and the decision of 2026-10-27 is on the node)"
+    }
   },
   "s-9rtrj24myzjvshu": {
     "location": "tools 7.2.2",
@@ -8859,7 +8947,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "new:tools-7-2-no-node": {
     "from": "s-9rtrj24myzjvshu",
@@ -8955,7 +9047,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "new:tools-7-2-outside": {
     "from": "s-j9r8z4xdrfkfs47",
@@ -9095,7 +9191,11 @@
         "date": "2026-11-25",
         "change": "\"without a SpecTag\" became \"that no SpecTag binds\", as in rule 9.5 (s-kkbqcb9xrpaepwn) under the owner's rulings of 2026-11-17 on rows 10.1.26 and 10.1.26a. Change 1.4 of the questions about the base specification, made together with proposal 2.6."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "s-utf4mbt7ref8g9c": {
     "location": "tools 7.2.4",
@@ -9234,7 +9334,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "new:tools-7-2-rule-test": {
     "from": "s-utf4mbt7ref8g9c",
@@ -9362,7 +9466,11 @@
         "ruling": "The owner agreed to the group («согласен», in answer to «Согласны с группой 2?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "proposal:s-nyh9yk22ba6g77q": {
     "question": "None: carries out rules 1.6.1 and 9.1 and the agreed reason of 10.4, shown to the owner as a proposal (the coordinator's ruling on review-g2-a.md)",
@@ -9592,7 +9700,11 @@
         "date": "2026-11-25",
         "change": "\"without a SpecTag\" became \"that no SpecTag binds\", as in rule 9.5 (s-kkbqcb9xrpaepwn) under the owner's rulings of 2026-11-17 on rows 10.1.26 and 10.1.26a. Change 1.4 of the questions about the base specification, made together with proposal 2.6."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 6, batch 6a (sheriff untagged in binding.ts and cli.ts; validate refuses, in the repository where the guidelines are written, a link from a node of spec.json to a node of an extension of the guidelines; the todo of row 10.1.20a removed)"
+    }
   },
   "s-j9r8z4xdrfkfs47": {
     "location": "tools 7.2.3",
@@ -9803,7 +9915,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6a (the schema composed from the extension files; a missing chosen extension refused by validate, binding, reindex and guard)"
+    }
   },
   "s-2x58az67bm6cxq2": {
     "location": "tools 7.2.1",
@@ -9956,7 +10072,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3b (src/versions.ts compares the units of a file, symbols, tests and the file's own code, by their syntax trees with comments left out, or by their text where either version has a syntax error, and by their SpecTags; a renamed test with its SpecTag and body kept stays the same test; code.ts gives each symbol, test and file its shape; the grammars of YAML, CSS, SQL and Bash are kept in vendor/grammars; readCommit compares each changed file and each file whose entry in the bindings file changes, and tells what the commit removes; guard and the reviewer use the same comparison; codeChanges and the renames forgiven across lines are gone)"
+    }
   },
   "new:tools-7-2-changed-line": {
     "from": "s-2x58az67bm6cxq2",
@@ -10082,7 +10202,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3b (src/versions.ts compares the units of a file, symbols, tests and the file's own code, by their syntax trees with comments left out, or by their text where either version has a syntax error, and by their SpecTags; a renamed test with its SpecTag and body kept stays the same test; code.ts gives each symbol, test and file its shape; the grammars of YAML, CSS, SQL and Bash are kept in vendor/grammars; readCommit compares each changed file and each file whose entry in the bindings file changes, and tells what the commit removes; guard and the reviewer use the same comparison; codeChanges and the renames forgiven across lines are gone)"
+    }
   },
   "new:tools-7-2-draft-rule": {
     "from": "s-2x58az67bm6cxq2",
@@ -10170,7 +10294,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "s-t383grkn3q68dpf": {
     "location": "tools 7.2.5",
@@ -10248,7 +10376,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 2, batch 2b (sheriff reindex writes meta.code and meta.tests from the SpecTags above symbols, in tests, and in the code and tests of the project's own checks and generators, cells included; binding builds the same lists through lists.ts and no longer compares symbols; symbols left meta.code in node.schema.json). The SpecTags at the start of a file and the entries of sheriff.bindings.json reach the lists through boundLists in lists.ts once new:tools-8-file-start and new:tools-8-bindings are done"
+    }
   },
   "s-5hb9k2e34dgn284": {
     "location": "tools 7.2.6",
@@ -10368,7 +10500,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3d (binding.ts listFindings: with jsonSchema, each value validated with Ajv 2020 against the schema at the pointer, its file added whole so that its references resolve, and each value of an enum reached directly or through a local $ref listed; with valueList, exactly the string literals of the symbol; a list with an object member lacking the property is left unchecked; a missing file, place or symbol is named. ownKindFindings: the kinds of project.schema.json against the members of the lists of the rules of project.json that refine s-vsh384ybt4w25a2, in their last approved wordings, by name and needsCode)"
+    }
   },
   "new:tools-7-2-own-kinds": {
     "from": "s-5hb9k2e34dgn284",
@@ -10474,7 +10610,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3d (binding.ts listFindings: with jsonSchema, each value validated with Ajv 2020 against the schema at the pointer, its file added whole so that its references resolve, and each value of an enum reached directly or through a local $ref listed; with valueList, exactly the string literals of the symbol; a list with an object member lacking the property is left unchecked; a missing file, place or symbol is named. ownKindFindings: the kinds of project.schema.json against the members of the lists of the rules of project.json that refine s-vsh384ybt4w25a2, in their last approved wordings, by name and needsCode)"
+    }
   },
   "s-cdachayybfvg4na": {
     "location": "tools 7.1.19",
@@ -10748,7 +10888,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 2, batch 2b (sheriff reindex writes meta.code and meta.tests from the SpecTags above symbols, in tests, and in the code and tests of the project's own checks and generators, cells included; binding builds the same lists through lists.ts and no longer compares symbols; symbols left meta.code in node.schema.json). The SpecTags at the start of a file and the entries of sheriff.bindings.json reach the lists through boundLists in lists.ts once new:tools-8-file-start and new:tools-8-bindings are done"
+    }
   },
   "proposal:s-9j2mmnuuwmx5ksn": {
     "question": "None: carries out the owner's ruling of 2026-11-24 on edits to comments and to whitespace",
@@ -11074,7 +11218,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3a (code.ts reads the SpecTags of the code outside every symbol in the file's first comment, of a file in JSON Schema through languages/json-schema.json and the grammar of JSON, and of a file bound as a whole at its start; refuses a text opening with @spec in neither form and @spec none beside another SpecTag; carries only @spec none down a run of re-exports; bindings.ts reads sheriff.bindings.json, which binding refuses where it is not valid JSON, not of its form, or names no file; lists.ts reads the formats without comments from project.json and the files of RuntimeChecks as code). Left to 3c: the refusals only for what a commit adds or changes, and the kinds a test may name; the bindings file in message.ts goes with s-qqs2svksmjct753"
+    }
   },
   "proposal:s-gb8s9657a65hqmv-g3": {
     "question": "None: carries out the owner's rulings of 2026-11-13 on row 10.1.35, together with the proposal for rule 8.4",
@@ -11391,7 +11539,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 2, batch 2a (the reindex rewrites declaredIn as jsonSchema or valueList, renames declaration, removes supersedes links, names each file it rewrites; binding reads jsonSchema and valueList)"
+    }
   },
   "proposal:row-10-1-35a": {
     "question": "None: carries out rule 8.4 (s-hhnahzmhahf8jht) and the owner's ruling of 2026-11-10 on it, so that a row of the main table of checks states that check",
@@ -12103,7 +12255,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5a (review.ts: the verdict's findings hold nodes, problem, judgement, file and line, file and line null where none, every property required; a pass may list findings on comments only, which are warnings, and a refusal lists at least one finding of another judgement; sheriff review exits with a refusal only for findings that are not warnings; an empty setting passes no flag to either runner; runCli runs the CLI under a watchdog that ends the whole tree of its processes at the limit, taskkill /T on Windows, the process group elsewhere; the todo of 2026-11-06 on s-xr5xxa9cxf2mq5u is removed)"
+    }
   },
   "new:tools-7-3-review-comments": {
     "location": "tools 7.3.4d (new, after \"The judgement on a node of the technical appendix that a commit approves\")",
@@ -12241,7 +12397,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 3?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5b (review.ts: the review runs where any of the four judgements is due — code that the commit adds, changes or removes, tests included; a comment that it adds or changes; an Implementation-Needs-No-Change trailer; an approval it adds of a node of the technical appendix with an implements link to a rule of the base specification; every file that sheriff types writes, the project's generators' included, is left out and only those the commit changes are named, the bindings file kept; the reviewer is given the wording of each node (title, text, reason, examples, the fields of its kind), each changed symbol, file bound as a whole, code outside every symbol and test whole with its lines and SpecTags, each changed comment with the code it describes, each trailer rule's wording before and after with its bound code and tests, and each approved appendix node with the base rules bearing on it; findings on a statement are disregarded while the specification is a draft; code.ts reads each file's comments and readCommit names the changed ones; the decisions of 2026-11-05 moved to s-rd9nftptjuz6bwv; s-4bwa4zepd4nwcv8 records what a rule in no section takes)"
+    }
   },
   "proposal:new-spec-1-6-checks": {
     "question": "None: carries out rule 7.3.3 and items 11 and 12 of group 2's list of changes outside the group, which fell due when rule 1.6.1 changed",
@@ -13022,7 +13182,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3g (sheriff citations reads every file that the repository keeps outside specs/, other than the bindings file, binary files and the listed fixtures, read in the last approved wording; looks sids up in the model, not the archive; leaves the sid of a SpecTag in the system's code to s-36x8amvunmv2kp5; refuses a SpecTag outside the system's code that names a node that is not a rule of the guidelines; the todo of row 10.1.46 on the archive is removed; locations are numbered from the folders of the base and the first top-level node of each file of the guidelines and the appendices, and a location continued by -, / or . with a letter or digit is left alone; the placeholder sid in reindex.ts is written in two pieces; two promotional cards lost their citations of removed rules and were rendered again)"
+    }
   },
   "s-m8nmfsxkcfu7cjp": {
     "location": "tools 7.3.1",
@@ -13173,7 +13337,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3g (sheriff citations reads every file that the repository keeps outside specs/, other than the bindings file, binary files and the listed fixtures, read in the last approved wording; looks sids up in the model, not the archive; leaves the sid of a SpecTag in the system's code to s-36x8amvunmv2kp5; refuses a SpecTag outside the system's code that names a node that is not a rule of the guidelines; the todo of row 10.1.46 on the archive is removed; locations are numbered from the folders of the base and the first top-level node of each file of the guidelines and the appendices, and a location continued by -, / or . with a letter or digit is left alone; the placeholder sid in reindex.ts is written in two pieces; two promotional cards lost their citations of removed rules and were rendered again)"
+    }
   },
   "s-dbk2vyeg8z5jxna": {
     "location": "tools 7.2.8",
@@ -13339,7 +13507,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3e (generators.ts: a project's generator gets the model in the last approved wordings, sections and headers as the files hold them; it runs only while its rule is approved, except for binding, which runs it to learn its paths; a path outside the system's code, sids outside the model and output of the wrong form are refused; clashes() refuses a path that would get two texts; binding compares each file of a generator whose rule is a draft with the commit's parent; the comparison of an entry of the bindings file for a file of RuntimeChecks lapsed, as the bq says)"
+    }
   },
   "s-txbwsthdqhvyzd2": {
     "location": "tools 7.3.3a (moved from tools 7.2.9, after “The nodes that a commit message must name”)",
@@ -13579,7 +13751,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 4, batch 4c (message.ts lagging(): while the specification is approved, refuses an approved rule whose approved wording the commit changes, its last approval in the parent compared by fingerprint, with tests bound before and none touched, and one whose wording or tests change with code bound before and none touched, through chains of implements links, unless a trailer Implementation-Needs-No-Change names it; in a merge the wording counts as changed only where it differs from every parent's; the drift report of binding.ts and onlySpecTagged are gone; the todos of row 10.1.49 are removed)"
+    }
   },
   "s-jgejd5rpd9d43pd": {
     "location": "tools 7.2.10",
@@ -13808,7 +13984,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3f (binding.ts implementationFindings: only while the specification is approved, refuses each approved rule that the commit includes and that lacks code, a test that runs, or both; the commit includes a rule whose approval it adds, whose bound code or tests it adds, changes or removes, read in the parent and after the commit, that loses an implements link through which code or tests were bound in the parent, or that it takes out of the exceptions; an exemption counts only from an approved node; every rule kind, cells, files bound as a whole and generated files count; the report of every unimplemented rule in a draft is gone)"
+    }
   },
   "s-qqs2svksmjct753": {
     "location": "tools 7.3.3",
@@ -13925,7 +14105,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 4, batch 4b (message.ts rewritten: the message must contain the sid of each node to which a SpecTag binds the code, other than tests, that the commit adds or changes, symbols, the code outside every symbol and files bound as a whole, a merge counting only what differs from every parent; git's comment lines by core.commentChar or core.commentString and the scissors line with everything after it are left out; noChangeTrailers reads the trailers through git interpret-trailers --parse; the refusals of a sid naming no node, a header or a section are gone; changedTags counts each file's own code)"
+    }
   },
   "s-b6qdtghnyha3fhk": {
     "location": "tools 7.3.5",
@@ -14063,7 +14247,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 4.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 6, batch 6c (push-mode.ts decides ref by ref from that commit's approval entries and its own guidelines' last approved wording, links from the commit that added the approval; pre-push runs no test for a push that only deletes refs and names each ref's reasons)"
+    }
   },
   "proposal:new-tools-1-project-g4": {
     "question": "None: carries out row 10.1.44, whose check depends on whether the project's own guidelines name a push as the moment at which the tests run, and rule 1.3.2, under which a draft rule is not implemented",
@@ -14966,7 +15154,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 5.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-c2r9jndrjbtbsv6": {
     "location": "tools 7.1.16",
@@ -15183,7 +15375,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 5.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-5nf87c3e3jg9v7c": {
     "location": "tools 7.1.18",
@@ -15410,7 +15606,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "new:tools-7-1-enum-values": {
     "from": "s-5nf87c3e3jg9v7c",
@@ -15541,7 +15741,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-ezq8csd433vj6fj": {
     "location": "tools 7.1.14",
@@ -15681,7 +15885,11 @@
         "ruling": "The owner agreed to the group («А», in answer to «Выбираете А? Если да и замечаний к узлам нет, этим же ответом вы согласуете всю группу 5.»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "new:tools-11-section": {
     "location": "tools 11 (new section, in place of the node “How an approval is recorded”)",
@@ -15853,7 +16061,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 4, batch 4a (approvals.ts: lastApproval gives a node's last approval as s-v4qus7raqnwzneb defines it, and approved-wording.ts starts from it; readApprovals and migrateApprovals put an earlier release's confirmations after the journal's lines; sheriff approve refuses a sid that no kept file holds, naming a node of the guidelines or of a chosen extension that the project takes from the plugin; approving a TableRule approves the nodes in its cells after it, in the order of the rows and the columns; its withdrawal withdraws only the table's own wordings; the tests moved to s-upkur92ry6332y5, s-xybjqp2rxh8gszf and s-gb8s9657a65hqmv as the note says)"
+    }
   },
   "new:tools-11-fingerprint": {
     "location": "tools 11.2 (new)",
@@ -16195,7 +16407,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 4, batch 4a (approvals.ts: lastApproval gives a node's last approval as s-v4qus7raqnwzneb defines it, and approved-wording.ts starts from it; readApprovals and migrateApprovals put an earlier release's confirmations after the journal's lines; sheriff approve refuses a sid that no kept file holds, naming a node of the guidelines or of a chosen extension that the project takes from the plugin; approving a TableRule approves the nodes in its cells after it, in the order of the rows and the columns; its withdrawal withdraws only the table's own wordings; the tests moved to s-upkur92ry6332y5, s-xybjqp2rxh8gszf and s-gb8s9657a65hqmv as the note says)"
+    }
   },
   "new:tools-11-withdraw": {
     "location": "tools 11.4 (new)",
@@ -16320,7 +16536,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 4, batch 4a (approvals.ts: lastApproval gives a node's last approval as s-v4qus7raqnwzneb defines it, and approved-wording.ts starts from it; readApprovals and migrateApprovals put an earlier release's confirmations after the journal's lines; sheriff approve refuses a sid that no kept file holds, naming a node of the guidelines or of a chosen extension that the project takes from the plugin; approving a TableRule approves the nodes in its cells after it, in the order of the rows and the columns; its withdrawal withdraws only the table's own wordings; the tests moved to s-upkur92ry6332y5, s-xybjqp2rxh8gszf and s-gb8s9657a65hqmv as the note says)"
+    }
   },
   "new:tools-2-entries": {
     "location": "tools 2.10a (new, after “The settings that only an owner of the specification changes”)",
@@ -16612,7 +16832,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 6, batch 6b (src/settings.ts and sheriff settings: the three changes, owners only, entries appended only where the value changes; the checks before an approval on a copy of the working tree as one commit, with --confirm; the refusals of strict on and of extension off; validate.ts exports readAgainstSchema and strictOwnChecks)"
+    }
   },
   "new:tools-2-strict": {
     "location": "tools 2.10c (new, after “Approving the specification”)",
@@ -16725,7 +16949,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 6, batch 6b (src/settings.ts and sheriff settings: the three changes, owners only, entries appended only where the value changes; the checks before an approval on a copy of the working tree as one commit, with --confirm; the refusals of strict on and of extension off; validate.ts exports readAgainstSchema and strictOwnChecks)"
+    }
   },
   "new:tools-2-extension-off": {
     "location": "tools 2.10d (new, after “Turning the `strict` flag on”)",
@@ -16864,7 +17092,11 @@
         "ruling": "The owner agreed to the group («ок», in answer to «Согласны с группой 6?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 6, batch 6b (src/settings.ts and sheriff settings: the three changes, owners only, entries appended only where the value changes; the checks before an approval on a copy of the working tree as one commit, with --confirm; the refusals of strict on and of extension off; validate.ts exports readAgainstSchema and strictOwnChecks)"
+    }
   },
   "s-7unxytshhc4md54": {
     "location": "tools 3",
@@ -17221,7 +17453,11 @@
         "date": "2026-11-25",
         "change": "Gained an `implements` link to the new rule on setting a repository up and taking SpecSheriff out of it (s-57g82ucqz3g834p), proposal 3.1 of the questions about the base specification, which the owner agreed to on 2026-11-25."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (sheriff init names what an existing settings file lacks and the agents from AGENTS; sheriff remove leaves sheriff.bindings.json and names it; two test names lose their counts; the draft rule on when the tests run was already written)"
+    }
   },
   "proposal:s-gb8s9657a65hqmv-g6": {
     "question": "None: carries out rule 1.6.4 and row 10.1.18 for a project that an earlier release set up, as `sheriff init` now does (group 6), and brings two sentences into line with the rules on citations and on words that point back",
@@ -17627,7 +17863,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 2, batch 2a (the reindex rewrites declaredIn as jsonSchema or valueList, renames declaration, removes supersedes links, names each file it rewrites; binding reads jsonSchema and valueList)"
+    }
   },
   "proposal:s-7pk89t8z6wymmj9-g6": {
     "question": "None: carries out rule 10.7 and its second example, under the owner's ruling of 2026-11-04 on rule 10.8 that the rule listing a check decides whether its failure is refused or reported",
@@ -18048,7 +18288,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 7, batch 7a (show.ts: a node in a cell headed by its location alone with its column, group and row's text cells before its text; a TableRule's groups as tables, a node's cell holding its location and text, line breaks as <br>, the cells' nodes after its children; nested gathered values tested; show finds cell nodes, its tests moved to s-2dhbqy43tcm6qj2, the guide's test to s-jk8v3srrved7ram)"
+    }
   },
   "new:tools-5-export": {
     "location": "tools 5a (new, after “How a node is written in Markdown”)",
@@ -18181,7 +18425,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 7, batch 7b (sheriff markdown and sheriff map only with the Views extension; the export of taken files; the map's four branches and cells; domainDiagram rows, labels and arrows; the hooks run markdown and map only with Views)"
+    }
   },
   "new:tools-5-show": {
     "location": "tools 5b (new, after “Writing the human-readable export”)",
@@ -18262,7 +18510,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 7, batch 7a (show.ts: a node in a cell headed by its location alone with its column, group and row's text cells before its text; a TableRule's groups as tables, a node's cell holding its location and text, line breaks as <br>, the cells' nodes after its children; nested gathered values tested; show finds cell nodes, its tests moved to s-2dhbqy43tcm6qj2, the guide's test to s-jk8v3srrved7ram)"
+    }
   },
   "s-rpv4fkdqqguptqd": {
     "location": "tools 4",
@@ -18508,7 +18760,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 7, batch 7b (sheriff markdown and sheriff map only with the Views extension; the export of taken files; the map's four branches and cells; domainDiagram rows, labels and arrows; the hooks run markdown and map only with Views)"
+    }
   },
   "new:tools-4-diagram": {
     "location": "tools 4a (new, after “Building the map”)",
@@ -18667,7 +18923,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 7, batch 7b (sheriff markdown and sheriff map only with the Views extension; the export of taken files; the map's four branches and cells; domainDiagram rows, labels and arrows; the hooks run markdown and map only with Views)"
+    }
   },
   "s-pvzms7d8kxb8dk2": {
     "location": "tools 17",
@@ -18803,7 +19063,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-suv42g8r3ra2h6b": {
     "location": "tools 18",
@@ -19012,7 +19276,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-nk8td3ez58gahc4": {
     "location": "tools 19",
@@ -19178,7 +19446,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "s-4npdup7mjkva69y": {
     "location": "tools 20",
@@ -19386,7 +19658,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-f5rz6b7dhxejjts-g7": {
     "question": "None: a technical replacement that follows the split of “What the export, the guide and `sheriff show` write of a node” (item 51), and the citations that rule 7.2.7 requires in the sentences that the owner agreed to, as the owner's rule “An agreed node is brought into line with the rules when it changes, never in a sweep” asks",
@@ -19672,7 +19948,11 @@
         "date": "2026-11-25",
         "change": "\"without a SpecTag\" became \"that no SpecTag binds\", as in rule 9.5 (s-kkbqcb9xrpaepwn) under the owner's rulings of 2026-11-17 on rows 10.1.26 and 10.1.26a. Change 1.4 of the questions about the base specification, made together with proposal 2.6."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 7, batch 7c (no code: the citations of the rule on the commands were written at the move; the project's validator of formats is configured by the project, and the SpecSheriff tools run no RuntimeChecks)"
+    }
   },
   "proposal:s-3anv9qcmx8pwp2w-g7": {
     "question": "None: a technical replacement; the node now cites item 56 for the form of `identifierOf`, as group 5's notes ask",
@@ -19793,7 +20073,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-ezq8csd433vj6fj-g7": {
     "question": "None: a technical replacement; the node now cites item 56 for the forms of `$ref` and `identifierOf`, as group 5's notes ask",
@@ -19934,7 +20218,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-gb8s9657a65hqmv-g7": {
     "question": "None: carries out the mapping of `unknown` that the owner accepted with the page on RecordType and JSON Schema on 2026-11-19, which the pairs of `if` and `then` of item 55 need",
@@ -20349,7 +20637,11 @@
         "date": "2026-11-25",
         "change": "`x-enumSource` became `enumSource` wherever the draft names it, in its wording, its stage-3 note or the tests to write, under decision R8 of the page on RecordType and JSON Schema that the owner accepted on 2026-11-19 (question 4.7 of the questions about the base specification). The decisions and the change fields, which record earlier states, keep the old name."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-dbk2vyeg8z5jxna-g7": {
     "question": "None: the entry in the bindings file that `sheriff types` now writes (item 53) is generated from the nodes, so the node of row 10.1.39a also compares it",
@@ -20520,7 +20812,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3e (generators.ts: a project's generator gets the model in the last approved wordings, sections and headers as the files hold them; it runs only while its rule is approved, except for binding, which runs it to learn its paths; a path outside the system's code, sids outside the model and output of the wrong form are refused; clashes() refuses a path that would get two texts; binding compares each file of a generator whose rule is a draft with the commit's parent; the comparison of an entry of the bindings file for a file of RuntimeChecks lapsed, as the bq says)"
+    }
   },
   "new:tools-17-bindings-entry": {
     "location": "tools 17a (new, after “Where the types and RuntimeChecks generated from the RecordTypes are written”)",
@@ -20605,7 +20901,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:new-tools-1-settings-g7": {
     "question": "None: the files of RuntimeChecks are read for SpecTags, so that the entry in the bindings file that `sheriff types` now writes for each of them (item 53) is accepted",
@@ -20764,7 +21064,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3a (code.ts reads the SpecTags of the code outside every symbol in the file's first comment, of a file in JSON Schema through languages/json-schema.json and the grammar of JSON, and of a file bound as a whole at its start; refuses a text opening with @spec in neither form and @spec none beside another SpecTag; carries only @spec none down a run of re-exports; bindings.ts reads sheriff.bindings.json, which binding refuses where it is not valid JSON, not of its form, or names no file; lists.ts reads the formats without comments from project.json and the files of RuntimeChecks as code). Left to 3c: the refusals only for what a commit adds or changes, and the kinds a test may name; the bindings file in message.ts goes with s-qqs2svksmjct753"
+    }
   },
   "proposal:s-vp24dqydygztqbt-g7": {
     "question": "None: `sheriff types` now also writes an entry into the bindings file (item 53), so the files that the review leaves out are those that `sheriff types` generates",
@@ -20893,7 +21197,11 @@
         "ruling": "The owner agreed to the group and to option A in both questions («А.», in answer to «Согласны с группой 7 и с вариантом А в обоих вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5b (review.ts: the review runs where any of the four judgements is due — code that the commit adds, changes or removes, tests included; a comment that it adds or changes; an Implementation-Needs-No-Change trailer; an approval it adds of a node of the technical appendix with an implements link to a rule of the base specification; every file that sheriff types writes, the project's generators' included, is left out and only those the commit changes are named, the bindings file kept; the reviewer is given the wording of each node (title, text, reason, examples, the fields of its kind), each changed symbol, file bound as a whole, code outside every symbol and test whole with its lines and SpecTags, each changed comment with the code it describes, each trailer rule's wording before and after with its bound code and tests, and each approved appendix node with the base rules bearing on it; findings on a statement are disregarded while the specification is a draft; code.ts reads each file's comments and readCommit names the changed ones; the decisions of 2026-11-05 moved to s-rd9nftptjuz6bwv; s-4bwa4zepd4nwcv8 records what a rule in no section takes)"
+    }
   },
   "new:tools-17-validator": {
     "location": "tools 17b (new, after “The entry in the bindings file for a file of RuntimeChecks”)",
@@ -20956,7 +21264,11 @@
         "date": "2026-11-25",
         "change": "Gained an `implements` link to rule 12.4 (s-wxcmpbvy9bzkfj9), which already requires what the node states (change 1.2 of the questions about the base specification). A link changes no status."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 7, batch 7c (no code: the citations of the rule on the commands were written at the move; the project's validator of formats is configured by the project, and the SpecSheriff tools run no RuntimeChecks)"
+    }
   },
   "s-477gtdrkw34dzxw": {
     "location": "tools 6",
@@ -21192,7 +21504,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (the git hooks: the pre-commit order, the project's own tools in the scripts, the git hook without Node.js or tools, commit-message and review, the push comparison; the tests and decisions of s-477gtdrkw34dzxw moved and copied to their nodes)"
+    }
   },
   "new:tools-6-pre-commit": {
     "location": "tools 6a (new, after “The hooks”)",
@@ -21400,7 +21716,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (the git hooks: the pre-commit order, the project's own tools in the scripts, the git hook without Node.js or tools, commit-message and review, the push comparison; the tests and decisions of s-477gtdrkw34dzxw moved and copied to their nodes)"
+    }
   },
   "new:tools-6-push-compare": {
     "location": "tools 6b (new, after “The pre-commit hook”)",
@@ -21478,7 +21798,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (push-mode prints each commit meeting both conditions after the word run, and pre-push compares the working tree only with those; the two comparison tests moved to s-8a5eyy5n5hnsgrs, one rewritten with a draft branch pushed beside a main branch that moves on)"
+    }
   },
   "new:tools-6-hooks-on": {
     "location": "tools 6c (new, after “The working tree compared with what a push sends”)",
@@ -21578,7 +21902,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (the git hooks: the pre-commit order, the project's own tools in the scripts, the git hook without Node.js or tools, commit-message and review, the push comparison; the tests and decisions of s-477gtdrkw34dzxw moved and copied to their nodes)"
+    }
   },
   "new:tools-6-reviewer-settings": {
     "location": "tools 6d (new, after “Turning the git hooks on when a session starts”)",
@@ -21679,7 +22007,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (the git hooks: the pre-commit order, the project's own tools in the scripts, the git hook without Node.js or tools, commit-message and review, the push comparison; the tests and decisions of s-477gtdrkw34dzxw moved and copied to their nodes)"
+    }
   },
   "new:tools-6-after-edit": {
     "location": "tools 6e (new, after “The settings of each runner when a session starts”)",
@@ -21879,7 +22211,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8b (changed.mjs answers tags where only the files read for SpecTags differ; the after-edit hook then reindexes and runs the checks, and writes types, markdown and map only where specs/ or the settings differ or the reindex wrote a file)"
+    }
   },
   "s-st6td4mua9uqt9z": {
     "location": "tools 7.3.2",
@@ -22090,7 +22426,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8b (sheriff guard: the owner's lists in the settings, every kind of rule, every changed unit and bindings entry, a node named by file and location; Codex's JSON answers already tested)"
+    }
   },
   "s-n76wt2bkqdmh78x": {
     "location": "tools 16",
@@ -22269,7 +22609,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8b (sheriff guard: the owner's lists in the settings, every kind of rule, every changed unit and bindings entry, a node named by file and location; Codex's JSON answers already tested)"
+    }
   },
   "s-4mej6ccn7xu3d3p": {
     "location": "tools 12",
@@ -22439,7 +22783,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (the git hooks: the pre-commit order, the project's own tools in the scripts, the git hook without Node.js or tools, commit-message and review, the push comparison; the tests and decisions of s-477gtdrkw34dzxw moved and copied to their nodes)"
+    }
   },
   "s-n4m5zvh96yb299p": {
     "location": "tools 13",
@@ -22608,7 +22956,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (the git hooks: the pre-commit order, the project's own tools in the scripts, the git hook without Node.js or tools, commit-message and review, the push comparison; the tests and decisions of s-477gtdrkw34dzxw moved and copied to their nodes)"
+    }
   },
   "proposal:row-10-1-37b": {
     "question": "None: the row that the agreed row 10.1.37a, in its change field, said would be proposed together with “The hooks”, for the refusal with which a git hook refuses a commit or a push where the project's other own tools change files (rule 10.12, second step)",
@@ -22657,7 +23009,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8a (the row of table 10.1 that it proposed already holds: s-n4m5zvh96yb299p implements s-yn5tdx2bp4f5rq7, row 10.1.44)"
+    }
   },
   "s-zh2vcr3xjumppg5": {
     "location": "tools 14",
@@ -22857,7 +23213,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (both plugins already carried the extensions, their schemas and the appendix; the plugin tests split by skill; spec-init keeps its steps 2, 4 and 5 and spec-remove its steps 2 and 5; spec-settings written and given the Codex overlay; the decisions copied to the nodes of the skills, and the owner's ruling of 2026-11-18 recorded on spec-settings)"
+    }
   },
   "s-2pdy9gw2jrjvfb4": {
     "location": "tools 15",
@@ -22970,7 +23330,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (both plugins already carried the extensions, their schemas and the appendix; the plugin tests split by skill; spec-init keeps its steps 2, 4 and 5 and spec-remove its steps 2 and 5; spec-settings written and given the Codex overlay; the decisions copied to the nodes of the skills, and the owner's ruling of 2026-11-18 recorded on spec-settings)"
+    }
   },
   "new:tools-15-skills": {
     "location": "tools 15a (new, after “The plugin for Codex CLI”)",
@@ -23076,7 +23440,11 @@
         "date": "2026-11-25",
         "change": "Implements the new rule on who chooses an agent's model and reasoning effort (s-8f6gw8c265cnj2n) in place of rule 2.5 (s-bsya3febm6u64ab), as proposal 3.2 of the questions about the base specification says; it was agreed on the owner's behalf on 2026-11-25."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (both plugins already carried the extensions, their schemas and the appendix; the plugin tests split by skill; spec-init keeps its steps 2, 4 and 5 and spec-remove its steps 2 and 5; spec-settings written and given the Codex overlay; the decisions copied to the nodes of the skills, and the owner's ruling of 2026-11-18 recorded on spec-settings)"
+    }
   },
   "new:tools-15-spec-init": {
     "location": "tools 15b (new, after “The skills of the SpecSheriff plugins”)",
@@ -23218,7 +23586,11 @@
         "date": "2026-11-25",
         "change": "Gained an `implements` link to the new rule on setting a repository up and taking SpecSheriff out of it (s-57g82ucqz3g834p), proposal 3.1 of the questions about the base specification, which the owner agreed to on 2026-11-25."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (both plugins already carried the extensions, their schemas and the appendix; the plugin tests split by skill; spec-init keeps its steps 2, 4 and 5 and spec-remove its steps 2 and 5; spec-settings written and given the Codex overlay; the decisions copied to the nodes of the skills, and the owner's ruling of 2026-11-18 recorded on spec-settings)"
+    }
   },
   "new:tools-15-spec-remove": {
     "location": "tools 15c (new, after “The skill `spec-init`”)",
@@ -23269,7 +23641,11 @@
         "date": "2026-11-25",
         "change": "Implements the new rule on setting a repository up and taking SpecSheriff out of it (s-57g82ucqz3g834p) in place of rule 2.5 (s-bsya3febm6u64ab), as proposal 3.1 of the questions about the base specification says; the owner agreed to it on 2026-11-25."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (both plugins already carried the extensions, their schemas and the appendix; the plugin tests split by skill; spec-init keeps its steps 2, 4 and 5 and spec-remove its steps 2 and 5; spec-settings written and given the Codex overlay; the decisions copied to the nodes of the skills, and the owner's ruling of 2026-11-18 recorded on spec-settings)"
+    }
   },
   "new:tools-15-spec-settings": {
     "location": "tools 15d (new, after “The skill `spec-remove`”)",
@@ -23348,7 +23724,11 @@
         "ruling": "The owner agreed to the group and to option A in all three questions («А», in answer to «Согласны с группой 8 и с вариантом А во всех трёх вопросах?»).",
         "type": "textual"
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 8, batch 8c (both plugins already carried the extensions, their schemas and the appendix; the plugin tests split by skill; spec-init keeps its steps 2, 4 and 5 and spec-remove its steps 2 and 5; spec-settings written and given the Codex overlay; the decisions copied to the nodes of the skills, and the owner's ruling of 2026-11-18 recorded on spec-settings)"
+    }
   },
   "proposal:s-ce24ynwabt5yx8h": {
     "question": "None: carries out the owner's choice of option A in the first question of group 7 (2026-11-25)",
@@ -26349,7 +26729,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out proposal 3.4 of the questions about the base specification, the new row of table 12.12 under which each `$ref` within a RecordType names a RecordType, which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-c2r9jndrjbtbsv6-bq": {
     "question": "None: carries out proposals 3.5 and 3.6 of the questions about the base specification (rule 12.6 and rows 12.12.6 and 12.12.7 on the fields that a RecordType variant adds, and the two new rows of table 12.12 on `additionalProperties` and `unevaluatedProperties`), which the owner agreed to on 2026-11-25",
@@ -26564,7 +26948,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out proposals 3.5 and 3.6 of the questions about the base specification (rule 12.6 and rows 12.12.6 and 12.12.7 on the fields that a RecordType variant adds, and the two new rows of table 12.12 on `additionalProperties` and `unevaluatedProperties`), which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "new:tools-7-1-recordtype-object": {
     "question": "None: carries out proposal 3.7 of the questions about the base specification, the new row of table 12.12 under which the `schema` of each RecordType other than a variant holds `\"type\": \"object\"`, which the owner agreed to on 2026-11-25",
@@ -26636,7 +27024,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out proposal 3.7 of the questions about the base specification, the new row of table 12.12 under which the `schema` of each RecordType other than a variant holds `\"type\": \"object\"`, which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:new-tools-11-fingerprint-bq": {
     "question": "None: carries out question 4.1 of the questions about the base specification, option A, under which a node's kind is part of the wording that an approval covers (s-5ah25f6gy99panq); the owner agreed to it on 2026-11-25",
@@ -27163,7 +27555,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out questions 4.3, option A, and 4.4, option B, of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3a (code.ts reads the SpecTags of the code outside every symbol in the file's first comment, of a file in JSON Schema through languages/json-schema.json and the grammar of JSON, and of a file bound as a whole at its start; refuses a text opening with @spec in neither form and @spec none beside another SpecTag; carries only @spec none down a run of re-exports; bindings.ts reads sheriff.bindings.json, which binding refuses where it is not valid JSON, not of its form, or names no file; lists.ts reads the formats without comments from project.json and the files of RuntimeChecks as code). Left to 3c: the refusals only for what a commit adds or changes, and the kinds a test may name; the bindings file in message.ts goes with s-qqs2svksmjct753"
+    }
   },
   "proposal:s-2x58az67bm6cxq2-bq": {
     "question": "None: carries out question 4.3 of the questions about the base specification, option A (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25",
@@ -27316,7 +27712,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.3 of the questions about the base specification, option A (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3b (src/versions.ts compares the units of a file, symbols, tests and the file's own code, by their syntax trees with comments left out, or by their text where either version has a syntax error, and by their SpecTags; a renamed test with its SpecTag and body kept stays the same test; code.ts gives each symbol, test and file its shape; the grammars of YAML, CSS, SQL and Bash are kept in vendor/grammars; readCommit compares each changed file and each file whose entry in the bindings file changes, and tells what the commit removes; guard and the reviewer use the same comparison; codeChanges and the renames forgiven across lines are gone)"
+    }
   },
   "proposal:s-weuyx98r7c923ab-bq": {
     "question": "None: carries out question 4.3 of the questions about the base specification, option A (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25",
@@ -27385,7 +27785,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.3 of the questions about the base specification, option A (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 6, batch 6a (sheriff untagged in binding.ts and cli.ts; validate refuses, in the repository where the guidelines are written, a link from a node of spec.json to a node of an extension of the guidelines; the todo of row 10.1.20a removed)"
+    }
   },
   "proposal:s-9rtrj24myzjvshu-bq": {
     "question": "None: carries out questions 4.3, option A, and 4.4, option B, of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25",
@@ -27540,7 +27944,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out questions 4.3, option A, and 4.4, option B, of the questions about the base specification (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "proposal:new-tools-7-3-review-code-bq": {
     "question": "None: carries out question 4.3 of the questions about the base specification, option A (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25",
@@ -27713,7 +28121,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.3 of the questions about the base specification, option A (rule 1.5.2 and row 10.1.26), which the owner agreed to on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 5, batch 5b (review.ts: the review runs where any of the four judgements is due — code that the commit adds, changes or removes, tests included; a comment that it adds or changes; an Implementation-Needs-No-Change trailer; an approval it adds of a node of the technical appendix with an implements link to a rule of the base specification; every file that sheriff types writes, the project's generators' included, is left out and only those the commit changes are named, the bindings file kept; the reviewer is given the wording of each node (title, text, reason, examples, the fields of its kind), each changed symbol, file bound as a whole, code outside every symbol and test whole with its lines and SpecTags, each changed comment with the code it describes, each trailer rule's wording before and after with its bound code and tests, and each approved appendix node with the base rules bearing on it; findings on a statement are disregarded while the specification is a draft; code.ts reads each file's comments and readCommit names the changed ones; the decisions of 2026-11-05 moved to s-rd9nftptjuz6bwv; s-4bwa4zepd4nwcv8 records what a rule in no section takes)"
+    }
   },
   "proposal:s-suv42g8r3ra2h6b-bq": {
     "question": "None: carries out question 4.4 of the questions about the base specification, option B, under which each definition of a file of RuntimeChecks is bound by a SpecTag in its `$comment`; the owner agreed to it on 2026-11-25",
@@ -27912,7 +28324,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.4 of the questions about the base specification, option B, under which each definition of a file of RuntimeChecks is bound by a SpecTag in its `$comment`; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-dbk2vyeg8z5jxna-bq": {
     "question": "None: carries out question 4.4 of the questions about the base specification, option B: the entry in the bindings file for a file of RuntimeChecks is no longer written; the owner agreed to it on 2026-11-25",
@@ -28070,7 +28486,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.4 of the questions about the base specification, option B: the entry in the bindings file for a file of RuntimeChecks is no longer written; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3e (generators.ts: a project's generator gets the model in the last approved wordings, sections and headers as the files hold them; it runs only while its rule is approved, except for binding, which runs it to learn its paths; a path outside the system's code, sids outside the model and output of the wrong form are refused; clashes() refuses a path that would get two texts; binding compares each file of a generator whose rule is a draft with the commit's parent; the comparison of an entry of the bindings file for a file of RuntimeChecks lapsed, as the bq says)"
+    }
   },
   "proposal:new-tools-17-bindings-entry-bq": {
     "question": "None: carries out question 4.4 of the questions about the base specification, option B: each definition of a file of RuntimeChecks is bound by a SpecTag in its `$comment`, so no entry in the bindings file is written for that file; the owner agreed to it on 2026-11-25",
@@ -28105,7 +28525,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.4 of the questions about the base specification, option B: each definition of a file of RuntimeChecks is bound by a SpecTag in its `$comment`, so no entry in the bindings file is written for that file; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-m8nmfsxkcfu7cjp-bq": {
     "question": "None: carries out question 4.5 of the questions about the base specification, option B, under which a row checks that a SpecTag outside the system's code names a rule of the guidelines (rule 10.10); the owner agreed to it on 2026-11-25",
@@ -28265,7 +28689,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.5 of the questions about the base specification, option B, under which a row checks that a SpecTag outside the system's code names a rule of the guidelines (rule 10.10); the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3g (sheriff citations reads every file that the repository keeps outside specs/, other than the bindings file, binary files and the listed fixtures, read in the last approved wording; looks sids up in the model, not the archive; leaves the sid of a SpecTag in the system's code to s-36x8amvunmv2kp5; refuses a SpecTag outside the system's code that names a node that is not a rule of the guidelines; the todo of row 10.1.46 on the archive is removed; locations are numbered from the folders of the base and the first top-level node of each file of the guidelines and the appendices, and a location continued by -, / or . with a letter or digit is left alone; the placeholder sid in reindex.ts is written in two pieces; two promotional cards lost their citations of removed rules and were rendered again)"
+    }
   },
   "new:tools-7-1-metaschema": {
     "question": "None: carries out question 4.7 of the questions about the base specification, which decision R8 of the page on RecordType and JSON Schema (accepted by the owner on 2026-11-19) settles: SpecSheriff's own keywords within a RecordType's `schema` are declared in a vocabulary of its own",
@@ -28357,7 +28785,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.7 of the questions about the base specification, which decision R8 of the page on RecordType and JSON Schema (accepted by the owner on 2026-11-19) settles: SpecSheriff's own keywords within a RecordType's `schema` are declared in a vocabulary of its own. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:new-tools-7-2-outside-bq": {
     "question": "None: carries out question 4.3 of the questions about the base specification, option A: the agreed node on SpecTags on the system's code (s-9rtrj24myzjvshu) hands this check the code outside every symbol of a file that the commit leaves unchanged; the owner agreed to it on 2026-11-25",
@@ -28474,7 +28906,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.3 of the questions about the base specification, option A: the agreed node on SpecTags on the system's code (s-9rtrj24myzjvshu) hands this check the code outside every symbol of a file that the commit leaves unchanged; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3c (binding.ts specTagFindings: refuses what the commit adds or changes and no SpecTag binds, a symbol, the code outside every symbol, a file bound as a whole and a test; a SpecTag naming no node at every commit, in the bindings file too; code and tests bound to a draft rule that the commit adds, changes or removes, read in the parent too; a rule whose code the commit adds or changes with no test, a skipped test counting; an entry of the bindings file that the commit adds or changes for a file that is not code other than tests, is described or allows comments; code and tests outside the commit that no SpecTag binds: nothing in a draft, one warning naming sheriff untagged while approved, a refusal while strict; projectToolTests is gone). The citations of SpecTags outside the specification go with s-m8nmfsxkcfu7cjp in 3g"
+    }
   },
   "proposal:new-tools-7-2-changed-line-bq": {
     "question": "None: carries out question 4.4 of the questions about the base specification, option B: a definition of a file in JSON Schema carries its SpecTags in its `$comment`, which JSON Schema 2020-12 makes a comment; the owner agreed to it on 2026-11-25",
@@ -28599,7 +29035,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.4 of the questions about the base specification, option B: a definition of a file in JSON Schema carries its SpecTags in its `$comment`, which JSON Schema 2020-12 makes a comment; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 3, batch 3b (src/versions.ts compares the units of a file, symbols, tests and the file's own code, by their syntax trees with comments left out, or by their text where either version has a syntax error, and by their SpecTags; a renamed test with its SpecTag and body kept stays the same test; code.ts gives each symbol, test and file its shape; the grammars of YAML, CSS, SQL and Bash are kept in vendor/grammars; readCommit compares each changed file and each file whose entry in the bindings file changes, and tells what the commit removes; guard and the reviewer use the same comparison; codeChanges and the renames forgiven across lines are gone)"
+    }
   },
   "proposal:s-qqs2svksmjct753-bq": {
     "question": "None: carries out question 4.3 of the questions about the base specification, option A: the code outside every symbol of a file is bound by SpecTags at the file's start, so a commit that changes it must name the rules that those SpecTags name; the owner agreed to it on 2026-11-25",
@@ -28702,7 +29142,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.3 of the questions about the base specification, option A: the code outside every symbol of a file is bound by SpecTags at the file's start, so a commit that changes it must name the rules that those SpecTags name; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 4, batch 4b (message.ts rewritten: the message must contain the sid of each node to which a SpecTag binds the code, other than tests, that the commit adds or changes, symbols, the code outside every symbol and files bound as a whole, a merge counting only what differs from every parent; git's comment lines by core.commentChar or core.commentString and the scissors line with everything after it are left out; noChangeTrailers reads the trailers through git interpret-trailers --parse; the refusals of a sid naming no node, a header or a section are gone; changedTags counts each file's own code)"
+    }
   },
   "proposal:s-nk8td3ez58gahc4-bq": {
     "question": "None: carries out question 4.4 of the questions about the base specification, option B, under which each definition of a file of RuntimeChecks carries a SpecTag in its `$comment`; the owner agreed to it on 2026-11-25",
@@ -28859,7 +29303,11 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.4 of the questions about the base specification, option B, under which each definition of a file of RuntimeChecks carries a SpecTag in its `$comment`; the owner agreed to it on 2026-11-25. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   },
   "proposal:s-zefk589ykh37b8u-bq": {
     "question": "None: carries out question 4.7 of the questions about the base specification, which decision R8 of the page on RecordType and JSON Schema settles: the meta-schema of a RecordType's `schema` (s-j4t9vusnsajmqdw) is a file of its own beside the schema of the RecordType extension",
@@ -29297,6 +29745,10 @@
         "problem": "Whether a draft that only carries out the owner's answers on the questions about the base specification is shown to the owner before it is agreed.",
         "ruling": "The draft carries out question 4.7 of the questions about the base specification, which decision R8 of the page on RecordType and JSON Schema settles: the meta-schema of a RecordType's `schema` (s-j4t9vusnsajmqdw) is a file of its own beside the schema of the RecordType extension. The reviewer found it ready after round c of fixes, so it is agreed on the owner's behalf and reported to the owner in one line."
       }
-    ]
+    ],
+    "stage3Done": {
+      "date": "2026-11-26",
+      "by": "step B, group 1, batch 6b (RecordType in JSON Schema form in validate, reindex, values, show and types)"
+    }
   }
 }

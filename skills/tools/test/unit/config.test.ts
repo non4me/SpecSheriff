@@ -52,15 +52,19 @@ test("@spec s-d3nkw9b6mn98vuw refuses an entry that holds a key other than those
   assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "extensions": {} }')), /extensions must be a list/);
 });
 
-test("@spec s-477gtdrkw34dzxw reads the command that runs the tests of the system's code", () => {
+test("@spec s-b6qdtghnyha3fhk reads the command that runs the tests of the system's code", () => {
   assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "testCommand": "npm test" }')).testCommand, "npm test");
 });
 
-test("@spec s-xr5xxa9cxf2mq5u reads the reviewer's runner and time limit from the project's settings, twenty minutes unless set, and no model or effort", () => {
-  const set = loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "codex", "minutes": 5 } }')).review;
-  assert.deepEqual(set, { runner: "codex", minutes: 5 });
+test("@spec s-xr5xxa9cxf2mq5u reads the reviewer's runner from the project's settings, and reads no model or effort from them", () => {
+  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "codex" } }')).review.runner, "codex");
   assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "other" } }')), /runner/);
   assert.throws(() => loadConfig(withConfig('{ "code": [], "tests": [], "review": { "colour": 1 } }')), /colour/);
+});
+
+test("@spec s-wgedv32rdaqca9k reads the time limit of a review from review.minutes in the project's settings, twenty minutes unless set", () => {
+  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "codex", "minutes": 5 } }')).review.minutes, 5);
+  assert.equal(loadConfig(withConfig('{ "code": [], "tests": [], "review": { "runner": "codex" } }')).review.minutes, 20);
 });
 
 test("@spec s-zefk589ykh37b8u refuses a model or an effort in the project's settings, naming the key of the user's git configuration that holds it", () => {

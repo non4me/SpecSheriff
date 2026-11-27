@@ -124,7 +124,7 @@ function mergeByUnion(root: string, report: InitReport): void {
  * earlier release of it wrote, and no other file that differs from what it would write.
  */
 export function init(root: string, agent: string = "claude"): InitReport {
-  if (!(AGENTS as readonly string[]).includes(agent)) throw new Error(`sheriff init sets a repository up for the agent claude or codex, not ${agent}`);
+  if (!(AGENTS as readonly string[]).includes(agent)) throw new Error(`sheriff init sets a repository up for the agent ${AGENTS.join(" or ")}, not ${agent}`);
   const report: InitReport = { written: [], replaced: [], left: [], notes: [] };
   const write = (path: string, text: string, executable = false, kind?: string) => {
     const full = join(root, path);
@@ -176,6 +176,18 @@ export function init(root: string, agent: string = "claude"): InitReport {
   if (!existsSync(join(root, "sheriff.config.json"))) {
     write("sheriff.config.json", JSON.stringify({ code: [], tests: [] }, null, 2) + "\n");
     report.notes.push("name in sheriff.config.json where the system's code and its tests live, and the testCommand");
+  } else {
+    // An existing settings file is reported where it lacks the globs for the code or for the tests, or the testCommand.
+    let settings: { code?: unknown[]; tests?: unknown[]; testCommand?: unknown } = {};
+    try {
+      settings = JSON.parse(readFileSync(join(root, "sheriff.config.json"), "utf8"));
+    } catch {
+      // the checks report a settings file that cannot be read, so nothing is added here
+    }
+    const globs = [!settings.code?.length && "the system's code", !settings.tests?.length && "the tests"].filter((g): g is string => !!g);
+    let lacks = globs.length ? `names no glob pattern for ${globs.join(" or ")}` : "";
+    if (!settings.testCommand) lacks = lacks ? `${lacks}, and no testCommand` : "names no testCommand";
+    if (lacks) report.notes.push(`sheriff.config.json ${lacks}: name them there`);
   }
   if (!existsSync(join(root, "specs", "_guidelines", "project.json"))) {
     const owner = git(root, "config", "user.email").out.trim();
@@ -325,6 +337,7 @@ export function remove(root: string): RemoveReport {
     if (existsSync(join(root, dir)) && !readdirSync(join(root, dir)).length) rmdirSync(join(root, dir));
   }
   if (existsSync(join(root, "specs"))) report.left.push("specs/, the project's specification, which remains its own");
+  if (existsSync(join(root, "sheriff.bindings.json"))) report.left.push("sheriff.bindings.json, which binds files of the system's code to the rules that they implement");
   return report;
 }
 

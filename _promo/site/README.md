@@ -102,10 +102,10 @@ The node's structure is [`specs/_schema/node.schema.json`](../../specs/_schema/n
 ## The map
 
 `/map/` shows the guidelines as a mind map: the sections and their rules by title, each a link to
-its page. `npx sheriff render` draws such a map for this repository, with markmap, into
-`specs/_viewer/`, which is generated and never committed; the site draws its own from the same
+its page. In a project that has chosen the Views extension, `npx sheriff map` draws such a map with
+markmap into `specs/_viewer/`, which is generated and never committed; the site draws its own from the same
 nodes, in the ledger style. The map does not repeat the rules, which `/rules/` already lists: a
-reader or a search engine without scripts is pointed there.
+reader whose browser runs no scripts, or a search engine that runs none, is directed there.
 
 The map takes the width of the window and is not limited in height: it grows with what is shown, so
 that nothing of it is cut off and the page scrolls instead. It opens collapsed, with only the main

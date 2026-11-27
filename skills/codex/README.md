@@ -12,8 +12,8 @@ says what differs with Codex.
 
 - Codex CLI 0.166 or later.
 - git, with your email in `git config user.email`: the tools name the specification's owner by it.
-- Node 24 or later on the `PATH`, and `sh`, which Git for Windows brings on Windows. The hooks
-  refuse to run on an older Node and say so.
+- Node.js 24 or later on the `PATH`, and `sh`, which Git for Windows provides. The hooks
+  refuse to run on an older Node.js and say so.
 
 ## Installing it
 
@@ -104,10 +104,31 @@ node ~/.codex/plugins/cache/specsheriff-marketplace/specsheriff/<version>/tools/
 `codex plugin marketplace upgrade specsheriff-marketplace` takes a new release; Codex keeps only the
 version installed last.
 
-From 0.6.0 a node's status is `draft` or `approved`, a part may name several `owners`, and
-`sheriff approve` replaces `sheriff confirm`. The first `sheriff reindex` of 0.6.0 rewrites what an
+As of 0.7.0, the first `sheriff reindex` rewrites what an earlier release wrote, keeps every
+approval in force, and names each file that it rewrites, for you to commit. It makes these changes:
+- the kind of node `rule` becomes `TextRule`, `record` and `recordType` become `RecordType`, and
+  `domain` becomes `header`;
+- the key `rationale` becomes `reason`;
+- a RecordType's fields become its `schema`, written in JSON Schema;
+- `declaredIn`, which says where a list is declared, becomes `jsonSchema` or `valueList`;
+- the rule of `project.json` that set the specification's approval status becomes an entry in
+  `sheriff.config.json`;
+- `@spec ` is put before each sid that opens a test's name without it.
+
+Four commands are renamed: `sheriff message` is now `sheriff commit-message`, `sheriff model` is
+`sheriff json`, `sheriff export` is `sheriff markdown`, and `sheriff render` is `sheriff map`.
+`sheriff markdown` and `sheriff map` run only where the project has chosen the Views extension. An
+owner changes the specification's approval status, its `strict` flag and the chosen extensions with
+`sheriff settings`, or through the skill `spec-settings`. Where the specification holds a node of a
+kind that an extension adds, such as a domain's header or a RecordType, `sheriff reindex` names that
+extension, and an owner chooses it. A project's own check that reads `sheriff json` must from then on
+read `reason` and the new names of the kinds. Ask the agent to run `spec-init` again: `sheriff init --agent codex`
+replaces the git hooks that an earlier release wrote.
+
+As of 0.6.0, a node's approval status is `draft` or `approved`, a section or a domain's header may name several `owners`, and
+`sheriff approve` replaces `sheriff confirm`. The first `sheriff reindex` run with 0.6.0 rewrites what an
 earlier release wrote — `""` and `checked`, `owner`, `specs/_confirmations.jsonl` — and keeps every
 approval; it names each file it writes, for you to commit. A project's own check that reads `owner`
-from `sheriff model` reads `owners`, a list, from then on. Ask the agent to set the repository up once more, through
+from `sheriff json` must from then on read `owners`, a list. Ask the agent to set up the repository again, through
 `spec-init`: `sheriff init --agent codex` then has git merge `specs/_approvals.jsonl` by union, so
-that the approvals two branches record merge without a conflict.
+that the approvals that two branches record merge without a conflict.

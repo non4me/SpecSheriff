@@ -17,6 +17,7 @@
     "internal_module",
     "ambient_declaration"
   ],
+  "imports": ["import_statement"],
   "export": "export_statement",
   "decorated": null,
   "tests": { "calls": ["test", "it"], "skips": ["skip", "todo"] }

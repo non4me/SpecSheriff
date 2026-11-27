@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recordtype-meta.schema.json",
+  "$vocabulary": {
+    "https://json-schema.org/draft/2020-12/vocab/core": true,
+    "https://json-schema.org/draft/2020-12/vocab/applicator": true,
+    "https://json-schema.org/draft/2020-12/vocab/unevaluated": true,
+    "https://json-schema.org/draft/2020-12/vocab/validation": true,
+    "https://json-schema.org/draft/2020-12/vocab/meta-data": true,
+    "https://json-schema.org/draft/2020-12/vocab/format-annotation": true,
+    "https://json-schema.org/draft/2020-12/vocab/content": true,
+    "https://github.com/non4me/SpecSheriff/vocab/recordtype": false
+  },
+  "$dynamicAnchor": "meta",
+  "title": "The meta-schema of a RecordType's schema",
+  "$comment": "A RecordType's schema is a JSON Schema 2020-12 object that may also hold SpecSheriff's own keywords, identifierOf and enumSource, declared in SpecSheriff's own vocabulary (s-j4t9vusnsajmqdw). `$vocabulary` sets that vocabulary to false, which marks it as optional, so a JSON Schema tool that does not know it still processes the schema. The $dynamicAnchor makes the meta-schema of JSON Schema 2020-12 apply this meta-schema to every schema within a RecordType's schema, at any depth.",
+  "allOf": [
+    {
+      "$ref": "https://json-schema.org/draft/2020-12/schema"
+    },
+    {
+      "$ref": "#/$defs/recordtype"
+    }
+  ],
+  "$defs": {
+    "recordtype": {
+      "$comment": "SpecSheriff's own keywords, checked in each schema within a RecordType's schema. A field's values come from one source only (s-xfu2gpzddjnmgks): its own enum, each value in it once, or the source that its enumSource names. A field never has both.",
+      "properties": {
+        "identifierOf": {
+          "$comment": "The sid of the RecordType whose data records the field identifies; the field takes the type of the field that identifies them (s-4npdup7mjkva69y, s-3anv9qcmx8pwp2w).",
+          "type": "string",
+          "pattern": "^s-[23456789abcdefghjkmnpqrstuvwxyz]{15}$"
+        },
+        "enumSource": {
+          "$ref": "#/$defs/enumSource"
+        },
+        "enum": {
+          "uniqueItems": true
+        }
+      },
+      "not": {
+        "type": "object",
+        "required": [
+          "enum",
+          "enumSource"
+        ]
+      }
+    },
+    "enumSource": {
+      "$comment": "Where a field's values come from when they are not its own list, and the values gathered from that source (s-5nf87c3e3jg9v7c). from parts: the names of the parts into which the base specification is divided (s-gqavjzcmubg5pvk). from kind: the sids of the nodes of the base specification whose kind is the project's own kind that the key kind names (s-mt6auv3jz8m5gzh). gathered: each value with the sid of the node it comes from, written only by the SpecSheriff tools (s-ju5vcanbjph7mgh).",
+      "type": "object",
+      "properties": {
+        "from": {
+          "enum": [
+            "parts",
+            "kind"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9]*$"
+        },
+        "gathered": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sid": {
+                "type": "string",
+                "pattern": "^s-[23456789abcdefghjkmnpqrstuvwxyz]{15}$"
+              }
+            },
+            "required": [
+              "value",
+              "sid"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "from": {
+            "const": "kind"
+          }
+        },
+        "required": [
+          "from"
+        ]
+      },
+      "then": {
+        "required": [
+          "kind"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "kind"
+          ]
+        }
+      }
+    }
+  }
+}
