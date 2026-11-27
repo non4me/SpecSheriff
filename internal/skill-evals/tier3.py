@@ -17,8 +17,10 @@ that this function leaves undone:
   node_modules folder; the plugin's session start then records where the plugin keeps its tools, so the git hooks find them;
 - it runs the agent with the Claude subscription token, which SkillEvaluator does not support, and keeps the judge's
   API key out of the agent's container;
-- it works around two bugs in SkillEvaluator on Windows: its refusal to copy a hard-linked file, and the CRLF line
-  endings of the shell scripts that SkillEvaluator generates.
+- in the with-plugin arm, it puts claude-wrapper.sh in place of claude, so that SpecSheriff's commit reviewer, which a
+  git hook starts, gets the agent's token, which Claude Code keeps out of the shells it starts;
+- it works around three bugs in SkillEvaluator on Windows: its refusal to copy a hard-linked file, the CRLF line
+  endings of the shell scripts that SkillEvaluator generates, and its failure to delete git's read-only object files.
 
 Run tier3.py with the Python interpreter of SkillEvaluator's uv tool environment. That environment is in a subfolder of
 the folder that `uv tool dir` prints:
@@ -185,11 +187,18 @@ def evaluate_with(root: Path, environment: Path, config: Path):
 
 
 def complete_with_arm(env_dir: Path, tools_dir: Path) -> None:
-    """Prepare the with-plugin arm's image: convert SkillEvaluator's generated scripts to LF line endings, add the
-    npm packages of the plugin's tools as SkillEvaluator stages them, and set the reviewer's settings."""
+    """Prepare the with-plugin arm's image:
+    - convert SkillEvaluator's generated scripts to LF line endings;
+    - add the npm packages of the plugin's tools to the copy of the tools that SkillEvaluator stages;
+    - write the reviewer's settings into the global git configuration;
+    - put claude-wrapper.sh in place of claude, so that the reviewer that a git hook starts uses the Claude
+      subscription token that the agent runs on.
+    """
     for script in (env_dir / "skilleval").rglob("*.sh"):
         script.write_bytes(script.read_bytes().replace(b"\r\n", b"\n"))
     shutil.copytree(tools_dir / "node_modules", env_dir / "specsheriff-node-modules")
+    wrapper = (Path(__file__).parent / "claude-wrapper.sh").read_bytes().replace(b"\r\n", b"\n")
+    (env_dir / "claude-wrapper.sh").write_bytes(wrapper)
     plugin_tools = f"{ClaudeCodeAdapter.plugin_dir}/tools"
     lines = [
         "",
@@ -197,6 +206,10 @@ def complete_with_arm(env_dir: Path, tools_dir: Path) -> None:
         f"COPY specsheriff-node-modules/ {plugin_tools}/node_modules/",
         "# tier3.py: the reviewer's settings, so that the session start does not ask the agent for them",
         "RUN " + " && ".join(f"git config --global specsheriff.review.{k} {v}" for k, v in REVIEWER.items()),
+        "# tier3.py: claude-wrapper.sh in place of claude, so that the reviewer has the agent's token",
+        "COPY claude-wrapper.sh /opt/tier3/claude-wrapper.sh",
+        'RUN real=$(readlink -f /root/.local/bin/claude) && sed -i "s#@REAL@#$real#" /opt/tier3/claude-wrapper.sh \\',
+        " && rm /root/.local/bin/claude && cp /opt/tier3/claude-wrapper.sh /root/.local/bin/claude && chmod +x /root/.local/bin/claude",
     ]
     with (env_dir / "Dockerfile").open("a", encoding="utf-8", newline="\n") as dockerfile:
         dockerfile.write("\n".join(lines) + "\n")
