@@ -14,7 +14,7 @@ that this function leaves undone:
 - in the evals folder of the wrapper skill that SkillEvaluator generates, it adds the neutral project, a Dockerfile
   for an image with Node.js and git, and a config file that sets the agent's working directory;
 - it gives the with-plugin arm the npm packages of the plugin's tools, because SkillEvaluator never copies a
-  node_modules folder, and it lets the project's git hooks find those tools where an installed plugin keeps them;
+  node_modules folder; the plugin's session start then records where the plugin keeps its tools, so the git hooks find them;
 - it runs the agent with the Claude subscription token, which SkillEvaluator does not support, and keeps the judge's
   API key out of the agent's container;
 - it works around two bugs in SkillEvaluator on Windows: its refusal to copy a hard-linked file, and the CRLF line
@@ -60,8 +60,6 @@ AGENT_MODEL = "claude-opus-5-5"
 JUDGE_MODEL = "claude-opus-5-5"
 BEHAVIOR_BUDGET = 80000
 WORKDIR = "/project"
-# The folder where the project's git hooks look for the tools of the plugin for Claude Code.
-GIT_HOOKS_TOOLS = "/root/.claude/plugins/data/specsheriff-specsheriff-marketplace"
 # Every process in the container inherits the container's environment, and Claude Code prefers an API key to the
 # subscription token. The variables listed below are therefore kept out of that environment. Harbor passes the token
 # to the agent, and the judge's key to the verifier, the part of Harbor in which the judge runs.
@@ -188,17 +186,15 @@ def evaluate_with(root: Path, environment: Path, config: Path):
 
 def complete_with_arm(env_dir: Path, tools_dir: Path) -> None:
     """Prepare the with-plugin arm's image: convert SkillEvaluator's generated scripts to LF line endings, add the
-    npm packages of the plugin's tools as SkillEvaluator stages them, link those tools where the project's git hooks
-    look for them, and set the reviewer's settings."""
+    npm packages of the plugin's tools as SkillEvaluator stages them, and set the reviewer's settings."""
     for script in (env_dir / "skilleval").rglob("*.sh"):
         script.write_bytes(script.read_bytes().replace(b"\r\n", b"\n"))
     shutil.copytree(tools_dir / "node_modules", env_dir / "specsheriff-node-modules")
     plugin_tools = f"{ClaudeCodeAdapter.plugin_dir}/tools"
     lines = [
         "",
-        "# tier3.py: the npm packages of the plugin's tools, and these tools where the project's git hooks look",
+        "# tier3.py: the npm packages of the plugin's tools",
         f"COPY specsheriff-node-modules/ {plugin_tools}/node_modules/",
-        f"RUN mkdir -p {os.path.dirname(GIT_HOOKS_TOOLS)} && ln -s {plugin_tools} {GIT_HOOKS_TOOLS}",
         "# tier3.py: the reviewer's settings, so that the session start does not ask the agent for them",
         "RUN " + " && ".join(f"git config --global specsheriff.review.{k} {v}" for k, v in REVIEWER.items()),
     ]

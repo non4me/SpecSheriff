@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { REPO } from "./repo.ts";
+import { gitConfig, REPO } from "./repo.ts";
 
 /** A path as Claude Code hands it to a hook, with forward slashes. */
 export const slashed = (path: string) => path.replaceAll("\\", "/");
@@ -13,12 +13,16 @@ export const PLUGIN = slashed(join(REPO, "skills", "claude-code"));
 /** The plugin for Codex CLI, as this repository builds it. */
 export const CODEX_PLUGIN = slashed(join(REPO, "skills", "codex"));
 
-/** A plugins directory of its own, as Claude Code keeps one, and the environment that points the git hooks at it. */
+/**
+ * A separate plugins directory, as Claude Code keeps one, and the environment that points the git hooks at it, with a
+ * global git configuration of its own, so that no key written by another test's session start points a git hook at a
+ * different directory.
+ */
 export function plugins(): { dir: string; data: string; env: NodeJS.ProcessEnv } {
   const dir = slashed(mkdtempSync(join(tmpdir(), "sheriff-plugins-")));
   // A Codex home of its own, empty, so that no plugin for Codex CLI installed on the machine is found.
   const codex = slashed(mkdtempSync(join(tmpdir(), "sheriff-no-codex-")));
-  return { dir, data: `${dir}/data/specsheriff-specsheriff-marketplace`, env: { ...process.env, CLAUDE_CODE_PLUGIN_CACHE_DIR: dir, CODEX_HOME: codex } };
+  return { dir, data: `${dir}/data/specsheriff-specsheriff-marketplace`, env: { ...process.env, CLAUDE_CODE_PLUGIN_CACHE_DIR: dir, CODEX_HOME: codex, GIT_CONFIG_GLOBAL: gitConfig() } };
 }
 
 /** The environment with SPECSHERIFF_GUIDELINES_REPO as the tests have last set it, or without it where they have unset it. */
@@ -48,7 +52,7 @@ export function codexHome(installed = true): { home: string; env: NodeJS.Process
   }
   // A plugins directory of Claude Code of its own, empty, so that no copy the plugin for Claude Code keeps on the machine is found.
   const claude = slashed(mkdtempSync(join(tmpdir(), "sheriff-no-claude-")));
-  return { home, env: { ...process.env, CODEX_HOME: home, CLAUDE_CODE_PLUGIN_CACHE_DIR: claude } };
+  return { home, env: { ...process.env, CODEX_HOME: home, CLAUDE_CODE_PLUGIN_CACHE_DIR: claude, GIT_CONFIG_GLOBAL: gitConfig() } };
 }
 
 /** Runs the agent's hook for Codex that `event` names in the project's `.codex/hooks.json`, as Codex runs a hook's command. */

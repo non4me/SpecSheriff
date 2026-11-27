@@ -1,11 +1,12 @@
 #!/bin/sh
-# Written by sheriff init: runs this hook's script from the SpecSheriff tools that a plugin keeps on this machine, the copy in
-# the data directory of the plugin for Claude Code or the tools of the plugin for Codex CLI in Codex's cache, taking those of
-# the higher release where both are there. That script runs the checks and the project's own tools for this hook. Where the
-# SpecSheriff tools cannot run, because no plugin keeps them or Node.js is missing or older than they need, the hook runs the
-# project's own tools for this hook, the files of .githooks/<hook>.d/ whose first line names their interpreter, in the byte
-# order of their names. It then lets the commit or the push through unless one of them fails, and says why no check of
-# SpecSheriff ran.
+# Written by sheriff init: runs this hook's script from the SpecSheriff tools that a plugin keeps on this machine. It looks for
+# the copy of the plugin for Claude Code in the directory that the user's git configuration names in
+# specsheriff.claudePluginData and in that plugin's default data directory, and for the tools of the plugin for Codex CLI in
+# Codex's cache, taking those of the highest release that it finds. That script runs the checks and the project's own tools
+# for this hook. Where the SpecSheriff tools cannot run, because the hook found no plugin's tools or Node.js is missing or
+# older than they need, the hook runs the project's own tools for this hook, the files of .githooks/<hook>.d/ whose first
+# line names their interpreter, in the byte order of their names. It then lets the commit or the push through unless one of
+# them fails, and says why no check of SpecSheriff ran.
 newer() {
   a=$1 b=$2
   while [ -n "$a$b" ]; do
@@ -27,8 +28,12 @@ trap 'rm -f "$input"' EXIT
 case $hook in pre-push) cat > "$input" ;; *) : > "$input" ;; esac
 codex=${CODEX_HOME:-$HOME/.codex}
 case $codex in *\\*) codex=$(printf '%s' "$codex" | tr '\\' /) ;; esac
+# The data directory that the session start of the plugin for Claude Code recorded in the user's git configuration.
+recorded=$(git config --global --get specsheriff.claudePluginData 2>/dev/null)
+case $recorded in *\\*) recorded=$(printf '%s' "$recorded" | tr '\\' /) ;; esac
 tools= version=
-for dir in "${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsheriff-specsheriff-marketplace" \
+for dir in ${recorded:+"$recorded"} \
+  "${CLAUDE_CODE_PLUGIN_CACHE_DIR:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins}/data/specsheriff-specsheriff-marketplace" \
   "$codex"/plugins/cache/specsheriff-marketplace/specsheriff/*/tools; do
   [ -f "$dir/release" ] || continue
   release=$(sed -n '1s/ .*//p' "$dir/release")
@@ -38,7 +43,7 @@ status=0
 # The SpecSheriff tools run only where Node.js meets the version that the engines field of their package.json names.
 why=
 if [ -z "$tools" ]; then
-  why="the SpecSheriff tools of no plugin are on this machine"
+  why="the hook found no plugin's SpecSheriff tools in the directories where it looks for them"
 else
   need=$(sed -n 's/.*"node": *">=\([0-9][0-9.]*\).*/\1/p' "$tools/package.json")
   have=$(node -p "process.versions.node" 2>/dev/null)
