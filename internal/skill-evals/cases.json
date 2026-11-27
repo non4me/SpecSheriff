@@ -66,7 +66,7 @@
       "assertions": [
         "The request is written as at least two new rules in specs/records/records.json, since keeping earlier versions and deciding who can see them can each be carried out without the other.",
         "No sentence in the new rules joins requirements with a semicolon or with \"while\" or \"but\".",
-        "No sentence in the new rules is longer than 25 words.",
+        "Each sentence of the new rules states one thought. A sentence over 25 words is acceptable where it states one thought, since the SpecSheriff guidelines treat that length as a reason to check a sentence, not as a limit.",
         "Each new rule's text opens with its main thought in a short sentence, and two or more conditions of one kind, if any, follow as a bulleted list.",
         "Each new rule's title names its topic in a few words and is not the sentence that opens its text.",
         "The new rules are drafts, and the agent does not change the code or the tests."
@@ -81,7 +81,7 @@
       "assertions": [
         "Every node of specs/records/records.json that spoke of archiving now speaks of retiring, in its title, its text and its reason.",
         "The agent does not ask the owner whether to make the replacement in any node.",
-        "The agent runs `sheriff approve` on each node whose wording it changed, since a replacement that leaves a node's meaning unchanged is approved on an owner's behalf.",
+        "The agent approves each node whose wording it changed on the owner's behalf, since a replacement that leaves a node's meaning unchanged is approved that way. It does so with the approve command of the SpecSheriff tools, `sheriff approve`, which it may run as `node <the plugin's folder>/tools/dist/cli.js approve <sid>` or through a shell variable that holds that command.",
         "The agent's message reports each approval it made on the owner's behalf, one line per node."
       ]
     },
