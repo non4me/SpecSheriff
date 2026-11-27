@@ -71,6 +71,7 @@ export async function testSkills({ root, env, evaluator, driver, git, cacheDir, 
     const status = readJson(join(out, "skillevaluator-tier1.json")).overall_status;
     if (status !== "passed") throw new Error(`tier 1 of ${skill}: ${status}; the reports are in ${out}`);
     const json = join(outDir, "harness", `${skill}.json`);
+    mkdirSync(dirname(json), { recursive: true }); // harness-check writes its report only into a folder that exists.
     ran(`the check of loading of ${skill}`, evaluator(["harness-check", join(root, skill), "--harness", HARNESSES, "--json", json], { env: clean(env) }));
     for (const entry of Object.values(readJson(json).harness_compatibility).flat()) {
       if (entry.status !== "loads") throw new Error(`${entry.harness} ${entry.status} ${skill}; Claude Code and Codex CLI must each load every skill`);

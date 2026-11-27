@@ -2,7 +2,7 @@
 // SkillEvaluator: it writes the reports that the step reads, so no test runs SkillEvaluator or calls a model.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { testSkills } from "./test-skills.mjs";
@@ -33,8 +33,11 @@ function setup(t, { tier1 = {}, loads = {}, tier2 = {}, changed = true, previous
     if (args[0] === "tier1") write(join(out, "skillevaluator-tier1.json"), { overall_status: tier1[skill] ?? "passed" });
     if (args[0] === "tier2") write(join(out, "skillevaluator-tier2.json"), { overall_status: tier2[skill] ?? "passed" });
     if (args[0] === "harness-check") {
+      // SkillEvaluator 1.0.1 writes this report into a folder that must already exist.
+      const json = args[args.indexOf("--json") + 1];
+      if (!existsSync(dirname(json))) return { status: 1, stdout: "", stderr: `FileNotFoundError: ${json}` };
       const harnesses = ["codex", "claude-code"].map((harness) => ({ harness, status: loads[`${skill}:${harness}`] ?? "loads" }));
-      write(args[args.indexOf("--json") + 1], { harness_compatibility: { [args[1]]: harnesses } });
+      write(json, { harness_compatibility: { [args[1]]: harnesses } });
     }
     return { status: 0, stdout: "", stderr: "" };
   };
