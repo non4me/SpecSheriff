@@ -18,6 +18,9 @@ import { fileURLToPath } from "node:url";
 export const VERSION = "1.0.1";
 const PLUGINS = ["skills/claude-code/skills", "skills/codex/skills"];
 const HARNESSES = "codex,claude-code";
+// SkillEvaluator 1.0.1 computes embeddings with nvidia/nemotron-3-embed-1b by default. NVIDIA Build withdrew
+// that model between 2026-11-22 and 2026-11-27, so tier 2 specifies the model that replaced it.
+const EMBEDDING_MODEL = "nvidia/nemotron-3.5-embed-1b";
 // The keys of the providers SkillEvaluator can use, which no tier is handed unless it needs one.
 const PROVIDER_KEYS = ["NVIDIA_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY", "SKILL_EVAL_LLM_PROVIDER", "CLAUDE_CODE_OAUTH_TOKEN", "CLAUDE_FORCE_OAUTH"];
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -81,7 +84,7 @@ export async function testSkills({ root, env, evaluator, driver, git, cacheDir, 
   // Tier 2: embeddings from NVIDIA Build, with the NVIDIA Build key alone.
   const nvidia = env.SKILLEVAL_NVIDIA_API_KEY;
   if (!nvidia) throw new Error("tier 2 needs the key of NVIDIA Build in the environment variable SKILLEVAL_NVIDIA_API_KEY");
-  const tier2Env = { ...clean(env), SKILL_EVAL_LLM_PROVIDER: "nv_build", NVIDIA_API_KEY: nvidia };
+  const tier2Env = { ...clean(env), SKILL_EVAL_LLM_PROVIDER: "nv_build", SKILL_EVAL_EMBEDDING_MODEL: EMBEDDING_MODEL, NVIDIA_API_KEY: nvidia };
   for (const plugin of PLUGINS.filter((p) => skills.some((s) => s.startsWith(`${p}/`)))) {
     const catalog = join(outDir, "tier2", plugin, "catalog.json");
     log(`tier 2: the catalog of ${plugin}`);

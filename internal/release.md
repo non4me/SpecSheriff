@@ -114,8 +114,10 @@ The step runs three tiers:
 1. Tier 1 runs on each skill without a model: SkillEvaluator's static checks (`tier1 --no-llm`), and
    the check that Claude Code and Codex CLI each load the skill (`harness-check`). The scan for
    secrets in tier 1 needs `gitleaks` on the `PATH`.
-2. Tier 2 runs on each skill: it looks for skills that overlap so much that an agent may confuse
-   them, with embeddings from NVIDIA Build. It needs an NVIDIA Build API key.
+2. Tier 2 runs on each skill. It uses embeddings from NVIDIA Build to look for skills that overlap so
+   much that an agent could confuse them. It needs an NVIDIA Build API key. The release step specifies
+   the embedding model, `nvidia/nemotron-3.5-embed-1b`, because NVIDIA Build has withdrawn the default
+   model of SkillEvaluator 1.0.1.
 3. Tier 3 is the live run. Claude Code in Docker works through each test case of
    `internal/skill-evals/cases.json` in three runs with the plugin for Claude Code, and in three runs
    without the plugin. An LLM judge scores each run. Tier 3 runs only if

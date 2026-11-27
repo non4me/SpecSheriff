@@ -33,7 +33,7 @@ function setup(t, { tier1 = {}, loads = {}, tier2 = {}, changed = true, previous
     if (args[0] === "tier1") write(join(out, "skillevaluator-tier1.json"), { overall_status: tier1[skill] ?? "passed" });
     if (args[0] === "tier2") write(join(out, "skillevaluator-tier2.json"), { overall_status: tier2[skill] ?? "passed" });
     if (args[0] === "harness-check") {
-      // SkillEvaluator 1.0.1 writes this report into a folder that must already exist.
+      // SkillEvaluator 1.0.1 writes harness-check's report only into a folder that already exists.
       const json = args[args.indexOf("--json") + 1];
       if (!existsSync(dirname(json))) return { status: 1, stdout: "", stderr: `FileNotFoundError: ${json}` };
       const harnesses = ["codex", "claude-code"].map((harness) => ({ harness, status: loads[`${skill}:${harness}`] ?? "loads" }));
@@ -114,6 +114,8 @@ test("runs tier 2 with the key of NVIDIA Build alone, and stops the release wher
   for (const c of tier2) {
     assert.equal(c.env.NVIDIA_API_KEY, "nvapi-test");
     assert.equal(c.env.SKILL_EVAL_LLM_PROVIDER, "nv_build");
+    // NVIDIA Build withdrew the default embedding model of SkillEvaluator 1.0.1 (HTTP 410), so the step specifies its successor.
+    assert.equal(c.env.SKILL_EVAL_EMBEDDING_MODEL, "nvidia/nemotron-3.5-embed-1b");
     assert.equal(c.env.ANTHROPIC_API_KEY, undefined);
     assert.equal(c.env.CLAUDE_CODE_OAUTH_TOKEN, undefined);
   }
