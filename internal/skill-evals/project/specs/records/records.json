@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "scope": "records",
+  "section": "records",
+  "nodes": [
+    {
+      "kind": "section",
+      "title": "Records",
+      "status": "draft",
+      "text": "How a user keeps records and how an operator takes a record out of use.",
+      "refs": [],
+      "children": [
+        {
+          "kind": "TextRule",
+          "title": "The title of a record",
+          "status": "draft",
+          "text": "The service creates a record only if its title has from 1 to 80 characters.",
+          "reason": "A user finds a record in the list by its title, and a title longer than one line of the list cannot be read there.",
+          "refs": []
+        },
+        {
+          "kind": "TextRule",
+          "title": "Archiving a record",
+          "status": "draft",
+          "text": "An operator archives a record by its number. The list of records holds only the records that are in use, so archiving takes a record out of the list.",
+          "reason": "A record that nobody needs any more crowds the list, yet it may be needed again, so it is kept rather than deleted.",
+          "refs": []
+        },
+        {
+          "kind": "TextRule",
+          "title": "The order of the list",
+          "status": "draft",
+          "text": "The list of records shows the most recently created record first.",
+          "reason": "A user most often looks for the record they have just written.",
+          "refs": [],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-01",
+                "problem": "Whether the list of records is sorted by title or by the time at which each record was created.",
+                "ruling": "By the time of creation, the newest record first, since users most often look for the record they have just written.",
+                "type": "textual"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

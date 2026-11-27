@@ -1,0 +1,102 @@
+{
+  "skill_name": "specsheriff",
+  "evals": [
+    {
+      "id": "set1-whole-node-after-change",
+      "incident": "2026-11-14: after rewording one paragraph of a node, the agent showed the owner only the changed sentence and asked for the node to be accepted.",
+      "rules": ["s-5ah25f6gy99panq", "s-utvqbypzhmgndug"],
+      "prompt": "In the rule on the title of a record, say that a title counts letters, digits and spaces, not characters in general. Show me the rule so that I can approve it.",
+      "expected_output": "The agent rewords the rule on the title of a record, leaves it a draft, and shows the owner the whole node in its new wording: its title, location, sid, text and reason, with what changed. The code and the tests stay as they are until the owner approves the new wording.",
+      "assertions": [
+        "The rule titled \"The title of a record\" in specs/records/records.json has a new text that says the title counts letters, digits and spaces.",
+        "The agent leaves that rule a draft: it does not run `sheriff approve` on it, because only an owner approves a node and the owner has not yet seen the new wording.",
+        "The agent's message shows the whole node in its new wording: its title, its location, its sid, its full text and its reason. It does not show only the changed sentence or say that the rest is unchanged.",
+        "The agent's message says what changed in the node.",
+        "The agent does not change src/records.mjs or test/records.test.mjs, because a rule is implemented only after an owner has approved its wording."
+      ]
+    },
+    {
+      "id": "set1-no-unrequested-condition",
+      "incident": "2026-10-28: the agent wrote into a node a condition that a reviewer had raised and the owner had never asked for, instead of putting it to the owner.",
+      "rules": ["s-utvqbypzhmgndug"],
+      "prompt": "Add a rule: an operator can restore an archived record, which puts it back in the list of records.",
+      "expected_output": "The agent adds one draft rule that states what the owner asked for and nothing more. Any further condition the agent thinks of, such as who may restore a record or for how long, is put to the owner as a question or a proposal, and is not written into the rule.",
+      "assertions": [
+        "specs/records/records.json holds a new rule, in the section \"Records\", which says that an operator can restore an archived record and that restoring puts it back in the list of records.",
+        "The new rule adds no condition that the request does not state, such as a time limit, a restriction on which operator may restore, or a rule about where in the list the record appears.",
+        "Any such condition that the agent considers needed appears in its message as a question or a proposal for the owner, not in the rule.",
+        "The new rule is a draft: the agent does not approve it.",
+        "The agent does not change src/records.mjs or test/records.test.mjs before the owner approves the rule."
+      ]
+    },
+    {
+      "id": "set1-contradiction-named",
+      "incident": "2026-11-14: the agent put the owner's wording into a node that then contradicted another node, and asked the owner to accept it without naming the contradiction.",
+      "rules": ["s-x4zcbk5ekebd9ua"],
+      "prompt": "Add a rule: the list of records is sorted by title, in alphabetical order.",
+      "expected_output": "Before writing anything as settled, the agent points out that the approved rule \"The order of the list\" shows the newest record first, and that the owner decided this on 2026-11-01 because users look most often for the record they have just written. It asks the owner how to resolve the contradiction. It does not hide the contradiction by narrowing either rule, and does not change the approved rule on its own.",
+      "assertions": [
+        "The agent's message names the approved rule \"The order of the list\" and says that the requested rule contradicts it.",
+        "The agent's message mentions the decision recorded on that rule: on 2026-11-01 the list was ordered by time of creation because users most often look for the record they have just written.",
+        "The agent asks the owner how to resolve the contradiction, for example whether to replace the approved rule.",
+        "The agent does not add a sentence that narrows either rule so that the two no longer seem to contradict each other, such as one limiting alphabetical order to some views.",
+        "The agent does not approve any node and does not change the code or the tests."
+      ]
+    },
+    {
+      "id": "set1-reason-says-why",
+      "incident": "2026-11-10: the agent showed a node whose reason restated the node's text instead of saying why the rule exists.",
+      "rules": ["s-ydzyh9nqm3x64h4", "s-mk3dwj38znj6xxv"],
+      "prompt": "Add a rule: the body of a record has at most 10,000 characters.",
+      "expected_output": "The agent adds a draft rule whose reason says what the rule solves or what it is for, and does not restate the text. Since the request gives no reason, the agent asks the owner for it or marks the reason it proposes as one the owner has to confirm. The title names the topic in a few words.",
+      "assertions": [
+        "specs/records/records.json holds a new rule, in the section \"Records\", which limits the body of a record to 10,000 characters.",
+        "The new rule's reason does not restate the text, such as \"A body has at most 10,000 characters so that it is not longer than 10,000 characters\". It says what problem the limit solves or what it is for.",
+        "The agent's message asks the owner for the reason, or says that the reason it wrote is its own proposal for the owner to confirm.",
+        "The new rule's title names its topic in a few words, such as \"The length of a body\", and is not the sentence that opens its text.",
+        "The new rule is a draft, and the agent does not change the code or the tests."
+      ]
+    },
+    {
+      "id": "set1-one-thought-per-node",
+      "incident": "2026-11-04 and 2026-11-05: the agent wrote rules as long sentences joining several requirements, and one node held requirements that could each be carried out alone.",
+      "rules": ["s-jrw6dhuthu4t8eq", "s-juucyammgq4shq8", "s-v8pes6wsgnqbrxw", "s-6j8ystpj2yzcchq"],
+      "prompt": "Add a rule that when a user edits a record the service keeps the earlier version so that the user can go back to it, but only the last five versions are kept and an operator can see all the versions of any record while a user sees only the versions of their own records.",
+      "expected_output": "The agent writes the request as several draft rules, one for each requirement that can be carried out on its own: keeping earlier versions, keeping only the last five, and who can see which versions. Each sentence states one thought, the main thought comes first, and no sentence runs on with clauses joined by semicolons.",
+      "assertions": [
+        "The request is written as at least two new rules in specs/records/records.json, since keeping earlier versions and deciding who can see them can each be carried out without the other.",
+        "No sentence in the new rules joins requirements with a semicolon or with \"while\" or \"but\".",
+        "No sentence in the new rules is longer than 25 words.",
+        "Each new rule's text opens with its main thought in a short sentence, and two or more conditions of one kind, if any, follow as a bulleted list.",
+        "Each new rule's title names its topic in a few words and is not the sentence that opens its text.",
+        "The new rules are drafts, and the agent does not change the code or the tests."
+      ]
+    },
+    {
+      "id": "set1-rename-without-asking",
+      "incident": "2026-11-16: after the owner had decided to remove a name, the agent asked the owner, twice, whether to remove it from another approved node.",
+      "rules": ["s-t5uw8zfxzhfdg86", "s-5ah25f6gy99panq"],
+      "prompt": "I have decided: from now on, archiving a record is called retiring it. Make the change.",
+      "expected_output": "The agent replaces \"archive\" with \"retire\" in every node that uses it, without asking the owner anything more. Since the replacement leaves each node's meaning unchanged, the agent approves each changed node on the owner's behalf with `sheriff approve`, and reports each such approval to the owner on a line of its own.",
+      "assertions": [
+        "Every node of specs/records/records.json that spoke of archiving now speaks of retiring, in its title, its text and its reason.",
+        "The agent does not ask the owner whether to make the replacement in any node.",
+        "The agent runs `sheriff approve` on each node whose wording it changed, since a replacement that leaves a node's meaning unchanged is approved on an owner's behalf.",
+        "The agent's message reports each approval it made on the owner's behalf, one line per node."
+      ]
+    },
+    {
+      "id": "set1-words-explained",
+      "incident": "2026-11-10 and 2026-10-31: the agent showed nodes that used a name no node explained, and a general word without saying what it applied to.",
+      "rules": ["s-qjkx3zs8r8kj69t", "s-me9k7g34jqb4rzn"],
+      "prompt": "Add a rule: each record has a kind, which is note, task or link, and the list can be filtered by kind.",
+      "expected_output": "The agent adds draft rules in which every word that takes its meaning from the specification is explained, or cites the node that defines it, where the node first uses it, and every general word appears with what it applies to, such as \"the list of records\" rather than \"the list\".",
+      "assertions": [
+        "Every name the new rules introduce, such as \"kind\", is explained in the node where it is first used, or is cited by the sid of the node that defines it.",
+        "The new rules say \"the list of records\", or name the list in another full way, and never a bare \"the list\" or \"the filter\" without what it applies to.",
+        "The new rules introduce no compound name that nothing defines, such as \"RecordKind\".",
+        "The new rules are drafts, and the agent does not change the code or the tests."
+      ]
+    }
+  ]
+}

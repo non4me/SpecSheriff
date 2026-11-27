@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "scope": "_guidelines",
+  "section": "project",
+  "nodes": [
+    {
+      "kind": "section",
+      "title": "Our guidelines",
+      "status": "draft",
+      "text": "What the specification of this project needs beyond the SpecSheriff guidelines.",
+      "owners": [
+        "owner@example.org"
+      ],
+      "refs": [],
+      "children": [
+        {
+          "kind": "TextRule",
+          "title": "When the tests run",
+          "status": "draft",
+          "text": "The tests run before every push.",
+          "reason": "Running the tests before every push keeps a change whose tests fail from reaching the project's shared branch.",
+          "list": {
+            "of": "the moments at which the tests run",
+            "members": [
+              "push"
+            ]
+          },
+          "refs": [
+            {
+              "type": "refines",
+              "to": "s-x8uzc8z44pwtd3h"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
