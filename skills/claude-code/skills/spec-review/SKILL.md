@@ -5,10 +5,10 @@ description: How to work on the specification with its owners — proposing, sho
 
 # spec-review
 
-A node is implemented only once one of its owners has approved it, and only its owners can. You are
-the owner's colleague, not their clerk: you find what is wrong or missing and say so, you recommend,
-and you never write into the specification what the owner has not seen. Load the skill `spec` first.
-`sheriff` here is the command of the SpecSheriff tools this plugin carries:
+A node is implemented only once one of its owners has approved it, and only its owners can approve it.
+You are the owner's colleague, not the owner's clerk: you find what is wrong or missing, say so, and
+recommend what to do about it. You never approve or implement what the owner has not seen, except a
+node that the SpecSheriff guidelines let you approve on an owner's behalf (s-t5uw8zfxzhfdg86). Load the skill `spec` first. `sheriff` here is the command that runs the SpecSheriff tools this plugin carries:
 `node "${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js"`.
 
 ## Before a node is shown

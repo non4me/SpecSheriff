@@ -83,23 +83,72 @@ hooks only in a project its `config.toml` trusts, `[projects.'<path>'] trust_lev
 
 1. builds the tools and runs `sheriff binding`, and stops where it refuses anything or reports an
    approved rule not implemented (s-6fw72j65jkqrfpf): a release carries out every rule it states;
-2. writes the version into `skills/tools/package.json` and the lockfile,
+2. tests the skills of both plugins, as the section "Testing the skills" describes. It stops if a
+   test that can stop a release fails or does not complete;
+3. writes the version into `skills/tools/package.json`, `package-lock.json`,
    `skills/claude-code/.claude-plugin/plugin.json`, `skills/codex/.codex-plugin/plugin.json` and
-   `skills/pytest-specsheriff/pyproject.toml`,
-   and the tag into the guide's recipe for CI, `skills/claude-code/README.md`, so that the recipe
-   clones the tools of the release a project's plugin runs; and commits it on `main` as
-   `Release: <version>`, through the git hooks like any commit;
-3. builds the tools;
-4. makes the release commit: the tree of that commit with `skills/claude-code/tools/` and
-   `skills/codex/skills/`, `hooks/` and `tools/` added, its parents that commit and the last commit
-   of `release`, where there is one;
-5. tags it `v<version>`, moves `release` to it, and pushes `main`, `release` and the tag in one
+   `skills/pytest-specsheriff/pyproject.toml`. It writes the release's tag into the guide's recipe for
+   CI, in `skills/claude-code/README.md`, so that the recipe clones the tools of the same release as
+   the project's plugin. It commits these changes on `main` as `Release: <version>`, through the git
+   hooks like any commit;
+4. builds the tools;
+5. makes the release commit. Its tree is the tree of the commit made in step 3, with
+   `skills/claude-code/tools/`, `skills/codex/skills/`, `skills/codex/hooks/` and `skills/codex/tools/`
+   added. Its parents are that commit and the last commit of `release`, if there is one. Its message contains the results
+   of the skills' tests;
+6. tags it `v<version>`, moves `release` to it, and pushes `main`, `release` and the tag in one
    atomic push, the pre-push hook running the tests first.
 
 `release` holds only releases, so a project's marketplace never reads the work in progress on `main`.
 Claude Code offers a machine the new release once the version in `plugin.json` has changed, and with
 the marketplace's `autoUpdate` on it takes it in the background. Codex CLI takes it at
 `codex plugin marketplace upgrade`.
+
+## Testing the skills
+
+The release script tests every skill of both plugins with NVIDIA's SkillEvaluator, exactly version
+1.0.1, installed as a `uv` tool: `uv tool install --python 3.13 "skillevaluator[all]==1.0.1"`. This
+step is implemented in `internal/skill-evals/test-skills.mjs`, and the step's tests run with `npm test`.
+The step runs three tiers:
+
+1. Tier 1 runs on each skill without a model: SkillEvaluator's static checks (`tier1 --no-llm`), and
+   the check that Claude Code and Codex CLI each load the skill (`harness-check`). The scan for
+   secrets in tier 1 needs `gitleaks` on the `PATH`.
+2. Tier 2 runs on each skill. It uses embeddings from NVIDIA Build to look for skills that overlap so
+   much that an agent could confuse them. It needs an NVIDIA Build API key. The release step specifies
+   the embedding model, `nvidia/nemotron-3.5-embed-1b`, because NVIDIA Build has withdrawn the default
+   model of SkillEvaluator 1.0.1.
+3. Tier 3 is the live run. Claude Code in Docker works through each test case of
+   `internal/skill-evals/cases.json` in three runs with the plugin for Claude Code, and in three runs
+   without the plugin. An LLM judge scores each run. Tier 3 runs only if
+   `skills/claude-code/skills/` or `specs/_guidelines/` has changed since the last release's tag.
+
+A failure in tier 1 or tier 2 stops the release, and so does a check of either tier that does not
+complete. Only a check whose result is the same on every run is allowed to stop a release, so the scores of
+tier 3 do not stop it. They go into the release commit's message, each next to the same test
+case's score at the previous release. The owner reads them before agreeing to publish the release. A live run that produces no
+report stops the release.
+
+The test cases of tier 3 run in a small neutral project, which `internal/skill-evals/setup-project.mjs`
+sets up with the tools of the release under test. Each test case is adapted from an incident in this
+repository's history, and names the rules of the SpecSheriff guidelines that its judge applies.
+`internal/skill-evals/tier3.py` runs them with SkillEvaluator's Python interpreter. SkillEvaluator's command
+line cannot load a plugin as Claude Code does, with the plugin's skills and hooks together. For this
+reason, `tier3.py` calls the function in SkillEvaluator's code that loads a plugin in that way
+(`evaluate_prepared_plugin` with `load="native"`).
+
+A live run takes hours, so its report is kept in `~/.specsheriff/skill-evals/<commit>/report.json`.
+The release reuses the report that its rehearsal, described in "Checking a release before it is
+published", made for the same commit of `main`.
+
+The keys come from Windows user environment variables, and each tier is handed only the keys it
+needs:
+
+| Variable | What it holds | Who uses it |
+|---|---|---|
+| `SKILLEVAL_NVIDIA_API_KEY` | an NVIDIA Build API key | tier 2 |
+| `SKILLEVAL_CLAUDE_OAUTH_TOKEN` | an OAuth token for the owner's Claude subscription | the tier 3 agent |
+| `SKILLEVAL_ANTHROPIC_API_KEY` | an Anthropic API key | the tier 3 judge |
 
 ## Checking a release before it is published
 

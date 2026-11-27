@@ -41,7 +41,7 @@ test("@spec s-zh2vcr3xjumppg5 the plugin declares the agent's hooks and the one 
   assert.match(command("SessionStart"), /\$\{CLAUDE_PLUGIN_ROOT\}\/hooks\/session-start\.sh/);
 });
 
-test("@spec s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the plugin's hooks do nothing but keep its copy of the tools", () => {
+test("@spec s-zh2vcr3xjumppg5 in a repository that has no sheriff.config.json the plugin's hooks do nothing but keep the plugin's copy of the tools up to date and record where that copy is", () => {
   const root = gitRepo(false);
   const p = plugins();
   const edit = JSON.stringify({ tool_name: "Write", tool_input: { file_path: join(root, "a.ts"), content: "export const a = 1;\n" } });
@@ -52,6 +52,7 @@ test("@spec s-zh2vcr3xjumppg5 in a repository holding no sheriff.config.json the
   assert.equal(start.status, 0, start.stderr);
   assert.equal(start.stdout, "");
   assert.ok(existsSync(`${p.data}/hooks/pre-commit`));
+  assert.equal(userSetting(p, "specsheriff.claudePluginData"), p.data);
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), "");
   assert.deepEqual(readdirSync(root), [".git"]);
 });
@@ -97,7 +98,8 @@ test("@spec s-4mej6ccn7xu3d3p each git hook that sheriff init writes contains th
   const root = initialised();
   const hooks = ["pre-commit", "commit-msg", "pre-push"].map((h) => read(join(root, ".githooks", h)));
   assert.equal(new Set(hooks).size, 1, "one call, naming its script by the hook's own name");
-  assert.match(hooks[0]!, /CLAUDE_CODE_PLUGIN_CACHE_DIR:-\$HOME\/\.claude\/plugins\}\/data\/specsheriff-specsheriff-marketplace/);
+  assert.match(hooks[0]!, /specsheriff\.claudePluginData/);
+  assert.match(hooks[0]!, /CLAUDE_CODE_PLUGIN_CACHE_DIR:-\$\{CLAUDE_CONFIG_DIR:-\$HOME\/\.claude\}\/plugins\}\/data\/specsheriff-specsheriff-marketplace/);
   assert.match(hooks[0]!, /CODEX_HOME:-\$HOME\/\.codex\}/);
   assert.match(hooks[0]!, /\/plugins\/cache\/specsheriff-marketplace\/specsheriff\/\*\/tools/);
   assert.doesNotMatch(hooks[0]!, /sheriff (validate|binding|commit-message|review)/);
@@ -130,6 +132,56 @@ test("@spec s-4mej6ccn7xu3d3p a git hook that finds both plugins runs the tools 
   assert.equal(ran(), "codex pre-push");
 });
 
+/** The value of `key` in the global git configuration that the environment of `p` names, or null. */
+function userSetting(p: ReturnType<typeof plugins>, key: string): string | null {
+  const read = spawnSync("git", ["config", "--file", p.env.GIT_CONFIG_GLOBAL!, "--get", key], { encoding: "utf8" });
+  return read.status === 0 ? read.stdout.replace(/\n$/, "") : null;
+}
+
+test("@spec s-4mej6ccn7xu3d3p at each session start the plugin records the path to its data directory in the user's git configuration, whenever the configuration lacks the key or holds a different path", () => {
+  const root = gitRepo(true);
+  const p = plugins();
+  assert.equal(pluginHook("session-start.sh", p, root).status, 0);
+  assert.equal(userSetting(p, "specsheriff.claudePluginData"), p.data);
+  spawnSync("git", ["config", "--file", p.env.GIT_CONFIG_GLOBAL!, "specsheriff.claudePluginData", "/elsewhere"]);
+  assert.equal(pluginHook("session-start.sh", p, root).status, 0);
+  assert.equal(userSetting(p, "specsheriff.claudePluginData"), p.data);
+});
+
+test("@spec s-4mej6ccn7xu3d3p a git hook finds the tools of the plugin for Claude Code in the directory that the user's git configuration names in specsheriff.claudePluginData", () => {
+  const root = initialised();
+  const p = plugins();
+  const recorded = mkdtempSync(join(tmpdir(), "sheriff-recorded-")).replaceAll("\\", "/");
+  toolsAt(recorded, "0.9.0", "recorded");
+  spawnSync("git", ["config", "--file", p.env.GIT_CONFIG_GLOBAL!, "specsheriff.claudePluginData", recorded]);
+  const ran = spawnSync("sh", [join(root, ".githooks", "pre-push")], { cwd: root, encoding: "utf8", input: "", env: p.env });
+  assert.equal(ran.stdout.trim(), "recorded pre-push", ran.stderr);
+});
+
+test("@spec s-4mej6ccn7xu3d3p a git hook looks in the plugins/ subdirectory of the configuration directory that CLAUDE_CONFIG_DIR names, when CLAUDE_CODE_PLUGIN_CACHE_DIR is not set", () => {
+  const root = initialised();
+  const { CLAUDE_CODE_PLUGIN_CACHE_DIR: _, ...env } = plugins().env;
+  const config = mkdtempSync(join(tmpdir(), "sheriff-claude-config-")).replaceAll("\\", "/");
+  toolsAt(`${config}/plugins/data/specsheriff-specsheriff-marketplace`, "0.9.0", "configured");
+  const ran = spawnSync("sh", [join(root, ".githooks", "pre-push")], { cwd: root, encoding: "utf8", input: "", env: { ...env, CLAUDE_CONFIG_DIR: config } });
+  assert.equal(ran.stdout.trim(), "configured pre-push", ran.stderr);
+});
+
+test("@spec s-4mej6ccn7xu3d3p a git hook that finds the tools of the plugin for Claude Code both in the directory that specsheriff.claudePluginData names and in the default directory takes the higher release", () => {
+  const root = initialised();
+  const p = plugins();
+  const recorded = mkdtempSync(join(tmpdir(), "sheriff-recorded-")).replaceAll("\\", "/");
+  spawnSync("git", ["config", "--file", p.env.GIT_CONFIG_GLOBAL!, "specsheriff.claudePluginData", recorded]);
+  const ran = () => spawnSync("sh", [join(root, ".githooks", "pre-push")], { cwd: root, encoding: "utf8", input: "", env: p.env }).stdout.trim();
+  toolsAt(recorded, "0.9.0", "recorded");
+  toolsAt(p.data, "0.10.0", "default");
+  assert.equal(ran(), "default pre-push");
+  toolsAt(recorded, "0.11.0", "recorded");
+  assert.equal(ran(), "recorded pre-push");
+  rmSync(recorded, { recursive: true });
+  assert.equal(ran(), "default pre-push", "a key that names a removed directory leaves the default directory");
+});
+
 test("@spec s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin lets the commit through, keeps the git hooks on, and says at every commit that no check of SpecSheriff ran", () => {
   const root = initialised();
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
@@ -137,7 +189,7 @@ test("@spec s-4mej6ccn7xu3d3p a git hook that finds the tools of neither plugin 
   const env = { ...plugins().env, CODEX_HOME: codexHome(false).home };
   const run = spawnSync("git", ["commit", "-qm", "first"], { cwd: root, encoding: "utf8", env });
   assert.equal(run.status, 0, run.stderr);
-  assert.match(run.stderr, /no check of SpecSheriff ran/);
+  assert.match(run.stderr, /no check of SpecSheriff ran: the hook found no plugin's SpecSheriff tools in the directories where it looks for them/);
   assert.equal(git(root, "config", "core.hooksPath").stdout.trim(), ".githooks");
   const again = spawnSync("git", ["commit", "-q", "--allow-empty", "-m", "second"], { cwd: root, encoding: "utf8", env });
   assert.equal(again.status, 0, again.stderr);

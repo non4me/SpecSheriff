@@ -25,6 +25,11 @@ if (checked.status !== 0) throw new Error(`sheriff binding refuses:\n${checked.s
 const unimplemented = checked.stdout.split("\n").filter((l) => l.includes("reported: not implemented"));
 if (unimplemented.length) throw new Error(`a release carries out every rule it states, and these are not implemented:\n${unimplemented.join("\n")}`);
 
+// The skills of both plugins are tested before the version is written, so that a failure does not use up a version
+// number. The scores of the live run of tier 3 go into the release commit's message.
+const { testSkillsHere } = await import("../internal/skill-evals/test-skills.mjs");
+const { summary: skillTests } = await testSkillsHere(process.cwd());
+
 // The version, where the tools, each plugin and the plugin for pytest name it, and the tag the guide's
 // recipe for CI clones the tools at.
 npm(`version ${version} -w specsheriff-tools --no-git-tag-version`);
@@ -50,7 +55,7 @@ run("git", ["add", "-f", "skills/claude-code/tools", "skills/codex/skills", "ski
 const tree = run("git", ["write-tree"], env);
 const previous = git("ls-remote", "origin", "refs/heads/release").split(/\s/)[0];
 if (previous) git("fetch", "-q", "origin", "release");
-const commit = git("commit-tree", tree, "-p", "HEAD", ...(previous ? ["-p", previous] : []), "-m", `Release ${version}: the plugins for Claude Code and Codex CLI with what the build lays out in them`);
+const commit = git("commit-tree", tree, "-p", "HEAD", ...(previous ? ["-p", previous] : []), "-m", `Release ${version}: the plugins for Claude Code and Codex CLI with what the build lays out in them`, "-m", skillTests);
 git("tag", `v${version}`, commit);
 git("branch", "-f", "release", commit);
 execFileSync("git", ["push", "--atomic", "origin", "main", "release", `v${version}`], { stdio: "inherit" });

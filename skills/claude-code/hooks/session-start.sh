@@ -12,6 +12,10 @@ data="${CLAUDE_PLUGIN_DATA:-}"
 if [ -n "$data" ] && ! cmp -s "$tools/release" "$data/release"; then
   mkdir -p "$(dirname "$data")" && rm -rf "$data.new.$$" && cp -R "$tools" "$data.new.$$" && rm -rf "$data" && mv "$data.new.$$" "$data" || exit 1
 fi
+# The path of the data directory, in the user's git configuration, where the git hooks find it whatever their environment.
+if [ -n "$data" ] && [ "$(git config --global --get specsheriff.claudePluginData)" != "$data" ]; then
+  git config --global specsheriff.claudePluginData "$data"
+fi
 # The settings of the runner claude the user gave Claude Code as the plugin's options, in any repository,
 # wherever the user's git configuration lacks one or holds another value.
 for key in claudeModel claudeFallbackModel claudeEffort; do
@@ -71,8 +75,11 @@ if [ -z "$runner" ]; then
   }
   codex=${CODEX_HOME:-$HOME/.codex}
   case $codex in *\\*) codex=$(printf '%s' "$codex" | tr '\\' /) ;; esac
+  recorded=$(git config --global --get specsheriff.claudePluginData 2>/dev/null)
+  case $recorded in *\\*) recorded=$(printf '%s' "$recorded" | tr '\\' /) ;; esac
   found= version=
-  for dir in "${CLAUDE_CODE_PLUGIN_CACHE_DIR:-$HOME/.claude/plugins}/data/specsheriff-specsheriff-marketplace" \
+  for dir in ${recorded:+"$recorded"} \
+    "${CLAUDE_CODE_PLUGIN_CACHE_DIR:-${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins}/data/specsheriff-specsheriff-marketplace" \
     "$codex"/plugins/cache/specsheriff-marketplace/specsheriff/*/tools; do
     [ -f "$dir/release" ] || continue
     release=$(sed -n '1s/ .*//p' "$dir/release")

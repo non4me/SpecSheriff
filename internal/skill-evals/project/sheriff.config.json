@@ -1,0 +1,9 @@
+{
+  "code": [
+    "src/**/*.mjs"
+  ],
+  "tests": [
+    "test/**/*.test.mjs"
+  ],
+  "testCommand": "npm test"
+}

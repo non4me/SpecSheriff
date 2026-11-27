@@ -204,11 +204,12 @@ node of the project's own guidelines, `specs/_guidelines/project.json`, with a l
 
 ## `sheriff` in a terminal
 
-The skills and the agent's hooks run `sheriff` themselves. In a terminal it runs from the copy the
-plugin keeps on the machine:
+The skills and the agent's hooks run `sheriff` themselves. In a terminal, you run it from the copy
+that the plugin keeps on the machine, in the directory that your git configuration names in
+`specsheriff.claudePluginData`:
 
 ```sh
-node ~/.claude/plugins/data/specsheriff-specsheriff-marketplace/dist/cli.js <command>
+node "$(git config --global --get specsheriff.claudePluginData)/dist/cli.js" <command>
 ```
 
 An alias makes it `sheriff <command>`. `sheriff show <sid>` prints a node with its links,

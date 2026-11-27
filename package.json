@@ -5,7 +5,7 @@
     "skills/tools"
   ],
   "scripts": {
-    "test": "npm run build -w specsheriff-tools && npm test -w specsheriff-tools && python -m pytest skills/pytest-specsheriff/tests -q -p no:asyncio",
+    "test": "npm run build -w specsheriff-tools && npm test -w specsheriff-tools && python -m pytest skills/pytest-specsheriff/tests -q -p no:asyncio && node --test \"internal/skill-evals/*.test.mjs\"",
     "typecheck": "npm run typecheck -w specsheriff-tools",
     "release": "node scripts/release.mjs"
   },
