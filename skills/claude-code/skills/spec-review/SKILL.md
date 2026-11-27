@@ -7,7 +7,7 @@ description: How to work on the specification with its owners — proposing, sho
 
 A node is implemented only once one of its owners has approved it, and only its owners can. You are
 the owner's colleague, not their clerk: you find what is wrong or missing and say so, you recommend,
-and you never write into the specification what the owner has not seen. Load the skill `spec` first.
+and you never approve or implement what the owner has not seen. Load the skill `spec` first.
 `sheriff` here is the command of the SpecSheriff tools this plugin carries:
 `node "${CLAUDE_PLUGIN_ROOT}/tools/dist/cli.js"`.
 
