@@ -11,7 +11,7 @@ import { file, node, OWNER, repo, sid } from "../fixture.ts";
 
 /**
  * Each test gets ports of its own, far from the viewer's default range, so that no test collides with a viewer that is already running
- * on the machine. The ports of the tests stay below 49152, from which Windows reserves ports by default.
+ * on the machine. The ports of the tests stay below 49152, where the range of ports that Windows reserves by default begins.
  */
 let next = 41000 + (process.pid % 500) * 10;
 const ports = () => {
@@ -38,7 +38,7 @@ async function nextModelEvent(url: string, act: () => void): Promise<{ built: st
   const reader = res.body!.getReader();
   const decoder = new TextDecoder();
   let text = "";
-  // The stream opens with its retry line; the edit is made once the stream is open.
+  // The stream opens with its retry line; `act` runs as soon as the stream is open.
   while (!text.includes("retry:")) text += decoder.decode((await reader.read()).value);
   act();
   const deadline = Date.now() + 5000;
@@ -56,7 +56,7 @@ async function nextModelEvent(url: string, act: () => void): Promise<{ built: st
   throw new Error("no model event");
 }
 
-test("@spec s-282zba8mtxvxnm5 answers a request for its health with the project's root and the identifier of the build of the SpecSheriff tools", async () => {
+test("@spec s-282zba8mtxvxnm5 answers a health-check request with the project's root and the identifier of the build of the SpecSheriff tools", async () => {
   const root = project();
   const viewer = await serve(root, ports());
   try {
@@ -85,7 +85,7 @@ test("@spec s-282zba8mtxvxnm5 reads the specification again after a file of the 
   }
 });
 
-test("@spec s-282zba8mtxvxnm5 reports where it cannot read the specification, and keeps what it last read successfully", async () => {
+test("@spec s-282zba8mtxvxnm5 reports that it cannot read the specification, and keeps what it last read successfully", async () => {
   const root = project();
   const viewer = await serve(root, ports());
   try {
@@ -100,7 +100,7 @@ test("@spec s-282zba8mtxvxnm5 reports where it cannot read the specification, an
   }
 });
 
-test("@spec s-282zba8mtxvxnm5 reports where the settings no longer choose either the Views or the Domains extension", async () => {
+test("@spec s-282zba8mtxvxnm5 reports that the settings, read again, show that the project has chosen neither the Views nor the Domains extension", async () => {
   const root = project();
   const viewer = await serve(root, ports());
   try {
@@ -129,7 +129,7 @@ test("@spec s-282zba8mtxvxnm5 takes the first free port in its range, and refuse
   }
 });
 
-test("@spec s-282zba8mtxvxnm5 refuses where no port of its range is free, naming the range", async () => {
+test("@spec s-282zba8mtxvxnm5 refuses to run where no port in its range is free, naming the range", async () => {
   const root = project();
   const range = ports();
   const held = [];
@@ -173,7 +173,7 @@ test("@spec s-282zba8mtxvxnm5 answers only requests addressed to the machine on 
     const own = `127.0.0.1:${viewer.port}`;
     assert.equal(await statusOf(viewer.url, "/model.json", "GET", { Host: own }), 200);
     assert.equal(await statusOf(viewer.url, "/model.json", "GET", { Host: `localhost:${viewer.port}` }), 200);
-    // A web page of another site whose domain name was set up to resolve to 127.0.0.1 sends that name in the Host header of its request.
+    // A web page on another site whose domain name was set up to resolve to 127.0.0.1 sends that name in the Host header of its request.
     assert.equal(await statusOf(viewer.url, "/model.json", "GET", { Host: `elsewhere.example:${viewer.port}` }), 403);
     assert.equal((await fetch(`${viewer.url}health`)).status, 200);
   } finally {

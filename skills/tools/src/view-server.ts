@@ -15,7 +15,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 export const PAGE = join(HERE, "..", "assets", "viewer", "index.html");
 
 /**
- * The identifier of the build of the SpecSheriff tools that runs this code: a hash of every module in this module's folder, this
+ * The identifier of the build of the SpecSheriff tools that this code belongs to: a hash of every module in this module's folder, this
  * one included, and of the web page. A plugin update, or a new build in this repository, produces a different value. `--detach`
  * uses this value to recognise a viewer that it must replace (s-282zba8mtxvxnm5).
  */
@@ -60,7 +60,7 @@ function listen(server: http.Server, port: number): Promise<boolean> {
  * - `/health` with the project's root and the identifier of the build of the SpecSheriff tools;
  * - a POST to `/stop` by stopping the server.
  * It reads the specification again after each change to a file that it reads. Where it cannot, it keeps the model that it last
- * read successfully and sends the error to the open pages. It takes the port given in `port`, or else the first free port from `first` to `last`.
+ * built successfully and sends the error to the open pages. It takes the port given in `port`, or else the first free port from `first` to `last`.
  */
 export async function serve(rootGiven: string, opts: { port?: number; first?: number; last?: number } = {}): Promise<Viewer> {
   const root = resolve(rootGiven);
@@ -110,7 +110,7 @@ export async function serve(rootGiven: string, opts: { port?: number; first?: nu
       res.writeHead(status, { "Content-Type": type, "Cache-Control": "no-store" });
       res.end(body);
     };
-    // Only a request addressed to this machine is answered, so that a web page of another site whose domain name was set up to
+    // Only a request addressed to this machine is answered, so that a web page on another site whose domain name was set up to
     // resolve to 127.0.0.1 cannot read the specification.
     const own = [`127.0.0.1:${port}`, `localhost:${port}`];
     if (!own.includes(req.headers.host ?? "")) {
@@ -222,8 +222,8 @@ async function viewerOf(root: string, port?: number): Promise<{ port: number; bu
 
 /**
  * Starts the viewer of the project in the background and returns its address (s-282zba8mtxvxnm5). Where the viewer of the project
- * already answers and this build started it, `detach` starts no second viewer and returns its address. Where another build started
- * it, `detach` stops it first. `detach` starts the new viewer by running `cli` with the argument `view` in a separate process,
+ * already answers and this build started it, `detach` starts no second viewer and returns the address of the running one. Where another
+ * build started the running viewer, `detach` stops it first. `detach` starts the new viewer by running `cli` with the argument `view` in a separate process,
  * detached from this one.
  */
 export async function detach(rootGiven: string, cli: string, opts: { port?: number } = {}): Promise<string> {

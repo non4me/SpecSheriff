@@ -244,7 +244,7 @@ Four commands are renamed: `sheriff message` is now `sheriff commit-message`, `s
 `sheriff markdown` and `sheriff map` run only where the project has chosen the Views extension.
 `sheriff map` writes the map into `specs/_map/`, and `sheriff reindex` removes `specs/_viewer/`, the
 folder into which an earlier release wrote it. The new command `sheriff view` serves the viewer of
-the specification, which also draws the diagram of the domains. An
+the specification where the project has chosen the Views extension, and the diagram of the domains where it has chosen the Domains extension. An
 owner changes the specification's approval status, its `strict` flag and the chosen extensions with
 `sheriff settings`, or through the skill `spec-settings`. Where the specification holds a node of a
 kind that an extension adds, such as a domain's header or a RecordType, `sheriff reindex` names that

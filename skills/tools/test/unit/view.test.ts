@@ -42,7 +42,7 @@ function project(extensions = ["domains", "views"]): string {
   return root;
 }
 
-test("@spec s-exgg4vm4ds7t9jg returns the parts in the order of the branches of the map, with the domains among them in the order of the diagram of the domains", () => {
+test("@spec s-exgg4vm4ds7t9jg returns the boxes in the order of the branches of the map, with the domains among them in the order of the diagram of the domains", () => {
   const model = viewModel(project());
   assert.deepEqual(model.parts.map((p) => [p.name, p.domain]), [
     ["spec", false], ["domains", false], ["views", false], ["project", false],
@@ -65,7 +65,7 @@ test("@spec s-exgg4vm4ds7t9jg returns the diagram of the domains as the SpecSher
   assert.deepEqual(viewModel(root).diagram, domainDiagram(loadSpecification(root), ["core", "auxiliary"]));
 });
 
-test("@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, with the nodes under it, a TableRule's nodes in cells coming after its children", () => {
+test("@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, with the nodes under it, where the nodes in a TableRule's cells come after the TableRule's children", () => {
   const root = project();
   const model = viewModel(root);
   const spec = loadSpecification(root);
@@ -80,7 +80,7 @@ test("@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, wit
   assert.equal(model.nodes[sid("shared check")]!.parent, sid("shared table"));
 });
 
-test("@spec s-k4nqjr96ux7a5m7 sheriff view writes a node in Markdown as sheriff show writes it, and heads a node in a cell with its location alone", () => {
+test("@spec s-k4nqjr96ux7a5m7 sheriff view writes a node in Markdown as sheriff show writes it, and gives a node in a cell a heading that consists of its location alone", () => {
   const root = project();
   const spec = loadSpecification(root);
   const { nodes } = viewModel(root);
@@ -126,7 +126,7 @@ test("@spec s-282zba8mtxvxnm5 returns no diagram of the domains where the projec
   assert.deepEqual(model.parts.map((p) => p.name), ["spec", "views", "base"]);
 });
 
-test("@spec s-282zba8mtxvxnm5 refuses where the project has chosen neither the Views nor the Domains extension, with a refusal that names both and `sheriff settings`", () => {
+test("@spec s-282zba8mtxvxnm5 refuses to run where the project has chosen neither the Views nor the Domains extension, with a refusal that names both extensions and `sheriff settings`", () => {
   const root = repo({
     "sheriff.config.json": { code: [], tests: [], extensions: chosen("recordtype") },
     "specs/_guidelines/spec.json": file("_guidelines", "spec", node("base", { kind: "section", text: "The base.", children: [node("base rule")] })),
@@ -134,7 +134,7 @@ test("@spec s-282zba8mtxvxnm5 refuses where the project has chosen neither the V
   assert.throws(() => viewModel(root), (error: Error) => /Views/.test(error.message) && /Domains/.test(error.message) && /sheriff settings/.test(error.message));
 });
 
-test("@spec s-282zba8mtxvxnm5 reads the specification as `sheriff json` reads it: an extension that the project takes from the plugin and has not chosen is left out", () => {
+test("@spec s-282zba8mtxvxnm5 reads the specification as `sheriff json` reads it: an extension that the project receives from the plugin but has not chosen is left out", () => {
   const root = taking({ "sheriff.config.json": { code: [], tests: [], extensions: chosen("views") } });
   reindex(root);
   const names = viewModel(root).parts.map((p) => p.name);

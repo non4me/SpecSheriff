@@ -425,7 +425,7 @@
               },
               {
                 "date": "2026-11-28",
-                "problem": "The folder into which `sheriff map` writes the map, `specs/_viewer/`, had the same name as the viewer of the specification (§s-rj7yxrktxywvxzj), which is a different view from the map.",
+                "problem": "The folder into which `sheriff map` wrote the map, `specs/_viewer/`, had the same name as the viewer of the specification (§s-rj7yxrktxywvxzj), which is a different view from the map.",
                 "ruling": "The owner chose to rename the folder to `specs/_map/` (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
                 "type": "textual"
               }
@@ -995,7 +995,7 @@
                   },
                   {
                     "date": "2026-11-28",
-                    "problem": "Each of the two agreed sentences stated two thoughts. The first said how the SpecSheriff tools are run and which commands they accept. The second listed the three steps that `sheriff` takes when it is given an unknown word.",
+                    "problem": "Each of the two sentences that the owner had agreed to stated two thoughts. The first said how the SpecSheriff tools are run and which commands they accept. The second listed the three steps that `sheriff` takes when it is given an unknown word.",
                     "ruling": "The owner accepted the proposal to split the first into two sentences and to write the second as a list of three steps (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
                     "type": "textual"
                   }
@@ -2859,7 +2859,7 @@
           "kind": "TextRule",
           "title": "Serving the viewer",
           "status": "approved",
-          "text": "`sheriff view` serves a web page at `http://127.0.0.1:<port>/`, which only the machine on which it runs can open. Where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb, §s-9ttvcwpqkehm58g), the web page is the viewer of the specification (§s-rj7yxrktxywvxzj). Where the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the web page shows the diagram of the domains (§s-4azsb49pj6sech8). Where the project has chosen neither, `sheriff view` refuses to run, and the refusal names both extensions and `sheriff settings` (§s-chsfpkgpmfk4fft).\n\n`sheriff view` prints the web page's address. The port is the one that the option `--port` sets, and by default the first free port from 5278 to 5297. Where `sheriff view` is to start serving and that port is already in use, or no port of that range is free, it refuses to run and names the port or the range.\n\n`sheriff view` reads the specification as `sheriff json` reads it (§s-w6gybeqn2ttydqx). It also reads the settings in `sheriff.config.json` (§s-tjsv2wv4j2cuapa), and the levels of the domains as the SpecSheriff tools read them (§s-t9j29hppag2nren). After each change to any file that it reads, it reads all of those files again, and each open web page is redrawn. A redrawn web page keeps open the box that the reader opened, keeps expanded the nodes that the reader expanded, keeps selected the node that the reader selected and keeps the display of drafts as the reader set it. Where `sheriff view` cannot read the specification, or where the settings no longer choose either the Views or the Domains extension, the web page says so and keeps showing what it most recently read successfully.\n\nWithout `--detach`, `sheriff view` serves the web page until it is stopped. The options work as follows:\n- `--detach` starts `sheriff view` in the background and prints the web page's address. Where a `sheriff view` process started by this same build of the SpecSheriff tools already serves this project, `--detach` only prints its address. Where a `sheriff view` process started by another build serves it, as after an update of the plugin, `--detach` stops that one and starts a new one.\n- `--stop` stops the `sheriff view` process that serves this project. Where no such process runs, `--stop` says so.\n\n`--detach` and `--stop` look for the `sheriff view` process that serves this project on the port that `--port` sets and, without that option, on each port from 5278 to 5297.",
+          "text": "`sheriff view` serves a web page at `http://127.0.0.1:<port>/`, which only the machine on which it runs can open. Where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb, §s-9ttvcwpqkehm58g), the web page is the viewer of the specification (§s-rj7yxrktxywvxzj). Where the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the web page shows the diagram of the domains (§s-4azsb49pj6sech8). Where the project has chosen neither, `sheriff view` refuses to run, and the refusal names both extensions and `sheriff settings` (§s-chsfpkgpmfk4fft).\n\n`sheriff view` prints the web page's address. The port is the one that the option `--port` sets or, without that option, the first free port from 5278 to 5297. Where `sheriff view` starts serving and the port that `--port` sets is already in use, or where no port in that range is free, it refuses to run and names the port or the range.\n\n`sheriff view` reads the specification as `sheriff json` reads it (§s-w6gybeqn2ttydqx). It also reads the settings in `sheriff.config.json` (§s-tjsv2wv4j2cuapa), and the levels of the domains as the SpecSheriff tools read them (§s-t9j29hppag2nren). After each change to any file that it reads, it reads all of those files again, and each open web page is redrawn. A redrawn web page keeps open the box that the reader opened, keeps expanded the nodes that the reader expanded, keeps selected the node that the reader selected and keeps the display of drafts as the reader set it. Where `sheriff view` cannot read the specification, or where the settings, read again, show that the project has chosen neither the Views nor the Domains extension, the web page says so. It then keeps showing what `sheriff view` most recently read successfully.\n\nWithout `--detach`, `sheriff view` serves the web page until it is stopped. The options `--detach` and `--stop` work as follows:\n- `--detach` starts `sheriff view` in the background and prints the web page's address. Where a `sheriff view` process started by this same build of the SpecSheriff tools already serves this project, `--detach` only prints that process's address. Where a `sheriff view` process started by another build serves the project, as happens after the plugin is updated, `--detach` stops that process and starts a new one.\n- `--stop` stops the `sheriff view` process that serves this project. Where no such process runs, `--stop` says so.\n\n`--detach` and `--stop` look for the `sheriff view` process that serves this project. They look on the port that `--port` sets or, without that option, on each port from 5278 to 5297.",
           "refs": [
             {
               "type": "implements",
@@ -2908,19 +2908,19 @@
           ],
           "reason": "A person who reviews the specification while an agent changes it needs to see each change as soon as it is made, on the machine where the work is done, in the specification as the other commands of the SpecSheriff tools read it.",
           "examples": [
-            "In a project that has chosen the Views extension, the owner runs `sheriff view --detach`, which prints `http://127.0.0.1:5278/`. An agent then changes the title of a rule, and the open web page shows the new title with the same node still selected. After an update of the plugin, `sheriff view --detach` stops the earlier `sheriff view` process and starts one from the new release. The most likely mistake is to keep the earlier process because it still responds, which shows the specification as the earlier release draws it."
+            "In a project that has chosen the Views extension, the owner runs `sheriff view --detach`, which prints `http://127.0.0.1:5278/`. An agent then changes the title of a rule, and the open web page shows the new title with the same node still selected. After an update of the plugin, `sheriff view --detach` stops the earlier `sheriff view` process and starts one from the new release. The most likely mistake is to keep the earlier process because it still responds. That process shows the specification as the earlier release draws it."
           ],
           "meta": {
             "decisions": [
               {
                 "date": "2026-11-27",
                 "problem": "Whether the plugin starts serving the viewer when a session starts, and what becomes of a `sheriff view` process that another build of the SpecSheriff tools started.",
-                "ruling": "The owner agreed to the design under which only the command `sheriff view` starts serving the viewer, `--detach` replaces a `sheriff view` process that another build of the SpecSheriff tools started, and `--stop` stops it (\"A\", in answer to \"Do you agree to the design, and which option do you choose on Views, A or B?\").",
+                "ruling": "The owner agreed to the design under which only the command `sheriff view` starts serving the viewer, `--detach` replaces a `sheriff view` process that another build of the SpecSheriff tools started, and `--stop` stops the project's `sheriff view` process (\"A\", in answer to \"Do you agree to the design, and which option do you choose for Views, A or B?\").",
                 "type": "textual"
               },
               {
                 "date": "2026-11-28",
-                "problem": "Whether the owner agrees to the group of the rules on the viewer of the specification, shown on one page with each node in full.",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
                 "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
                 "type": "textual"
               }
@@ -2928,20 +2928,20 @@
             "tests": [
               "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view --detach starts the viewer in the background and prints its address, and a second --detach starts no second one",
               "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view --detach stops a viewer of the project that another build of the SpecSheriff tools started, and starts a new one",
-              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view --stop stops the sheriff view process that serves the project, and says so where none does",
+              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view --stop stops the sheriff view process that serves the project and, where there is none, says that there is none",
               "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view refuses to run on the port that --port sets if the viewer of another project already serves on it, naming the port",
-              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view refuses where the project has chosen neither the Views nor the Domains extension, naming both and sheriff settings",
-              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 answers a request for its health with the project's root and the identifier of the build of the SpecSheriff tools",
+              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view refuses to run where the project has chosen neither the Views nor the Domains extension, naming both extensions and sheriff settings",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 answers a health-check request with the project's root and the identifier of the build of the SpecSheriff tools",
               "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 answers only requests addressed to the machine on which it runs",
               "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 only reads files: the working tree is unchanged after the web page has been served",
               "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reads the specification again after a file of the specification changes, and tells each open web page to redraw",
-              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 refuses where no port of its range is free, naming the range",
-              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reports where it cannot read the specification, and keeps what it last read successfully",
-              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reports where the settings no longer choose either the Views or the Domains extension",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 refuses to run where no port in its range is free, naming the range",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reports that it cannot read the specification, and keeps what it last read successfully",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reports that the settings, read again, show that the project has chosen neither the Views nor the Domains extension",
               "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 stops serving when asked to stop",
               "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 takes the first free port in its range, and refuses to run on the port that `--port` sets where that port is in use",
-              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 reads the specification as `sheriff json` reads it: an extension that the project takes from the plugin and has not chosen is left out",
-              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 refuses where the project has chosen neither the Views nor the Domains extension, with a refusal that names both and `sheriff settings`",
+              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 reads the specification as `sheriff json` reads it: an extension that the project receives from the plugin but has not chosen is left out",
+              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 refuses to run where the project has chosen neither the Views nor the Domains extension, with a refusal that names both extensions and `sheriff settings`",
               "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 returns no diagram of the domains where the project has chosen the Views extension and not the Domains extension",
               "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 returns only the diagram of the domains where the project has chosen the Domains extension and not the Views extension"
             ]
@@ -2953,7 +2953,7 @@
           "kind": "TextRule",
           "title": "The top of the web page that `sheriff view` serves",
           "status": "approved",
-          "text": "The top of the web page that `sheriff view` serves (§s-282zba8mtxvxnm5) shows how the specification is divided and the diagram of the domains.\n\nWhere the project has chosen the Views extension (§s-qgg6sfawtmwvrbb), a row at the top holds a box for each of the following, each where the project keeps it, in the order of the branches of the map (§s-rpv4fkdqqguptqd):\n- the file `spec.json` of the SpecSheriff guidelines, each file of an extension of the guidelines whose nodes the model of the specification holds (§s-w6gybeqn2ttydqx), and the file of the project's own guidelines (§s-u7tw6m8npxmv5tu), each labelled with the value of its `section`;\n- the appendix of the tools (§s-a4rbry4hsu34hy8), labelled `tools`;\n- the contracts section (§s-z6tq6a3btnvvwx7), labelled `contracts`;\n- the folder `base` (§s-zefk589ykh37b8u), labelled `base`;\n- the technical appendix (§s-tj38pvm38nepaf5), labelled `tech`.\n\nEach box also holds the two numbers that the viewer shows for what the box represents (§s-rj7yxrktxywvxzj): the number of approved nodes, a slash and the number of all nodes, such as `12/14`. A switch at the top turns the display of drafts on and off.\n\nWhere the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the diagram of the domains (§s-4azsb49pj6sech8) is drawn at the top, below the row of boxes where there is one, as the node that describes how it is drawn says (§s-jzm6qw992j3bnxt). Where the project has also chosen the Views extension, each domain's box holds its numbers in the same way.",
+          "text": "The top of the web page that `sheriff view` serves (§s-282zba8mtxvxnm5) shows how the specification is divided, and shows the diagram of the domains.\n\nWhere the project has chosen the Views extension (§s-qgg6sfawtmwvrbb), a row at the top holds a box for each of the following that the project keeps, in the order of the branches of the map (§s-rpv4fkdqqguptqd):\n- the file `spec.json` of the SpecSheriff guidelines, each file of an extension of the guidelines whose nodes the model of the specification holds (§s-w6gybeqn2ttydqx), and the file of the project's own guidelines (§s-u7tw6m8npxmv5tu), each of these files labelled with the value of its `section`;\n- the appendix of the tools (§s-a4rbry4hsu34hy8), labelled `tools`;\n- the contracts section (§s-z6tq6a3btnvvwx7), labelled `contracts`;\n- the folder `base` (§s-zefk589ykh37b8u), labelled `base`;\n- the technical appendix (§s-tj38pvm38nepaf5), labelled `tech`.\n\nEach box also holds the two numbers that the viewer shows for what the box represents (§s-rj7yxrktxywvxzj), written as the number of approved nodes, a slash and the number of all nodes, such as `12/14`. A switch at the top of the web page turns the display of drafts on and off.\n\nWhere the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the diagram of the domains (§s-4azsb49pj6sech8) is drawn at the top, below the row of boxes if the web page shows that row, as the rule on drawing the diagram says (§s-jzm6qw992j3bnxt). Where the project has also chosen the Views extension, each domain's box holds the domain's numbers, written in the same way as in the row of boxes.",
           "refs": [
             {
               "type": "implements",
@@ -3016,22 +3016,22 @@
               "from": "s-4s3aru64yudz4kh"
             }
           ],
-          "reason": "The viewer divides and orders the specification as the map does, so that a person who uses both finds each file and each domain in the same place.",
+          "reason": "The viewer divides and orders the specification as the map does, so that a person who uses both finds each file and each domain in the same place in both.",
           "examples": [
-            "A project that has chosen the Views and Domains extensions keeps its own guidelines, a contracts section, the domains `requests` and `billing` and a technical appendix. The row at the top holds the boxes `spec`, `domains`, `views`, `project`, `tools`, `contracts` and `tech`, and the diagram below it holds `requests` and `billing`. The most likely mistake is to put the domains in the row at the top as well, so that each of them is drawn twice."
+            "A project that has chosen the Views and Domains extensions keeps its own guidelines, a contracts section, the domains `requests` and `billing` and a technical appendix. The row at the top holds the boxes `spec`, `domains`, `views`, `project`, `tools`, `contracts` and `tech`, and the diagram below it holds `requests` and `billing`. The most likely mistake is to put the domains in the row at the top as well, which draws each of them twice."
           ],
           "meta": {
             "decisions": [
               {
                 "date": "2026-11-28",
-                "problem": "Whether the owner agrees to the group of the rules on the viewer of the specification, shown on one page with each node in full.",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
                 "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
                 "type": "textual"
               }
             ],
             "tests": [
+              "skills/tools/test/unit/view.test.ts::@spec s-exgg4vm4ds7t9jg returns the boxes in the order of the branches of the map, with the domains among them in the order of the diagram of the domains",
               "skills/tools/test/unit/view.test.ts::@spec s-exgg4vm4ds7t9jg returns the diagram of the domains as the SpecSheriff tools draw it",
-              "skills/tools/test/unit/view.test.ts::@spec s-exgg4vm4ds7t9jg returns the parts in the order of the branches of the map, with the domains among them in the order of the diagram of the domains",
               "skills/tools/test/unit/viewer-page.test.ts::@spec s-exgg4vm4ds7t9jg draws the rows of the diagram of the domains in the order that the model gives, and each domain's numbers only where the Views extension is chosen"
             ]
           }
@@ -3042,7 +3042,7 @@
           "kind": "TextRule",
           "title": "The nodes drawn on the web page that `sheriff view` serves",
           "status": "approved",
-          "text": "Where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb), the web page that `sheriff view` serves draws, below the top of the web page (§s-exgg4vm4ds7t9jg), the nodes of the box at the top that the reader opens, as follows:\n- a node that holds other nodes, such as a section or a `TableRule` whose cells hold nodes (§s-5fewsp22mmdz7y6), is a frame around those nodes once the reader has expanded it;\n- until then, such a node is a card that holds two numbers for the nodes under it at any depth, of approved nodes and of all nodes, counted and written as on a box at the top of the web page;\n- each remaining node is a card;\n- each card and each frame holds its node's location (§s-kag2m9tzdnduxdx) and its node's title, where the node has one;\n- the card or frame of a draft has a dotted border, and that of an approved node a solid one, as on the map (§s-rpv4fkdqqguptqd);\n- each link (§s-sn6au3vcr9uy5pm) between two nodes that the web page draws is a line with an arrowhead at the node that the link leads to, in the colour of the link's type, and dashed for a `cites` link;\n- a link one end of which is inside a card is drawn to that card;\n- the links between the same two cards are drawn as one line, in the colour of their type, or in a colour of its own where they are of several types, with an arrowhead at each card that one of them leads to;\n- a legend below the drawing shows the colour of each link type;\n- a card or a frame holds ◆ and the number of its node's decisions (§s-x4zcbk5ekebd9ua), ✎ and the number of its node's comments, and ☐ and the number of its node's todos (§s-t28j22vbdmmeqnh), each only where the node has any;\n- a card holds ○ where its node is a rule that is linked to no other node.\n\nSelecting a card, or the heading of a frame, shows its node in a panel beside the drawing, as `sheriff show` prints it (§s-2dhbqy43tcm6qj2), rendered from Markdown as formatted text. Selecting a cited sid or a link in the panel selects the node at the other end: the web page opens the box that holds that node, expands each node above it, and turns on the display of drafts where that node is a draft.",
+          "text": "Where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb), the web page that `sheriff view` serves draws, below the top of the web page (§s-exgg4vm4ds7t9jg), the nodes of whichever box at the top the reader opens, as follows:\n- a node that holds other nodes, such as a section or a `TableRule` whose cells hold nodes (§s-5fewsp22mmdz7y6), is drawn as a frame around those nodes once the reader has expanded it;\n- until the reader expands it, such a node is drawn as a card that holds two numbers for the nodes under it at any depth: the number of approved nodes and the number of all nodes, counted and written as in a box at the top of the web page;\n- every other node is drawn as a card;\n- each card and each frame shows its node's location (§s-kag2m9tzdnduxdx) and its node's title, where the node has one;\n- the card or frame of a draft has a dotted border, and that of an approved node a solid one, as on the map (§s-rpv4fkdqqguptqd);\n- each link (§s-sn6au3vcr9uy5pm) between two nodes that the web page draws is drawn as a line in the colour of the link's type, dashed for a `cites` link, with an arrowhead at the node that the link leads to;\n- a link to or from a node that a card hides ends at that card;\n- all the links between one pair of cards are drawn as one line, in the colour of their type or, where they are of several types, in a colour kept for that case, with an arrowhead at each card that one of the links leads to;\n- a legend below the drawing shows the colour of each link type;\n- a card or a frame shows ◆ and the number of its node's decisions (§s-x4zcbk5ekebd9ua), ✎ and the number of its node's comments, and ☐ and the number of its node's todos (§s-t28j22vbdmmeqnh), each only where the node has any;\n- a card shows ○ where its node is a rule that is linked to no other node.\n\nSelecting a card, or the heading of a frame, shows its node in a panel beside the drawing, as `sheriff show` prints it (§s-2dhbqy43tcm6qj2), with its Markdown rendered as formatted text. Selecting a cited sid in the panel selects the node that the sid identifies, and selecting a link there selects the node at the link's other end. The web page then opens the box that holds that node, expands each node above it, and turns on the display of drafts where that node is a draft.",
           "refs": [
             {
               "type": "implements",
@@ -3093,7 +3093,7 @@
               "from": "s-k4nqjr96ux7a5m7"
             }
           ],
-          "reason": "Without such a drawing, a person who reviews the specification has to open its files to find what each node is linked to and what is still open on it.",
+          "reason": "Without such a drawing, a person who reviews the specification has to open its files to find what each node is linked to and what is still unresolved about it.",
           "examples": [
             "In the open box `billing`, the card of the rule `billing/1.2` holds ◆1 and is joined to the card of `billing/1.1` by a line in the colour of the link type `refines`. Selecting the card shows the rule's text, reason, decision and links in the panel. Selecting, in the panel, the rule's link to a node of `requests` opens `requests` and selects that node. The most likely mistake is to draw a link to a node of another box as a line that leads off the drawing, which the reader cannot follow."
           ],
@@ -3101,19 +3101,19 @@
             "decisions": [
               {
                 "date": "2026-11-28",
-                "problem": "Whether the owner agrees to the group of the rules on the viewer of the specification, shown on one page with each node in full.",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
                 "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
                 "type": "textual"
               }
             ],
             "tests": [
               "skills/tools/test/unit/view.test.ts::@spec s-4s3aru64yudz4kh returns each link between two nodes with its type, a `cites` link and a `consumes` link among them",
-              "skills/tools/test/unit/view.test.ts::@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, with the nodes under it, a TableRule's nodes in cells coming after its children",
+              "skills/tools/test/unit/view.test.ts::@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, with the nodes under it, where the nodes in a TableRule's cells come after the TableRule's children",
               "skills/tools/test/unit/view.test.ts::@spec s-4s3aru64yudz4kh returns the counts of each node's decisions, comments and todos",
               "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh counts, for a node that holds other nodes, the nodes under it at any depth, as a box at the top of the web page counts them",
               "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh draws each link in the colour of its type, dashed for a `cites` link, and a link of an unknown type in a colour of its own",
               "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh marks a rule that is linked to no other node",
-              "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh renders a node's Markdown as formatted text, with every character of the node shown as text and every cited sid shown as a link"
+              "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh renders a node's Markdown as formatted text, with every character of the node escaped for HTML and every cited sid shown as a link"
             ]
           }
         },
@@ -3214,7 +3214,7 @@
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the columns and groups of a TableRule as a table for each group, each node's cell holding its location and its text, and the nodes in its cells after it",
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field after the schema's JSON, headed by the field's JSON Pointer, each with the sid, location and title of the node it comes from",
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field nested anywhere in a RecordType's schema under the field's JSON Pointer",
-              "skills/tools/test/unit/view.test.ts::@spec s-k4nqjr96ux7a5m7 sheriff view writes a node in Markdown as sheriff show writes it, and heads a node in a cell with its location alone"
+              "skills/tools/test/unit/view.test.ts::@spec s-k4nqjr96ux7a5m7 sheriff view writes a node in Markdown as sheriff show writes it, and gives a node in a cell a heading that consists of its location alone"
             ],
             "decisions": [
               {

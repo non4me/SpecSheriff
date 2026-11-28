@@ -6,20 +6,20 @@ import { nodeMarkdown } from "./show.ts";
 import { cellNodes, loadSpecification, type SpecFile, type SpecNode } from "./spec-files.ts";
 
 /**
- * A box at the top of the viewer's web page (s-exgg4vm4ds7t9jg). It stands for a file of the guidelines, the appendix of the
- * tools, a folder of the base specification or the technical appendix.
+ * A box at the top of the viewer's web page (s-exgg4vm4ds7t9jg). It represents one of these: a file of the guidelines, the
+ * appendix of the tools, a folder of the base specification, or the technical appendix.
  */
 export interface ViewPart {
   name: string;
   files: string[];
-  /** The top-level nodes of its files, in the order of the files. */
+  /** The top-level nodes of the box's files, in the order of the files. */
   roots: string[];
   approved: number;
   all: number;
   domain: boolean;
 }
 
-/** A node as the web page draws it (s-4s3aru64yudz4kh): `children` lists a TableRule's nodes in cells after its children. */
+/** A node as the web page draws it (s-4s3aru64yudz4kh). For a TableRule, `children` lists its children first and then the nodes in its cells. */
 export interface ViewNode {
   sid: string;
   location: string;
@@ -51,7 +51,7 @@ export interface ViewModel {
   links: ViewLink[];
 }
 
-/** The box a file belongs to. A file of the guidelines has a box of its own, named by its `section`. Every other folder is a box of its own. */
+/** The box that a file belongs to. A file of the guidelines has a box of its own, named after the file's `section`. Any other file belongs to the box of its folder. */
 const boxOf = (file: SpecFile) => {
   const { part } = partOf(file.path);
   if (part === "_guidelines") return file.path === "specs/_guidelines/tools.json" ? "tools" : file.data.section;
@@ -78,14 +78,14 @@ function rank(file: SpecFile, domainOrder: string[]): [number, number, string] {
 }
 
 /**
- * Builds the model that the web page of `sheriff view` is drawn from (s-282zba8mtxvxnm5). It reads the specification as
+ * Builds the model that the web page that `sheriff view` serves is drawn from (s-282zba8mtxvxnm5). It reads the specification as
  * `sheriff json` reads it. The model contains:
  * - the boxes, in the order of the map's branches (s-exgg4vm4ds7t9jg), each counting only the nodes whose approval status is not
  *   derived (s-rj7yxrktxywvxzj);
  * - each node as `sheriff show` prints it, with the counts of its decisions, comments and todos (s-4s3aru64yudz4kh);
  * - each link that a node declares;
  * - the diagram of the domains, where the Domains extension is chosen.
- * Where only the Domains extension is chosen, the model contains the diagram alone. Where neither is chosen, the function throws an error.
+ * Where only the Domains extension is chosen, the model contains the diagram alone. Where neither the Views nor the Domains extension is chosen, the function throws an error.
  */
 export function viewModel(root: string): ViewModel {
   const chosen = ownerSettings(loadConfig(root), strictDefault(root)).extensions;

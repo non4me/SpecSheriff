@@ -184,7 +184,7 @@
           "kind": "TextRule",
           "title": "The viewer of the specification",
           "status": "approved",
-          "text": "The viewer is a web page that shows the specification. It is redrawn in place whenever the specification changes. It is drawn from the nodes and holds no facts of its own.\n\nThe viewer shows:\n- each file of the guidelines (§s-qmmzf9nksfsa3qp), the appendix of the tools (§s-a4rbry4hsu34hy8), the contracts section (§s-z6tq6a3btnvvwx7), each other section into which the base specification is divided (or the rest of the base specification as a whole, where it is not divided) and the technical appendix (§s-tj38pvm38nepaf5);\n- for each of these, the number of its approved nodes and the number of all its nodes, counting only the nodes whose approval status is not derived (§s-9kfdycuq34beqvs);\n- the nodes of whichever of these the reader opens, nested as they are nested in the specification, each with its approval status (§s-tgrnpagrb58tya7) and with its title, where it has one;\n- each link between two nodes that the viewer shows, as a line that shows the link's type;\n- the node that the reader selects, as the human-readable export shows it (§s-ce24ynwabt5yx8h).\n\nUntil the reader asks to see the drafts, the viewer shows only the approved nodes and the nodes above them.",
+          "text": "The viewer is a web page that shows the specification. It is redrawn in place whenever the specification changes. It is drawn from the nodes and holds no facts of its own.\n\nThe viewer shows:\n- each file of the guidelines (§s-qmmzf9nksfsa3qp), the appendix of the tools (§s-a4rbry4hsu34hy8), the contracts section (§s-z6tq6a3btnvvwx7), each other section into which the base specification is divided (or, where the base specification is not divided, the rest of it as a whole) and the technical appendix (§s-tj38pvm38nepaf5);\n- for each of these, the number of its approved nodes and the number of all its nodes, counting only the nodes whose approval status is not derived (§s-9kfdycuq34beqvs);\n- the nodes of whichever of these the reader opens, nested as they are nested in the specification, each with its approval status (§s-tgrnpagrb58tya7) and with its title, where it has one;\n- each link between two nodes that the viewer shows, as a line that shows the link's type;\n- the node that the reader selects, as the human-readable export shows it (§s-ce24ynwabt5yx8h).\n\nUntil the reader asks to see the drafts, the viewer shows only the approved nodes and the nodes above them.",
           "refs": [
             {
               "type": "cites",
@@ -249,7 +249,7 @@
               },
               {
                 "date": "2026-11-28",
-                "problem": "Whether the owner agrees to the group of the rules on the viewer of the specification, shown on one page with each node in full.",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
                 "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
                 "type": "textual"
               }

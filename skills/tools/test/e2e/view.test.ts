@@ -20,7 +20,7 @@ const sheriffAsync = (root: string, ...args: string[]) =>
 
 /**
  * Each test gets a port of its own, set by `--port`, far from the viewer's default range, so that no test collides with a viewer that is
- * already running on the machine. The ports of the tests stay below 49152, from which Windows reserves ports by default.
+ * already running on the machine. The ports of the tests stay below 49152, where the range of ports that Windows reserves by default begins.
  */
 let next = 46000 + (process.pid % 300) * 10;
 const port = () => ++next;
@@ -42,7 +42,7 @@ const health = async (p: number) => {
   }
 };
 
-test("@spec s-282zba8mtxvxnm5 sheriff view refuses where the project has chosen neither the Views nor the Domains extension, naming both and sheriff settings", () => {
+test("@spec s-282zba8mtxvxnm5 sheriff view refuses to run where the project has chosen neither the Views nor the Domains extension, naming both extensions and sheriff settings", () => {
   const run = sheriff(project(["recordtype"]), "view", "--port", String(port()));
   assert.equal(run.status, 1);
   assert.match(run.stderr, /Views/);
@@ -70,7 +70,7 @@ test("@spec s-282zba8mtxvxnm5 sheriff view --detach stops a viewer of the projec
   const root = project();
   const p = port();
   let stopped = false;
-  // A viewer of this project that an earlier build started: it reports another build ID, and stops when asked to.
+  // A viewer of this project that an earlier build started: it reports a different build ID, and stops when asked to.
   const earlier = http.createServer((req, res) => {
     if (req.url === "/health") return res.end(JSON.stringify({ root: resolve(root), build: "an earlier build" }));
     if (req.url === "/stop" && req.method === "POST") {
@@ -109,7 +109,7 @@ test("@spec s-282zba8mtxvxnm5 sheriff view refuses to run on the port that --por
   }
 });
 
-test("@spec s-282zba8mtxvxnm5 sheriff view --stop stops the sheriff view process that serves the project, and says so where none does", async () => {
+test("@spec s-282zba8mtxvxnm5 sheriff view --stop stops the sheriff view process that serves the project and, where there is none, says that there is none", async () => {
   const root = project();
   const p = port();
   assert.equal(sheriff(root, "view", "--detach", "--port", String(p)).status, 0);

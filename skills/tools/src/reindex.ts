@@ -23,13 +23,13 @@ export interface ReindexReport {
   added: string[];
   /** The files of the specification rewritten because an earlier release wrote them differently (s-gb8s9657a65hqmv). */
   rewritten: string[];
-  /** The folders that an earlier release wrote and that the reindex removed (s-gb8s9657a65hqmv). */
+  /** The folders that an earlier release created and that the reindex removed (s-gb8s9657a65hqmv). */
   removed: string[];
   /** The folders that the reindex failed to remove, each with the reason. The reindex continues after each failure. */
   notRemoved: Array<{ path: string; reason: string }>;
 }
 
-/** The folder into which releases before 0.7.0 wrote the map, which the map's folder `specs/_map/` replaced. */
+/** The folder into which releases before 0.7.0 wrote the map. The map's folder `specs/_map/` replaced it. */
 const EARLIER_MAP = "specs/_viewer/";
 
 /**

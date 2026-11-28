@@ -73,7 +73,7 @@ export interface Specification {
   nodes: Map<string, Located>;
 }
 
-/** Directories under specs/ that hold no part of the specification: the schema, the map, and the map's folder of earlier releases until the reindex removes it. */
+/** Directories under specs/ that hold no part of the specification: the schema, the map, and the folder into which earlier releases wrote the map, until the reindex removes it. */
 const NOT_PARTS = new Set(["_schema", "_map", "_viewer"]);
 
 function jsonFiles(root: string, dir: string): string[] {

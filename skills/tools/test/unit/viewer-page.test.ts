@@ -63,7 +63,7 @@ test("@spec s-rj7yxrktxywvxzj shows only the approved nodes and the nodes above 
 
 test("@spec s-4s3aru64yudz4kh counts, for a node that holds other nodes, the nodes under it at any depth, as a box at the top of the web page counts them", () => {
   const { counts } = viewer();
-  // The section under it is left out of the count, as a box at the top leaves it out.
+  // The section under `sec` is left out of the count, as a box at the top of the web page leaves a section out.
   assert.deepEqual(plain(counts(model(), "sec")), { approved: 1, all: 3 });
 });
 
@@ -99,7 +99,7 @@ test("@spec s-exgg4vm4ds7t9jg draws the rows of the diagram of the domains in th
   assert.deepEqual(plain(rows({ ...m, diagram: null })), []);
 });
 
-test("@spec s-4s3aru64yudz4kh renders a node's Markdown as formatted text, with every character of the node shown as text and every cited sid shown as a link", () => {
+test("@spec s-4s3aru64yudz4kh renders a node's Markdown as formatted text, with every character of the node escaped for HTML and every cited sid shown as a link", () => {
   const { markdownHtml } = viewer();
   const other = sid("the other node");
   const own = sid("the node shown");
@@ -121,8 +121,8 @@ test("@spec s-4s3aru64yudz4kh renders a node's Markdown as formatted text, with 
   assert.match(html, /<code>code<\/code>/);
   assert.match(html, /<table>[\s\S]*<td>1<\/td>[\s\S]*<\/table>/);
   assert.equal(html.split(`data-sid="${other}"`).length - 1, 2, "the citation and the link both lead to the node");
-  // The panel shows the node as `sheriff show` prints it: a cited sid is shown as a sid, and the location and title of the node
-  // that it cites appear as its tooltip.
+  // The panel shows the node as `sheriff show` prints it: a cited sid is shown as the sid itself, and the location and title of
+  // the node that it identifies appear in its tooltip.
   assert.ok(html.includes(`>§${other}</span>`), html);
   assert.ok(html.includes(`title="x/1 the other"`), html);
 });
