@@ -17,7 +17,7 @@ interface Viewer {
   markdownHtml(text: string, nodes: Record<string, { location: string; title: string }>): string;
 }
 
-/** The page's own logic: the script of the page that does not access the page's elements, run in a context of its own. */
+/** The page's own logic: the one script of the page that does not access the page's elements, run in a context of its own. */
 function viewer(): Viewer {
   const page = readFileSync(PAGE, "utf8");
   const logic = /<script id="logic">([\s\S]*?)<\/script>/.exec(page);

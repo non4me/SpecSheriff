@@ -78,7 +78,7 @@ function rank(file: SpecFile, domainOrder: string[]): [number, number, string] {
 }
 
 /**
- * Builds the model that the web page that `sheriff view` serves is drawn from (s-282zba8mtxvxnm5). It reads the specification as
+ * Builds the model from which the web page that `sheriff view` serves is drawn (s-282zba8mtxvxnm5). It reads the specification as
  * `sheriff json` reads it. The model contains:
  * - the boxes, in the order of the map's branches (s-exgg4vm4ds7t9jg), each counting only the nodes whose approval status is not
  *   derived (s-rj7yxrktxywvxzj);

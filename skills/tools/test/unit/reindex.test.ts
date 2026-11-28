@@ -56,7 +56,7 @@ test("@spec s-gb8s9657a65hqmv removes the folder specs/_viewer/, into which an e
   assert.deepEqual(reindex(root).removed, [], "a second run finds nothing to remove");
 });
 
-test("@spec s-gb8s9657a65hqmv names the folder specs/_viewer/ and goes on where its removal fails", () => {
+test("@spec s-gb8s9657a65hqmv names the folder specs/_viewer/ and goes on when its removal fails", () => {
   const root = taking();
   mkdirSync(join(root, "specs", "_viewer"), { recursive: true });
   const outcome = removeEarlierMap(root, () => {

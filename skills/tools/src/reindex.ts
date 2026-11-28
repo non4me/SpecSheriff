@@ -25,7 +25,7 @@ export interface ReindexReport {
   rewritten: string[];
   /** The folders that an earlier release created and that the reindex removed (s-gb8s9657a65hqmv). */
   removed: string[];
-  /** The folders that the reindex failed to remove, each with the reason. The reindex continues after each failure. */
+  /** The folders that the reindex failed to remove, each with the reason for the failure. The reindex continues after each failure. */
   notRemoved: Array<{ path: string; reason: string }>;
 }
 

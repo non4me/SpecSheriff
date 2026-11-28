@@ -65,7 +65,7 @@ test("@spec s-exgg4vm4ds7t9jg returns the diagram of the domains as the SpecSher
   assert.deepEqual(viewModel(root).diagram, domainDiagram(loadSpecification(root), ["core", "auxiliary"]));
 });
 
-test("@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, with the nodes under it, where the nodes in a TableRule's cells come after the TableRule's children", () => {
+test("@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, with the nodes under it and with the nodes in a TableRule's cells after the TableRule's children", () => {
   const root = project();
   const model = viewModel(root);
   const spec = loadSpecification(root);

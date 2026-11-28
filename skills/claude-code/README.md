@@ -218,7 +218,7 @@ An alias makes it `sheriff <command>`. `sheriff show <sid>` prints a node with i
 
 Where the project has chosen the Views or the Domains extension, `sheriff view --detach` starts the
 viewer of the specification in the background. The viewer is a web page that is redrawn after each change to the
-specification. It is served at `http://127.0.0.1:5278/`, or at the first free port above 5278.
+specification. It is served at `http://127.0.0.1:5278/`, or on the first free port above 5278.
 `sheriff view --stop` stops it. You can also ask the agent to start the viewer.
 
 ## Updates
