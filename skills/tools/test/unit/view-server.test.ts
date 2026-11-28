@@ -93,7 +93,7 @@ test("@spec s-282zba8mtxvxnm5 reports where it cannot read the specification, an
     assert.match(event.error ?? "", /spec\.json/);
     const model = await (await fetch(`${viewer.url}model.json`)).json();
     assert.equal(model.nodes[sid("base rule")].title, "base rule");
-    // A web page opened after the failure learns of it from the server's status.
+    // A web page opened after the failure to read the specification learns about it from the server's status endpoint.
     assert.match((await (await fetch(`${viewer.url}status`)).json()).error, /spec\.json/);
   } finally {
     await viewer.close();

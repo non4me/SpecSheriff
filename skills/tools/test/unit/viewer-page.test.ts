@@ -121,7 +121,8 @@ test("@spec s-4s3aru64yudz4kh renders a node's Markdown as formatted text, with 
   assert.match(html, /<code>code<\/code>/);
   assert.match(html, /<table>[\s\S]*<td>1<\/td>[\s\S]*<\/table>/);
   assert.equal(html.split(`data-sid="${other}"`).length - 1, 2, "the citation and the link both lead to the node");
-  // The panel shows the node as `sheriff show` prints it: a cited sid stays a sid, and its node's location and title are its tooltip.
+  // The panel shows the node as `sheriff show` prints it: a cited sid is shown as a sid, and the location and title of the node
+  // that it cites appear as its tooltip.
   assert.ok(html.includes(`>§${other}</span>`), html);
   assert.ok(html.includes(`title="x/1 the other"`), html);
 });
