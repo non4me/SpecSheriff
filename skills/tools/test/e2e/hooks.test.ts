@@ -17,7 +17,7 @@ function hooked(): string {
   const root = codeProject();
   spawnSync(process.execPath, [`${PLUGIN}/tools/dist/cli.js`, "init"], { cwd: root, encoding: "utf8" });
   pluginHook("session-start.sh", machine, root);
-  writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_viewer/\n");
+  writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_map/\n");
   git(root, "add", "-A");
   return root;
 }
@@ -29,7 +29,7 @@ function typedHooked(): string {
   const root = typedProject("customer", ["src/**"]);
   sheriff(root, "init");
   pluginHook("session-start.sh", machine, root);
-  writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_viewer/\n");
+  writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_map/\n");
   git(root, "add", "-A");
   const run = commit(root, "Set up");
   assert.equal(run.status, 0, run.stdout + run.stderr);
@@ -99,7 +99,7 @@ test("@spec s-npnmwyt6s3gypwe a commit changing no code passes the hooks, and th
   const chosen = commit(root, "Docs: the Views extension chosen");
   assert.equal(chosen.status, 0, chosen.stdout + chosen.stderr);
   assert.ok(readFileSync(join(root, "md-version", "contracts", "c.md"), "utf8").includes(sid("open")));
-  assert.ok(existsSync(join(root, "specs", "_viewer", "index.html")));
+  assert.ok(existsSync(join(root, "specs", "_map", "index.html")));
 });
 
 test("@spec s-npnmwyt6s3gypwe the pre-commit hook refuses a commit whose specification sheriff validate refuses", () => {
@@ -185,7 +185,7 @@ function pushing(live = true): string {
     // The project's own rule on when the tests run, which names a push, approved by its owner.
     sheriff(root, "approve", sid("tests run"));
   }
-  writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_viewer/\nbuild/\n");
+  writeFileSync(join(root, ".gitignore"), "md-version/\nspecs/_map/\nbuild/\n");
   git(root, "add", "-A");
   const setUp = commit(root, "Hooks in");
   assert.equal(setUp.status, 0, setUp.stdout + setUp.stderr);
@@ -473,13 +473,13 @@ test("@spec s-hcmpjmwtgfwzncu after an agent's edit to the code of a project's o
   pluginHook("after-edit.sh", machine, root);
   assert.ok(existsSync(join(root, "md-version")), "the export is written on the first run");
   rmSync(join(root, "md-version"), { recursive: true, force: true });
-  rmSync(join(root, "specs", "_viewer"), { recursive: true, force: true });
+  rmSync(join(root, "specs", "_map"), { recursive: true, force: true });
   const generator = join(root, "gen.mjs");
   writeFileSync(generator, readFileSync(generator, "utf8").replace('open.title + "\\n"', 'open.title + "!\\n"'));
   pluginHook("after-edit.sh", machine, root);
   assert.match(readFileSync(join(root, "gen", "titles.txt"), "utf8"), /open!/);
   assert.ok(!existsSync(join(root, "md-version")), "no export");
-  assert.ok(!existsSync(join(root, "specs", "_viewer")), "no map");
+  assert.ok(!existsSync(join(root, "specs", "_map")), "no map");
 });
 
 test("@spec s-hcmpjmwtgfwzncu after an agent's edit to code alone, the hook reindexes and runs the checks, and writes neither the types nor the export", () => {

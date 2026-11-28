@@ -1,5 +1,5 @@
 import { randomInt } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, posix } from "node:path";
 import { readCode } from "./code.ts";
 import { loadConfig, ownerSettings, readsAs, strictDefault } from "./config.ts";
@@ -23,6 +23,28 @@ export interface ReindexReport {
   added: string[];
   /** The files of the specification rewritten because an earlier release wrote them differently (s-gb8s9657a65hqmv). */
   rewritten: string[];
+  /** The folders that an earlier release created and that the reindex removed (s-gb8s9657a65hqmv). */
+  removed: string[];
+  /** The folders that the reindex failed to remove, each with the reason for the failure. The reindex continues after each failure. */
+  notRemoved: Array<{ path: string; reason: string }>;
+}
+
+/** The folder into which releases before 0.7.0 wrote the map. The map's folder `specs/_map/` replaced it. */
+const EARLIER_MAP = "specs/_viewer/";
+
+/**
+ * Removes the folder into which an earlier release wrote the map (s-gb8s9657a65hqmv). Where the removal fails, the function returns
+ * the folder together with the reason for the failure, and the reindex continues.
+ */
+export function removeEarlierMap(root: string, remove: (path: string) => void = (path) => rmSync(path, { recursive: true, force: true })): { removed: string[]; failed: Array<{ path: string; reason: string }> } {
+  const path = join(root, EARLIER_MAP);
+  if (!existsSync(path)) return { removed: [], failed: [] };
+  try {
+    remove(path);
+    return { removed: [EARLIER_MAP], failed: [] };
+  } catch (failure) {
+    return { removed: [], failed: [{ path: EARLIER_MAP, reason: String((failure as Error)?.message ?? failure) }] };
+  }
 }
 
 /**
@@ -383,7 +405,7 @@ export function reindex(root: string): ReindexReport {
   const missing = missingExtensions(root);
   if (missing.length) throw new Error(`the installed plugin lacks a chosen extension, so the reindex writes no file:\n${missing.map((m) => `${m.where}: ${m.message}`).join("\n")}`);
   const writesSpecSheriffGuidelines = writesGuidelines(root);
-  const report: ReindexReport = { merged: [], drafted: [], written: [], added: [], rewritten: [] };
+  const report: ReindexReport = { merged: [], drafted: [], written: [], added: [], rewritten: [], removed: [], notRemoved: [] };
   const texts = new Map<string, string>();
   const files: SpecFile[] = specPaths(root).map((path) => {
     const text = readFileSync(join(root, path), "utf8");
@@ -471,6 +493,9 @@ export function reindex(root: string): ReindexReport {
     writeFileSync(settings, JSON.stringify(raw, null, 2) + "\n");
     report.written.push("sheriff.config.json");
   }
+  const { removed, failed } = removeEarlierMap(root);
+  report.removed.push(...removed);
+  report.notRemoved.push(...failed);
   return report;
 }
 

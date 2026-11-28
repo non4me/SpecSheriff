@@ -98,6 +98,10 @@
                     },
                     {
                       "type": "cites",
+                      "from": "s-rj7yxrktxywvxzj"
+                    },
+                    {
+                      "type": "cites",
                       "from": "s-5x737t9nee4zgaa"
                     },
                     {
@@ -344,6 +348,10 @@
                     },
                     {
                       "type": "cites",
+                      "from": "s-rj7yxrktxywvxzj"
+                    },
+                    {
+                      "type": "cites",
                       "from": "s-mm2de262g3jkapu"
                     },
                     {
@@ -357,6 +365,10 @@
                     {
                       "type": "cites",
                       "from": "s-rpv4fkdqqguptqd"
+                    },
+                    {
+                      "type": "cites",
+                      "from": "s-exgg4vm4ds7t9jg"
                     },
                     {
                       "type": "cites",
@@ -637,6 +649,10 @@
                   "refs": [
                     {
                       "type": "cites",
+                      "from": "s-4s3aru64yudz4kh"
+                    },
+                    {
+                      "type": "cites",
                       "from": "s-2dhbqy43tcm6qj2"
                     }
                   ],
@@ -671,6 +687,10 @@
                     {
                       "type": "implements",
                       "from": "s-fprt8xysafzjqv9"
+                    },
+                    {
+                      "type": "cites",
+                      "from": "s-4s3aru64yudz4kh"
                     }
                   ],
                   "reason": "Kept on its node, a todo shows whoever reads the node what work on it is still pending. Kept in a comment, it is missed wherever the todos are collected. Left in place once done or given up, it still shows the work as pending. Kept on one node where it concerns several, it leaves behind no copy that would still show the work as pending.",
@@ -862,6 +882,10 @@
                     {
                       "type": "cites",
                       "from": "s-zu8ne3wq84zchc4"
+                    },
+                    {
+                      "type": "cites",
+                      "from": "s-rj7yxrktxywvxzj"
                     },
                     {
                       "type": "cites",
@@ -1567,6 +1591,10 @@
                     {
                       "type": "cites",
                       "from": "s-yccuyqbypzzx2gu"
+                    },
+                    {
+                      "type": "cites",
+                      "from": "s-rj7yxrktxywvxzj"
                     },
                     {
                       "type": "cites",
@@ -2806,6 +2834,10 @@
                     },
                     {
                       "type": "cites",
+                      "from": "s-282zba8mtxvxnm5"
+                    },
+                    {
+                      "type": "cites",
                       "from": "s-e3495enbc5h75c3"
                     },
                     {
@@ -2987,6 +3019,10 @@
                 },
                 {
                   "type": "cites",
+                  "from": "s-rj7yxrktxywvxzj"
+                },
+                {
+                  "type": "cites",
                   "from": "s-eferktypcj7njt5"
                 },
                 {
@@ -3020,6 +3056,10 @@
                 {
                   "type": "cites",
                   "from": "s-jzm6qw992j3bnxt"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-exgg4vm4ds7t9jg"
                 },
                 {
                   "type": "cites",
@@ -3186,6 +3226,10 @@
                 {
                   "type": "cites",
                   "from": "s-rpv4fkdqqguptqd"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-exgg4vm4ds7t9jg"
                 },
                 {
                   "type": "cites",
@@ -3609,11 +3653,19 @@
                 },
                 {
                   "type": "cites",
+                  "from": "s-rj7yxrktxywvxzj"
+                },
+                {
+                  "type": "cites",
                   "from": "s-zefk589ykh37b8u"
                 },
                 {
                   "type": "cites",
                   "from": "s-rpv4fkdqqguptqd"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-exgg4vm4ds7t9jg"
                 },
                 {
                   "type": "cites",
@@ -4447,6 +4499,10 @@
                 {
                   "type": "cites",
                   "from": "s-7unxytshhc4md54"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-4s3aru64yudz4kh"
                 },
                 {
                   "type": "cites",
@@ -6266,6 +6322,10 @@
                 },
                 {
                   "type": "cites",
+                  "from": "s-4s3aru64yudz4kh"
+                },
+                {
+                  "type": "cites",
                   "from": "s-k4nqjr96ux7a5m7"
                 },
                 {
@@ -6513,6 +6573,10 @@
                 {
                   "type": "cites",
                   "from": "s-rpv4fkdqqguptqd"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-4s3aru64yudz4kh"
                 },
                 {
                   "type": "cites",

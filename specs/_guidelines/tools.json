@@ -41,7 +41,7 @@
           "kind": "TextRule",
           "title": "Where the files are",
           "status": "approved",
-          "text": "The SpecSheriff tools find each file of a project at the path given for it below, relative to the root of the repository:\n\n| What is kept | Where |\n|---|---|\n| The base specification, if the project has not chosen the Domains extension (§s-tdm3rwsppnuh6dm) | `specs/base/` |\n| Each domain, if the project has chosen the Domains extension | `specs/<domain>/`, where `<domain>` is the domain's name, which is neither `stack` nor `debt` nor the name of any directory that this table names under `specs/` |\n| The contracts section (§s-z6tq6a3btnvvwx7) | `specs/contracts/` |\n| The section of the technical appendix (§s-vj7ercem526zd6v) that implements a domain, if the project has chosen the Domains extension | `specs/tech/<domain>.json` |\n| The section of the technical appendix that implements the base specification, if the project has not chosen the Domains extension | `specs/tech/base.json` |\n| The section of the technical appendix for the stack | `specs/tech/stack.json` |\n| The technical debt | `specs/tech/debt.json` |\n| The project's own guidelines (§s-u7tw6m8npxmv5tu) | `specs/_guidelines/project.json` |\n| The project's extension of the schema (§s-xm8rz4uupb73gu5) | `specs/_schema/project.schema.json` |\n| The approvals of nodes (§s-67vekyup7y8smap) | `specs/_approvals.jsonl` |\n| The archive of removed nodes (§s-f2b5zvc565s242f) | every JSON file in `specs/_archive/`, each named after the part of the specification that its nodes were removed from, such as `contracts.json` or `guidelines.json` |\n| The bindings file (§s-kgbzk2ph9e6jfb4) | `sheriff.bindings.json` |\n| The project-wide settings of the SpecSheriff tools, among them the entries that set the specification's approval status (§s-qzthyh7yqvfhsa2) and its `strict` flag (§s-q3pfzyaxvpr2zj2), and the extensions of the guidelines that the project has chosen (§s-9ttvcwpqkehm58g) | `sheriff.config.json` |\n| The map (§s-zu8ne3wq84zchc4) and the human-readable export (§s-ce24ynwabt5yx8h), if the project has chosen the Views extension (§s-qgg6sfawtmwvrbb) | `specs/_viewer/` for the map and `md-version/` for the export, both of which git ignores |\n| The documentation | every Markdown file that the repository keeps outside `specs/` |\n\nThe files common to every project come with the SpecSheriff tools that a plugin keeps on the machine (§s-4mej6ccn7xu3d3p). The tools find each of these files at the path in the second column of the table below, relative to their own folder, the one that holds their `dist/`. Only the repository where the SpecSheriff guidelines are written keeps these files under `specs/`, each at the path in the third column (§s-6bmnsbskg6en4nf). The SpecSheriff tools recognize that repository only by the environment variable `SPECSHERIFF_GUIDELINES_REPO`, which holds the path to its root. In that repository, the tools read the files at those paths:\n\n| What is kept | Path in the folder of the tools | Path in the repository where the SpecSheriff guidelines are written |\n|---|---|---|\n| The SpecSheriff guidelines | `guidelines/spec.json` | `specs/_guidelines/spec.json` |\n| Each extension of the guidelines (§s-mbmnsnxenmavu3z) | `guidelines/extensions/<name>.json` | `specs/_guidelines/extensions/<name>.json` |\n| The appendix of the tools (§s-a4rbry4hsu34hy8) | `guidelines/tools.json` | `specs/_guidelines/tools.json` |\n| The schema of the SpecSheriff guidelines (§s-eferktypcj7njt5): `node.schema.json` for a node, `section-file.schema.json` for a file of a part of the specification, `archive-file.schema.json` for a file of the archive, and `extension.schema.json` for an extension of the schema, whether it is added by an extension of the guidelines or by the project | `guidelines/_schema/` | `specs/_schema/` |\n| The schema of `sheriff.config.json`, which sets the default value of the `strict` flag (§s-q3pfzyaxvpr2zj2) | `guidelines/_schema/config.schema.json` | `specs/_schema/config.schema.json` |\n| The schema of each extension of the guidelines that has one | `guidelines/_schema/extensions/<name>.schema.json` | `specs/_schema/extensions/<name>.schema.json` |\n| The meta-schema of a RecordType's `schema` (§s-j4t9vusnsajmqdw) | `guidelines/_schema/extensions/recordtype-meta.schema.json` | `specs/_schema/extensions/recordtype-meta.schema.json` |\n\n`<name>` is the extension's name, which `sheriff.config.json` uses to list the extension once the project has chosen it.",
+          "text": "The SpecSheriff tools find each file of a project at the path given for it below, relative to the root of the repository:\n\n| What is kept | Where |\n|---|---|\n| The base specification, if the project has not chosen the Domains extension (§s-tdm3rwsppnuh6dm) | `specs/base/` |\n| Each domain, if the project has chosen the Domains extension | `specs/<domain>/`, where `<domain>` is the domain's name, which is neither `stack` nor `debt` nor the name of any directory that this table names under `specs/` |\n| The contracts section (§s-z6tq6a3btnvvwx7) | `specs/contracts/` |\n| The section of the technical appendix (§s-vj7ercem526zd6v) that implements a domain, if the project has chosen the Domains extension | `specs/tech/<domain>.json` |\n| The section of the technical appendix that implements the base specification, if the project has not chosen the Domains extension | `specs/tech/base.json` |\n| The section of the technical appendix for the stack | `specs/tech/stack.json` |\n| The technical debt | `specs/tech/debt.json` |\n| The project's own guidelines (§s-u7tw6m8npxmv5tu) | `specs/_guidelines/project.json` |\n| The project's extension of the schema (§s-xm8rz4uupb73gu5) | `specs/_schema/project.schema.json` |\n| The approvals of nodes (§s-67vekyup7y8smap) | `specs/_approvals.jsonl` |\n| The archive of removed nodes (§s-f2b5zvc565s242f) | every JSON file in `specs/_archive/`, each named after the part of the specification that its nodes were removed from, such as `contracts.json` or `guidelines.json` |\n| The bindings file (§s-kgbzk2ph9e6jfb4) | `sheriff.bindings.json` |\n| The project-wide settings of the SpecSheriff tools, among them the entries that set the specification's approval status (§s-qzthyh7yqvfhsa2) and its `strict` flag (§s-q3pfzyaxvpr2zj2), and the extensions of the guidelines that the project has chosen (§s-9ttvcwpqkehm58g) | `sheriff.config.json` |\n| The map (§s-zu8ne3wq84zchc4) and the human-readable export (§s-ce24ynwabt5yx8h), if the project has chosen the Views extension (§s-qgg6sfawtmwvrbb) | `specs/_map/` for the map and `md-version/` for the export, both of which git ignores |\n| The documentation | every Markdown file that the repository keeps outside `specs/` |\n\nThe files common to every project come with the SpecSheriff tools that a plugin keeps on the machine (§s-4mej6ccn7xu3d3p). The tools find each of these files at the path in the second column of the table below, relative to their own folder, the one that holds their `dist/`. Only the repository where the SpecSheriff guidelines are written keeps these files under `specs/`, each at the path in the third column (§s-6bmnsbskg6en4nf). The SpecSheriff tools recognize that repository only by the environment variable `SPECSHERIFF_GUIDELINES_REPO`, which holds the path to its root. In that repository, the tools read the files at those paths:\n\n| What is kept | Path in the folder of the tools | Path in the repository where the SpecSheriff guidelines are written |\n|---|---|---|\n| The SpecSheriff guidelines | `guidelines/spec.json` | `specs/_guidelines/spec.json` |\n| Each extension of the guidelines (§s-mbmnsnxenmavu3z) | `guidelines/extensions/<name>.json` | `specs/_guidelines/extensions/<name>.json` |\n| The appendix of the tools (§s-a4rbry4hsu34hy8) | `guidelines/tools.json` | `specs/_guidelines/tools.json` |\n| The schema of the SpecSheriff guidelines (§s-eferktypcj7njt5): `node.schema.json` for a node, `section-file.schema.json` for a file of a part of the specification, `archive-file.schema.json` for a file of the archive, and `extension.schema.json` for an extension of the schema, whether it is added by an extension of the guidelines or by the project | `guidelines/_schema/` | `specs/_schema/` |\n| The schema of `sheriff.config.json`, which sets the default value of the `strict` flag (§s-q3pfzyaxvpr2zj2) | `guidelines/_schema/config.schema.json` | `specs/_schema/config.schema.json` |\n| The schema of each extension of the guidelines that has one | `guidelines/_schema/extensions/<name>.schema.json` | `specs/_schema/extensions/<name>.schema.json` |\n| The meta-schema of a RecordType's `schema` (§s-j4t9vusnsajmqdw) | `guidelines/_schema/extensions/recordtype-meta.schema.json` | `specs/_schema/extensions/recordtype-meta.schema.json` |\n\n`<name>` is the extension's name, which `sheriff.config.json` uses to list the extension once the project has chosen it.",
           "refs": [
             {
               "type": "implements",
@@ -141,6 +141,10 @@
             },
             {
               "type": "cites",
+              "to": "s-rj7yxrktxywvxzj"
+            },
+            {
+              "type": "cites",
               "from": "s-tjsv2wv4j2cuapa"
             },
             {
@@ -170,6 +174,10 @@
             {
               "type": "cites",
               "from": "s-jzm6qw992j3bnxt"
+            },
+            {
+              "type": "cites",
+              "from": "s-exgg4vm4ds7t9jg"
             },
             {
               "type": "cites",
@@ -414,6 +422,12 @@
                 "problem": "Whether a draft that only carries out the owner's answers to the questions about the base specification is shown to the owner before it is agreed to.",
                 "ruling": "The draft carries out the answer that decision R8 of the page on RecordType and JSON Schema gives to question 4.7 of the questions about the base specification: the meta-schema of a RecordType's `schema` (s-j4t9vusnsajmqdw) is a file of its own beside the schema of the RecordType extension. The reviewer found it ready after the third round of fixes, so it is agreed to on the owner's behalf and reported to the owner in one line.",
                 "type": "textual"
+              },
+              {
+                "date": "2026-11-28",
+                "problem": "The folder into which `sheriff map` wrote the map, `specs/_viewer/`, had the same name as the viewer of the specification (§s-rj7yxrktxywvxzj), which is a different view from the map.",
+                "ruling": "The owner chose to rename the folder to `specs/_map/` (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
+                "type": "textual"
               }
             ]
           }
@@ -481,6 +495,10 @@
             {
               "type": "cites",
               "to": "s-trwczfskj5zmuft"
+            },
+            {
+              "type": "cites",
+              "from": "s-282zba8mtxvxnm5"
             }
           ],
           "reason": "A setting kept in the repository is the same in every clone, so the SpecSheriff tools behave alike for everyone who works on the project.",
@@ -631,6 +649,10 @@
             },
             {
               "type": "cites",
+              "from": "s-282zba8mtxvxnm5"
+            },
+            {
+              "type": "cites",
               "from": "s-npnmwyt6s3gypwe"
             },
             {
@@ -693,7 +715,7 @@
               "kind": "TextRule",
               "title": "The commands that `sheriff` accepts",
               "status": "approved",
-              "text": "The SpecSheriff tools are run as `sheriff <command>` and accept only the following commands. Each command is listed with its purpose and the nodes that describe it:\n- `sheriff validate`: checks that the specification holds together and that each change to it follows the guidelines (§s-4kd2pave7vm4hmd);\n- `sheriff binding`: checks the specification against the code and the tests that are bound to it (§s-4kd2pave7vm4hmd);\n- `sheriff citations`: checks that each sid cited in the code, the tests and the documentation names a node of the specification (§s-4kd2pave7vm4hmd);\n- `sheriff guard`: checks an agent's edit before it is made, and refuses an edit that the SpecSheriff guidelines forbid (§s-4kd2pave7vm4hmd);\n- `sheriff commit-message`: checks a commit's message against the code that the commit changes (§s-4kd2pave7vm4hmd);\n- `sheriff review`: asks the independent reviewer (§s-m4h279nbaqkpa3t) for its verdict on a commit (§s-4kd2pave7vm4hmd);\n- `sheriff init`: sets a repository up for SpecSheriff (§s-7unxytshhc4md54);\n- `sheriff remove`: removes SpecSheriff from a repository and leaves the repository's specification as it is (§s-7unxytshhc4md54);\n- `sheriff approve`: records an owner's approval of a node, or the withdrawal of that approval (§s-v4qus7raqnwzneb);\n- `sheriff reindex`: writes into the specification what the SpecSheriff tools compute from it, and rewrites what an earlier release wrote in the form that its own release uses (§s-ztseyetus7np6br, §s-gb8s9657a65hqmv, §s-w5wg69pvvhedsws);\n- `sheriff types`: generates parts of the system's code (§s-hheus6f395ynqvc) from the approved wordings of the nodes (§s-qyjw8xez6t6adc3), for example the types and RuntimeChecks (§s-e877bnfa559tvk9) for the RecordTypes (§s-7vm323mhry2enx3, §s-a8fn72xa782wvbk);\n- `sheriff json`: prints as JSON the model of the specification, which a project's own check (§s-2fau85dfyyeq66m) or generator (§s-km4x4s26kv7pjze) reads (§s-w6gybeqn2ttydqx);\n- `sheriff todos`: prints every todo (§s-t28j22vbdmmeqnh) of the specification together with its node (§s-fprt8xysafzjqv9);\n- `sheriff guide`: prints the guidelines that the project follows, which an agent reads before it works on the specification (§s-jk8v3srrved7ram);\n- `sheriff settings`: shows and changes the specification's approval status (§s-qzthyh7yqvfhsa2), its `strict` flag (§s-q3pfzyaxvpr2zj2) and the extensions of the guidelines (§s-mbmnsnxenmavu3z) that the project has chosen (§s-chsfpkgpmfk4fft);\n- `sheriff untagged`: lists the symbols of the system's code that no SpecTag (§s-8xw4mgvpexyvw5q) binds, each with its file (§s-weuyx98r7c923ab);\n- `sheriff show`: prints one node, found by its sid or its location (§s-2dhbqy43tcm6qj2);\n- `sheriff markdown`: writes a human-readable export of the specification as Markdown (§s-e3495enbc5h75c3);\n- `sheriff map`: writes a map of the specification's structure (§s-rpv4fkdqqguptqd).\n\n`sheriff` with no command prints the list of the commands. `sheriff --version` prints the version number of the SpecSheriff tools. `sheriff` with any other word in place of a command reports that word as unknown, prints the list of the commands and exits with code 2.",
+              "text": "The SpecSheriff tools are run as `sheriff <command>`. They accept only the following commands. Each command is listed with its purpose and the nodes that describe it:\n- `sheriff validate`: checks that the specification holds together and that each change to it follows the guidelines (§s-4kd2pave7vm4hmd);\n- `sheriff binding`: checks the specification against the code and the tests that are bound to it (§s-4kd2pave7vm4hmd);\n- `sheriff citations`: checks that each sid cited in the code, the tests and the documentation names a node of the specification (§s-4kd2pave7vm4hmd);\n- `sheriff guard`: checks an agent's edit before it is made, and refuses an edit that the SpecSheriff guidelines forbid (§s-4kd2pave7vm4hmd);\n- `sheriff commit-message`: checks a commit's message against the code that the commit changes (§s-4kd2pave7vm4hmd);\n- `sheriff review`: asks the independent reviewer (§s-m4h279nbaqkpa3t) for its verdict on a commit (§s-4kd2pave7vm4hmd);\n- `sheriff init`: sets a repository up for SpecSheriff (§s-7unxytshhc4md54);\n- `sheriff remove`: removes SpecSheriff from a repository and leaves the repository's specification as it is (§s-7unxytshhc4md54);\n- `sheriff approve`: records an owner's approval of a node, or the withdrawal of that approval (§s-v4qus7raqnwzneb);\n- `sheriff reindex`: writes into the specification what the SpecSheriff tools compute from it, and rewrites what an earlier release wrote in the form that its own release uses (§s-ztseyetus7np6br, §s-gb8s9657a65hqmv, §s-w5wg69pvvhedsws);\n- `sheriff types`: generates parts of the system's code (§s-hheus6f395ynqvc) from the approved wordings of the nodes (§s-qyjw8xez6t6adc3), for example the types and RuntimeChecks (§s-e877bnfa559tvk9) for the RecordTypes (§s-7vm323mhry2enx3, §s-a8fn72xa782wvbk);\n- `sheriff json`: prints as JSON the model of the specification, which a project's own check (§s-2fau85dfyyeq66m) or generator (§s-km4x4s26kv7pjze) reads (§s-w6gybeqn2ttydqx);\n- `sheriff todos`: prints every todo (§s-t28j22vbdmmeqnh) of the specification together with its node (§s-fprt8xysafzjqv9);\n- `sheriff guide`: prints the guidelines that the project follows, which an agent reads before it works on the specification (§s-jk8v3srrved7ram);\n- `sheriff settings`: shows and changes the specification's approval status (§s-qzthyh7yqvfhsa2), its `strict` flag (§s-q3pfzyaxvpr2zj2) and the extensions of the guidelines (§s-mbmnsnxenmavu3z) that the project has chosen (§s-chsfpkgpmfk4fft);\n- `sheriff untagged`: lists the symbols of the system's code that no SpecTag (§s-8xw4mgvpexyvw5q) binds, each with its file (§s-weuyx98r7c923ab);\n- `sheriff show`: prints one node, found by its sid or its location (§s-2dhbqy43tcm6qj2);\n- `sheriff markdown`: writes a human-readable export of the specification as Markdown (§s-e3495enbc5h75c3);\n- `sheriff map`: writes a map of the specification's structure (§s-rpv4fkdqqguptqd);\n- `sheriff view`: serves a web page that is the viewer of the specification, or that shows the diagram of the domains, and is redrawn after each change to the specification (§s-282zba8mtxvxnm5, §s-exgg4vm4ds7t9jg, §s-4s3aru64yudz4kh).\n\n`sheriff` with no command prints the list of the commands. `sheriff --version` prints the version number of the SpecSheriff tools. Given any other word in place of a command, `sheriff`:\n- reports that word as unknown;\n- prints the list of the commands;\n- exits with code 2.",
               "refs": [
                 {
                   "type": "implements",
@@ -833,6 +855,18 @@
                 },
                 {
                   "type": "cites",
+                  "to": "s-282zba8mtxvxnm5"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-exgg4vm4ds7t9jg"
+                },
+                {
+                  "type": "cites",
+                  "to": "s-4s3aru64yudz4kh"
+                },
+                {
+                  "type": "cites",
                   "from": "s-dbk2vyeg8z5jxna"
                 }
               ],
@@ -957,6 +991,12 @@
                     "date": "2026-11-25",
                     "problem": "Whether the owner agrees to group 7 of stage 2 of task T25, items 51 to 56 and the seven proposals to change agreed nodes that the group holds, shown on one page with each node in full, and to option A in both of the group's questions.",
                     "ruling": "The owner agreed to the group and to option A in both questions (\"A.\", in answer to \"Do you agree to group 7 and to option A in both questions?\").",
+                    "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-28",
+                    "problem": "Each of the two sentences that the owner had agreed to stated two thoughts. The first said how the SpecSheriff tools are run and which commands they accept. The second listed the three steps that `sheriff` takes when it is given an unknown word.",
+                    "ruling": "The owner accepted the proposal to split the first into two sentences and to write the second as a list of three steps (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
                     "type": "textual"
                   }
                 ],
@@ -1159,7 +1199,7 @@
               "kind": "TextRule",
               "title": "What `sheriff reindex` changes in what an earlier release wrote",
               "status": "approved",
-              "text": "`sheriff reindex` rewrites whatever an earlier release of the SpecSheriff tools wrote or read differently from the release that `sheriff reindex` belongs to. It does so after it has merged the duplicate keys (§s-w5wg69pvvhedsws), and before it validates the files. In every file of the specification and of its archive (§s-f2b5zvc565s242f), it makes the following changes:\n- a node's key `id` becomes `location`;\n- a node's key `rationale` becomes `reason`;\n- the kinds of node `record` and `recordType` become `RecordType`;\n- the kind of node `rule` becomes `TextRule`;\n- the kind of node `domain` becomes `header`;\n- the key `code` of a domain's header (§s-yggv9myedprnaa7) is removed;\n- a node's status `\"\"` becomes `draft`;\n- a node's status `checked` becomes `approved`;\n- a node's key `owner`, which holds an email address, becomes `owners`, which holds a list that contains that email address;\n- a RecordType's `fields` and `unknown` become its `schema` (§s-6eb92ddch7shuvu), as follows:\n  - the schema holds `\"type\": \"object\"`, unless the RecordType is a RecordType variant (§s-z3dnru6qqdf9m6j);\n  - each field becomes a property whose schema is the one given for the field's neutral type (§s-4npdup7mjkva69y);\n  - the field's `text` becomes the property's `description`;\n  - each field that the RecordType marks as required is listed in the schema's `required`;\n  - a field that is required only \"where it holds a value\" becomes an optional property;\n  - `unknown: \"refused\"` becomes `unevaluatedProperties: false`, and a RecordType variant loses its `unknown`;\n- the source of a field's values becomes the field's `enumSource` (§s-xfu2gpzddjnmgks);\n- `TextRule.list.declaredIn` (§s-eferktypcj7njt5) is removed where it points to the field `kinds` of the project's extension of the schema (§s-xm8rz4uupb73gu5);\n- `TextRule.list.declaredIn` becomes `TextRule.list.jsonSchema`, and its key `declaration` becomes `pointer`, where it points to any other place in a JSON Schema;\n- `TextRule.list.declaredIn` becomes `TextRule.list.valueList`, and its key `declaration` becomes `symbol`, where it names a declaration in code;\n- a link of the type `supersedes` is removed (§s-sn6au3vcr9uy5pm);\n- each `N` in a link's ratio (§s-bckzdwd35d2nefa) becomes `*`;\n- a node of the archive loses its sid and every link that points to it (§s-f2b5zvc565s242f, §s-bpdqd9v72wg7vsz).\n\nA renamed key keeps its place among the node's keys.\n\nThe name of a kind of node is also changed in each of these places:\n- the source of a field's values, where those values are the sids of that kind's nodes;\n- the `fields` of the project's extension of the schema, where the name is the key under which those `fields` add properties to that kind.\n\nA bare sid is a word that has the form of a sid and meets one of these conditions:\n- it opens a test's name, followed by a space or by the end of the name;\n- it is the only argument of a test's mark.\n\n`sheriff reindex` also makes the following changes:\n- `specs/_confirmations.jsonl` becomes `specs/_approvals.jsonl`;\n- the key `owner` in each line of `specs/_confirmations.jsonl` becomes `by`;\n- where `specs/_approvals.jsonl` already exists, the lines of `specs/_confirmations.jsonl`, with `owner` renamed to `by`, are appended to it, and `specs/_confirmations.jsonl` is removed;\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, an approved rule of `project.json` that refines the rule on that status (§s-qzthyh7yqvfhsa2) is replaced by an entry that approves the specification (§s-d3nkw9b6mn98vuw);\n- the entry that approves the specification names the owner who last approved the rule that the entry replaces;\n- the rule that the entry replaces is moved to the archive (§s-f2b5zvc565s242f), with the reason \"Replaced by the entry in `sheriff.config.json` that records the specification's approval status\";\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, a draft rule of `project.json` that refines the rule on that status is moved to the archive with the reason \"The specification's approval status is recorded in `sheriff.config.json`\" if it was ever approved, and is deleted otherwise (§s-f2b5zvc565s242f);\n- in a run that archives or deletes a rule of `project.json` that refines the rule on the specification's approval status, regardless of whether the archived or deleted rule is approved or a draft, and where `project.json` is left with no rule that refines the rule on when the tests must pass (§s-x8uzc8z44pwtd3h), the draft rule on when the tests run, which `sheriff init` writes (§s-7unxytshhc4md54), is added under the top node of `project.json`;\n- the key `writesSpecSheriffGuidelines` is removed from `sheriff.config.json` (§s-zefk589ykh37b8u) before the SpecSheriff tools validate that file;\n- in each file that `sheriff.config.json` names as tests of the system's code (§s-hheus6f395ynqvc) or of a project's own check (§s-2fau85dfyyeq66m) or generator (§s-km4x4s26kv7pjze), `@spec ` is inserted before each bare sid.\n\n`sheriff reindex` leaves unchanged a RecordType that holds a field of type `variant`, a field whose values come from the source `domains`, or a field whose own list of values is empty, and names that RecordType and each such field.\n\nWhere a node of the specification is of a kind, or holds a link of a type, that an extension of the guidelines (§s-mbmnsnxenmavu3z) adds, and the project has not chosen that extension (§s-9ttvcwpqkehm58g), `sheriff reindex` names that extension.\n\nWhen `sheriff reindex` adds the draft rule on when the tests run, it names that rule, since the SpecSheriff tools read the rule only after an owner approves it (§s-t9j29hppag2nren).\n\nA renamed key and a renamed kind of node leave a node's fingerprint (§s-f5brvuuu6xmkj6t) unchanged, so the approval of the node's wording stays in force (§s-v4qus7raqnwzneb).\n\n`sheriff reindex` names each file that it rewrites because an earlier release wrote or read that file differently, including the files of the specification.",
+              "text": "`sheriff reindex` rewrites whatever an earlier release of the SpecSheriff tools wrote or read differently from the release that `sheriff reindex` belongs to. It does so after it has merged the duplicate keys (§s-w5wg69pvvhedsws), and before it validates the files. In every file of the specification and of its archive (§s-f2b5zvc565s242f), it makes the following changes:\n- a node's key `id` becomes `location`;\n- a node's key `rationale` becomes `reason`;\n- the kinds of node `record` and `recordType` become `RecordType`;\n- the kind of node `rule` becomes `TextRule`;\n- the kind of node `domain` becomes `header`;\n- the key `code` of a domain's header (§s-yggv9myedprnaa7) is removed;\n- a node's status `\"\"` becomes `draft`;\n- a node's status `checked` becomes `approved`;\n- a node's key `owner`, which holds an email address, becomes `owners`, which holds a list that contains that email address;\n- a RecordType's `fields` and `unknown` become its `schema` (§s-6eb92ddch7shuvu), as follows:\n  - the schema holds `\"type\": \"object\"`, unless the RecordType is a RecordType variant (§s-z3dnru6qqdf9m6j);\n  - each field becomes a property whose schema is the one given for the field's neutral type (§s-4npdup7mjkva69y);\n  - the field's `text` becomes the property's `description`;\n  - each field that the RecordType marks as required is listed in the schema's `required`;\n  - a field that is required only \"where it holds a value\" becomes an optional property;\n  - `unknown: \"refused\"` becomes `unevaluatedProperties: false`, and a RecordType variant loses its `unknown`;\n- the source of a field's values becomes the field's `enumSource` (§s-xfu2gpzddjnmgks);\n- `TextRule.list.declaredIn` (§s-eferktypcj7njt5) is removed where it points to the field `kinds` of the project's extension of the schema (§s-xm8rz4uupb73gu5);\n- `TextRule.list.declaredIn` becomes `TextRule.list.jsonSchema`, and its key `declaration` becomes `pointer`, where it points to any other place in a JSON Schema;\n- `TextRule.list.declaredIn` becomes `TextRule.list.valueList`, and its key `declaration` becomes `symbol`, where it names a declaration in code;\n- a link of the type `supersedes` is removed (§s-sn6au3vcr9uy5pm);\n- each `N` in a link's ratio (§s-bckzdwd35d2nefa) becomes `*`;\n- a node of the archive loses its sid and every link that points to it (§s-f2b5zvc565s242f, §s-bpdqd9v72wg7vsz).\n\nA renamed key keeps its place among the node's keys.\n\nThe name of a kind of node is also changed in each of these places:\n- the source of a field's values, where those values are the sids of that kind's nodes;\n- the `fields` of the project's extension of the schema, where the name is the key under which those `fields` add properties to that kind.\n\nA bare sid is a word that has the form of a sid and meets one of these conditions:\n- it opens a test's name, followed by a space or by the end of the name;\n- it is the only argument of a test's mark.\n\n`sheriff reindex` also makes the following changes:\n- `specs/_confirmations.jsonl` becomes `specs/_approvals.jsonl`;\n- the key `owner` in each line of `specs/_confirmations.jsonl` becomes `by`;\n- where `specs/_approvals.jsonl` already exists, the lines of `specs/_confirmations.jsonl`, with `owner` renamed to `by`, are appended to it, and `specs/_confirmations.jsonl` is removed;\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, an approved rule of `project.json` that refines the rule on that status (§s-qzthyh7yqvfhsa2) is replaced by an entry that approves the specification (§s-d3nkw9b6mn98vuw);\n- the entry that approves the specification names the owner who last approved the rule that the entry replaces;\n- the rule that the entry replaces is moved to the archive (§s-f2b5zvc565s242f), with the reason \"Replaced by the entry in `sheriff.config.json` that records the specification's approval status\";\n- where `sheriff.config.json` holds no entry that sets the specification's approval status, a draft rule of `project.json` that refines the rule on that status is moved to the archive with the reason \"The specification's approval status is recorded in `sheriff.config.json`\" if it was ever approved, and is deleted otherwise (§s-f2b5zvc565s242f);\n- in a run that archives or deletes a rule of `project.json` that refines the rule on the specification's approval status, regardless of whether the archived or deleted rule is approved or a draft, and where `project.json` is left with no rule that refines the rule on when the tests must pass (§s-x8uzc8z44pwtd3h), the draft rule on when the tests run, which `sheriff init` writes (§s-7unxytshhc4md54), is added under the top node of `project.json`;\n- the key `writesSpecSheriffGuidelines` is removed from `sheriff.config.json` (§s-zefk589ykh37b8u) before the SpecSheriff tools validate that file;\n- in each file that `sheriff.config.json` names as tests of the system's code (§s-hheus6f395ynqvc) or of a project's own check (§s-2fau85dfyyeq66m) or generator (§s-km4x4s26kv7pjze), `@spec ` is inserted before each bare sid.\n\n`sheriff reindex` leaves unchanged a RecordType that holds a field of type `variant`, a field whose values come from the source `domains`, or a field whose own list of values is empty, and names that RecordType and each such field.\n\nWhere a node of the specification is of a kind, or holds a link of a type, that an extension of the guidelines (§s-mbmnsnxenmavu3z) adds, and the project has not chosen that extension (§s-9ttvcwpqkehm58g), `sheriff reindex` names that extension.\n\nWhen `sheriff reindex` adds the draft rule on when the tests run, it names that rule, since the SpecSheriff tools read the rule only after an owner approves it (§s-t9j29hppag2nren).\n\nA renamed key and a renamed kind of node leave a node's fingerprint (§s-f5brvuuu6xmkj6t) unchanged, so the approval of the node's wording stays in force (§s-v4qus7raqnwzneb).\n\n`sheriff reindex` also removes the folder `specs/_viewer/`, into which an earlier release wrote the map (§s-rpv4fkdqqguptqd), and names that folder. Where the removal fails, `sheriff reindex` names the folder and goes on.\n\n`sheriff reindex` names each file that it rewrites because an earlier release wrote or read that file differently, including the files of the specification.",
               "refs": [
                 {
                   "type": "implements",
@@ -1271,6 +1311,10 @@
                 },
                 {
                   "type": "cites",
+                  "to": "s-rpv4fkdqqguptqd"
+                },
+                {
+                  "type": "cites",
                   "from": "s-f5rz6b7dhxejjts"
                 },
                 {
@@ -1373,6 +1417,12 @@
                     "problem": "The schemas of earlier releases required a domain's header to hold the key `code`. Under the owner's ruling of 2026-11-17 on s-yggv9myedprnaa7, the header no longer says where the domain's code is, so a schema that follows that ruling refuses every header holding `code`.",
                     "ruling": "In the owner's name, carrying out the owner's ruling of 2026-11-17: `sheriff reindex` removes the key `code` of a domain's header.",
                     "type": "textual"
+                  },
+                  {
+                    "date": "2026-11-28",
+                    "problem": "The owner renamed the map's folder from `specs/_viewer/` to `specs/_map/`. Each project in which an earlier release wrote the map would keep `specs/_viewer/`, which no release writes to any more.",
+                    "ruling": "The owner chose option A: `sheriff reindex` removes `specs/_viewer/` in every project when the project upgrades to the release in which that folder is renamed (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
+                    "type": "textual"
                   }
                 ],
                 "tests": [
@@ -1380,9 +1430,11 @@
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv archives a draft rule on the specification's approval status if the rule has ever been approved, deletes one that was never approved, and records no entry",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv leaves a rule on the specification's approval status unchanged where sheriff.config.json already holds an entry for that status",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv leaves unchanged a RecordType holding a field of type variant, a field whose values the domains add, or a field whose own list of values is empty, and names that RecordType and each such field of the three kinds",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv names the folder specs/_viewer/ and goes on when its removal fails",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes every link of the type supersedes, which earlier releases wrote, and the schema then refuses one",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes from sheriff.config.json the setting by which an earlier release recognized the repository where the SpecSheriff guidelines are written, and keeps every other setting in its place",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes its sid and every link pointing at it from a node of the archive that an earlier release wrote, and builds no link pointing from it to another node",
+                  "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes the folder specs/_viewer/, into which an earlier release wrote the map, and names that folder",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv removes the key `code` that earlier releases wrote in a domain's header, and rewrites each N that they wrote in a link's ratio as *",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv replaces an approved rule of project.json on the specification's approval status with an entry that names the owner who last approved the rule, archives the rule, adds the draft rule on when the tests run, and reports that rule's sid",
                   "skills/tools/test/unit/reindex.test.ts::@spec s-gb8s9657a65hqmv rewrites a list's declaredIn, in the form that earlier releases wrote, into jsonSchema or valueList, renames the key declaration in them, removes one that points to the field kinds of the project's extension, and names each file that it rewrites",
@@ -1700,6 +1752,14 @@
                 },
                 {
                   "type": "cites",
+                  "from": "s-282zba8mtxvxnm5"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-exgg4vm4ds7t9jg"
+                },
+                {
+                  "type": "cites",
                   "from": "s-e3495enbc5h75c3"
                 },
                 {
@@ -1911,6 +1971,10 @@
                 {
                   "type": "cites",
                   "from": "s-n4ny597qdv9c9bu"
+                },
+                {
+                  "type": "cites",
+                  "from": "s-282zba8mtxvxnm5"
                 },
                 {
                   "type": "cites",
@@ -2568,7 +2632,7 @@
           "kind": "TextRule",
           "title": "Building the map",
           "status": "approved",
-          "text": "`sheriff map` writes the map of the specification (§s-zu8ne3wq84zchc4) only where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb, §s-9ttvcwpqkehm58g). In any other project, it refuses to run. The refusal names the Views extension.\n\n`sheriff map` writes the map into `specs/_viewer/` (§s-zefk589ykh37b8u) as follows:\n- it first removes everything in that folder;\n- it then writes two files there: the web page `index.html`, which draws the map, and a `.gitignore` file that holds `*`.\n\nThat `.gitignore` file makes git ignore the folder's contents whatever the repository's own ignore files say.\n\n`sheriff map` builds an outline in Markdown from the nodes. It writes that outline only into the web page itself. The web page draws the map from the outline with markmap.\n\nThe page holds markmap and every library that markmap needs, each with its licence notice. The page loads nothing from the network.\n\nThe root of the outline, labelled `Specification`, represents no node. The outline has the following top-level branches, in this order. None of them represents a node. Each holds the nodes of the files listed with it:\n- `Guidelines`: the SpecSheriff guidelines, then each extension of the guidelines whose nodes the model of the specification holds (§s-w6gybeqn2ttydqx), in the code-point order of the extensions' names, and then the project's own guidelines (§s-u7tw6m8npxmv5tu);\n- `Appendix of the tools`: the appendix of the tools (§s-a4rbry4hsu34hy8);\n- `Base specification`: the files of the contracts section (§s-z6tq6a3btnvvwx7) first, and then those of the other folders of the base specification (§s-5x737t9nee4zgaa);\n- `Technical appendix`: the files of the technical appendix (§s-tj38pvm38nepaf5).\n\nWhere the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the branch `Base specification` holds the domains row by row, from the top row of the diagram of the domains (§s-jzm6qw992j3bnxt) to its row `No level`. It holds the domains of each row in the order in which the diagram places them.\n\nThe files of one folder of the base specification, and the files of the technical appendix, are taken in the code-point order of their paths. Each node holds the nodes under it as follows, in the order in which the computation of locations visits them (§s-ygg5kpcxgzq3m7w):\n- a node holds its children, and a `TableRule` (§s-5fewsp22mmdz7y6) also holds the nodes in its cells;\n- where the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), a domain's header (§s-yggv9myedprnaa7) also holds the other top-level nodes of its folder;\n- the first top-level node of a file of the guidelines, of the appendix of the tools or of the technical appendix also holds the file's other top-level nodes.\n\nEach node is labelled with its title. A node in a cell of a `TableRule`, which has no title, is labelled with its location (§s-kag2m9tzdnduxdx).\n\nIn the outline, `sheriff map` writes each node's title or location in an element whose class names the node's approval status (§s-tgrnpagrb58tya7). The page draws that element with a border, dotted where the node is a draft and solid where it is approved. A branch that represents no node has no border. Apart from that border, the branch of each node is drawn in the same way, whatever the node's approval status.",
+          "text": "`sheriff map` writes the map of the specification (§s-zu8ne3wq84zchc4) only where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb, §s-9ttvcwpqkehm58g). In any other project, it refuses to run. The refusal names the Views extension.\n\n`sheriff map` writes the map into `specs/_map/` (§s-zefk589ykh37b8u) as follows:\n- it first removes everything in that folder;\n- it then writes two files there: the web page `index.html`, which draws the map, and a `.gitignore` file that holds `*`.\n\nThat `.gitignore` file makes git ignore the folder's contents whatever the repository's own ignore files say.\n\n`sheriff map` builds an outline in Markdown from the nodes. It writes that outline only into the web page itself. The web page draws the map from the outline with markmap.\n\nThe page holds markmap and every library that markmap needs, each with its licence notice. The page loads nothing from the network.\n\nThe root of the outline, labelled `Specification`, represents no node. The outline has the following top-level branches, in this order. None of them represents a node. Each holds the nodes of the files listed with it:\n- `Guidelines`: the SpecSheriff guidelines, then each extension of the guidelines whose nodes the model of the specification holds (§s-w6gybeqn2ttydqx), in the code-point order of the extensions' names, and then the project's own guidelines (§s-u7tw6m8npxmv5tu);\n- `Appendix of the tools`: the appendix of the tools (§s-a4rbry4hsu34hy8);\n- `Base specification`: the files of the contracts section (§s-z6tq6a3btnvvwx7) first, and then those of the other folders of the base specification (§s-5x737t9nee4zgaa);\n- `Technical appendix`: the files of the technical appendix (§s-tj38pvm38nepaf5).\n\nWhere the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the branch `Base specification` holds the domains row by row, from the top row of the diagram of the domains (§s-jzm6qw992j3bnxt) to its row `No level`. It holds the domains of each row in the order in which the diagram places them.\n\nThe files of one folder of the base specification, and the files of the technical appendix, are taken in the code-point order of their paths. Each node holds the nodes under it as follows, in the order in which the computation of locations visits them (§s-ygg5kpcxgzq3m7w):\n- a node holds its children, and a `TableRule` (§s-5fewsp22mmdz7y6) also holds the nodes in its cells;\n- where the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), a domain's header (§s-yggv9myedprnaa7) also holds the other top-level nodes of its folder;\n- the first top-level node of a file of the guidelines, of the appendix of the tools or of the technical appendix also holds the file's other top-level nodes.\n\nEach node is labelled with its title. A node in a cell of a `TableRule`, which has no title, is labelled with its location (§s-kag2m9tzdnduxdx).\n\nIn the outline, `sheriff map` writes each node's title or location in an element whose class names the node's approval status (§s-tgrnpagrb58tya7). The page draws that element with a border, dotted where the node is a draft and solid where it is approved. A branch that represents no node has no border. Apart from that border, the branch of each node is drawn in the same way, whatever the node's approval status.",
           "refs": [
             {
               "type": "implements",
@@ -2645,6 +2709,18 @@
             {
               "type": "cites",
               "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-gb8s9657a65hqmv"
+            },
+            {
+              "type": "cites",
+              "from": "s-exgg4vm4ds7t9jg"
+            },
+            {
+              "type": "cites",
+              "from": "s-4s3aru64yudz4kh"
             },
             {
               "type": "cites",
@@ -2751,6 +2827,10 @@
             {
               "type": "cites",
               "from": "s-rpv4fkdqqguptqd"
+            },
+            {
+              "type": "cites",
+              "from": "s-exgg4vm4ds7t9jg"
             }
           ],
           "reason": "The rule on the order of the domains in a row (§s-uw9n84edf7cbe9n) leaves its harder cases to the appendix of the tools (§s-a4rbry4hsu34hy8). This node settles them, together with how the rows are labelled, so that the same headers give the same diagram on every machine.",
@@ -2775,11 +2855,275 @@
         },
         {
           "location": "_guidelines/tools/8",
+          "sid": "s-282zba8mtxvxnm5",
+          "kind": "TextRule",
+          "title": "Serving the viewer",
+          "status": "approved",
+          "text": "`sheriff view` serves a web page at `http://127.0.0.1:<port>/`, which can be opened only from the machine on which `sheriff view` runs. Where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb, §s-9ttvcwpqkehm58g), the web page is the viewer of the specification (§s-rj7yxrktxywvxzj). Where the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the web page shows the diagram of the domains (§s-4azsb49pj6sech8). Where the project has chosen neither, `sheriff view` refuses to run, and the refusal names both extensions and `sheriff settings` (§s-chsfpkgpmfk4fft).\n\n`sheriff view` prints the web page's address. The port is the one that the option `--port` sets or, without that option, the first free port from 5278 to 5297. Where the port that `--port` sets is already in use when `sheriff view` starts, or where no port in that range is free, it refuses to run and names the port or the range.\n\n`sheriff view` reads the specification as `sheriff json` reads it (§s-w6gybeqn2ttydqx). It also reads the settings in `sheriff.config.json` (§s-tjsv2wv4j2cuapa), and the levels of the domains as the SpecSheriff tools read them (§s-t9j29hppag2nren). After each change to any file that it reads, it reads all of those files again, and each open web page is redrawn. A redrawn web page keeps open the box that the reader opened, keeps expanded the nodes that the reader expanded, keeps selected the node that the reader selected and keeps the display of drafts as the reader set it. Where `sheriff view` cannot read the specification, or where the settings, read again, show that the project has chosen neither the Views nor the Domains extension, the web page says so. It then keeps showing what `sheriff view` most recently read successfully.\n\nWithout `--detach`, `sheriff view` serves the web page until it is stopped. The options `--detach` and `--stop` work as follows:\n- `--detach` starts `sheriff view` in the background and prints the web page's address. Where a `sheriff view` process started by the same build of the SpecSheriff tools as the one that runs `--detach` already serves this project, `--detach` only prints that process's address. Where a `sheriff view` process started by another build serves the project, as happens after the plugin is updated, `--detach` stops that process and starts a new one.\n- `--stop` stops the `sheriff view` process that serves this project. Where no such process runs, `--stop` says so.\n\n`--detach` and `--stop` look for the `sheriff view` process that serves this project. They look for it on the port that `--port` sets or, without that option, on each port from 5278 to 5297.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-rj7yxrktxywvxzj"
+            },
+            {
+              "type": "cites",
+              "to": "s-qgg6sfawtmwvrbb"
+            },
+            {
+              "type": "cites",
+              "to": "s-9ttvcwpqkehm58g"
+            },
+            {
+              "type": "cites",
+              "to": "s-tdm3rwsppnuh6dm"
+            },
+            {
+              "type": "cites",
+              "to": "s-4azsb49pj6sech8"
+            },
+            {
+              "type": "cites",
+              "to": "s-chsfpkgpmfk4fft"
+            },
+            {
+              "type": "cites",
+              "to": "s-w6gybeqn2ttydqx"
+            },
+            {
+              "type": "cites",
+              "to": "s-tjsv2wv4j2cuapa"
+            },
+            {
+              "type": "cites",
+              "to": "s-t9j29hppag2nren"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-exgg4vm4ds7t9jg"
+            }
+          ],
+          "reason": "A person who reviews the specification while an agent changes it needs to see each change as soon as it is made, on the machine where the work is done and in the specification as the other commands of the SpecSheriff tools read it.",
+          "examples": [
+            "In a project that has chosen the Views extension, the owner runs `sheriff view --detach`, which prints `http://127.0.0.1:5278/`. An agent then changes the title of a rule, and the open web page shows the new title with the same node still selected. After an update of the plugin, `sheriff view --detach` stops the earlier `sheriff view` process and starts one from the new release. The most likely mistake is to keep the earlier process because it still responds. That process shows the specification as the earlier release draws it."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-27",
+                "problem": "Whether the plugin starts serving the viewer when a session starts, and what becomes of a `sheriff view` process that another build of the SpecSheriff tools started.",
+                "ruling": "The owner agreed to the design under which only the command `sheriff view` starts serving the viewer, `--detach` replaces a `sheriff view` process that another build of the SpecSheriff tools started, and `--stop` stops the project's `sheriff view` process (\"A\", in answer to \"Do you agree to the design, and which option do you choose for Views, A or B?\").",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-28",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
+                "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view --detach starts the viewer in the background and prints its address, and a second --detach starts no second one",
+              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view --detach stops a viewer of the project that another build of the SpecSheriff tools started, and starts a new one",
+              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view --stop stops the sheriff view process that serves the project and, where there is none, says that there is none",
+              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view refuses to run on the port that --port sets if the viewer of another project already serves on it, naming the port",
+              "skills/tools/test/e2e/view.test.ts::@spec s-282zba8mtxvxnm5 sheriff view refuses to run where the project has chosen neither the Views nor the Domains extension, naming both extensions and sheriff settings",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 answers a health-check request with the project's root and the identifier of the build of the SpecSheriff tools",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 answers only requests addressed to the machine on which it runs",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 only reads files: the working tree is unchanged after the web page has been served",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reads the specification again after a file of the specification changes, and tells each open web page to redraw",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 refuses to run where no port in its range is free, naming the range",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reports that it cannot read the specification, and keeps what it last read successfully",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 reports that the settings, read again, show that the project has chosen neither the Views nor the Domains extension",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 stops serving when asked to stop",
+              "skills/tools/test/unit/view-server.test.ts::@spec s-282zba8mtxvxnm5 takes the first free port in its range, and refuses to run on the port that `--port` sets where that port is in use",
+              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 reads the specification as `sheriff json` reads it: an extension that the project receives from the plugin but has not chosen is left out",
+              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 refuses to run where the project has chosen neither the Views nor the Domains extension, with a refusal that names both extensions and `sheriff settings`",
+              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 returns no diagram of the domains where the project has chosen the Views extension and not the Domains extension",
+              "skills/tools/test/unit/view.test.ts::@spec s-282zba8mtxvxnm5 returns only the diagram of the domains where the project has chosen the Domains extension and not the Views extension"
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/tools/9",
+          "sid": "s-exgg4vm4ds7t9jg",
+          "kind": "TextRule",
+          "title": "The top of the web page that `sheriff view` serves",
+          "status": "approved",
+          "text": "The top of the web page that `sheriff view` serves (§s-282zba8mtxvxnm5) shows how the specification is divided, and shows the diagram of the domains.\n\nWhere the project has chosen the Views extension (§s-qgg6sfawtmwvrbb), a row at the top holds a box for each of the following that the project keeps, in the order of the branches of the map (§s-rpv4fkdqqguptqd):\n- the file `spec.json` of the SpecSheriff guidelines, each file of an extension of the guidelines whose nodes the model of the specification holds (§s-w6gybeqn2ttydqx), and the file of the project's own guidelines (§s-u7tw6m8npxmv5tu), each of these files labelled with the value of its `section`;\n- the appendix of the tools (§s-a4rbry4hsu34hy8), labelled `tools`;\n- the contracts section (§s-z6tq6a3btnvvwx7), labelled `contracts`;\n- the folder `base` (§s-zefk589ykh37b8u), labelled `base`;\n- the technical appendix (§s-tj38pvm38nepaf5), labelled `tech`.\n\nEach box also holds the two numbers that the viewer shows for what the box represents (§s-rj7yxrktxywvxzj), written as the number of approved nodes, a slash and the number of all nodes, such as `12/14`. A switch at the top of the web page turns the display of drafts on and off.\n\nWhere the project has chosen the Domains extension (§s-tdm3rwsppnuh6dm), the diagram of the domains (§s-4azsb49pj6sech8) is drawn at the top, below the row of boxes if the web page shows that row, as the rule on drawing the diagram says (§s-jzm6qw992j3bnxt). Where the project has also chosen the Views extension, each domain's box holds the domain's numbers, written in the same way as in the row of boxes.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-rj7yxrktxywvxzj"
+            },
+            {
+              "type": "implements",
+              "to": "s-4azsb49pj6sech8"
+            },
+            {
+              "type": "cites",
+              "to": "s-282zba8mtxvxnm5"
+            },
+            {
+              "type": "cites",
+              "to": "s-qgg6sfawtmwvrbb"
+            },
+            {
+              "type": "cites",
+              "to": "s-rpv4fkdqqguptqd"
+            },
+            {
+              "type": "cites",
+              "to": "s-w6gybeqn2ttydqx"
+            },
+            {
+              "type": "cites",
+              "to": "s-u7tw6m8npxmv5tu"
+            },
+            {
+              "type": "cites",
+              "to": "s-a4rbry4hsu34hy8"
+            },
+            {
+              "type": "cites",
+              "to": "s-z6tq6a3btnvvwx7"
+            },
+            {
+              "type": "cites",
+              "to": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "cites",
+              "to": "s-tj38pvm38nepaf5"
+            },
+            {
+              "type": "cites",
+              "to": "s-tdm3rwsppnuh6dm"
+            },
+            {
+              "type": "cites",
+              "to": "s-jzm6qw992j3bnxt"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-4s3aru64yudz4kh"
+            }
+          ],
+          "reason": "The viewer divides and orders the specification as the map does, so that a person who uses both finds each file and each domain in the same place in both.",
+          "examples": [
+            "A project that has chosen the Views and Domains extensions keeps its own guidelines, a contracts section, the domains `requests` and `billing` and a technical appendix. The row at the top holds the boxes `spec`, `domains`, `views`, `project`, `tools`, `contracts` and `tech`, and the diagram below it holds `requests` and `billing`. The most likely mistake is to put the domains in the row at the top as well, which draws each of them twice."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-28",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
+                "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/view.test.ts::@spec s-exgg4vm4ds7t9jg returns the boxes in the order of the branches of the map, with the domains among them in the order of the diagram of the domains",
+              "skills/tools/test/unit/view.test.ts::@spec s-exgg4vm4ds7t9jg returns the diagram of the domains as the SpecSheriff tools draw it",
+              "skills/tools/test/unit/viewer-page.test.ts::@spec s-exgg4vm4ds7t9jg draws the rows of the diagram of the domains in the order that the model gives, and each domain's numbers only where the Views extension is chosen"
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/tools/10",
+          "sid": "s-4s3aru64yudz4kh",
+          "kind": "TextRule",
+          "title": "The nodes drawn on the web page that `sheriff view` serves",
+          "status": "approved",
+          "text": "Where the project has chosen the Views extension (§s-qgg6sfawtmwvrbb), the web page that `sheriff view` serves draws, below the top of the web page (§s-exgg4vm4ds7t9jg), the nodes of whichever box at the top the reader opens, as follows:\n- a node that holds other nodes, such as a section or a `TableRule` whose cells hold nodes (§s-5fewsp22mmdz7y6), is drawn as a frame around those nodes once the reader has expanded it;\n- until the reader expands it, such a node is drawn as a card that holds two numbers for the nodes under it at any depth: the number of approved nodes and the number of all nodes, counted and written as in a box at the top of the web page;\n- every other node is drawn as a card;\n- each card and each frame shows its node's location (§s-kag2m9tzdnduxdx) and its node's title, where the node has one;\n- the card or frame of a draft has a dotted border, and that of an approved node a solid one, as on the map (§s-rpv4fkdqqguptqd);\n- each link (§s-sn6au3vcr9uy5pm) between two nodes that the web page draws is drawn as a line in the colour of the link's type, dashed for a `cites` link, with an arrowhead at the node that the link leads to;\n- a link to or from a node under the node of a card ends at that card;\n- all the links between a given pair of cards are drawn as one line, in the colour of their type or, where they are of several types, in a colour reserved for that case, with an arrowhead at each card that one of the links leads to;\n- a legend below the drawing shows the colour of each link type;\n- a card or a frame shows ◆ and the number of its node's decisions (§s-x4zcbk5ekebd9ua), ✎ and the number of its node's comments, and ☐ and the number of its node's todos (§s-t28j22vbdmmeqnh), each only where the node has any;\n- a card shows ○ where its node is a rule that is linked to no other node.\n\nSelecting a card, or the heading of a frame, shows its node in a panel beside the drawing, as `sheriff show` prints it (§s-2dhbqy43tcm6qj2), with its Markdown rendered as formatted text. Selecting a cited sid in the panel selects the node that the sid identifies, and selecting a link there selects the node at the link's other end. The web page then opens the box that holds that node, expands each node that contains it, and turns on the display of drafts where that node is a draft.",
+          "refs": [
+            {
+              "type": "implements",
+              "to": "s-rj7yxrktxywvxzj"
+            },
+            {
+              "type": "cites",
+              "to": "s-qgg6sfawtmwvrbb"
+            },
+            {
+              "type": "cites",
+              "to": "s-exgg4vm4ds7t9jg"
+            },
+            {
+              "type": "cites",
+              "to": "s-5fewsp22mmdz7y6"
+            },
+            {
+              "type": "cites",
+              "to": "s-kag2m9tzdnduxdx"
+            },
+            {
+              "type": "cites",
+              "to": "s-rpv4fkdqqguptqd"
+            },
+            {
+              "type": "cites",
+              "to": "s-sn6au3vcr9uy5pm"
+            },
+            {
+              "type": "cites",
+              "to": "s-x4zcbk5ekebd9ua"
+            },
+            {
+              "type": "cites",
+              "to": "s-t28j22vbdmmeqnh"
+            },
+            {
+              "type": "cites",
+              "to": "s-2dhbqy43tcm6qj2"
+            },
+            {
+              "type": "cites",
+              "from": "s-f5rz6b7dhxejjts"
+            },
+            {
+              "type": "cites",
+              "from": "s-k4nqjr96ux7a5m7"
+            }
+          ],
+          "reason": "Without such a drawing, a person who reviews the specification has to open its files to find what each node is linked to and what is still unresolved about it.",
+          "examples": [
+            "In the open box `billing`, the card of the rule `billing/1.2` holds ◆1 and is joined to the card of `billing/1.1` by a line in the colour of the link type `refines`. Selecting the card shows the rule's text, reason, decision and links in the panel. Selecting, in the panel, the rule's link to a node of `requests` opens `requests` and selects that node. The most likely mistake is to draw a link to a node of another box as a line that leads off the drawing, which the reader cannot follow."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-28",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
+                "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/view.test.ts::@spec s-4s3aru64yudz4kh returns each link between two nodes with its type, a `cites` link and a `consumes` link among them",
+              "skills/tools/test/unit/view.test.ts::@spec s-4s3aru64yudz4kh returns each node as `sheriff show` prints it, with the nodes under it and with the nodes in a TableRule's cells after the TableRule's children",
+              "skills/tools/test/unit/view.test.ts::@spec s-4s3aru64yudz4kh returns the counts of each node's decisions, comments and todos",
+              "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh counts, for a node that holds other nodes, the nodes under it at any depth, as a box at the top of the web page counts them",
+              "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh draws each link in the colour of its type, dashed for a `cites` link, and a link of an unknown type in a colour of its own",
+              "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh marks a rule that is linked to no other node",
+              "skills/tools/test/unit/viewer-page.test.ts::@spec s-4s3aru64yudz4kh renders a node's Markdown as formatted text, with every character of the node escaped for HTML and every cited sid shown as a link"
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/tools/11",
           "sid": "s-k4nqjr96ux7a5m7",
           "kind": "TextRule",
           "title": "How a node is written in Markdown",
           "status": "approved",
-          "text": "`sheriff markdown` (§s-e3495enbc5h75c3), `sheriff show` (§s-2dhbqy43tcm6qj2) and `sheriff guide` (§s-jk8v3srrved7ram) write a node in Markdown in this order:\n- a heading that holds the node's location (§s-kag2m9tzdnduxdx) and its title, or only its location where the node is in a cell of a `TableRule` (§s-5fewsp22mmdz7y6) and so has no title;\n- a line that holds the node's sid, its kind and its approval status (§s-tgrnpagrb58tya7);\n- the node's text, and then its reason, which opens with `*Why:*`;\n- any other value that the node's file holds for it, except its links and the nodes under it, headed by the value's key: a value that is text is written as it is, and any other value is written as JSON;\n- the node's links, each with its type, its direction, its ratio (§s-bckzdwd35d2nefa) where it has one, and the sid, location and title of the node at the other end.\n\n`sheriff guide` leaves out each node's metadata, the value of the node's `meta` (§s-jk8v3srrved7ram).\n\nThe following values are written in a form of their own instead of as JSON:\n- a `TextRule.list` (§s-eferktypcj7njt5) any of whose members is an object: its other values as JSON, and its members as a table;\n- the values gathered beside a field (§s-ju5vcanbjph7mgh), which a RecordType's `schema` (§s-6eb92ddch7shuvu) holds in the field's `enumSource.gathered`: as a list after the JSON of the `schema`, from which they are left out;\n- the `columns` and `groups` of a `TableRule`: as a table for each group of rows, under the group's heading where the group has one.\n\nThe first column of the table of a `TextRule.list` is for the property that `TextRule.list.property` names. Its other columns follow in the order in which their properties first appear. The table has a row for each member, and a member that is not an object is written in the first column alone.\n\nThe list of the values gathered beside a field is headed by the JSON Pointer to the field's schema within the RecordType's `schema`, such as `/properties/part`. It lists each value with the sid, location and title of the node that the value comes from.\n\nA node in a cell of a `TableRule`, which has no title, is named in a link and in the list of gathered values by its sid and location alone.\n\nA table of a `TableRule` has a column for each column of the `TableRule`, headed by that column's heading, and a row for each row of its group. A cell of the `TableRule` that holds text is written as that text. A cell that holds a node is written as the node's location and its text.\n\nIn a cell of the table of a `TextRule.list` and of a table of a `TableRule`:\n- a list or an object is written as JSON on one line;\n- each line break is written as `<br>`;\n- each `|` is written as `\\|`.\n\nA node in a cell of a `TableRule` is also written with the following before its text, since these are part of its wording (§s-5ah25f6gy99panq):\n- the heading of its column;\n- the heading of its group, where the table's rows are grouped;\n- the text of each cell of its row that holds text, under the heading of that cell's column.\n\nWhere a command writes the nodes under a node, it writes them after that node. It writes them in the order in which the computation of locations visits them (§s-ygg5kpcxgzq3m7w), so the nodes in the cells of a `TableRule` come after its children. Each of those nodes has a heading one level deeper than that of the node above it, capped at the sixth level, the deepest that Markdown has. A top-level node of a file, and the node that `sheriff show` prints, have a first-level heading.",
+          "text": "`sheriff markdown` (§s-e3495enbc5h75c3), `sheriff show` (§s-2dhbqy43tcm6qj2), `sheriff guide` (§s-jk8v3srrved7ram) and `sheriff view` (§s-4s3aru64yudz4kh) write a node in Markdown in this order:\n- a heading that holds the node's location (§s-kag2m9tzdnduxdx) and its title, or only its location where the node is in a cell of a `TableRule` (§s-5fewsp22mmdz7y6) and so has no title;\n- a line that holds the node's sid, its kind and its approval status (§s-tgrnpagrb58tya7);\n- the node's text, and then its reason, which opens with `*Why:*`;\n- any other value that the node's file holds for it, except its links and the nodes under it, headed by the value's key: a value that is text is written as it is, and any other value is written as JSON;\n- the node's links, each with its type, its direction, its ratio (§s-bckzdwd35d2nefa) where it has one, and the sid, location and title of the node at the other end.\n\n`sheriff guide` leaves out each node's metadata, the value of the node's `meta` (§s-jk8v3srrved7ram).\n\nThe following values are written in a form of their own instead of as JSON:\n- a `TextRule.list` (§s-eferktypcj7njt5) any of whose members is an object: its other values as JSON, and its members as a table;\n- the values gathered beside a field (§s-ju5vcanbjph7mgh), which a RecordType's `schema` (§s-6eb92ddch7shuvu) holds in the field's `enumSource.gathered`: as a list after the JSON of the `schema`, from which they are left out;\n- the `columns` and `groups` of a `TableRule`: as a table for each group of rows, under the group's heading where the group has one.\n\nThe first column of the table of a `TextRule.list` is for the property that `TextRule.list.property` names. Its other columns follow in the order in which their properties first appear. The table has a row for each member, and a member that is not an object is written in the first column alone.\n\nThe list of the values gathered beside a field is headed by the JSON Pointer to the field's schema within the RecordType's `schema`, such as `/properties/part`. It lists each value with the sid, location and title of the node that the value comes from.\n\nA node in a cell of a `TableRule`, which has no title, is named in a link and in the list of gathered values by its sid and location alone.\n\nA table of a `TableRule` has a column for each column of the `TableRule`, headed by that column's heading, and a row for each row of its group. A cell of the `TableRule` that holds text is written as that text. A cell that holds a node is written as the node's location and its text.\n\nIn a cell of the table of a `TextRule.list` and of a table of a `TableRule`:\n- a list or an object is written as JSON on one line;\n- each line break is written as `<br>`;\n- each `|` is written as `\\|`.\n\nA node in a cell of a `TableRule` is also written with the following before its text, since these are part of its wording (§s-5ah25f6gy99panq):\n- the heading of its column;\n- the heading of its group, where the table's rows are grouped;\n- the text of each cell of its row that holds text, under the heading of that cell's column.\n\nWhere a command writes the nodes under a node, it writes them after that node. It writes them in the order in which the computation of locations visits them (§s-ygg5kpcxgzq3m7w), so the nodes in the cells of a `TableRule` come after its children. Each of those nodes has a heading one level deeper than that of the node above it, capped at the sixth level, the deepest that Markdown has. A top-level node of a file, and the node that `sheriff show` prints, have a first-level heading.",
           "refs": [
             {
               "type": "implements",
@@ -2839,6 +3183,10 @@
             },
             {
               "type": "cites",
+              "to": "s-4s3aru64yudz4kh"
+            },
+            {
+              "type": "cites",
               "from": "s-jk8v3srrved7ram"
             },
             {
@@ -2865,7 +3213,8 @@
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes a node in a cell with its location alone as its heading, and its column, its group and the text cells of its row before its text",
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the columns and groups of a TableRule as a table for each group, each node's cell holding its location and its text, and the nodes in its cells after it",
               "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field after the schema's JSON, headed by the field's JSON Pointer, each with the sid, location and title of the node it comes from",
-              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field nested anywhere in a RecordType's schema under the field's JSON Pointer"
+              "skills/tools/test/unit/show.test.ts::@spec s-k4nqjr96ux7a5m7 writes the values gathered beside a field nested anywhere in a RecordType's schema under the field's JSON Pointer",
+              "skills/tools/test/unit/view.test.ts::@spec s-k4nqjr96ux7a5m7 sheriff view writes a node in Markdown as sheriff show writes it, and gives a node in a cell a heading that consists of its location alone"
             ],
             "decisions": [
               {
@@ -2896,7 +3245,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/9",
+          "location": "_guidelines/tools/12",
           "sid": "s-e3495enbc5h75c3",
           "kind": "TextRule",
           "title": "Writing the human-readable export",
@@ -2978,7 +3327,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/10",
+          "location": "_guidelines/tools/13",
           "sid": "s-2dhbqy43tcm6qj2",
           "kind": "TextRule",
           "title": "Printing one node",
@@ -3019,6 +3368,10 @@
             },
             {
               "type": "cites",
+              "from": "s-4s3aru64yudz4kh"
+            },
+            {
+              "type": "cites",
               "from": "s-k4nqjr96ux7a5m7"
             }
           ],
@@ -3044,7 +3397,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/11",
+          "location": "_guidelines/tools/14",
           "sid": "s-477gtdrkw34dzxw",
           "kind": "TextRule",
           "title": "The hooks",
@@ -3331,7 +3684,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/12",
+          "location": "_guidelines/tools/15",
           "sid": "s-npnmwyt6s3gypwe",
           "kind": "TextRule",
           "title": "The pre-commit hook",
@@ -3474,7 +3827,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/13",
+          "location": "_guidelines/tools/16",
           "sid": "s-8a5eyy5n5hnsgrs",
           "kind": "TextRule",
           "title": "The working tree compared with what a push sends",
@@ -3520,7 +3873,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/14",
+          "location": "_guidelines/tools/17",
           "sid": "s-jgcveum8dwdnyzr",
           "kind": "TextRule",
           "title": "Turning the git hooks on when a session starts",
@@ -3582,7 +3935,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/15",
+          "location": "_guidelines/tools/18",
           "sid": "s-p29yawkkkgk7kxb",
           "kind": "TextRule",
           "title": "The settings of each runner when a session starts",
@@ -3653,7 +4006,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/16",
+          "location": "_guidelines/tools/19",
           "sid": "s-hcmpjmwtgfwzncu",
           "kind": "TextRule",
           "title": "The agent's hook after an edit",
@@ -3791,7 +4144,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/17",
+          "location": "_guidelines/tools/20",
           "sid": "s-4kd2pave7vm4hmd",
           "kind": "section",
           "title": "How each check is made",
@@ -3851,7 +4204,7 @@
           },
           "children": [
             {
-              "location": "_guidelines/tools/17.1",
+              "location": "_guidelines/tools/20.1",
               "sid": "s-6uqu6vn5fnp7fwb",
               "kind": "section",
               "title": "Checks run by `sheriff validate`",
@@ -3869,7 +4222,7 @@
               ],
               "children": [
                 {
-                  "location": "_guidelines/tools/17.1.1",
+                  "location": "_guidelines/tools/20.1.1",
                   "sid": "s-7zqsstgnuc772ba",
                   "kind": "TextRule",
                   "title": "A key written more than once in one object",
@@ -3935,7 +4288,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.2",
+                  "location": "_guidelines/tools/20.1.2",
                   "sid": "s-xzcw3hv4hmxz7h7",
                   "kind": "TextRule",
                   "title": "How the schema of the specification is composed",
@@ -4067,7 +4420,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.3",
+                  "location": "_guidelines/tools/20.1.3",
                   "sid": "s-mhsb6fjsq5xn6c9",
                   "kind": "TextRule",
                   "title": "The chosen extensions and the installed plugin",
@@ -4126,7 +4479,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.4",
+                  "location": "_guidelines/tools/20.1.4",
                   "sid": "s-ynqb8zt3fy28asp",
                   "kind": "TextRule",
                   "title": "Validation against the schema before a command works on the files",
@@ -4183,7 +4536,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.5",
+                  "location": "_guidelines/tools/20.1.5",
                   "sid": "s-vke5hakwf3uyrjs",
                   "kind": "TextRule",
                   "title": "Duplicate sids, terms and names of RecordTypes",
@@ -4244,7 +4597,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.6",
+                  "location": "_guidelines/tools/20.1.6",
                   "sid": "s-yauyedny2yzvs4c",
                   "kind": "TextRule",
                   "title": "Term nodes outside the contracts section",
@@ -4307,7 +4660,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.7",
+                  "location": "_guidelines/tools/20.1.7",
                   "sid": "s-76becsjwmasc2r2",
                   "kind": "TextRule",
                   "title": "Terms defined in a domain",
@@ -4375,7 +4728,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.8",
+                  "location": "_guidelines/tools/20.1.8",
                   "sid": "s-stxmhq3hgfndvn6",
                   "kind": "TextRule",
                   "title": "A location that differs from the computed one",
@@ -4430,7 +4783,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.9",
+                  "location": "_guidelines/tools/20.1.9",
                   "sid": "s-ygg5kpcxgzq3m7w",
                   "kind": "TextRule",
                   "title": "How a node's location is computed",
@@ -4539,7 +4892,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.10",
+                  "location": "_guidelines/tools/20.1.10",
                   "sid": "s-95w92rnjuv3sst8",
                   "kind": "TextRule",
                   "title": "An approved node with no approval in force",
@@ -4611,7 +4964,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.11",
+                  "location": "_guidelines/tools/20.1.11",
                   "sid": "s-75ue25v6r23jkk8",
                   "kind": "TextRule",
                   "title": "Who an added approval names",
@@ -4675,7 +5028,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.12",
+                  "location": "_guidelines/tools/20.1.12",
                   "sid": "s-j4webte36gkraju",
                   "kind": "TextRule",
                   "title": "A removed node and the archive",
@@ -4743,7 +5096,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.13",
+                  "location": "_guidelines/tools/20.1.13",
                   "sid": "s-hw84ynkvhgzcnpr",
                   "kind": "TextRule",
                   "title": "Validation of a file of the archive",
@@ -4791,7 +5144,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.14",
+                  "location": "_guidelines/tools/20.1.14",
                   "sid": "s-c4rn9fj4czk768b",
                   "kind": "TextRule",
                   "title": "The target of a link",
@@ -4839,7 +5192,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.15",
+                  "location": "_guidelines/tools/20.1.15",
                   "sid": "s-qzyacnqwvaeaps4",
                   "kind": "TextRule",
                   "title": "Citations and the links that match them",
@@ -4905,7 +5258,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.16",
+                  "location": "_guidelines/tools/20.1.16",
                   "sid": "s-pvnnr844f3y964m",
                   "kind": "TextRule",
                   "title": "Link types reserved for terms",
@@ -4967,7 +5320,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.17",
+                  "location": "_guidelines/tools/20.1.17",
                   "sid": "s-68zhvb5vfprznmd",
                   "kind": "TextRule",
                   "title": "The bounds of a range in a ratio",
@@ -5010,7 +5363,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.18",
+                  "location": "_guidelines/tools/20.1.18",
                   "sid": "s-agc6fb3vx46pc23",
                   "kind": "TextRule",
                   "title": "Values built from other nodes",
@@ -5112,7 +5465,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.19",
+                  "location": "_guidelines/tools/20.1.19",
                   "sid": "s-8esbyvaj2yx5eqf",
                   "kind": "TextRule",
                   "title": "One header for each domain",
@@ -5160,7 +5513,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.20",
+                  "location": "_guidelines/tools/20.1.20",
                   "sid": "s-e2vdhfsndy5stq9",
                   "kind": "TextRule",
                   "title": "A run of words in capitals",
@@ -5219,7 +5572,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.21",
+                  "location": "_guidelines/tools/20.1.21",
                   "sid": "s-zhen42p6mnaxu7w",
                   "kind": "TextRule",
                   "title": "A section with a rule in it",
@@ -5289,7 +5642,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.22",
+                  "location": "_guidelines/tools/20.1.22",
                   "sid": "s-qvgzubkrafadqgf",
                   "kind": "TextRule",
                   "title": "`exempts` links",
@@ -5373,7 +5726,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.23",
+                  "location": "_guidelines/tools/20.1.23",
                   "sid": "s-p3n666zfjdrrw6a",
                   "kind": "TextRule",
                   "title": "`consumes` links",
@@ -5432,7 +5785,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.24",
+                  "location": "_guidelines/tools/20.1.24",
                   "sid": "s-75r4pg4wdqu3gw5",
                   "kind": "TextRule",
                   "title": "A link from the SpecSheriff guidelines to an extension of the guidelines",
@@ -5483,7 +5836,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.25",
+                  "location": "_guidelines/tools/20.1.25",
                   "sid": "s-vuujweu57sxsa58",
                   "kind": "TextRule",
                   "title": "Domains that use one another in a cycle",
@@ -5533,7 +5886,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.26",
+                  "location": "_guidelines/tools/20.1.26",
                   "sid": "s-ezq8csd433vj6fj",
                   "kind": "TextRule",
                   "title": "A RecordType that refers to a RecordType outside its part of the system",
@@ -5621,7 +5974,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.27",
+                  "location": "_guidelines/tools/20.1.27",
                   "sid": "s-yhe32vrbygjyd66",
                   "kind": "TextRule",
                   "title": "What a `$ref` within a RecordType names",
@@ -5665,7 +6018,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.28",
+                  "location": "_guidelines/tools/20.1.28",
                   "sid": "s-uxmkwbnpgtjzkgv",
                   "kind": "TextRule",
                   "title": "The level in a domain's header",
@@ -5729,7 +6082,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.29",
+                  "location": "_guidelines/tools/20.1.29",
                   "sid": "s-c2r9jndrjbtbsv6",
                   "kind": "TextRule",
                   "title": "What a RecordType variant must agree with",
@@ -5884,7 +6237,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.30",
+                  "location": "_guidelines/tools/20.1.30",
                   "sid": "s-qg2yqec2cgmcg2w",
                   "kind": "TextRule",
                   "title": "`\"type\": \"object\"` in a RecordType's `schema`",
@@ -5939,7 +6292,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.31",
+                  "location": "_guidelines/tools/20.1.31",
                   "sid": "s-3anv9qcmx8pwp2w",
                   "kind": "TextRule",
                   "title": "An identifier followed to its end",
@@ -6035,7 +6388,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.32",
+                  "location": "_guidelines/tools/20.1.32",
                   "sid": "s-5nf87c3e3jg9v7c",
                   "kind": "TextRule",
                   "title": "Where the values of a field with `enum` are collected from",
@@ -6173,7 +6526,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.33",
+                  "location": "_guidelines/tools/20.1.33",
                   "sid": "s-dk3zfkbhc3v6xbp",
                   "kind": "TextRule",
                   "title": "Fields with `enum` that `sheriff validate` accepts",
@@ -6249,7 +6602,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.34",
+                  "location": "_guidelines/tools/20.1.34",
                   "sid": "s-j4t9vusnsajmqdw",
                   "kind": "TextRule",
                   "title": "The meta-schema of a RecordType's `schema`",
@@ -6300,7 +6653,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.35",
+                  "location": "_guidelines/tools/20.1.35",
                   "sid": "s-cdachayybfvg4na",
                   "kind": "TextRule",
                   "title": "An object in a list",
@@ -6361,7 +6714,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.36",
+                  "location": "_guidelines/tools/20.1.36",
                   "sid": "s-6bmnsbskg6en4nf",
                   "kind": "TextRule",
                   "title": "Copies of the files that the SpecSheriff plugin delivers",
@@ -6404,7 +6757,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.37",
+                  "location": "_guidelines/tools/20.1.37",
                   "sid": "s-yprj7d6tnvauggr",
                   "kind": "TextRule",
                   "title": "`implements` and `refines` links in the appendices and in a project's own guidelines",
@@ -6501,7 +6854,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.38",
+                  "location": "_guidelines/tools/20.1.38",
                   "sid": "s-gvafe6bnstwab8b",
                   "kind": "TextRule",
                   "title": "Files of the technical appendix named after the domains",
@@ -6558,7 +6911,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.39",
+                  "location": "_guidelines/tools/20.1.39",
                   "sid": "s-g7auhqvzzbkw644",
                   "kind": "TextRule",
                   "title": "Sections of the technical appendix matched to the base specification",
@@ -6622,7 +6975,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.1.40",
+                  "location": "_guidelines/tools/20.1.40",
                   "sid": "s-7pk89t8z6wymmj9",
                   "kind": "TextRule",
                   "title": "How a project's own check is run",
@@ -6747,7 +7100,7 @@
               ]
             },
             {
-              "location": "_guidelines/tools/17.2",
+              "location": "_guidelines/tools/20.2",
               "sid": "s-p34692nwceaxq2p",
               "kind": "section",
               "title": "Checks run by `sheriff binding`",
@@ -6765,7 +7118,7 @@
               ],
               "children": [
                 {
-                  "location": "_guidelines/tools/17.2.1",
+                  "location": "_guidelines/tools/20.2.1",
                   "sid": "s-2x58az67bm6cxq2",
                   "kind": "TextRule",
                   "title": "What a commit adds, changes and removes in the code and the tests",
@@ -6917,7 +7270,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.2",
+                  "location": "_guidelines/tools/20.2.2",
                   "sid": "s-u6mj5yv8ngnz79v",
                   "kind": "TextRule",
                   "title": "How two versions of code are compared",
@@ -6989,7 +7342,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.3",
+                  "location": "_guidelines/tools/20.2.3",
                   "sid": "s-9rtrj24myzjvshu",
                   "kind": "TextRule",
                   "title": "SpecTags on the system's code other than tests",
@@ -7100,7 +7453,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.4",
+                  "location": "_guidelines/tools/20.2.4",
                   "sid": "s-36x8amvunmv2kp5",
                   "kind": "TextRule",
                   "title": "A SpecTag that names no node",
@@ -7152,7 +7505,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.5",
+                  "location": "_guidelines/tools/20.2.5",
                   "sid": "s-3xx2eukc8gtd2tx",
                   "kind": "TextRule",
                   "title": "Code and tests outside the commit that no SpecTag binds",
@@ -7257,7 +7610,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.6",
+                  "location": "_guidelines/tools/20.2.6",
                   "sid": "s-w93jfnqynfa47pf",
                   "kind": "TextRule",
                   "title": "The code and the tests of a draft rule",
@@ -7314,7 +7667,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.7",
+                  "location": "_guidelines/tools/20.2.7",
                   "sid": "s-j9r8z4xdrfkfs47",
                   "kind": "TextRule",
                   "title": "Entries that only an owner of the specification records",
@@ -7412,7 +7765,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.8",
+                  "location": "_guidelines/tools/20.2.8",
                   "sid": "s-utf4mbt7ref8g9c",
                   "kind": "TextRule",
                   "title": "The SpecTags the tests carry",
@@ -7539,7 +7892,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.9",
+                  "location": "_guidelines/tools/20.2.9",
                   "sid": "s-8wp7xm7g3u8gscq",
                   "kind": "TextRule",
                   "title": "A test for each rule whose code a commit changes",
@@ -7606,7 +7959,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.10",
+                  "location": "_guidelines/tools/20.2.10",
                   "sid": "s-t383grkn3q68dpf",
                   "kind": "TextRule",
                   "title": "A node's `meta.code` and `meta.tests`",
@@ -7681,7 +8034,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.11",
+                  "location": "_guidelines/tools/20.2.11",
                   "sid": "s-5hb9k2e34dgn284",
                   "kind": "TextRule",
                   "title": "A list and its declaration",
@@ -7750,7 +8103,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.12",
+                  "location": "_guidelines/tools/20.2.12",
                   "sid": "s-czxaqvaesmu3gru",
                   "kind": "TextRule",
                   "title": "The list of a project's own kinds of node",
@@ -7809,7 +8162,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.13",
+                  "location": "_guidelines/tools/20.2.13",
                   "sid": "s-nh8b2hjvzasdxmd",
                   "kind": "TextRule",
                   "title": "A node's location outside the specification",
@@ -7893,7 +8246,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.14",
+                  "location": "_guidelines/tools/20.2.14",
                   "sid": "s-dbk2vyeg8z5jxna",
                   "kind": "TextRule",
                   "title": "Generated copies checked against their nodes",
@@ -8051,7 +8404,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.2.15",
+                  "location": "_guidelines/tools/20.2.15",
                   "sid": "s-jgejd5rpd9d43pd",
                   "kind": "TextRule",
                   "title": "An approved rule without code or a test",
@@ -8189,7 +8542,7 @@
               ]
             },
             {
-              "location": "_guidelines/tools/17.3",
+              "location": "_guidelines/tools/20.3",
               "sid": "s-bgegrkhrgpefs69",
               "kind": "section",
               "title": "Checks run by the other commands",
@@ -8207,7 +8560,7 @@
               ],
               "children": [
                 {
-                  "location": "_guidelines/tools/17.3.1",
+                  "location": "_guidelines/tools/20.3.1",
                   "sid": "s-m8nmfsxkcfu7cjp",
                   "kind": "TextRule",
                   "title": "A citation or a SpecTag outside the specification",
@@ -8300,7 +8653,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.2",
+                  "location": "_guidelines/tools/20.3.2",
                   "sid": "s-st6td4mua9uqt9z",
                   "kind": "TextRule",
                   "title": "An edit judged before it is made",
@@ -8453,7 +8806,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.3",
+                  "location": "_guidelines/tools/20.3.3",
                   "sid": "s-qqs2svksmjct753",
                   "kind": "TextRule",
                   "title": "The nodes that a commit message must name",
@@ -8540,7 +8893,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.4",
+                  "location": "_guidelines/tools/20.3.4",
                   "sid": "s-txbwsthdqhvyzd2",
                   "kind": "TextRule",
                   "title": "An approved rule whose tests or code lag behind it",
@@ -8642,7 +8995,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.5",
+                  "location": "_guidelines/tools/20.3.5",
                   "sid": "s-vp24dqydygztqbt",
                   "kind": "TextRule",
                   "title": "The review of a commit",
@@ -8772,7 +9125,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.6",
+                  "location": "_guidelines/tools/20.3.6",
                   "sid": "s-rd9nftptjuz6bwv",
                   "kind": "TextRule",
                   "title": "The judgement on the code that a commit changes",
@@ -8881,7 +9234,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.7",
+                  "location": "_guidelines/tools/20.3.7",
                   "sid": "s-kgqxg4gunzynwsv",
                   "kind": "TextRule",
                   "title": "The judgement on a statement that a rule's implementation needs no change",
@@ -8936,7 +9289,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.8",
+                  "location": "_guidelines/tools/20.3.8",
                   "sid": "s-4bwa4zepd4nwcv8",
                   "kind": "TextRule",
                   "title": "The judgement on a node of the technical appendix that a commit approves",
@@ -9024,7 +9377,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.9",
+                  "location": "_guidelines/tools/20.3.9",
                   "sid": "s-7vpsdsy8dpqdy6r",
                   "kind": "TextRule",
                   "title": "The judgement on a comment that a commit adds or changes",
@@ -9104,7 +9457,7 @@
                   }
                 },
                 {
-                  "location": "_guidelines/tools/17.3.10",
+                  "location": "_guidelines/tools/20.3.10",
                   "sid": "s-b6qdtghnyha3fhk",
                   "kind": "TextRule",
                   "title": "Running the tests before a push",
@@ -9234,7 +9587,7 @@
           ]
         },
         {
-          "location": "_guidelines/tools/18",
+          "location": "_guidelines/tools/21",
           "sid": "s-6c4hyyrnprekk32",
           "kind": "section",
           "title": "SpecTags in the code and the tests",
@@ -9262,7 +9615,7 @@
           },
           "children": [
             {
-              "location": "_guidelines/tools/18.1",
+              "location": "_guidelines/tools/21.1",
               "sid": "s-5z5gnu7pahr82xp",
               "kind": "TextRule",
               "title": "The form of a SpecTag",
@@ -9443,7 +9796,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/18.2",
+              "location": "_guidelines/tools/21.2",
               "sid": "s-33fw3ga4ctd94dq",
               "kind": "TextRule",
               "title": "SpecTags in a file whose language is described",
@@ -9540,7 +9893,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/18.3",
+              "location": "_guidelines/tools/21.3",
               "sid": "s-5qdjyf6t898rsd4",
               "kind": "TextRule",
               "title": "SpecTags at the start of a file",
@@ -9616,7 +9969,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/18.4",
+              "location": "_guidelines/tools/21.4",
               "sid": "s-trwczfskj5zmuft",
               "kind": "TextRule",
               "title": "The bindings file",
@@ -9716,7 +10069,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/18.5",
+              "location": "_guidelines/tools/21.5",
               "sid": "s-zrsc6asgmhv8tnc",
               "kind": "TextRule",
               "title": "How a test declares the rule it is written from",
@@ -9825,7 +10178,7 @@
           ]
         },
         {
-          "location": "_guidelines/tools/19",
+          "location": "_guidelines/tools/22",
           "sid": "s-7gab4ptjt2khfr5",
           "kind": "TextRule",
           "title": "How a commit message states that a rule's implementation needs no change",
@@ -9872,7 +10225,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/20",
+          "location": "_guidelines/tools/23",
           "sid": "s-v36s7dm8s3yewtr",
           "kind": "section",
           "title": "Who runs the reviewer",
@@ -9896,7 +10249,7 @@
           },
           "children": [
             {
-              "location": "_guidelines/tools/20.1",
+              "location": "_guidelines/tools/23.1",
               "sid": "s-xr5xxa9cxf2mq5u",
               "kind": "TextRule",
               "title": "Which runner runs the reviewer",
@@ -10098,7 +10451,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/20.2",
+              "location": "_guidelines/tools/23.2",
               "sid": "s-68ds99w8wd67aae",
               "kind": "TextRule",
               "title": "The reviewer's verdict",
@@ -10174,7 +10527,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/20.3",
+              "location": "_guidelines/tools/23.3",
               "sid": "s-avvnasjhsfkgajh",
               "kind": "TextRule",
               "title": "How a runner is started",
@@ -10276,7 +10629,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/20.4",
+              "location": "_guidelines/tools/23.4",
               "sid": "s-wgedv32rdaqca9k",
               "kind": "TextRule",
               "title": "The time limit of a run",
@@ -10321,7 +10674,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/20.5",
+              "location": "_guidelines/tools/23.5",
               "sid": "s-3wh8uhgn9jr2k74",
               "kind": "TextRule",
               "title": "The runner `claude`",
@@ -10365,7 +10718,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/20.6",
+              "location": "_guidelines/tools/23.6",
               "sid": "s-u2n5hwwqkb6zk4z",
               "kind": "TextRule",
               "title": "The runner `codex`",
@@ -10417,7 +10770,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/20.7",
+              "location": "_guidelines/tools/23.7",
               "sid": "s-tnz9zgqx8c629a7",
               "kind": "TextRule",
               "title": "The settings of each runner",
@@ -10510,7 +10863,7 @@
           ]
         },
         {
-          "location": "_guidelines/tools/21",
+          "location": "_guidelines/tools/24",
           "sid": "s-e75g25ajrm2kqj5",
           "kind": "section",
           "title": "The approvals of nodes",
@@ -10538,7 +10891,7 @@
           },
           "children": [
             {
-              "location": "_guidelines/tools/21.1",
+              "location": "_guidelines/tools/24.1",
               "sid": "s-v4qus7raqnwzneb",
               "kind": "TextRule",
               "title": "How an approval is recorded",
@@ -10703,7 +11056,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/21.2",
+              "location": "_guidelines/tools/24.2",
               "sid": "s-f5brvuuu6xmkj6t",
               "kind": "TextRule",
               "title": "The fingerprint of a node's wording",
@@ -10799,7 +11152,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/21.3",
+              "location": "_guidelines/tools/24.3",
               "sid": "s-upkur92ry6332y5",
               "kind": "TextRule",
               "title": "Approving a node",
@@ -10879,7 +11232,7 @@
               }
             },
             {
-              "location": "_guidelines/tools/21.4",
+              "location": "_guidelines/tools/24.4",
               "sid": "s-xybjqp2rxh8gszf",
               "kind": "TextRule",
               "title": "Withdrawing the approval of a node",
@@ -10957,7 +11310,7 @@
           ]
         },
         {
-          "location": "_guidelines/tools/22",
+          "location": "_guidelines/tools/25",
           "sid": "s-4mej6ccn7xu3d3p",
           "kind": "TextRule",
           "title": "A git hook runs the SpecSheriff tools that a plugin keeps on the machine",
@@ -11082,7 +11435,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/23",
+          "location": "_guidelines/tools/26",
           "sid": "s-n4m5zvh96yb299p",
           "kind": "TextRule",
           "title": "The project's own tools in a git hook",
@@ -11175,7 +11528,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/24",
+          "location": "_guidelines/tools/27",
           "sid": "s-zh2vcr3xjumppg5",
           "kind": "TextRule",
           "title": "The plugin for Claude Code",
@@ -11327,7 +11680,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/25",
+          "location": "_guidelines/tools/28",
           "sid": "s-2pdy9gw2jrjvfb4",
           "kind": "TextRule",
           "title": "The plugin for Codex CLI",
@@ -11422,7 +11775,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/26",
+          "location": "_guidelines/tools/29",
           "sid": "s-kq6wmdud9c7j2k9",
           "kind": "TextRule",
           "title": "The skills of the SpecSheriff plugins",
@@ -11500,7 +11853,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/27",
+          "location": "_guidelines/tools/30",
           "sid": "s-ttsc8tpnu46q53s",
           "kind": "TextRule",
           "title": "The skill `spec-init`",
@@ -11571,7 +11924,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/28",
+          "location": "_guidelines/tools/31",
           "sid": "s-jn3rauw6a8zeefn",
           "kind": "TextRule",
           "title": "The skill `spec-remove`",
@@ -11607,7 +11960,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/29",
+          "location": "_guidelines/tools/32",
           "sid": "s-h343yq2mua648eg",
           "kind": "TextRule",
           "title": "The skill `spec-settings`",
@@ -11652,7 +12005,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/30",
+          "location": "_guidelines/tools/33",
           "sid": "s-n76wt2bkqdmh78x",
           "kind": "TextRule",
           "title": "The agent's hooks for Codex CLI",
@@ -11748,7 +12101,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/31",
+          "location": "_guidelines/tools/34",
           "sid": "s-pvzms7d8kxb8dk2",
           "kind": "TextRule",
           "title": "Where the types and RuntimeChecks generated from the RecordTypes are written",
@@ -11858,7 +12211,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/32",
+          "location": "_guidelines/tools/35",
           "sid": "s-axxezge5duzemgs",
           "kind": "TextRule",
           "title": "The validator of the RuntimeChecks",
@@ -11894,7 +12247,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/33",
+          "location": "_guidelines/tools/36",
           "sid": "s-suv42g8r3ra2h6b",
           "kind": "TextRule",
           "title": "What is generated from a RecordType",
@@ -12034,7 +12387,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/34",
+          "location": "_guidelines/tools/37",
           "sid": "s-nk8td3ez58gahc4",
           "kind": "TextRule",
           "title": "A RecordType that its variants refine",
@@ -12132,7 +12485,7 @@
           }
         },
         {
-          "location": "_guidelines/tools/35",
+          "location": "_guidelines/tools/38",
           "sid": "s-4npdup7mjkva69y",
           "kind": "TextRule",
           "title": "The type that the schema of a field gives",

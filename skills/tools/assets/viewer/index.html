@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The viewer of the specification</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0d1117; --panel: #161b22; --ink: #e6edf3; --muted: #8d96a0; --line: #30363d;
+  --card: #1c2128; --pale: #151a20; --pale-ink: #7d8590; --container: #11161d; --container-line: #30363d;
+  --accent: #4493f8; --glow: #d29922; --warn: #f85149;
+  --t-implements: #4493f8; --t-refines: #a371f7; --t-constrains: #d29922; --t-consumes: #3fb950; --t-exempts: #f85149;
+  --t-checks: #39c5cf; --t-cites: #8b949e; --t-term-relation: #79c0ff; --t-uses: #e3b341; --t-other: #db61a2; --t-several: #adbac7;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; min-width: 560px; background: var(--bg); color: var(--ink); font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+body { display: grid; grid-template-rows: auto minmax(0, 1fr); grid-template-columns: minmax(0, 1fr) 6px var(--panel-w, 440px); height: 100vh; overflow: hidden; }
+body.diagram-only { grid-template-columns: minmax(0, 1fr); }
+body.diagram-only #splitter, body.diagram-only #panel, body.diagram-only #lowerwrap, body.diagram-only #drafts { display: none; }
+#bar { grid-column: 1 / -1; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+#bar h1 { font-size: 14px; margin: 0; font-weight: 600; }
+#bar label { font-size: 12px; }
+#stamp { margin-left: auto; color: var(--muted); font-size: 11px; }
+#stamp.bad { color: var(--warn); }
+.legend { display: flex; gap: 4px 12px; flex-wrap: wrap; color: var(--muted); font-size: 11px; }
+.legend .break { flex-basis: 100%; height: 0; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 4px; }
+#main { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+#top { flex: none; display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 14px; border-bottom: 1px solid var(--line); max-height: 55vh; overflow: auto; }
+#topline { display: flex; align-items: center; gap: 10px; }
+#foldTop { flex: none; width: 18px; height: 18px; padding: 0; background: transparent; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); font-size: 10px; line-height: 16px; cursor: pointer; }
+#foldedName { display: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+#top.folded #foldedName { display: inline; }
+#top.folded #topRow, #top.folded #domwrap { display: none; }
+#topRow { display: flex; gap: 12px; flex-wrap: wrap; }
+#topRow:empty { display: none; }
+.box { background: var(--container); border: 1.5px solid var(--container-line); border-radius: 5px; padding: 6px 12px; font-weight: 600; cursor: pointer; display: flex; gap: 12px; align-items: baseline; min-width: 120px; }
+.box .cnt { margin-left: auto; color: var(--muted); font-weight: 400; white-space: nowrap; }
+.box.open { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.box.related { border-color: var(--glow); box-shadow: 0 0 0 1px var(--glow); }
+.box.inert { cursor: default; }
+#domwrap { position: relative; padding-top: 6px; }
+#domwrap:empty { display: none; }
+#layers { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 26px; min-width: min-content; }
+.layer { position: relative; display: flex; gap: 48px; align-items: center; border: 1px dashed var(--line); border-radius: 6px; padding: 12px 12px 10px; }
+.layer-name { position: absolute; top: 0; left: 10px; transform: translateY(-50%); padding: 0 4px; background: var(--bg); color: var(--muted); font-size: 10px; line-height: 1; white-space: nowrap; }
+#hwires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; }
+.hwire { fill: none; stroke: var(--t-consumes); stroke-width: 2; }
+#splitter { grid-column: 2; grid-row: 2; cursor: col-resize; background: var(--line); touch-action: none; }
+#splitter:hover, #splitter.active { background: var(--accent); }
+#lowerwrap { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+#canvas { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+#lower { width: 100%; height: 100%; display: block; cursor: grab; }
+#lower.dragging { cursor: grabbing; }
+#hint { position: absolute; left: 16px; bottom: 12px; color: var(--muted); font-size: 12px; pointer-events: none; max-width: 70%; }
+#blockLegend { flex: none; padding: 6px 16px; border-top: 1px solid var(--line); background: var(--panel); }
+#panel { grid-column: 3; grid-row: 2; min-width: 0; background: var(--panel); overflow: auto; padding: 14px 16px 40px; }
+#panel h2 { font-size: 15px; margin: 4px 0 8px; }
+#panel h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 16px 0 6px; }
+#panel .md h3 { text-transform: none; letter-spacing: 0; color: var(--ink); font-size: 15px; margin: 4px 0 8px; }
+#panel .md p { margin: 0 0 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+#panel .md ul { margin: 0 0 8px; padding-left: 18px; }
+#panel .md pre { background: var(--pale); padding: 8px; border-radius: 6px; overflow: auto; font-size: 11.5px; }
+#panel .md table { border-collapse: collapse; margin: 0 0 8px; font-size: 12px; }
+#panel .md td, #panel .md th { border: 1px solid var(--line); padding: 3px 6px; vertical-align: top; text-align: left; }
+#panel code { font-family: ui-monospace, Consolas, monospace; font-size: 12px; background: var(--pale); padding: 0 3px; border-radius: 3px; }
+#panel .go { color: var(--accent); cursor: pointer; }
+#panel .go:hover { text-decoration: underline; }
+#panel .note { color: var(--muted); font-size: 12px; }
+#panel .row { padding: 4px 0; border-bottom: 1px dashed var(--line); }
+svg text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; fill: var(--ink); }
+.card rect.body { fill: var(--card); stroke: var(--line); stroke-width: 1.2; }
+.card.draft rect.body, .container.draft rect.frame { stroke-dasharray: 2 3; stroke: var(--pale-ink); }
+.card.holder rect.body { stroke-width: 1.5; }
+.card.selected rect.body, .container.selected rect.frame { stroke: var(--accent); stroke-width: 2.5; }
+.card { cursor: pointer; }
+.container rect.frame { fill: var(--container); stroke: var(--container-line); stroke-width: 1.2; }
+.container rect.head { fill: transparent; cursor: pointer; }
+.meta { font-size: 10.5px; fill: var(--muted) !important; }
+.badge { font-size: 11px; font-weight: 600; fill: var(--glow) !important; }
+.badge.warn { fill: var(--warn) !important; }
+.wire { fill: none; stroke-width: 1.4; }
+.wire.dashed { stroke-dasharray: 5 4; }
+.wires.dim .wire:not(.hot) { opacity: .45; }
+.wire.hot { stroke-width: 2.4; }
+.wirelabel rect { fill: var(--panel); stroke: var(--line); }
+.wirelabel text { font-size: 10px; }
+</style>
+</head>
+<body>
+<div id="bar">
+  <h1>The viewer of the specification</h1>
+  <label id="drafts"><input type="checkbox" id="showAll"> show drafts</label>
+  <span id="stamp">…</span>
+</div>
+<div id="main">
+  <div id="top">
+    <div id="topline"><button id="foldTop"></button><span id="foldedName"></span></div>
+    <div id="topRow"></div>
+    <div id="domwrap"><svg id="hwires"></svg><div id="layers"></div></div>
+  </div>
+  <div id="lowerwrap"><div id="canvas"><svg id="lower"></svg><div id="hint"></div></div><div id="blockLegend" class="legend"></div></div>
+</div>
+<div id="splitter" title="Drag to resize the panel; double-click for the default width"></div>
+<div id="panel"></div>
+<script id="logic">
+"use strict";
+/**
+ * THE PAGE'S OWN DECISIONS, apart from the page: what is drawn, in which colour, in which rows, and the panel's text. The tests run
+ * this script in a context of its own, so it touches no element of the page.
+ */
+var VIEWER = (() => {
+  const COLOURS = { implements: "--t-implements", refines: "--t-refines", constrains: "--t-constrains", consumes: "--t-consumes", exempts: "--t-exempts", checks: "--t-checks", cites: "--t-cites", "term-relation": "--t-term-relation", uses: "--t-uses" };
+  const TYPES = Object.keys(COLOURS);
+  /** The colour of a link type; a type that the guidelines do not define, such as a project's own, has a colour of its own. */
+  const linkColour = (type) => (type === "several" ? "var(--t-several)" : `var(${COLOURS[type] ?? "--t-other"})`);
+  const dashed = (type) => type === "cites";
+  /** A node whose approval status is derived from the nodes under it (s-9kfdycuq34beqvs). */
+  const derived = (n) => n.kind === "section" || n.kind === "header";
+
+  /** The nodes drawn: the approved nodes and the nodes above them, and every node once the reader asks to see the drafts. */
+  function shown(model, showDrafts) {
+    const out = new Set();
+    const visit = (sid) => {
+      const n = model.nodes[sid];
+      if (!n) return false;
+      let any = showDrafts || n.status === "approved";
+      for (const c of n.children) if (visit(c)) any = true;
+      if (any) out.add(sid);
+      return any;
+    };
+    for (const p of model.parts) for (const r of p.roots) visit(r);
+    return out;
+  }
+  /** The numbers of the nodes under a node at any depth, approved and all, counted as a box at the top counts them. */
+  function counts(model, sid) {
+    let approved = 0, all = 0;
+    const walk = (s) => {
+      for (const c of model.nodes[s]?.children ?? []) {
+        const k = model.nodes[c];
+        if (!k) continue;
+        if (!derived(k)) { all += 1; if (k.status === "approved") approved += 1; }
+        walk(c);
+      }
+    };
+    walk(sid);
+    return { approved, all };
+  }
+  /** Whether a node is a rule that is linked to no other node. */
+  function lonely(model, sid) {
+    const n = model.nodes[sid];
+    if (!n || derived(n)) return false;
+    return !model.links.some((l) => (l.from === sid && l.to !== sid) || (l.to === sid && l.from !== sid));
+  }
+  /** The rows of the diagram of the domains in the model's order, each domain in the column of its place in the row. */
+  function rows(model) {
+    if (!model.diagram) return [];
+    const parts = new Map(model.parts.map((p) => [p.name, p]));
+    return model.diagram.rows.map((r) => ({
+      label: r.label,
+      domains: r.domains.map((name, col) => {
+        const p = parts.get(name);
+        return { name, col, count: model.views && p ? `${p.approved}/${p.all}` : null };
+      }),
+    }));
+  }
+  /** Every arrow of the diagram, from the domain that uses to the domain that it uses. */
+  const arrows = (model) => (model.diagram ? model.diagram.arrows.map((a) => ({ from: a.from, to: a.to })) : []);
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const SID = /\b(s-[2-9a-hjkmnp-z]{15})\b/g;
+  /** Text made safe, with each sid of a node in the model a link to that node, its location and title as the link's tooltip. */
+  function linked(text, nodes) {
+    return esc(text).replace(/(§?)(s-[2-9a-hjkmnp-z]{15})\b/g, (whole, mark, sid) => {
+      const n = nodes[sid];
+      if (!n) return whole;
+      return `<span class="go" data-sid="${sid}" title="${esc(n.location)} ${esc(n.title)}">${mark}${sid}</span>`;
+    });
+  }
+  function inline(text, nodes) {
+    return String(text).split(/(`[^`]*`)/).map((part) => {
+      if (part.startsWith("`") && part.endsWith("`") && part.length > 1) return `<code>${linked(part.slice(1, -1), nodes)}</code>`;
+      return linked(part, nodes).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\*([^*]+)\*/g, "<i>$1</i>");
+    }).join("");
+  }
+  /** A node's Markdown, as `sheriff show` writes it, rendered as formatted text. */
+  function markdownHtml(text, nodes) {
+    const lines = String(text ?? "").split("\n");
+    const out = [];
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (line.startsWith("```")) {
+        const body = [];
+        for (i += 1; i < lines.length && !lines[i].startsWith("```"); i += 1) body.push(lines[i]);
+        i += 1;
+        out.push(`<pre><code>${linked(body.join("\n"), nodes)}</code></pre>`);
+        continue;
+      }
+      const heading = /^#{1,6} (.*)$/.exec(line);
+      if (heading) { out.push(`<h3>${inline(heading[1], nodes)}</h3>`); i += 1; continue; }
+      if (line.startsWith("|")) {
+        const rowsOf = [];
+        for (; i < lines.length && lines[i].startsWith("|"); i += 1) if (!/^\|[\s|:-]+\|$/.test(lines[i])) rowsOf.push(lines[i]);
+        const cells = (row) => row.replace(/^\|\s?|\s?\|$/g, "").split(/\s?(?<!\\)\|\s?/).map((c) => c.replace(/\\\|/g, "|"));
+        const [head, ...body] = rowsOf;
+        out.push(`<table><tr>${cells(head).map((c) => `<th>${inline(c, nodes)}</th>`).join("")}</tr>${body.map((r) => `<tr>${cells(r).map((c) => `<td>${inline(c, nodes)}</td>`).join("")}</tr>`).join("")}</table>`);
+        continue;
+      }
+      if (/^\s*- /.test(line)) {
+        const items = [];
+        for (; i < lines.length && /^\s*- /.test(lines[i]); i += 1) items.push(lines[i].replace(/^\s*- /, ""));
+        out.push(`<ul>${items.map((it) => `<li>${inline(it, nodes)}</li>`).join("")}</ul>`);
+        continue;
+      }
+      if (!line.trim()) { i += 1; continue; }
+      const para = [];
+      for (; i < lines.length && lines[i].trim() && !/^(```|#{1,6} |\||\s*- )/.test(lines[i]); i += 1) para.push(lines[i]);
+      out.push(`<p>${inline(para.join("\n"), nodes)}</p>`);
+    }
+    return out.join("");
+  }
+  return { TYPES, linkColour, dashed, derived, shown, counts, lonely, rows, arrows, markdownHtml, esc };
+})();
+</script>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const el = (name, attrs = {}, parent) => {
+  const node = document.createElementNS(NS, name);
+  for (const [k, v] of Object.entries(attrs)) if (v !== undefined && v !== null) node.setAttribute(k, v);
+  if (parent) parent.appendChild(node);
+  return node;
+};
+const esc = VIEWER.esc;
+/**
+ * THE PAGE IS UPDATED IN PLACE, never redrawn from nothing. Every region is rendered afresh into a detached tree and the live
+ * one is brought to it node by node, so that a node whose content did not change stays the same node: a text selected in it
+ * stays selected. Children that carry `data-key` are matched by it wherever they moved, the rest by position.
+ */
+const keyOf = (n) => (n.nodeType === 1 ? n.getAttribute("data-key") : null);
+const sameKind = (a, b) => a.nodeType === b.nodeType && (a.nodeType !== 1 || (a.namespaceURI === b.namespaceURI && a.tagName === b.tagName));
+function morphNode(live, next) {
+  if (live.nodeType !== 1) { if (live.nodeValue !== next.nodeValue) live.nodeValue = next.nodeValue; return; }
+  if (live.isEqualNode(next)) return;
+  for (const { name } of [...live.attributes]) if (!next.hasAttribute(name)) live.removeAttribute(name);
+  for (const { name, value } of next.attributes) if (live.getAttribute(name) !== value) live.setAttribute(name, value);
+  morphChildren(live, next);
+}
+function morphChildren(parent, next) {
+  const keyed = new Map();
+  for (const k of parent.childNodes) { const key = keyOf(k); if (key) keyed.set(key, k); }
+  let cur = parent.firstChild;
+  for (const nk of [...next.childNodes]) {
+    const key = keyOf(nk);
+    let match = key ? keyed.get(key) : cur && !keyOf(cur) && sameKind(cur, nk) ? cur : null;
+    if (match && !sameKind(match, nk)) match = null;
+    if (!match) { parent.insertBefore(nk, cur); continue; }
+    if (key) keyed.delete(key);
+    if (match === cur) cur = cur.nextSibling; else parent.insertBefore(match, cur);
+    morphNode(match, nk);
+  }
+  while (cur) { const after = cur.nextSibling; cur.remove(); cur = after; }
+}
+const tpl = document.createElement("template");
+function patchHtml(target, html) { tpl.innerHTML = html; morphChildren(target, tpl.content); }
+const setText = (node, text) => { if (node.textContent !== text) node.textContent = text; };
+
+// ---------------------------------------------------------------- state, kept per browser
+const STORE = "sheriff-view-v1";
+const saved = (() => { try { return JSON.parse(localStorage.getItem(STORE) || "{}"); } catch { return {}; } })();
+const state = {
+  open: saved.open ?? null,
+  expanded: new Set(saved.expanded ?? []),
+  selected: saved.selected ?? null,
+  topFolded: saved.topFolded ?? false,
+  showAll: saved.showAll ?? false,
+  views: saved.views ?? {},
+  panelW: saved.panelW ?? null,
+};
+const persist = () => {
+  try { localStorage.setItem(STORE, JSON.stringify({ ...state, expanded: [...state.expanded] })); } catch { /* a private window keeps no state, and the page works without it */ }
+};
+let model = null;
+let modelText = null;
+let modelVersion = 0;
+let nodes = {};
+let out = new Map();
+let inn = new Map();
+let parts = new Map();
+let drawn = new Set();
+let layout = null;
+
+// ---------------------------------------------------------------- model
+function index() {
+  nodes = model.nodes;
+  out = new Map(); inn = new Map();
+  const push = (map, key, value) => { if (!map.has(key)) map.set(key, []); map.get(key).push(value); };
+  for (const link of model.links) { push(out, link.from, link); push(inn, link.to, link); }
+  parts = new Map(model.parts.map((p) => [p.name, p]));
+  if (!parts.has(state.open)) state.open = model.parts.find((p) => !p.domain)?.name ?? model.parts[0]?.name ?? null;
+  if (state.selected && !nodes[state.selected]) state.selected = null;
+}
+const linksOf = (sid) => [...(out.get(sid) ?? []), ...(inn.get(sid) ?? [])];
+const other = (link, sid) => (link.from === sid ? link.to : link.from);
+const vis = (sid) => drawn.has(sid);
+const holds = (n) => !!n && n.children.length > 0;
+const subtree = (sid, acc = []) => { const n = nodes[sid]; if (!n) return acc; acc.push(sid); for (const c of n.children) subtree(c, acc); return acc; };
+const chain = (sid) => { const list = []; let n = nodes[sid]; while (n) { list.unshift(n); n = n.parent ? nodes[n.parent] : null; } return list; };
+/** A node that holds other nodes is drawn as a frame only once the reader has expanded it (s-4s3aru64yudz4kh). */
+const isOpen = (sid) => state.expanded.has(sid);
+/** The top-level nodes of a part's files, in the order of its files. */
+const topsOf = (p) => p?.roots ?? [];
+/** The node that is drawn for a node: the node itself, or the nearest node above it that the reader has not expanded. */
+function rep(sid) {
+  for (const n of chain(sid)) if (holds(n) && !isOpen(n.sid) && n.sid !== sid) return n.sid;
+  return sid;
+}
+/** A node's location, which its card or frame shows before its title (s-4s3aru64yudz4kh). */
+const tailOf = (n) => n.location;
+
+// ---------------------------------------------------------------- text
+const ctx = document.createElement("canvas").getContext("2d");
+function wrap(text, width, font, indent = 0) {
+  ctx.font = font;
+  const lines = [];
+  let line = "";
+  const fits = (t) => ctx.measureText(t).width <= (lines.length === 0 ? width - indent : width);
+  for (const word of String(text).split(/\s+/).filter(Boolean)) {
+    const test = line ? `${line} ${word}` : word;
+    if (fits(test)) { line = test; continue; }
+    if (line) { lines.push(line); line = ""; }
+    if (fits(word)) { line = word; continue; }
+    if (lines.length === 0 && indent > 0 && ctx.measureText(word).width <= width) { lines.push(""); line = word; continue; }
+    let part = "";
+    for (const ch of word) { if (part && !fits(part + ch)) { lines.push(part); part = ch; } else part += ch; }
+    line = part;
+  }
+  if (line) lines.push(line);
+  return lines.length ? lines : [""];
+}
+/** A title with its Markdown markup left out, as the card draws it as plain text. */
+const plain = (s) => String(s ?? "").replace(/\*\*|`/g, "");
+
+// ---------------------------------------------------------------- lower layout
+const PAD = 10, LH = 15, HEAD = 30, CP = 14;
+/** A card's width follows the width of the area, less the margins of the frames that the reader has expanded, and it is never scaled down to fit. */
+const CARD = { min: 150, max: 240 }, GUTTER = { min: 36, max: 64 };
+let W = CARD.max, G = GUTTER.min;
+function fitGrid(width) {
+  let cols = Math.max(1, Math.floor((width + GUTTER.min) / (CARD.max + GUTTER.min)));
+  let w = CARD.max;
+  if (cols === 1 && 2 * CARD.min + GUTTER.min <= width) { cols = 2; w = Math.floor((width - GUTTER.min) / 2); }
+  else if (cols === 1) w = Math.max(CARD.min, Math.min(CARD.max, width));
+  const g = cols > 1 ? Math.max(GUTTER.min, Math.min(GUTTER.max, Math.floor((width - cols * w) / (cols - 1)))) : GUTTER.min;
+  if (cols > 1) w = Math.max(w, Math.floor((width - (cols - 1) * g) / cols));
+  return { cols, w, g };
+}
+const FONT = "12px system-ui, -apple-system, Segoe UI, sans-serif";
+const FONT_B = "600 12.5px system-ui, -apple-system, Segoe UI, sans-serif";
+const FONT_META = "10.5px system-ui, -apple-system, Segoe UI, sans-serif";
+const ID_GAP = 4;
+const idWidth = (n) => { ctx.font = FONT_META; return tailOf(n) ? ctx.measureText(tailOf(n)).width + ID_GAP : 0; };
+function card(sid, kind) {
+  const n = nodes[sid];
+  const bold = kind === "holder";
+  const lines = wrap(plain(n.title), W - 2 * PAD - 30, bold ? FONT_B : FONT, idWidth(n));
+  const h = PAD + lines.length * (bold ? 16 : LH) + (bold ? 18 : 0) + PAD + 2;
+  return { sid, kind, w: W, h, lines };
+}
+function build(sid, maxW) {
+  if (!vis(sid)) return null;
+  const n = nodes[sid];
+  const kids = n.children.filter(vis);
+  if (holds(n) && isOpen(sid) && kids.length > 0) {
+    const inner = kids.map((k) => build(k, maxW - 2 * CP)).filter(Boolean);
+    const h = flow(inner, 0, 0, maxW - 2 * CP);
+    const titleLines = wrap(plain(n.title), maxW - 200, FONT_B);
+    return { sid, kind: "container", w: maxW, h: HEAD + h + CP, full: true, inner, titleLines };
+  }
+  return card(sid, holds(n) ? "holder" : "rule");
+}
+function flow(items, x0, y0, maxW) {
+  let x = x0, y = y0, rowH = 0, bottom = y0;
+  for (const it of items) {
+    if (it.full) {
+      if (x > x0) { y += rowH + GUTTER.min; x = x0; rowH = 0; }
+      it.rx = x; it.ry = y; y += it.h + GUTTER.min; bottom = Math.max(bottom, it.ry + it.h);
+      continue;
+    }
+    if (x > x0 && x + it.w > x0 + maxW) { y += rowH + GUTTER.min; x = x0; rowH = 0; }
+    it.rx = x; it.ry = y; x += it.w + G; rowH = Math.max(rowH, it.h); bottom = Math.max(bottom, y + it.h);
+  }
+  return bottom - y0;
+}
+function place(it, ox, oy, acc) {
+  it.x = ox + it.rx; it.y = oy + it.ry;
+  acc.push(it);
+  if (it.kind === "container") for (const k of it.inner) place(k, it.x + CP, it.y + HEAD, acc);
+}
+function layoutLower(name) {
+  const p = parts.get(name);
+  const depth = (sid) => (isOpen(sid) && holds(nodes[sid]) && vis(sid) ? 1 + Math.max(0, ...nodes[sid].children.filter(vis).map(depth)) : 0);
+  const tops = topsOf(p);
+  const nesting = Math.max(0, ...tops.map(depth));
+  const shownAt = Math.max(0, $("#lower").clientWidth - 40);
+  const grid = fitGrid(shownAt - 2 * CP * nesting);
+  W = grid.w; G = grid.g;
+  const maxW = grid.cols * (W + G) - G + 2 * CP * nesting;
+  const tree = tops.map((r) => build(r, maxW)).filter(Boolean);
+  const blocks = [];
+  flow(tree, 0, 0, maxW);
+  for (const t of tree) place(t, 0, 0, blocks);
+  const bySid = new Map(blocks.map((b) => [b.sid, b]));
+  // One line for each pair of blocks, carrying every link between them, with an arrowhead at each end that a link leads to.
+  const members = new Set((p?.roots ?? []).flatMap((r) => subtree(r)));
+  const bundles = new Map();
+  for (const link of model.links) {
+    if (!members.has(link.from) || !members.has(link.to) || !vis(link.from) || !vis(link.to)) continue;
+    const a = rep(link.from), b = rep(link.to);
+    if (a === b || !bySid.has(a) || !bySid.has(b)) continue;
+    const [x, y] = a < b ? [a, b] : [b, a];
+    const key = `${x}|${y}`;
+    if (!bundles.has(key)) bundles.set(key, { a: x, b: y, links: [], toB: false, toA: false });
+    const w = bundles.get(key);
+    w.links.push(link);
+    if (b === y) w.toB = true; else w.toA = true;
+  }
+  const wires = [...bundles.values()];
+  routeWires(blocks, bySid, wires);
+  const width = Math.max(0, ...blocks.map((b) => b.x + b.w));
+  const height = Math.max(0, ...blocks.map((b) => b.y + b.h));
+  return { name, blocks, bySid, wires, width, height, hasTree: tree.length > 0 };
+}
+
+// ---------------------------------------------------------------- orthogonal router
+const LANES = [7, 13, 19];
+function rectOf(b) { return b.kind === "container" ? { x: b.x, y: b.y, w: b.w, h: HEAD } : { x: b.x, y: b.y, w: b.w, h: b.h }; }
+function routeWires(blocks, bySid, wires) {
+  const obstacles = blocks.map(rectOf);
+  const sideOf = (A, B) => {
+    const ra = rectOf(A), rb = rectOf(B);
+    if (rb.y + rb.h < ra.y) return ["top", "bottom"];
+    if (rb.y > ra.y + ra.h) return ["bottom", "top"];
+    return rb.x + rb.w / 2 >= ra.x + ra.w / 2 ? ["right", "left"] : ["left", "right"];
+  };
+  const slots = new Map();
+  for (const w of wires) {
+    const A = bySid.get(w.a), B = bySid.get(w.b);
+    const [sa, sb] = sideOf(A, B);
+    w.ends = [{ block: A, side: sa, far: B }, { block: B, side: sb, far: A }];
+    for (const e of w.ends) {
+      const key = `${e.block.sid}|${e.side}`;
+      if (!slots.has(key)) slots.set(key, []);
+      slots.get(key).push(e);
+    }
+  }
+  for (const list of slots.values()) {
+    const { block, side } = list[0];
+    const r = rectOf(block);
+    const vertical = side === "top" || side === "bottom";
+    const c = (b) => { const q = rectOf(b); return vertical ? q.x + q.w / 2 : q.y + q.h / 2; };
+    list.sort((p, q) => c(p.far) - c(q.far));
+    const len = vertical ? r.w : r.h;
+    const margin = Math.min(14, len / 4);
+    list.forEach((e, k) => {
+      const t = margin + (k + 0.5) * (len - 2 * margin) / list.length;
+      const px = vertical ? r.x + t : side === "left" ? r.x : r.x + r.w;
+      const py = vertical ? (side === "top" ? r.y : r.y + r.h) : r.y + t;
+      const nx = side === "left" ? -1 : side === "right" ? 1 : 0;
+      const ny = side === "top" ? -1 : side === "bottom" ? 1 : 0;
+      e.port = { x: px, y: py };
+      e.stub = { x: px + nx * LANES[0], y: py + ny * LANES[0] };
+      e.dir = vertical ? 1 : 0;
+    });
+  }
+  const snap = (v) => Math.round(v * 2) / 2;
+  const xsSet = new Set(), ysSet = new Set();
+  for (const r of obstacles) {
+    xsSet.add(snap(r.x + r.w / 2)); ysSet.add(snap(r.y + r.h / 2));
+    for (const d of LANES) { xsSet.add(snap(r.x - d)); xsSet.add(snap(r.x + r.w + d)); ysSet.add(snap(r.y - d)); ysSet.add(snap(r.y + r.h + d)); }
+  }
+  for (const w of wires) for (const e of w.ends) { xsSet.add(snap(e.stub.x)); ysSet.add(snap(e.stub.y)); }
+  const xs = [...xsSet].sort((a, b) => a - b), ys = [...ysSet].sort((a, b) => a - b);
+  const nx = xs.length, ny = ys.length;
+  const free = new Uint8Array(nx * ny).fill(1);
+  const lower = (arr, v) => { let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] < v) lo = m + 1; else hi = m; } return lo; };
+  for (const r of obstacles) {
+    const i0 = lower(xs, r.x - 2 + 1e-6), i1 = lower(xs, r.x + r.w + 2);
+    const j0 = lower(ys, r.y - 2 + 1e-6), j1 = lower(ys, r.y + r.h + 2);
+    for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) free[j * nx + i] = 0;
+  }
+  const idx = (p) => lower(xs, snap(p.x)) + lower(ys, snap(p.y)) * nx;
+  for (const w of wires) for (const e of w.ends) free[idx(e.stub)] = 1;
+  const used = new Map();
+  const segKey = (p, q) => (p < q ? p * 1e6 + q : q * 1e6 + p);
+  const BEND = 28;
+  const g = new Float64Array(nx * ny * 2);
+  const prev = new Int32Array(nx * ny * 2);
+  function astar(s, t, sdir, tdir) {
+    g.fill(Infinity);
+    prev.fill(-1);
+    const heap = [];
+    const tx = t % nx, ty = Math.floor(t / nx);
+    const hcost = (p) => Math.abs(xs[p % nx] - xs[tx]) + Math.abs(ys[Math.floor(p / nx)] - ys[ty]);
+    const push = (st, f) => { heap.push([f, st]); let i = heap.length - 1; while (i > 0) { const pi = (i - 1) >> 1; if (heap[pi][0] <= heap[i][0]) break; [heap[pi], heap[i]] = [heap[i], heap[pi]]; i = pi; } };
+    const pop = () => { const top = heap[0]; const last = heap.pop(); if (heap.length) { heap[0] = last; let i = 0; for (;;) { const l = 2 * i + 1, r = l + 1; let m = i; if (l < heap.length && heap[l][0] < heap[m][0]) m = l; if (r < heap.length && heap[r][0] < heap[m][0]) m = r; if (m === i) break; [heap[m], heap[i]] = [heap[i], heap[m]]; i = m; } } return top; };
+    const start = s * 2 + sdir;
+    g[start] = 0; push(start, hcost(s));
+    let guard = 0;
+    while (heap.length && guard++ < 400000) {
+      const [, st] = pop();
+      const p = st >> 1, dir = st & 1;
+      if (p === t) {
+        const path = [];
+        for (let c = st; c !== -1; c = prev[c]) path.push(c >> 1);
+        return path.reverse();
+      }
+      const i = p % nx, j = Math.floor(p / nx);
+      for (const [a, b, d] of [[i - 1, j, 0], [i + 1, j, 0], [i, j - 1, 1], [i, j + 1, 1]]) {
+        if (a < 0 || b < 0 || a >= nx || b >= ny) continue;
+        const q = b * nx + a;
+        if (!free[q]) continue;
+        const len = Math.abs(xs[a] - xs[i]) + Math.abs(ys[b] - ys[j]);
+        let cost = g[st] + len + (d !== dir ? BEND : 0) + len * 1.6 * (used.get(segKey(p, q)) ?? 0);
+        if (q === t && d !== tdir) cost += BEND;
+        const ns = q * 2 + d;
+        if (cost < g[ns]) { g[ns] = cost; prev[ns] = st; push(ns, cost + hcost(q)); }
+      }
+    }
+    return null;
+  }
+  const dist = (w) => { const [e1, e2] = w.ends; return Math.abs(e1.stub.x - e2.stub.x) + Math.abs(e1.stub.y - e2.stub.y); };
+  for (const w of [...wires].sort((p, q) => dist(p) - dist(q))) {
+    const [e1, e2] = w.ends;
+    const path = astar(idx(e1.stub), idx(e2.stub), e1.dir, e2.dir);
+    let pts;
+    if (path) {
+      for (let k = 1; k < path.length; k++) used.set(segKey(path[k - 1], path[k]), (used.get(segKey(path[k - 1], path[k])) ?? 0) + 1);
+      pts = path.map((p) => ({ x: xs[p % nx], y: ys[Math.floor(p / nx)] }));
+    } else {
+      const mid = (e1.stub.y + e2.stub.y) / 2;
+      pts = [e1.stub, { x: e1.stub.x, y: mid }, { x: e2.stub.x, y: mid }, e2.stub];
+    }
+    w.points = simplify([e1.port, ...pts, e2.port]);
+  }
+}
+function simplify(pts) {
+  const res = [];
+  for (const p of pts) {
+    if (res.length && res[res.length - 1].x === p.x && res[res.length - 1].y === p.y) continue;
+    res.push(p);
+    while (res.length >= 3) {
+      const [a, b, c] = res.slice(-3);
+      if ((a.x === b.x && b.x === c.x) || (a.y === b.y && b.y === c.y)) res.splice(res.length - 2, 1); else break;
+    }
+  }
+  return res;
+}
+function pathD(pts) {
+  const R = 5;
+  let d = `M${pts[0].x},${pts[0].y}`;
+  for (let k = 1; k < pts.length - 1; k++) {
+    const a = pts[k - 1], b = pts[k], c = pts[k + 1];
+    const l1 = Math.hypot(b.x - a.x, b.y - a.y), l2 = Math.hypot(c.x - b.x, c.y - b.y);
+    const r = Math.min(R, l1 / 2, l2 / 2);
+    const p1 = { x: b.x - ((b.x - a.x) / l1) * r, y: b.y - ((b.y - a.y) / l1) * r };
+    const p2 = { x: b.x + ((c.x - b.x) / l2) * r, y: b.y + ((c.y - b.y) / l2) * r };
+    d += ` L${p1.x},${p1.y} Q${b.x},${b.y} ${p2.x},${p2.y}`;
+  }
+  const z = pts[pts.length - 1];
+  return `${d} L${z.x},${z.y}`;
+}
+const TYPES_DRAWN = [...VIEWER.TYPES, "other", "several"];
+function markers(svg) {
+  const defs = el("defs", {}, svg);
+  for (const t of TYPES_DRAWN) {
+    const m = el("marker", { id: `arrow-${t}`, viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 10, markerHeight: 10, markerUnits: "userSpaceOnUse", orient: "auto-start-reverse" }, defs);
+    el("path", { d: "M0,0 L10,5 L0,10 z", fill: VIEWER.linkColour(t) }, m);
+  }
+}
+/** A bundle's type: its links' one type, or `several`; a type the guidelines do not define is drawn as `other`. */
+function wireType(w) {
+  const types = new Set(w.links.map((l) => l.type));
+  if (types.size > 1) return "several";
+  const only = [...types][0];
+  return VIEWER.TYPES.includes(only) ? only : "other";
+}
+
+// ---------------------------------------------------------------- drawing: the top of the page
+function boxHtml(p, extra = "") {
+  const open = state.open === p.name && model.views ? " open" : "";
+  const related = relatedParts().has(p.name) ? " related" : "";
+  const count = model.views ? `<span class="cnt">${p.approved}/${p.all}</span>` : "";
+  return `<div class="box${open}${related}${model.views ? "" : " inert"}" data-part="${esc(p.name)}" data-key="${esc(p.name)}"${extra}><span>${esc(p.name)}</span>${count}</div>`;
+}
+function renderTop() {
+  patchHtml($("#topRow"), model.views ? model.parts.filter((p) => !p.domain).map((p) => boxHtml(p)).join("") : "");
+  const layers = VIEWER.rows(model).map((r) => `<div class="layer" data-key="${esc(r.label)}"><span class="layer-name">${esc(r.label)}</span>${r.domains.map((d) => {
+    const p = parts.get(d.name) ?? { name: d.name, approved: 0, all: 0 };
+    return boxHtml({ ...p, name: d.name }, "");
+  }).join("")}</div>`).join("");
+  patchHtml($("#layers"), layers);
+  requestAnimationFrame(drawTopArrows);
+}
+/** Every arrow of the diagram of the domains, from the domain that uses to the domain that it uses. */
+function drawTopArrows() {
+  const live = $("#hwires");
+  if (!live.firstChild) {
+    const defs = el("defs", {}, live);
+    const m = el("marker", { id: "arrow-uses-domain", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 9, markerHeight: 9, markerUnits: "userSpaceOnUse", orient: "auto" }, defs);
+    el("path", { d: "M0,0 L10,5 L0,10 z", fill: VIEWER.linkColour("consumes") }, m);
+    el("g", {}, live);
+  }
+  const svg = el("g");
+  const base = $("#domwrap").getBoundingClientRect();
+  const box = new Map([...$("#layers").querySelectorAll("[data-part]")].map((b) => {
+    const r = b.getBoundingClientRect();
+    return [b.dataset.part, { x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height }];
+  }));
+  for (const a of VIEWER.arrows(model)) {
+    const A = box.get(a.from), B = box.get(a.to);
+    if (!A || !B) continue;
+    let pts;
+    if (Math.abs(A.y - B.y) < 2) {
+      const y = A.y + A.h / 2;
+      pts = B.x > A.x ? [{ x: A.x + A.w, y }, { x: B.x - 1, y }] : [{ x: A.x, y }, { x: B.x + B.w + 1, y }];
+    } else {
+      const down = B.y > A.y;
+      const x1 = A.x + A.w / 2, x2 = B.x + B.w / 2;
+      const y1 = down ? A.y + A.h : A.y, y2 = down ? B.y - 1 : B.y + B.h + 1;
+      const mid = (y1 + y2) / 2;
+      pts = [{ x: x1, y: y1 }, { x: x1, y: mid }, { x: x2, y: mid }, { x: x2, y: y2 }];
+    }
+    const path = el("path", { class: "hwire", d: pathD(simplify(pts)), "marker-end": "url(#arrow-uses-domain)", "data-key": `${a.from}>${a.to}` }, svg);
+    el("title", {}, path).textContent = `${a.from} uses ${a.to}`;
+  }
+  morphChildren(live.lastChild, svg);
+}
+/** The parts that hold a node at the other end of a link of the selected node. */
+function relatedParts() {
+  const set = new Set();
+  if (!state.selected || !nodes[state.selected]) return set;
+  const own = nodes[state.selected].part;
+  for (const l of linksOf(state.selected)) {
+    const o = nodes[other(l, state.selected)];
+    if (o && o.part !== own) set.add(o.part);
+  }
+  return set;
+}
+
+// ---------------------------------------------------------------- drawing: the nodes of the open part
+let viewG = null;
+let layoutKey = null;
+function badges(sid) {
+  const n = nodes[sid];
+  const list = [];
+  if (n.marks.decisions) list.push([`◆${n.marks.decisions}`, "", `Decisions: ${n.marks.decisions}`]);
+  if (n.marks.comments) list.push([`✎${n.marks.comments}`, "", `Comments: ${n.marks.comments}`]);
+  if (n.marks.todos) list.push([`☐${n.marks.todos}`, "", `Todos: ${n.marks.todos}`]);
+  if (VIEWER.lonely(model, sid)) list.push(["○", "warn", "A rule that is linked to no other node"]);
+  return list;
+}
+function drawCard(parent, b, selRep) {
+  const n = nodes[b.sid];
+  const cls = ["card", b.kind, n.status === "approved" ? "" : "draft", selRep === b.sid ? "selected" : ""].filter(Boolean).join(" ");
+  const g = el("g", { class: cls, "data-key": b.sid, "data-sid": b.sid, "data-act": b.kind === "holder" ? "expand" : "select" }, parent);
+  el("rect", { class: "body", x: b.x, y: b.y, width: b.w, height: b.h, rx: 5 }, g);
+  const lh = b.kind === "holder" ? 16 : LH;
+  let bx = b.x + b.w - PAD;
+  for (const [text, kind, meaning] of badges(b.sid).reverse()) {
+    const t = el("text", { x: bx, y: b.y + PAD + lh - 3, "text-anchor": "end", class: `badge ${kind}` }, g);
+    t.textContent = text;
+    el("title", {}, t).textContent = meaning;
+    bx -= 8 + text.length * 7;
+  }
+  b.lines.forEach((line, k) => {
+    const t = el("text", { x: b.x + PAD, y: b.y + PAD + (k + 1) * lh - 3, "font-weight": b.kind === "holder" ? 600 : null, "font-size": b.kind === "holder" ? 12.5 : 12 }, g);
+    if (k === 0) {
+      el("tspan", { class: "meta", "font-weight": "normal" }, t).textContent = tailOf(n);
+      el("tspan", { dx: tailOf(n) ? ID_GAP : 0 }, t).textContent = line;
+    } else t.textContent = line;
+  });
+  if (b.kind === "holder") {
+    const c = VIEWER.counts(model, b.sid);
+    const t = el("text", { x: b.x + PAD, y: b.y + b.h - PAD - 1, class: "meta" }, g);
+    t.textContent = `▸ ${c.approved}/${c.all}`;
+  }
+  el("title", {}, g).textContent = `${n.location}\n${plain(n.title)}`;
+}
+function drawContainer(parent, b, selRep) {
+  const n = nodes[b.sid];
+  const g = el("g", { "data-key": b.sid, class: `container${n.status === "approved" ? "" : " draft"}${selRep === b.sid ? " selected" : ""}` }, parent);
+  el("rect", { class: "frame", x: b.x, y: b.y, width: b.w, height: b.h, rx: 6 }, g);
+  const t = el("text", { x: b.x + 12, y: b.y + 19, "font-weight": 600, "font-size": 12.5 }, g);
+  el("tspan", {}, t).textContent = "▾ ";
+  el("tspan", { class: "meta", "font-weight": "normal" }, t).textContent = tailOf(n);
+  el("tspan", { dx: tailOf(n) ? ID_GAP : 0 }, t).textContent = b.titleLines.join(" ");
+  const c = VIEWER.counts(model, b.sid);
+  const s = el("text", { x: b.x + b.w - 12, y: b.y + 19, "text-anchor": "end", class: "meta" }, g);
+  s.textContent = `${badges(b.sid).map(([x]) => x).join(" ")}   ${c.approved}/${c.all}`;
+  // The arrow folds the frame away; the rest of its heading selects its node.
+  el("rect", { class: "head", x: b.x, y: b.y, width: 26, height: HEAD, "data-sid": b.sid, "data-act": "collapse" }, g);
+  el("rect", { class: "head", x: b.x + 26, y: b.y, width: b.w - 26, height: HEAD, "data-sid": b.sid, "data-act": "select" }, g);
+}
+function renderLower(centerOn) {
+  const svg = $("#lower");
+  if (!viewG) { markers(svg); viewG = el("g", {}, svg); }
+  const drawnG = el("g");
+  const name = state.open;
+  if (!name || !model.views) { morphChildren(viewG, drawnG); return; }
+  const key = JSON.stringify([modelVersion, name, state.showAll, [...state.expanded].sort(), svg.clientWidth]);
+  if (key !== layoutKey) { layout = layoutLower(name); layoutKey = key; }
+  const selRep = state.selected && nodes[state.selected]?.part === name && vis(state.selected) ? rep(state.selected) : null;
+  const containers = el("g", {}, drawnG);
+  const wiresG = el("g", { class: "wires dim" }, drawnG);
+  const cards = el("g", {}, drawnG);
+  for (const b of layout.blocks) {
+    if (b.kind === "container") drawContainer(containers, b, selRep);
+    else drawCard(cards, b, selRep);
+  }
+  for (const w of layout.wires) {
+    const type = wireType(w);
+    const hot = selRep && (w.a === selRep || w.b === selRep);
+    const p = el("path", {
+      "data-key": `${w.a}|${w.b}`, class: `wire${VIEWER.dashed(type) ? " dashed" : ""}${hot ? " hot" : ""}`, d: pathD(w.points), stroke: VIEWER.linkColour(type),
+      "marker-end": w.toB ? `url(#arrow-${type})` : null, "marker-start": w.toA ? `url(#arrow-${type})` : null,
+      "stroke-width": hot ? null : 1.3 + Math.min(w.links.length, 12) * 0.35,
+    }, wiresG);
+    el("title", {}, p).textContent = w.links.map((l) => `${l.type}: ${nodes[l.from]?.location} → ${nodes[l.to]?.location}`).join("\n");
+    if (w.links.length > 1) {
+      let best = null, len = -1;
+      for (let k = 1; k < w.points.length; k++) { const a = w.points[k - 1], c = w.points[k]; const l = Math.abs(a.x - c.x) + Math.abs(a.y - c.y); if (l > len) { len = l; best = { x: (a.x + c.x) / 2, y: (a.y + c.y) / 2 }; } }
+      const lg = el("g", { "data-key": `${w.a}|${w.b}#n`, class: `wirelabel${hot ? " hot" : ""}` }, wiresG);
+      const label = String(w.links.length);
+      el("rect", { x: best.x - 4 - label.length * 3.3, y: best.y - 8, width: 8 + label.length * 6.6, height: 16, rx: 8 }, lg);
+      const t = el("text", { x: best.x, y: best.y + 3.5, "text-anchor": "middle" }, lg);
+      t.textContent = label;
+    }
+  }
+  morphChildren(viewG, drawnG);
+  const p = parts.get(name);
+  setText($("#hint"), !layout.hasTree && p && p.all > 0 && !state.showAll ? "Nothing in this part is approved yet: turn on “show drafts”." : "");
+  applyView(centerOn);
+}
+
+// ---------------------------------------------------------------- scrolling: the drawing scrolls up and down only
+const MARGIN = 20;
+let moved = false;
+const view = () => state.views[state.open] ?? null;
+function clampY(y) {
+  const box = $("#lower").getBoundingClientRect();
+  const lowest = Math.min(MARGIN, box.height - (layout?.height ?? 0) - MARGIN);
+  return Math.max(lowest, Math.min(MARGIN, y));
+}
+function applyView(centerOn) {
+  const box = $("#lower").getBoundingClientRect();
+  let y = view()?.y ?? MARGIN;
+  if (centerOn && layout.bySid.has(centerOn)) {
+    const b = layout.bySid.get(centerOn);
+    y = box.height / 2 - (b.y + Math.min(b.h, 200) / 2);
+  }
+  const v = { y: clampY(y) };
+  state.views[state.open] = v;
+  viewG.setAttribute("transform", `translate(${MARGIN},${v.y})`);
+}
+(function scrolling() {
+  const svg = $("#lower");
+  let start = null;
+  svg.addEventListener("pointerdown", (e) => { start = { y: e.clientY, top: view()?.y ?? MARGIN }; moved = false; });
+  window.addEventListener("pointermove", (e) => {
+    if (!start) return;
+    const dy = e.clientY - start.y;
+    if (!moved && Math.abs(dy) < 4) return;
+    moved = true;
+    svg.classList.add("dragging");
+    state.views[state.open] = { y: start.top + dy };
+    applyView();
+  });
+  window.addEventListener("pointerup", () => { if (start) { start = null; svg.classList.remove("dragging"); persist(); setTimeout(() => { moved = false; }, 0); } });
+  svg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const v = view(); if (!v) return;
+    state.views[state.open] = { y: v.y - e.deltaY };
+    applyView();
+    persist();
+  }, { passive: false });
+  svg.addEventListener("click", (e) => {
+    if (moved) return;
+    const hit = e.target.closest("[data-act]");
+    if (!hit) { if (state.selected) { state.selected = null; refresh(); } return; }
+    const { act, sid } = hit.dataset;
+    if (act === "expand") state.expanded.add(sid);
+    if (act === "collapse") { state.expanded.delete(sid); return refresh(); }
+    select(sid);
+  });
+})();
+
+// ---------------------------------------------------------------- the panel
+function nodePanel(sid) {
+  const n = nodes[sid];
+  return `<div class="md">${VIEWER.markdownHtml(n.markdown, nodes)}</div>`;
+}
+function partPanel(name) {
+  const p = parts.get(name);
+  if (!p) return "";
+  let h = `<h2>${esc(p.name)}</h2><span class="note">approved ${p.approved} of ${p.all}</span><h3>Files</h3>`;
+  h += p.files.map((f) => `<div class="row">${esc(f)}</div>`).join("");
+  h += `<h3>At the top</h3>` + topsOf(p).map((s) => `<div class="row"><span class="go" data-sid="${s}">${esc(tailOf(nodes[s]))} ${esc(plain(nodes[s].title))}</span></div>`).join("");
+  return h;
+}
+let panelHtml = null;
+function renderPanel() {
+  const html = state.selected && nodes[state.selected] ? nodePanel(state.selected) : state.open ? partPanel(state.open) : "";
+  if (html === panelHtml) return;
+  panelHtml = html;
+  patchHtml($("#panel"), html);
+}
+$("#panel").addEventListener("click", (e) => {
+  if (String(getSelection())) return;
+  const go = e.target.closest("[data-sid]");
+  if (go) navigate(go.dataset.sid);
+});
+$("#top").addEventListener("click", (e) => {
+  const one = e.target.closest("[data-part]");
+  if (one && model.views && parts.has(one.dataset.part)) openPart(one.dataset.part);
+});
+
+// ---------------------------------------------------------------- actions
+function select(sid) { state.selected = sid; refresh(); }
+function openPart(name) {
+  state.selected = null;
+  delete state.views[name];
+  state.open = name;
+  refresh();
+}
+/** Selects a node from the panel: opens its part, expands each node above it, and shows the drafts where it is a draft. */
+function navigate(sid) {
+  const n = nodes[sid];
+  if (!n) return;
+  state.open = n.part;
+  if (!state.showAll && n.status !== "approved") { state.showAll = true; $("#showAll").checked = true; }
+  for (const c of chain(sid)) if (c.sid !== sid) state.expanded.add(c.sid);
+  state.selected = sid;
+  refresh(sid);
+}
+function refresh(centerOn) {
+  drawn = VIEWER.shown(model, state.showAll);
+  document.body.classList.toggle("diagram-only", !model.views);
+  renderTop();
+  if (model.views) { renderLower(centerOn); renderPanel(); renderLegend(); }
+  renderFold();
+  persist();
+}
+$("#showAll").addEventListener("change", (e) => { state.showAll = e.target.checked; refresh(); });
+window.addEventListener("keydown", (e) => { if (e.key === "Escape") { state.selected = null; refresh(); } });
+function renderFold() {
+  $("#top").classList.toggle("folded", state.topFolded);
+  const btn = $("#foldTop");
+  setText(btn, state.topFolded ? "▸" : "▾");
+  btn.title = state.topFolded ? "Show the top of the page" : "Fold the top of the page away";
+  const p = parts.get(state.open);
+  setText($("#foldedName"), p ? `${p.name}  ${p.approved}/${p.all}` : "");
+}
+const toggleFold = () => { state.topFolded = !state.topFolded; refresh(); };
+$("#foldTop").addEventListener("click", toggleFold);
+$("#foldedName").addEventListener("click", toggleFold);
+function renderLegend() {
+  const present = new Set(model.links.map((l) => (VIEWER.TYPES.includes(l.type) ? l.type : "other")));
+  const types = [...VIEWER.TYPES.filter((t) => present.has(t)), ...(present.has("other") ? ["other"] : []), "several"];
+  patchHtml($("#blockLegend"), types.map((t) => `<span><i style="border-color:${VIEWER.linkColour(t)};${VIEWER.dashed(t) ? "border-top-style:dashed" : ""}"></i>${t === "several" ? "several types" : t === "other" ? "another type" : esc(t)}</span>`).join("") +
+    `<span class="break"></span><span>◆ decisions</span><span>✎ comments</span><span>☐ todos</span><span><b style="color:var(--warn)">○</b> a rule linked to no other node</span><span>a dotted border: a draft</span>`);
+}
+new ResizeObserver(() => { if (model) requestAnimationFrame(drawTopArrows); }).observe($("#domwrap"));
+let shownWidth = 0, relayout = null;
+new ResizeObserver(() => {
+  const width = $("#lowerwrap").clientWidth;
+  if (!model || !layout || width === shownWidth) return;
+  shownWidth = width;
+  clearTimeout(relayout);
+  relayout = setTimeout(() => renderLower(), 120);
+}).observe($("#lowerwrap"));
+(function splitter() {
+  const bar = $("#splitter");
+  const set = (w) => (w ? document.body.style.setProperty("--panel-w", `${w}px`) : document.body.style.removeProperty("--panel-w"));
+  set(state.panelW);
+  bar.addEventListener("pointerdown", (e) => {
+    try { bar.setPointerCapture(e.pointerId); } catch { /* a pointer the browser will not capture still drags while it stays on the bar */ }
+    bar.classList.add("active");
+    const move = (ev) => { state.panelW = Math.round(Math.min(Math.max(window.innerWidth - ev.clientX - 3, 260), window.innerWidth - 360)); set(state.panelW); };
+    const up = () => { bar.classList.remove("active"); bar.removeEventListener("pointermove", move); bar.removeEventListener("pointerup", up); persist(); };
+    bar.addEventListener("pointermove", move);
+    bar.addEventListener("pointerup", up);
+  });
+  bar.addEventListener("dblclick", () => { state.panelW = null; set(null); persist(); });
+})();
+
+// ---------------------------------------------------------------- live: redrawn after each change, without a reload
+async function load(info) {
+  try {
+    const res = await fetch("/model.json", { cache: "no-store" });
+    const text = await res.text();
+    const next = text === modelText ? null : JSON.parse(text);
+    if (next) { modelText = text; modelVersion += 1; model = next; index(); $("#showAll").checked = state.showAll; refresh(); }
+    const stamp = $("#stamp");
+    // A page opened, reloaded or reconnected without an event asks the server whether its last reading failed.
+    const err = info ? info.error : (await (await fetch("/status", { cache: "no-store" })).json()).error;
+    setText(stamp, err ? `the specification could not be read, so the page shows what was read before: ${err}` : `updated ${new Date(model.built).toLocaleTimeString("en-GB")}`);
+    stamp.classList.toggle("bad", !!err);
+  } catch (error) {
+    $("#stamp").textContent = `no connection to sheriff view: ${error.message}`;
+    $("#stamp").classList.add("bad");
+  }
+}
+const events = new EventSource("/events");
+events.addEventListener("model", (e) => load(JSON.parse(e.data)));
+events.addEventListener("page", () => location.reload());
+events.addEventListener("open", () => load());
+events.addEventListener("error", () => { $("#stamp").textContent = "no connection to sheriff view, reconnecting…"; $("#stamp").classList.add("bad"); });
+load();
+</script>
+</body>
+</html>

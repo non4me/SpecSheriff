@@ -15,6 +15,7 @@ import { loadConfig, modelFlags, ownerSettings } from "./config.ts";
 import { modelOf } from "./model.ts";
 import { loadSpecification, specificationOf, type SpecFile, type Specification } from "./spec-files.ts";
 import { writeTypes } from "./types.ts";
+import { detach, serve, stop } from "./view-server.ts";
 import { readAgainstSchema, validate } from "./validate.ts";
 
 const USAGE = `Usage: sheriff <command>
@@ -31,7 +32,10 @@ Commands:
   todos                       print the work put off on the nodes, the newest first, each with its node
   json                        print the model of the specification as JSON, which a project's own check or generator reads
   markdown                    write the readable export in markdown to md-version/, where the Views extension is chosen
-  map                         write the map to specs/_viewer/, where the Views extension is chosen
+  map                         write the map to specs/_map/, where the Views extension is chosen
+  view [--port <n>] [--detach|--stop]
+                              serve the viewer of the specification at http://127.0.0.1:<port>/, where the Views or
+                              the Domains extension is chosen; --detach starts it in the background, --stop stops it
   guide                       print the guidelines and where the specification stands
   types                       write the types and runtime checks generated from the RecordTypes
                               into the files the technical appendix lists for them
@@ -131,6 +135,8 @@ async function run(command: string | undefined, args: string[]): Promise<number>
       for (const s of report.drafted) process.stdout.write(`made a draft: ${s}\n`);
       for (const f of report.written) process.stdout.write(`written: ${f}\n`);
       for (const s of report.added) process.stdout.write(`added a draft rule, which the SpecSheriff tools read only once it is approved: ${s}\n`);
+      for (const f of report.removed) process.stdout.write(`removed the folder into which an earlier release wrote the map: ${f}\n`);
+      for (const f of report.notRemoved) process.stdout.write(`could not remove the folder into which an earlier release wrote the map: ${f.path}: ${f.reason}\n`);
       for (const f of await rewriteTests(root)) process.stdout.write(`rewritten: ${f}\n`);
       for (const f of await writeLists(root)) process.stdout.write(`written: ${f}\n`);
       return 0;
@@ -244,6 +250,23 @@ async function run(command: string | undefined, args: string[]): Promise<number>
     case "todos":
       process.stdout.write(todos(loadSpecification(root)));
       return 0;
+    case "view": {
+      const at = args.indexOf("--port");
+      const port = at >= 0 ? Number(args[at + 1]) : undefined;
+      if (port !== undefined && !(Number.isInteger(port) && port > 0 && port < 65536)) throw new Error(`--port needs a port number, not ${args[at + 1] ?? "nothing"}`);
+      if (args.includes("--stop")) {
+        process.stdout.write((await stop(root, { port })) ? "stopped\n" : "no sheriff view process serves this project\n");
+        return 0;
+      }
+      if (args.includes("--detach")) {
+        process.stdout.write(`Specification viewer: ${await detach(root, process.argv[1]!, { port })}\n`);
+        return 0;
+      }
+      const viewer = await serve(root, { port });
+      process.stdout.write(`Specification viewer: ${viewer.url}\n`);
+      await viewer.closed;
+      return 0;
+    }
     default:
       process.stderr.write(`sheriff: unknown command: ${command}\n\n${USAGE}`);
       return 2;

@@ -21,6 +21,18 @@
         },
         {
           "type": "cites",
+          "from": "s-282zba8mtxvxnm5"
+        },
+        {
+          "type": "cites",
+          "from": "s-exgg4vm4ds7t9jg"
+        },
+        {
+          "type": "cites",
+          "from": "s-4s3aru64yudz4kh"
+        },
+        {
+          "type": "cites",
           "from": "s-e3495enbc5h75c3"
         },
         {
@@ -48,6 +60,10 @@
             {
               "type": "cites",
               "to": "s-5fewsp22mmdz7y6"
+            },
+            {
+              "type": "cites",
+              "from": "s-rj7yxrktxywvxzj"
             },
             {
               "type": "cites",
@@ -109,6 +125,10 @@
             },
             {
               "type": "cites",
+              "from": "s-rj7yxrktxywvxzj"
+            },
+            {
+              "type": "cites",
               "from": "s-zefk589ykh37b8u"
             },
             {
@@ -155,6 +175,88 @@
             ],
             "tests": [
               "skills/tools/test/unit/generated.test.ts::@spec s-zu8ne3wq84zchc4 the map shows the structure and each node's status only, nothing of a rule's text"
+            ]
+          }
+        },
+        {
+          "location": "_guidelines/extensions/views/3",
+          "sid": "s-rj7yxrktxywvxzj",
+          "kind": "TextRule",
+          "title": "The viewer of the specification",
+          "status": "approved",
+          "text": "The viewer is a web page that shows the specification. It is redrawn in place whenever the specification changes. It is drawn from the nodes and holds no facts of its own.\n\nThe viewer shows:\n- each file of the guidelines (§s-qmmzf9nksfsa3qp), the appendix of the tools (§s-a4rbry4hsu34hy8), the contracts section (§s-z6tq6a3btnvvwx7), every other section into which the base specification is divided (or, where the base specification is not divided, the rest of it as a whole) and the technical appendix (§s-tj38pvm38nepaf5);\n- for each of these, the number of its approved nodes and the number of all its nodes, both numbers counting only the nodes whose approval status is not derived (§s-9kfdycuq34beqvs);\n- the nodes of whichever of these the reader opens, nested as they are nested in the specification, each with its approval status (§s-tgrnpagrb58tya7) and with its title, where it has one;\n- each link between two nodes that the viewer shows, as a line that shows the link's type;\n- the node that the reader selects, as the human-readable export shows it (§s-ce24ynwabt5yx8h).\n\nUntil the reader asks to see the drafts, the viewer shows only the approved nodes and the nodes above them.",
+          "refs": [
+            {
+              "type": "cites",
+              "to": "s-qmmzf9nksfsa3qp"
+            },
+            {
+              "type": "cites",
+              "to": "s-a4rbry4hsu34hy8"
+            },
+            {
+              "type": "cites",
+              "to": "s-z6tq6a3btnvvwx7"
+            },
+            {
+              "type": "cites",
+              "to": "s-tj38pvm38nepaf5"
+            },
+            {
+              "type": "cites",
+              "to": "s-9kfdycuq34beqvs"
+            },
+            {
+              "type": "cites",
+              "to": "s-tgrnpagrb58tya7"
+            },
+            {
+              "type": "cites",
+              "to": "s-ce24ynwabt5yx8h"
+            },
+            {
+              "type": "cites",
+              "to": "s-zu8ne3wq84zchc4"
+            },
+            {
+              "type": "cites",
+              "from": "s-zefk589ykh37b8u"
+            },
+            {
+              "type": "implements",
+              "from": "s-282zba8mtxvxnm5"
+            },
+            {
+              "type": "implements",
+              "from": "s-exgg4vm4ds7t9jg"
+            },
+            {
+              "type": "implements",
+              "from": "s-4s3aru64yudz4kh"
+            }
+          ],
+          "reason": "The map (§s-zu8ne3wq84zchc4) shows the shape of the specification. The export shows its text. A person who works on the specification also needs to see each node together with the nodes it is linked to. Since the specification changes while that person reads it, what that person sees is useful only if it keeps up with each change.",
+          "examples": [
+            "An owner turns on the display of drafts, opens the appendix of the tools and selects a rule under review. The web page shows the rule's text, its reason, its decisions and each node it is linked to, and draws a line to each node of the appendix that the rule is linked to. When an agent changes the rule's title, the web page shows the new title at once. The most likely mistake is to show only the nodes' titles, as the map does, which leaves the reader to look up each link in the files."
+          ],
+          "meta": {
+            "decisions": [
+              {
+                "date": "2026-11-27",
+                "problem": "The Domains extension promised a diagram of the domains that no command of the SpecSheriff tools drew, and a project that adopted SpecSheriff got only the map. The owner's own viewer of the specification drew such a diagram but was not part of the plugin.",
+                "ruling": "The owner chose to make the owner's viewer a command of the SpecSheriff tools that serves a web page redrawn after each change, rather than a web page that the hooks rewrite or a diagram of the domains added to the map (\"A.\", in answer to \"Which way do we go?\").",
+                "type": "textual"
+              },
+              {
+                "date": "2026-11-28",
+                "problem": "Whether the owner agrees to the group of rules on the viewer of the specification, shown on one page with each node in full.",
+                "ruling": "The owner agreed to the group (\"A\", in answer to \"Do you agree to the group and to the proposal for the list of commands, and which option do you choose for the folder, A or B?\").",
+                "type": "textual"
+              }
+            ],
+            "tests": [
+              "skills/tools/test/unit/view.test.ts::@spec s-rj7yxrktxywvxzj counts, for each box, the nodes whose approval status is not derived, and how many of them are approved",
+              "skills/tools/test/unit/viewer-page.test.ts::@spec s-rj7yxrktxywvxzj shows only the approved nodes and the nodes above them, until the reader asks to see the drafts"
             ]
           }
         }

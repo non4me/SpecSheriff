@@ -55,7 +55,7 @@ function requireViews(root: string, command: string): Set<string> {
 }
 
 /** The files whose nodes a view shows: every file of the specification, except the file of an extension that the project takes from the plugin and has not chosen. */
-function viewedFiles(spec: Specification, chosen: Set<string>): Specification["files"] {
+export function viewedFiles(spec: Specification, chosen: Set<string>): Specification["files"] {
   const extension = (path: string) => path.match(/^specs\/_guidelines\/extensions\/(.+)\.json$/)?.[1];
   return spec.files.filter((f) => !(f.taken && extension(f.path) && !chosen.has(extension(f.path)!)));
 }
@@ -157,8 +157,8 @@ ${LIBRARIES.map((library) => `<script>\n${readFileSync(library, "utf8")}</script
 </body>
 </html>
 `;
-  const path = join("specs", "_viewer", "index.html");
-  regenerated(root, join("specs", "_viewer"));
+  const path = join("specs", "_map", "index.html");
+  regenerated(root, join("specs", "_map"));
   writeFileSync(join(root, path), page);
   return path.replace(/\\/g, "/");
 }

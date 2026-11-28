@@ -10,5 +10,12 @@
       "status": "approved",
       "by": "vladimir.troyanenko@gmail.com"
     }
+  ],
+  "extensions": [
+    {
+      "name": "views",
+      "chosen": true,
+      "by": "vladimir.troyanenko@gmail.com"
+    }
   ]
 }

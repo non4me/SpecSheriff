@@ -145,7 +145,7 @@ test("@spec s-f5rz6b7dhxejjts sheriff markdown, sheriff map and sheriff guide wr
   assert.match(exported.stdout, /written: md-version\/contracts\/c\.md/);
   const rendered = sheriff(root, "map");
   assert.equal(rendered.status, 0, rendered.stderr);
-  assert.match(readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8"), /markmap/);
+  assert.match(readFileSync(join(root, "specs", "_map", "index.html"), "utf8"), /markmap/);
   const guided = sheriff(root, "guide");
   assert.equal(guided.status, 0, guided.stderr);
   assert.match(guided.stdout, /contracts: 4 nodes, 0 approved/);

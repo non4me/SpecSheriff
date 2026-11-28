@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { approve, readApprovals } from "../../src/approvals.ts";
-import { reindex, rewriteTests, writeLists } from "../../src/reindex.ts";
+import { reindex, removeEarlierMap, rewriteTests, writeLists } from "../../src/reindex.ts";
 import { loadSchema } from "../../src/schema.ts";
 import { loadSpecification, specPaths } from "../../src/spec-files.ts";
 import { APPROVAL_RULE, fingerprint, LEVELS_RULE, SID, TESTS_PASS_RULE } from "../../src/model.ts";
@@ -43,6 +43,26 @@ test("@spec s-bpdqd9v72wg7vsz empties every incoming list and rebuilds it from t
 test("@spec s-gb8s9657a65hqmv removes from sheriff.config.json the setting by which an earlier release recognized the repository where the SpecSheriff guidelines are written, and keeps every other setting in its place", () => {
   const root = taking({ "sheriff.config.json": { code: ["src/**"], writesSpecSheriffGuidelines: false, tests: [] } });
   assert.equal(readFileSync(join(root, "sheriff.config.json"), "utf8"), JSON.stringify({ extensions: ALL_EXTENSIONS, code: ["src/**"], tests: [] }, null, 2) + "\n");
+});
+
+test("@spec s-gb8s9657a65hqmv removes the folder specs/_viewer/, into which an earlier release wrote the map, and names that folder", () => {
+  const root = taking();
+  mkdirSync(join(root, "specs", "_viewer"), { recursive: true });
+  writeFileSync(join(root, "specs", "_viewer", "index.html"), "<!doctype html>\n");
+  writeFileSync(join(root, "specs", "_viewer", ".gitignore"), "*\n");
+  const report = reindex(root);
+  assert.deepEqual(report.removed, ["specs/_viewer/"]);
+  assert.ok(!existsSync(join(root, "specs", "_viewer")));
+  assert.deepEqual(reindex(root).removed, [], "a second run finds nothing to remove");
+});
+
+test("@spec s-gb8s9657a65hqmv names the folder specs/_viewer/ and goes on when its removal fails", () => {
+  const root = taking();
+  mkdirSync(join(root, "specs", "_viewer"), { recursive: true });
+  const outcome = removeEarlierMap(root, () => {
+    throw new Error("a process holds the folder");
+  });
+  assert.deepEqual(outcome, { removed: [], failed: [{ path: "specs/_viewer/", reason: "a process holds the folder" }] });
 });
 
 test("@spec s-gb8s9657a65hqmv removes its sid and every link pointing at it from a node of the archive that an earlier release wrote, and builds no link pointing from it to another node", () => {
