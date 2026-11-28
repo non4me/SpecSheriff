@@ -216,6 +216,11 @@ An alias makes it `sheriff <command>`. `sheriff show <sid>` prints a node with i
 `sheriff binding` what the code and the tests lack, `sheriff guide` the guidelines whole, and
 `sheriff approve <sid>` records an owner's approval.
 
+Where the project has chosen the Views or the Domains extension, `sheriff view --detach` starts the
+viewer of the specification in the background. The viewer is a web page that is redrawn after each change to the
+specification. It is served at `http://127.0.0.1:5278/`, or at the first free port above 5278.
+`sheriff view --stop` stops it. You can also ask the agent to start the viewer.
+
 ## Updates
 
 A project's settings turn automatic updates on. Claude Code then takes a new release in the
@@ -236,7 +241,10 @@ approval in force, and names each file that it rewrites, for you to commit. It m
 
 Four commands are renamed: `sheriff message` is now `sheriff commit-message`, `sheriff model` is
 `sheriff json`, `sheriff export` is `sheriff markdown`, and `sheriff render` is `sheriff map`.
-`sheriff markdown` and `sheriff map` run only where the project has chosen the Views extension. An
+`sheriff markdown` and `sheriff map` run only where the project has chosen the Views extension.
+`sheriff map` writes the map into `specs/_map/`, and `sheriff reindex` removes `specs/_viewer/`, the
+folder into which an earlier release wrote it. The new command `sheriff view` serves the viewer of
+the specification, which also draws the diagram of the domains. An
 owner changes the specification's approval status, its `strict` flag and the chosen extensions with
 `sheriff settings`, or through the skill `spec-settings`. Where the specification holds a node of a
 kind that an extension adds, such as a domain's header or a RecordType, `sheriff reindex` names that

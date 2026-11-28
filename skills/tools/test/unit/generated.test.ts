@@ -39,7 +39,7 @@ test("@spec s-zefk589ykh37b8u keeps the readable export and the map out of git",
   spawnSync("git", ["init", "-q"], { cwd: root });
   exportMarkdown(root);
   render(root);
-  for (const path of ["md-version/contracts/c.md", "specs/_viewer/index.html"]) {
+  for (const path of ["md-version/contracts/c.md", "specs/_map/index.html"]) {
     assert.equal(spawnSync("git", ["check-ignore", "-q", path], { cwd: root }).status, 0, `${path} is ignored`);
   }
 });
@@ -87,7 +87,7 @@ test("@spec s-e3495enbc5h75c3 writes the export only where the project has chose
 test("@spec s-rpv4fkdqqguptqd writes the map only where the project has chosen the Views extension, and otherwise refuses, naming it", () => {
   const root = withoutViews();
   assert.throws(() => render(root), /Views extension/);
-  assert.ok(!existsSync(join(root, "specs", "_viewer")));
+  assert.ok(!existsSync(join(root, "specs", "_map")));
 });
 
 test("@spec s-e3495enbc5h75c3 exports the files that the project takes from the plugin: those of the guidelines, of each chosen extension and of the appendix of the tools", () => {
@@ -211,7 +211,7 @@ test("@spec s-jsqxdx47wkkj7gp exporting again changes nothing, and leaves no exp
 
 test("@spec s-jsqxdx47wkkj7gp the export and the map empty the folder they write into and keep the folder itself, which a running server may hold", () => {
   const root = project();
-  for (const [dir, write] of [["md-version", exportMarkdown], [join("specs", "_viewer"), render]] as const) {
+  for (const [dir, write] of [["md-version", exportMarkdown], [join("specs", "_map"), render]] as const) {
     mkdirSync(join(root, dir), { recursive: true });
     writeFileSync(join(root, dir, "stale.md"), "left by hand\n");
     const before = statSync(join(root, dir), { bigint: true }).ino;
@@ -224,15 +224,15 @@ test("@spec s-jsqxdx47wkkj7gp the export and the map empty the folder they write
 test("@spec s-rpv4fkdqqguptqd writes the map as a web page that draws it with markmap from an outline it holds no file of", () => {
   const root = project();
   render(root);
-  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  const page = readFileSync(join(root, "specs", "_map", "index.html"), "utf8");
   assert.match(page, /markmap\.Markmap\.create\(/);
-  assert.deepEqual(readdirSync(join(root, "specs", "_viewer")).sort(), [".gitignore", "index.html"]);
+  assert.deepEqual(readdirSync(join(root, "specs", "_map")).sort(), [".gitignore", "index.html"]);
 });
 
 test("@spec s-rpv4fkdqqguptqd the map's page carries markmap and every library it needs, each with its licence notice, and loads nothing from the network", () => {
   const root = project();
   render(root);
-  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  const page = readFileSync(join(root, "specs", "_map", "index.html"), "utf8");
   assert.doesNotMatch(page, /<script[^>]*\bsrc=|<link\b|@import|url\(\s*["']?https?:|\b(?:src|href)\s*=\s*["']?https?:/i);
   // An address stands only as a namespace of XML or inside a library's notice, where nothing loads it.
   const hosts = new Set([...page.matchAll(/https?:\/\/([^/"'\s>)]+)/g)].map((m) => m[1]!));
@@ -250,7 +250,7 @@ test("@spec s-rpv4fkdqqguptqd the map's page reads a title as text, so that no t
   data.nodes[0].children[0].title = "Costs $x$ and <b>more</b>";
   writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
   render(root);
-  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  const page = readFileSync(join(root, "specs", "_map", "index.html"), "utf8");
   assert.ok(!page.includes("<b>more"), "the title written as markup");
   assert.doesNotMatch(page, /katex/i);
   // The page's own scripts, the outline and the drawing, run against a markmap that keeps the tree it is given.
@@ -269,7 +269,7 @@ test("@spec s-rpv4fkdqqguptqd the map's page reads a title as text, so that no t
 test("@spec s-rpv4fkdqqguptqd draws each node's title in a frame, dotted for a draft and solid for an approved node, a branch standing for no node without one", () => {
   const root = project();
   render(root);
-  const page = readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8");
+  const page = readFileSync(join(root, "specs", "_map", "index.html"), "utf8");
   const scripts = [...page.matchAll(/<script>([^]*?)<\/script>/g)].map((m) => m[1]!);
   const drawn: { tree?: any } = {};
   const context = createContext({ markmap: { Markmap: { create: (_svg: unknown, _options: unknown, tree: unknown) => (drawn.tree = tree) } } });
@@ -315,7 +315,7 @@ test("@spec s-rpv4fkdqqguptqd the map holds the nodes in the cells of a TableRul
 test("@spec s-zu8ne3wq84zchc4 the map shows the structure and each node's status only, nothing of a rule's text", () => {
   const root = project();
   render(root);
-  assert.ok(!readFileSync(join(root, "specs", "_viewer", "index.html"), "utf8").includes("What zeta rule requires."));
+  assert.ok(!readFileSync(join(root, "specs", "_map", "index.html"), "utf8").includes("What zeta rule requires."));
 });
 
 test("@spec s-xtqebaxjrqjsjwn sheriff guide prints every node of the guidelines and the figures counted off the model as it prints", () => {
